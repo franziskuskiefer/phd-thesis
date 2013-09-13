@@ -1,9 +1,150 @@
 %************************************************
 \chapter{Introduction}\label{ch:introduction}
 %************************************************
+This work at hand is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
+In contrast to conventional cryptographic algorithms and protocols, secrets have low-entropy here, such that an adversary is able to iterate through all possible secrets in reasonable time.
+This leads directly to the inherent threat to everything we are dealing with in this work: dictionary attacks.
+So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
-\section{Password Based Authentication}
+\begin{quote}
+``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\cite{Kaufmann02}
+\end{quote}
 
+\noindent
+We do not care about humans lack of speed and accuracy in performing cryptographic operations in this work.
+But their inability to remember high-quality cryptographic keys is a major problem.
+To perform cryptography where humans input a secret those have to be human-memorable.
+This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
+Even though there exist several standardized authentication tokens for humans, we heavily rely on passwords.
+In general we distinguish between three big categories of authentication data \cite{Burr11}:
+\begin{itemize}
+	\item Something you know (\eg password, PIN)
+	\item Something you have (\eg mobile phone, cryptographic key)
+	\item Something you are (\eg fingerprint)
+\end{itemize}
+But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he doe not write down his passwords).
+
+
+\paragraph{The inherent Threat of Dictionary Attacks}
+Most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
+Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
+Therefore, it is feasible for any program to walk through the entire dictionary and just try every possible secret (password).
+This kind of attack is called \emph{dictionary attack} and is inherent to every password based algorithm.
+There exist several approach to deal with this flaw in each specific field of password based research.
+We will point out the particular mechanism when dealing with each field.
+
+\paragraph{Poorly Chosen Passwords}
+While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
+\fk[inline]{Discuss}
+
+\begin{itemize}
+	\item Why do we need human authentication
+	\item What are the challenges in human authentication
+	\item How to ``avoid'' these challenges
+	\item Generalisation from human authentication to cryptography from low-entropy secrets
+\end{itemize}
+
+\paragraph{Outline of this Work}
+This work consists of ??? chapters.
+We gave a motivational overview on low-entropy cryptography and passwords already and deepen this discussion in the remainder of this introduction.
+While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on the background of low-entropy cryptography complete the information on research in this area, necessary for the reminder of this work.
+
+\paragraph{Outline of this Chapter}
+In the following section  we will discuss different research areas in the general field of password based cryptography.
+We start with password based authentication and key exchange protocols, which comprise a big part of password based cryptography.
+The second part is concerned with general cryptographic primitives from low entropy secrets and other password based protocols.
+We finally conclude this chapter with an overview of mechanisms to ease or avoid problems related with password mechanisms.
+
+% *****************************************************************************
+% Section: On Provable Security
+% *****************************************************************************
+
+\section{On Provable Security}
+\fk[inline]{Discuss provable security (models)}
+
+The Find-then-Guess PAKE model from~\cite{Bellare2000}, strengthened and simplified in~\cite{Abdalla2005} towards the Real-or-Random PAKE model aims at Authenticated Key Exchange (AKE)-security, the main security property of PAKE protocols.
+
+\fk[inline]{\ac{FtG} VS. \ac{RoR}}
+
+% *****************************************************************************
+% Section: Password Based Authentication and Key Exchange
+% *****************************************************************************
+
+\section{Password Based Authentication and Key Exchange}
+In this section we give a broad overview on password based authentication and key exchange protocols found in literature.
+We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialized protocol classes like threshold \ac{PAKE} or group \ac{PAKE}.
+
+\subsection{Password Based Authenticated Key Exchange}
+The notion of \emph{\ac{PAKE}} was introduced by Bellovin~\cite{bellovin92} and corresponding security models were initially developed by Bellare, Pointcheval, and Rogaway~\cite{Bellare2000}, Boyko, MacKenzie, and Patel~\cite{Boyko2000}, and Goldreich and Lindell~\cite{Goldreich01}.
+Until now, numerous subsequent work explored it in depth.
+\ac{PAKE} allows two parties, holding low-entropy keys, to negotiate a common session key.
+Despite the key exchange functionality it authenticates the two parties explicitly or implicitly.
+They aim to protect against offline dictionary attacks but require restriction on the number of failed password trials as all password based protocols.
+The most promising application of \ac{PAKE} protocols is the online authentication of users.
+It is considered as a more secure alternative to the nowadays mainly deployed approach of transmitting the password over a secure channel (\ac{HTTPS}) and let the server perform a check against his stored credential.
+The standard model of \ac{PAKE} does not require any \ac{PKI}, which is necessary for the secure channel, and assumes that only a low-entropy secret, \ie a human memorable password, is shared between both parties.
+Thereby, \ac{PAKE} protocols solve the problem of potential password leakage, inherent to the approach based on secure channels.
+
+In general, all PAKE models (see~\cite{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
+While many PAKE constructions require a constant number of communication rounds~\cite{Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}; recent frameworks by Katz and Vaikuntanathan \cite{Katz2011} and Benhamouda et al. \cite{Benhamouda2013} offer optimal one-round PAKE.
+
+In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as~\cite{Camenisch2010,Blazy2012} that also lend themselves to the constructions of (somewhat less practical) PAKE protocols.
+\fk[inline]{SPEKE \cite{Jablon96}}
+
+\paragraph{Game-Based \acc{PAKE}-Security}
+The original game-based \ac{PAKE} models in~\cite{Bellare2000,Boyko2000} incorporate the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
+Abdalla, Fouque, and Pointcheval~\cite{Abdalla2005} defined a \ac{RoR} approach to model semantic security of PAKE protocols by allowing polynomially-many queries to a \Test oracle.
+They showed not only that their \ac{RoR} approach leads to stronger security but were also able to simplify the model by removing the \Reveal oracle that provides the adversary with established session keys.
+The adversary in~\cite{Abdalla2005} is thus left with access to the \Test oracle, the \Execute oracle that models passive attacks, and the \Send oracle accounting for active attacks.
+
+The models in~\cite{Bellare2000,Abdalla2005} remain the most popular game-based PAKE models, adopted in the analysis of many protocols, including the random oracle-based protocols~\cite{Abdalla2006,Abdalla2005b} and protocols requiring a common reference string (CRS)~\cite{Gennaro2003,Gennaro2008,Katz2009a}.
+
+\paragraph{Simulation-Based \acc{PAKE}-Security}
+Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by Goldreich and Lindell~\cite{Goldreich01}.
+Their work also comprises the only (but fairly inefficient) protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.
+The protocol has been subsequently simplified at the cost of weakened security in~\cite{NguyenV04}.
+While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of Universal Composability (UC)~\cite{Canetti2001a} has been proposed by Canetti, Halevi, Katz and Lindell~\cite{Canetti2005} later.
+In contrast to game-based \ac{PAKE} protocols, UC-secure protocols require setup assumptions, with CRS being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
+
+\fk[inline]{Check if I missed any PAKE paper}
+\fk[inline]{Add newer protocols (2013)}
+\fk[inline]{Write a bit more about the models}
+
+\subsection{Three-Party \acc{PAKE}}
+three-party protocols~\cite{Abdalla2005,Abdalla2007}
+
+\subsection{Group Password Based Authenticated Key Exchange}
+group protocols~\cite{AbdallaP06,AbdallaBVS07}. 
+
+\subsubsection{Security against Malicious Servers}
+
+\subsection{Threshold Password Based Authenticated Key Exchange}
+threshold-based PAKE protocols, e.g.~\cite{Abdalla2005b,Bagherzandi2011}, where the client's password is shared amongst two (or possibly more) servers that jointly authenticate the client
+
+\subsection{Multi-Factor Authenticated Key Exchange}
+
+% *****************************************************************************
+% Section: How to Ease the Pain
+% *****************************************************************************
+
+\section{How to Ease the Pain}
+Mechanisms to avoid password based authentication problems
+\begin{itemize}
+	\item password manager
+	\item SSO
+	\item ...
+\end{itemize}
+
+% *****************************************************************************
+% Section: Strong Cryptography from Low-Entropy Secrets
+% *****************************************************************************
+
+\section{Strong Cryptography from Low-Entropy Secrets}
+PKE, independent from PAKE
+
+\subsection{Password Protected Secret Sharing}
+
+\subsection{Password Based Encryption}
 
 %This bundle for \LaTeX\ has two goals:
 %\begin{enumerate}

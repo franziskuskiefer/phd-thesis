@@ -21,6 +21,20 @@
     \let\clearpage\relax
     \let\cleardoublepage\relax
     \let\cleardoublepage\relax
+    
+    %*******************************************************
+    % List of ToDos
+    %******************************************************* 
+    \ifthenelse{\boolean{@drafting}}{%  
+	    %\phantomsection 
+    	\refstepcounter{dummy}
+	    %\addcontentsline{toc}{chapter}{\listfigurename}
+	    \pdfbookmark[1]{\listoftodos}{lotd}
+	    \listoftodos 
+
+	    \vspace*{8ex}   
+    }{}
+    
     %*******************************************************
     % List of Figures
     %*******************************************************    
@@ -70,6 +84,12 @@
         \acro{NIZKPoK}{Non-Interactive Zero Knowledge Proof of Knowledge}
         \acro{ECC}{Elliptic Curve Cryptography}
         \acro{CPA}{Chosen Plaintext Attack}
+        \acro{PAKE}{Password Authenticated Key Exchange}
+        \acro{HTTP}{Hypertext Transfer Protocol}
+        \acro{HTTPS}{\ac{HTTP} Secure}
+        \acro{FtG}{Find-then-Guess}
+        \acro{RoR}{Real-or-Random}
+        \acro{PKI}{Public Key Infrastructure}
     \end{acronym}                     
 \endgroup
 

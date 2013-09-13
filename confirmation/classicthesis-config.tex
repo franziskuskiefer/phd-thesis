@@ -39,7 +39,7 @@
 % ****************************************************************************************************
 % 2. Personal data and user ad-hoc commands
 % ****************************************************************************************************
-\newcommand{\myTitle}{Human Authentication --- Cryptography from Low-Entropy Secrets\xspace}
+\newcommand{\myTitle}{Human Authentication \& Cryptography from Low-Entropy Secrets\xspace}
 \newcommand{\mySubtitle}{Confirmation Report\xspace}
 \newcommand{\myDegree}{Master of Science (Dr.-Ing.)\xspace}
 \newcommand{\myName}{Franziskus Kiefer\xspace}
@@ -59,10 +59,10 @@
 \newcounter{dummy} % necessary for correct hyperlinks (to index, bib, etc.)
 \newlength{\abcd} % for ab..z string length calculation
 \providecommand{\mLyX}{L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
-\newcommand{\ie}{i.\,e.}
-\newcommand{\Ie}{I.\,e.}
-\newcommand{\eg}{e.\,g.}
-\newcommand{\Eg}{E.\,g.} 
+\newcommand{\ie}{i.\,e.,\xspace}
+\newcommand{\Ie}{I.\,e.,\xspace}
+\newcommand{\eg}{e.\,g.,\xspace}
+\newcommand{\Eg}{E.\,g.,\xspace} 
 % ****************************************************************************************************
 
 
@@ -102,10 +102,26 @@
 \renewcommand{\bflabel}[1]{{#1}\hfill} % fix the list of acronyms
 \usepackage{multibib} % allow multiple bibliographies
 \newcites{pubs}{Publications} % bibliography containing own publications
+\let\oldbibsection\bibsection % store behaviour
 \renewcommand\bibsection{} % avoid pagebreak before publications
-%TODO: change back for normal references?
+\usepackage[dvipsnames,english]{xcolor}
+\usepackage[colorinlistoftodos]{todonotes} % add shiny todos
+
+% ****************************************************************************************************
+% rewrite stuff whether using draft or final version
 % ****************************************************************************************************
 
+% *** todo with nicer default color and only in drafting mode ***
+\newcommand{\fk}[2][]{%
+	\ifthenelse{\boolean{@drafting}}{%
+		\todo[color={blue!40},size=\small,#1]{#2}%
+	}{}
+}
+
+% *** 
+\newcommand{\acc}[1]{\NoCaseChange{\ac{#1}}}
+
+% ****************************************************************************************************
 
 % ****************************************************************************************************
 % 4. Setup floats: tables, (sub)figures, and captions
@@ -282,3 +298,12 @@
 %\usepackage{lmodern} % <-- no osf support :-(
 %\usepackage[urw-garamond]{mathdesign} <-- no osf support :-(
 % ****************************************************************************************************
+
+%****************************************************************************************************
+% 9. Handy macros
+% ****************************************************************************************************
+\newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
+\newcommand{\Execute}{\ensuremath{\mathsf{Execute}}\xspace}
+\newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
+\newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
+\newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
