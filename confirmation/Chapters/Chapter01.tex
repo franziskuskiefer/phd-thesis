@@ -13,25 +13,49 @@ So why do we want to perform cryptography with passwords at all, when they compr
 \noindent
 We do not care about humans lack of speed and accuracy in performing cryptographic operations in this work.
 But their inability to remember high-quality cryptographic keys is a major problem.
-To perform cryptography where humans input a secret those have to be human-memorable.
-This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
 Even though there exist several standardized authentication tokens for humans, we heavily rely on passwords.
 In general we distinguish between three big categories of authentication data \cite{Burr11}:
 \begin{itemize}
-	\item Something you know (\eg password, PIN)
+	\item Something you know (\eg password, \ac{PIN})
 	\item Something you have (\eg mobile phone, cryptographic key)
 	\item Something you are (\eg fingerprint)
 \end{itemize}
 But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he doe not write down his passwords).
+To perform cryptography where humans input a known secret those have to be human-memorable.
+This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
 
+\section{Password Based Cryptography}
+Password based cryptography can be classified (with some exceptions) as symmetric within the field of cryptographic research.
+In contrast to other cryptographic mechanisms where \emph{keys} are chosen from a \emph{key space}, \emph{passwords} are chosen from a \emph{dictionary}.
+Note that dictionaries in our case denote sets of characters rather than \emph{real} lexicon like dictionaries.
+When talking about those we use the term \emph{lexicon}.
+We distinguish between several types of passwords, we discuss in the following.
 
-\paragraph{The inherent Threat of Dictionary Attacks}
+\paragraph{Passwords}
+Passwords are usually chosen from a dictionary that consists of alpha-numeric characters \texttt{a-z,A-Z,0-9} and special characters like \texttt{\$,\%,@} and so on.
+While many (online) services have password policies\fk{Cite password policy papers} in place, humans tend to choose easy memorable and therefore mainly easy to guess passwords that can be found in a lexicon.
+
+\paragraph{\acc{PIN}}
+\acp{PIN} are chosen from the numeric dictionary containing only the numbers \texttt{0-9}.
+Furthermore, they are mainly rather short, \eg banking \acp{PIN} with four digits.
+
+\paragraph{\acc{OTP}}
+While other passwords are meant to be memorized by humans, \acp{OTP} are used only once and therefore don not have to be memorized.
+\acp{OTP} have become more popular recently as a second factor in multi factor authentication.\fk{Cite google, fb, etc.}
+The most popular standards for \ac{OTP}, implemented \eg in the Google Authenticator App\fk{Cite}, are the \ac{HMAC} based algorithm specified in RFC 4226\fk{cite} and the time based algorithm specified in RFC 6238\fk{cite}.
+
+\paragraph{\acc{TAN}}
+Transaction bound passwords
+
+\subsection{The inherent Threat of Dictionary Attacks}
 Most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
 Therefore, it is feasible for any program to walk through the entire dictionary and just try every possible secret (password).
 This kind of attack is called \emph{dictionary attack} and is inherent to every password based algorithm.
 There exist several approach to deal with this flaw in each specific field of password based research.
 We will point out the particular mechanism when dealing with each field.
+
+In addition to a brute force dictionary attack that iterates an entire dictionary, it is often sufficient to perform a lexicon attack that traverses only \eg words of the English language.
 
 \paragraph{Poorly Chosen Passwords}
 While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
@@ -43,6 +67,8 @@ While dictionary attacks are unavoidable, poorly chosen passwords worsen the sit
 	\item How to ``avoid'' these challenges
 	\item Generalisation from human authentication to cryptography from low-entropy secrets
 \end{itemize}
+
+\section{Outline}
 
 \paragraph{Outline of this Work}
 This work consists of ??? chapters.

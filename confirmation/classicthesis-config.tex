@@ -114,7 +114,7 @@
 % *** todo with nicer default color and only in drafting mode ***
 \newcommand{\fk}[2][]{%
 	\ifthenelse{\boolean{@drafting}}{%
-		\todo[color={blue!40},size=\small,#1]{#2}%
+		\todo[color={blue!40},size=\small,#1]{#2}\xspace%
 	}{}
 }
 
@@ -307,3 +307,6 @@
 \newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
 \newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
 \newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
+
+% we have to get back the old marginpar for todonotes
+\let\marginpar\oldmarginpar
