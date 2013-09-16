@@ -310,3 +310,6 @@
 
 % we have to get back the old marginpar for todonotes
 \let\marginpar\oldmarginpar
+
+% make href and footnote
+\newcommand{\myhref}[2]{\href{#1}{#2}\footnote{\url{#1}}}

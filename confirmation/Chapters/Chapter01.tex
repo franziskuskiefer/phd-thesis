@@ -29,7 +29,7 @@ Password based cryptography can be classified (with some exceptions) as symmetri
 In contrast to other cryptographic mechanisms where \emph{keys} are chosen from a \emph{key space}, \emph{passwords} are chosen from a \emph{dictionary}.
 Note that dictionaries in our case denote sets of characters rather than \emph{real} lexicon like dictionaries.
 When talking about those we use the term \emph{lexicon}.
-We distinguish between several types of passwords, we discuss in the following.
+Even though password is the the umbrella term, we distinguish between several types of passwords, we discuss in the following.
 
 \paragraph{Passwords}
 Passwords are usually chosen from a dictionary that consists of alpha-numeric characters \texttt{a-z,A-Z,0-9} and special characters like \texttt{\$,\%,@} and so on.
@@ -61,13 +61,6 @@ In addition to a brute force dictionary attack that iterates an entire dictionar
 While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
 \fk[inline]{Discuss}
 
-\begin{itemize}
-	\item Why do we need human authentication
-	\item What are the challenges in human authentication
-	\item How to ``avoid'' these challenges
-	\item Generalisation from human authentication to cryptography from low-entropy secrets
-\end{itemize}
-
 \section{Outline}
 
 \paragraph{Outline of this Work}
@@ -86,11 +79,25 @@ We finally conclude this chapter with an overview of mechanisms to ease or avoid
 % *****************************************************************************
 
 \section{On Provable Security}
-\fk[inline]{Discuss provable security (models)}
+In this section we discuss general security models used in the field of provable security, and more specialised methods used in password based cryptography.
+To prove a cryptographic primitive secure, reductionist arguments are used.
+Therefore, it is tried to reduce the security of the primitive under consideration to a problem that is believed to be hard\footnote{Note that this work is not concerned with the question whether specific problems are actual hard. We consider only well investigated problems, which the cryptography community beliefs are hard.}.
+Thus, as long as the underlying problem is actually hard to solve, one could be confident that the primitive is secure.
+For a insightful discussion on this kind of security verification we refer to the \myhref{http://anotherlook.ca/}{``Another Look''} series by Koblitz and Menezes.
 
+Cryptographic primitives can not be proven secure without taking into account the ability of the adversary.
+Therefore, before being able to proof anything, a primitive has to be modelled.
+It has always be kept in mind that the resulting proof is only valid for the used model.
+There are basically two different ways of modelling: game based modelling and real world / ideal world modelling.
+
+\subsection{Game Based Security}
 The Find-then-Guess PAKE model from~\cite{Bellare2000}, strengthened and simplified in~\cite{Abdalla2005} towards the Real-or-Random PAKE model aims at Authenticated Key Exchange (AKE)-security, the main security property of PAKE protocols.
 
 \fk[inline]{\ac{FtG} VS. \ac{RoR}}
+
+\subsection{Real World / Ideal World Security}
+\fk[inline]{General}
+\fk[inline]{UC}
 
 % *****************************************************************************
 % Section: Password Based Authentication and Key Exchange
