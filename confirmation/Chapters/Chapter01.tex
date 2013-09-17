@@ -69,10 +69,11 @@ We gave a motivational overview on low-entropy cryptography and passwords alread
 While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on the background of low-entropy cryptography complete the information on research in this area, necessary for the reminder of this work.
 
 \paragraph{Outline of this Chapter}
-In the following section  we will discuss different research areas in the general field of password based cryptography.
+We continue this introduction by giving a brief informal overview on the most important approaches in the research area of provable security.
+In the subsequent sections we discuss different areas in the general field of password based cryptography.
 We start with password based authentication and key exchange protocols, which comprise a big part of password based cryptography.
 The second part is concerned with general cryptographic primitives from low entropy secrets and other password based protocols.
-We finally conclude this chapter with an overview of mechanisms to ease or avoid problems related with password mechanisms.
+We finally conclude this chapter with an overview of mechanisms to simplify password related tasks or avoid problems related with password handling.
 
 % *****************************************************************************
 % Section: On Provable Security
@@ -83,19 +84,51 @@ In this section we discuss general security models used in the field of provable
 To prove a cryptographic primitive secure, reductionist arguments are used.
 Therefore, it is tried to reduce the security of the primitive under consideration to a problem that is believed to be hard\footnote{Note that this work is not concerned with the question whether specific problems are actual hard. We consider only well investigated problems, which the cryptography community beliefs are hard.}.
 Thus, as long as the underlying problem is actually hard to solve, one could be confident that the primitive is secure.
-For a insightful discussion on this kind of security verification we refer to the \myhref{http://anotherlook.ca/}{``Another Look''} series by Koblitz and Menezes.
+For a insightful and skeptical discussion on this kind of security verification we refer to the \myhref{http://anotherlook.ca/}{``Another Look''} series by Koblitz and Menezes.
 
-Cryptographic primitives can not be proven secure without taking into account the ability of the adversary.
-Therefore, before being able to proof anything, a primitive has to be modelled.
-It has always be kept in mind that the resulting proof is only valid for the used model.
-There are basically two different ways of modelling: game based modelling and real world / ideal world modelling.
+Cryptographic primitives can only be proven secure in the light of the abilities of an adversary.
+Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
+It always has to be kept in mind that the resulting proof is only valid within the used model.
+A well-known model is the so-called \emph{Dolev-Yao} model.
 
-\subsection{Game Based Security}
-The Find-then-Guess PAKE model from~\cite{Bellare2000}, strengthened and simplified in~\cite{Abdalla2005} towards the Real-or-Random PAKE model aims at Authenticated Key Exchange (AKE)-security, the main security property of PAKE protocols.
+\paragraph{The World of Dolev-Yao}
+A formal view on adversarial behaviour and how to model security protocols goes back to works from \citeauthor{Needham78} \citeyear{Needham78} \cite{Needham78} and \citeauthor{Dolev83} \citeyear{Dolev83} \cite{Dolev83}.
+The Dolev-Yao model models cryptographic protocols by assuming black-box cryptographic primitives and an adversary that is able to control the entire communication channel between the participating parties.
 
-\fk[inline]{\ac{FtG} VS. \ac{RoR}}
+\paragraph{The Computational World}
+In this work at hand however we are concerned with a more realistic approach of modelling, the computational modelling.
+The foundation of today's computational models are laid in the 1980's\fk{more citations} \cite{Goldwasser82}.
+The computational world consists of bitstring messages and cryptographic primitives calculating on them.
+In this world the attacker is a \ac{PPT} Turing machine \cite{Turing37}.
+We give necessary formal definitions in Chapter \ref{ch:background}.
 
-\subsection{Real World / Ideal World Security}
+There are basically two different ways of modelling and proving in this computational world we are describe in the following: game-based and simulation-based.
+
+\subsection{Game-Based Security}
+Game-based security models allow the \ac{PPT} adversary plays a game against a challenger.
+During this game (or experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
+Eventually, the adversary outputs his answer to the challenger who decides whether the adversary wins the game or not.
+Oracles are black-box functions, the adversary can query.
+On (possibly empty) input by the adversary they return the result of their computation to him.
+
+There are different commonly used ways of modelling security.
+However, all \ac{PAKE} model aim at \ac{AKE}-security.
+We describe only the ones used here.
+
+\paragraph{\accl{FtG}}
+The term \acl{FtG} goes back to \citeauthor{Bellare97} \cite{Bellare97} whose definition of \ac{FtG}-security for symmetric encryption is based on \cite{Goldwasser84} \cite{Micali86}.
+In our research focus of password-based cryptography the first formal model for \ac{PAKE}, proposed by \citeauthor{Bellare2000} in \cite{Bellare2000}, employs the \ac{FtG} approach.
+The security requirement there is that an adversary must not be able to decide whether a given bit-string is the real key computed by honest parties performing the protocol, or a random element from the key space.
+But the adversary has only one change to retrieve such a test key.
+
+\paragraph{\accl{RoR}}
+The term \acl{RoR} has been introduced by \citeauthor{Bellare97} in \cite{Bellare97} in a different context and a different meaning.
+The notion of \ac{RoR} in the context of \ac{AKE} protocols has been introduced by \citeauthor{Abdalla2005} to strengthen and simplify the \ac{FtG} approach used in the original model \cite{Bellare2000} towards \ac{RoR}.
+In the \ac{AKE} context \ac{RoR} allows the adversary to query \emph{multiple} keys before deciding whether all of them have been computed by honest parties performing the protocol, or all of tem  have been randomly chosen from the key space.
+
+
+\subsection{Simulation-Based Security}
+The idea of simulation-based security proofs are due to \citeauthor{Goldreich87} \citeyear{Goldreich87} \cite{Goldreich87}.
 \fk[inline]{General}
 \fk[inline]{UC}
 
