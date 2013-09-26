@@ -1,9 +1,50 @@
 %*****************************************
 \chapter{Prerequisites}\label{ch:background}
 %*****************************************
-blub \ac{ECC} blablub \ac{ECC}
+In this chapter we recall all definitions necessary to follow this work.
+We start with general notations and useful definitions before giving an overview on useful computationally hard problems.
+\fk[inline]{What else do we need as background?}
 
 \section{Definitions \& Notations}
+
+\subsection{Definitions}
+
+\begin{definition}[Negligible Functions]\label{def:negligible}
+A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exists an $N\in\NN$ such that for all $n\in\NN$ with $n>N$ it holds that $f(n)<1/p(n)$.
+\eod
+\end{definition}
+
+\begin{definition}[Asymptotic Notation]\label{def:asymptotic}
+\eod
+\end{definition}
+
+\fk[inline]{make \ac{PPT} def correct}
+\begin{definition}[\acl{PPT} \cite{gill1977}]\label{def:ppt}
+A \acl{PPT} algorithm (Turing machine) $A$ decides languages $L$ in polynomial time if and only if the probability of $A$ on input $w$ accepting is greater than $1/2$, \ie $w\in L\implies\Pr[A(w) \mathrm{~accepts}]>1/2$.
+\eod
+\end{definition}
+
+
+\subsection{Notations}
+In addition to common notations (we do not recall here), we give here all notations used throughout this work.
+\fk[inline]{See / add what exactly I need later.}
+\begin{itemize}
+	\item If $A$ is an algorithm, then $x\algout A(y)$ denotes running $A$ with input $y$ and storing the result in $x$.
+	\item If $A$ is a randomized algorithm, then $x\ralgout A(y;r)$ denotes running $A$ with input $y$ and randomness $r$, and storing the result in $x$.
+	\item If $U$ is a set, then $x\rin U$ denotes that $x$ is chosen uniformly at random form $U$.
+	\item A variable $y$ is assigned to $x$ by $x:=y$.
+	\item The boolean operations \emph{and} and \emph{or} are denoted by $\wedge$ and $\vee$.
+	\item Exclusive or (xor) is denoted by $\oplus$.
+	\item Set of binary strings of length $n$ $\bits^n$.
+	\item The length of a binary string $x$ is denoted by $|x|$, the bit-length of an integer $y$ is denoted by $\|y\|$.
+	\item $\bigo,\Theta,\Omega,\omega$
+	\item Since $\log_2$ is the most used logarithm we denote it by $\log$.
+	\item The security parameter is denoted $\secpar$.
+	\item Oracle access to $O(\cdot)$ for algorithm $A$ is denoted by $A^{O(\cdot)}$.
+	\item Public/private key-pairs are denoted by $(\pk,\sk)$
+	\item Negligible functions are denoted by $\varepsilon(\cdot)$.
+	\item \aclp{PRF} are denoted by \PRF.
+\end{itemize}
 
 \section{Computationally Hard Problems}
 

@@ -5,7 +5,7 @@
 
 This work at hand is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
 In contrast to conventional cryptographic algorithms and protocols, secrets have low-entropy here, such that an adversary is able to iterate through all possible secrets in reasonable time.
-This leads directly to the inherent threat to everything we are dealing with in this work: dictionary attacks.
+This leads directly to the inherent threat of everything we are dealing with in this work: so-called dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}).
 So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
 \begin{quote}
@@ -22,8 +22,8 @@ In general we distinguish between three big categories of authentication data \c
 	\item Something you have (\eg mobile phone, cryptographic key)
 	\item Something you are (\eg fingerprint)
 \end{itemize}
-But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he doe not write down his passwords).
-To perform cryptography where humans input a known secret those have to be human-memorable.
+But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he does not write down his passwords).
+To perform cryptography where humans input a secret, those have to be human-memorable.
 This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
 
 \section{Password Based Cryptography}
@@ -31,54 +31,61 @@ Password based cryptography can be classified (with some exceptions) as symmetri
 In contrast to other cryptographic mechanisms where \emph{keys} are chosen from a \emph{key space}, \emph{passwords} are chosen from a \emph{dictionary}.
 Note that dictionaries in our case denote sets of characters rather than \emph{real} lexicon like dictionaries.
 When talking about those we use the term \emph{lexicon}.
+
 Even though password is the the umbrella term, we distinguish between several types of passwords, we discuss in the following.
 
-\paragraph{Passwords}
-Passwords are usually chosen from a dictionary that consists of alpha-numeric characters \texttt{a-z,A-Z,0-9} and special characters like \texttt{\$,\%,@} and so on.
+\paragraph{Password}
+The term \emph{password} usually refers to character strings chosen from a dictionary consisting of alpha-numeric characters \texttt{a-z}, \texttt{A-Z}, \texttt{0-9} and special characters like \texttt{\$,\%,@} and so on.
 While many (online) services have password policies in place, humans tend to choose easy memorable and therefore mainly easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
 To encourage users to use stronger passwords, password-strength meters are used by many services.
 A recent study \cite{Ur2012} on password-strength meters shows that this could have a significant impact on user's password-strength.
 
 \paragraph{\accl{PIN}}
 \acp{PIN} are rather short passwords, chosen from the numeric dictionary containing numbers \texttt{0-9}.
+They are mainly used to secure access to the actual authentication token like credit card or other smart cards.
+Since the card is a second authentication factor (\emph{something you have}) here, a short \ac{PIN} is sufficient to reach reasonable security.
+The smaller dictionary containing only numbers is most presumable due to practical restrictions on the input device, used to enter the \ac{PIN}.
 
 \paragraph{\accl{OTP}}
-While other passwords are meant to be memorized by humans, \acp{OTP} are used only once and therefore don not have to be memorized.
-\acp{OTP} have become more popular recently as a second factor in multi factor authentication, \eg Google \cite{Google2Factor}, Facebook \cite{FB2Factor}, Twitter \cite{Twitter2Factor} and GitHub \cite{Github2Factor}.
-The most popular standards for \ac{OTP}, implemented \eg in the Google Authenticator App \cite{GAuthenticator}, are the \ac{HMAC} based algorithm specified in RFC 4226 \cite{rfc4226} and the time based algorithm specified in RFC 6238 \cite{rfc6238}.
+While most passwords are meant to be memorized by humans, \acp{OTP} are used only once and therefore don not have to be memorised.
+They are mainly chosen from the numeric dictionary \texttt{0-9}.
+\acp{OTP} have become more popular recently as a second factor, in addition to the ``regular'' password, in two-factor authentication, \eg Google \cite{Google2Factor}, Facebook \cite{FB2Factor}, Twitter \cite{Twitter2Factor} and GitHub \cite{Github2Factor}.
+The most popular standards for \ac{OTP} that are implemented in the Google Authenticator App \cite{GAuthenticator} for example, are the \acs{HMAC} based algorithm specified in RFC 4226 \cite{rfc4226} and the time based algorithm specified in RFC 6238 \cite{rfc6238}.
 
 \paragraph{\accl{TAN}}
 \acp{TAN} are special \acp{OTP} mainly used to authorise single financial transactions in online banking applications.
 These, mainly short passwords, are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
+They can be seen as transaction bound \acp{OTP}.
 
-\subsection{The inherent Threat of Dictionary Attacks}
-Most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
+\subsection{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
+As mentioned already, most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
-Therefore, it is feasible for any program to walk through the entire dictionary and just try every possible secret (password).
+Therefore, it is feasible for a program to walk through the entire dictionary and just try every possible secret (password).
 This kind of attack is called \emph{dictionary attack} and is inherent to every password based algorithm.
-There exist several approach to deal with this flaw in each specific field of password based research.
+There exist several approaches to deal with this flaw in each specific field of password based research.
 We will point out the particular mechanism when dealing with each field.
 
-In addition to a brute force dictionary attack that iterates an entire dictionary, it is often sufficient to perform a lexicon attack that traverses only \eg words of the English language.
+In addition to a brute force dictionary attack that iterates an entire dictionary, it is often sufficient to perform a lexicon attack that traverses only a relatively small dictionary containing for example words of the English language.
 
 \paragraph{Poorly Chosen Passwords}
 While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
-By choosing passwords that are available in lexicons, the search space for brute-force attacks gets significantly smaller.
+By choosing passwords that are available in lexicons or easy to derive from other parameters like the public e-mail address, the search space for brute-force attacks gets significantly smaller.
 Password cracking programs like \emph{John the Ripper} \cite{JohnTheRipper} gather lexicons of different languages in password lists \cite{JohnTheRipperWordlist}.
-Not only lexicons can be used for brute-force attacks on passwords, but password lists of often used passwords that got somehow leaked.
-Using for example a list with the most used passwords (\eg \cite{XatoPwds}), brute-force attacks on online accounts are very efficient.
+Not only language lexicons can be used for brute-force attacks on passwords, but password lists of often used passwords that got somehow leaked.
+Using for example a list with the most used passwords (\eg \cite{XatoPwds}), brute-force attacks on online accounts may be performed very efficiently.
 
 \section{Outline}
 
 \paragraph{Outline of this Work}
 This work consists of ???\fk{How many chapters do we have?} chapters.
 We gave a motivational overview on low-entropy cryptography and passwords already and deepen this discussion in the remainder of this introduction.
-While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on the background of low-entropy cryptography complete the information on research in this area, necessary for the reminder of this work.
+While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of low-entropy cryptography complete the information on research in this area, necessary for the remainder of this work.
+\fk[inline]{Finish Outline}
 
 \paragraph{Outline of this Chapter}
 We continue this introduction by giving a brief informal overview on the most important approaches in the research area of provable security.
 In the subsequent sections we discuss different areas in the general field of password based cryptography.
-We start with password based authentication and key exchange protocols, which comprise a big part of password based cryptography.
+We start with password based authentication and key exchange protocols, which comprise the biggest part of password based cryptography research.
 The second part is concerned with general cryptographic primitives from low entropy secrets and other password based protocols.
 We finally conclude this chapter with an overview of mechanisms to simplify password related tasks or avoid problems related with password handling.
 
@@ -87,11 +94,12 @@ We finally conclude this chapter with an overview of mechanisms to simplify pass
 % *****************************************************************************
 
 \section{On Provable Security}
-In this section we discuss general security models used in the field of provable security, and more specialised methods used in password based cryptography.
+In this section we briefly discuss general security models used in the field of provable security.
+We discuss more specialised methods used in password based cryptography later.
 To prove a cryptographic primitive secure, reductionist arguments are used.
-Therefore, it is tried to reduce the security of the primitive under consideration to a problem that is believed to be hard\footnote{Note that this work is not concerned with the question whether specific problems are actual hard. We consider only well investigated problems, which the cryptography community beliefs are hard.}.
-Thus, as long as the underlying problem is actually hard to solve, one could be confident that the primitive is secure.
-For a insightful and skeptical discussion on this kind of security verification we refer to the ``Another Look'' \cite{AnotherLook} series by Koblitz and Menezes.
+Thereby, the attempt is made to reduce the security of the primitive under consideration to a problem that is believed to be hard\footnote{Note that this work is not concerned with the question whether specific problems are actual hard. We consider only well investigated problems, which the cryptography community beliefs are hard.}.
+Thus, given a (tight) reduction from the primitive to an underlying problem, one could be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
+For an insightful and skeptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citeauthor{AnotherLook} \cite{AnotherLook}.
 
 Cryptographic primitives can only be proven secure in the light of the abilities of an adversary.
 Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
@@ -105,22 +113,22 @@ Since all primitives are seen in a black-box way, this model is not sufficient t
 \paragraph{The Computational World}
 In this work at hand however we are concerned with a more realistic approach of modelling, the computational modelling.
 The foundation of today's computational models are laid in the 1980's\fk{more citations} \cite{Goldwasser82}.
-The computational world consists of bitstring messages and cryptographic primitives performing computations on them.
-In this world the attacker is a \ac{PPT} Turing machine \cite{Turing37}.
+The computational world consists of bit-string messages and cryptographic primitives performing computations on them.
+In this world the attacker is mostly modelled as a \ac{PPT} Turing machine \cite{Turing37}.
 We give necessary formal definitions in Chapter \ref{ch:background}.
 
-There are basically two different ways of modelling and proving in this computational world we are describe in the following: game-based and simulation-based.
+There are basically two different ways of modelling and proving in this computational world, we describe in the following: game-based and simulation-based.
 
 \subsection{Game-Based Security}
-Game-based security models allow the \ac{PPT} adversaries to play a game against a challenger.
+Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.\fk{Needs citation!!!}
 During this game (or experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
 Eventually, the adversary outputs his answer to the challenger who decides whether the adversary wins the game or not.
 Oracles are black-box functions, the adversary can query.
 On (possibly empty) input by the adversary they return the result of their computation.
+\fk[inline]{Rewrite above!}
 
 The actual security definition and strength of the adversary depends on the oracles available to the adversary.
 There are different commonly used ways of modelling security.
-In the field of \acl{PAKE}, security models aim at \ac{AKE}-security \cite{Bellare1993,Bellare1995} that may be seen in one of the following general settings.
 
 \subsection{Simulation-Based Security}
 The idea of simulation-based security proofs is due to \citeauthor{Goldreich87} \cite{Goldreich87} \citeyear{Goldreich87}.
@@ -169,8 +177,8 @@ Servers store passwords in databases to retrieve them when necessary.
 Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security problem.
 Different approaches have been proposed to mitigate the impact of server compromises.
 \citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framwork, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.\fk{more cites}
-
 \fk[inline]{Asymmetric and symmetric PAKE}
+In the field of \acl{PAKE}, security models aim at \ac{AKE}-security \cite{Bellare1993,Bellare1995} that may be seen in one of the following general settings.
 
 \paragraph{Game-Based \acc{PAKE}-Security}
 The original game-based \ac{PAKE} models in~\cite{Bellare2000,Boyko2000} incorporate the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.

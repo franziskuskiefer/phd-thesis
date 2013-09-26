@@ -107,7 +107,8 @@
 \renewcommand\bibsection{} % avoid pagebreak before publications
 \usepackage[dvipsnames,english]{xcolor}
 \usepackage[colorinlistoftodos]{todonotes} % add shiny todos
-
+\usepackage{theorem} % for environment
+\usepackage{latexsym} % for Diamond symbol
 % ****************************************************************************************************
 % rewrite stuff whether using draft or final version
 % ****************************************************************************************************
@@ -302,6 +303,23 @@
 % ****************************************************************************************************
 
 %****************************************************************************************************
+% 8,5. Some environment, not available in classicthesis
+% ****************************************************************************************************
+
+\theoremstyle{break}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{proof}{Proof}[chapter]
+
+% end of definition symbol
+\newcommand\xqed[1]{%
+  \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+  \quad\hbox{#1}}
+\newcommand\eod{\xqed{$\Diamond$}}
+
+%****************************************************************************************************
 % 9. Handy macros
 % ****************************************************************************************************
 \newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
@@ -323,3 +341,24 @@
 \newcommand{\UCZ}{\ensuremath{\mathcal{Z}}\xspace}
 \newcommand{\UCS}{\ensuremath{\mathcal{S}}\xspace}
 \newcommand{\UCF}{\ensuremath{\mathcal{F}}\xspace}
+
+% General notation
+\newcommand{\algout}{\ensuremath{\gets}\xspace}
+\newcommand{\ralgout}{\ensuremath{\stackrel{\$}{\gets}}\xspace}
+\newcommand{\rin}{\ensuremath{\in_R}\xspace}
+
+\newcommand{\bits}{\ensuremath{\{0,1\}}\xspace}
+\newcommand{\bigo}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\secpar}{\ensuremath{\lambda}\xspace}
+
+\newcommand{\pk}{\ensuremath{\mathtt{pk}}\xspace}
+\newcommand{\sk}{\ensuremath{\mathtt{sk}}\xspace}
+
+\newcommand{\PRF}{\ensuremath{\mathtt{PRF}}\xspace}
+
+% Numbers
+\newcommand{\NN}{\ensuremath{\mathbb{N}}\xspace}
+\newcommand{\PP}{\ensuremath{\mathbb{P}}\xspace}
+\newcommand{\ZZ}{\ensuremath{\mathbb{Z}}\xspace}
+\newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
