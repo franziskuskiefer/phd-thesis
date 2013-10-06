@@ -104,20 +104,27 @@ For an insightful and skeptical discussion on this kind of security verification
 Cryptographic primitives can only be proven secure in the light of the abilities of an adversary.
 Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
 It always has to be kept in mind that the resulting proof is only valid within the used model.
-A well-known model is the so-called \emph{Dolev-Yao} model.
+We briefly discuss the two main streams in cryptographic research.
 
-\paragraph{The World of Dolev-Yao}
-A formal view on adversarial behaviour and how to model security protocols goes back to works from \citeauthor{Needham78} \citeyear{Needham78} \cite{Needham78} and \citeauthor{Dolev83} \citeyear{Dolev83} \cite{Dolev83}, the Dolev-Yao model. It models cryptographic protocols by assuming black-box cryptographic primitives and an adversary that is able to control the entire communication channel between the participating parties.
-Since all primitives are seen in a black-box way, this model is not sufficient to analyse the actually used cryptographic primitives.
+\paragraph{The Formal World}
+A formal view on modelling security goes back to work throughout the 1980's \cite{DeMillo82,Dolev83,Millen87,Meadows91,Kemmerer1988,Burrows90}.
+While they explore different approaches of formal modelling, the so called Dolev-Yao model \cite{Dolev83} may be the best known one.
+In the formal world, everything is modelled by formal expressions rather than bit strings.
+The adversary controls the entire communication channel between participating parties and can replay, modify or drop messages.
+While the formal world is relatively simple, it allows only all-or-nothing  and no probability or computational statements.
 
 \paragraph{The Computational World}
-In this work at hand however we are concerned with a more realistic approach of modelling, the computational modelling.
-The foundation of today's computational models are laid in the 1980's\fk{more citations} \cite{Goldwasser82}.
-The computational world consists of bit-string messages and cryptographic primitives performing computations on them.
-In this world the attacker is mostly modelled as a \ac{PPT} Turing machine \cite{Turing37}.
+In this work at hand however we are concerned with a somewhat more realistic approach of modelling, the computational modelling.
+The foundation of today's computational models were laid in the 1980's \cite{Goldwasser82,Goldwasser84,Yao82,Blum82}.
+The computational world consists of bit-string messages and cryptographic primitives performing computations on them and is therefore based on complexity theory.
+In this world the attacker is modelled as a \ac{PPT} Turing machine \cite{Turing37} that must not have significant success probability.
 We give necessary formal definitions in Chapter \ref{ch:background}.
+%
+%There are basically two different ways of modelling and proving in this computational world, we describe in the following: game-based and simulation-based.
 
-There are basically two different ways of modelling and proving in this computational world, we describe in the following: game-based and simulation-based.
+\paragraph{Reconciling the Two Worlds}
+Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in the community using them.
+For more discussion on these two worlds we refer the interested reader to \cite{cortier2011survey}.
 
 \subsection{Game-Based Security}
 Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.\fk{Needs citation!!!}

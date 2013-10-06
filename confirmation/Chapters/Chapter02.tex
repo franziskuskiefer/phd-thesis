@@ -18,12 +18,34 @@ A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exi
 \eod
 \end{definition}
 
-\fk[inline]{make \ac{PPT} def correct}
-\begin{definition}[\acl{PPT} \cite{gill1977}]\label{def:ppt}
-A \acl{PPT} algorithm (Turing machine) $A$ decides languages $L$ in polynomial time if and only if the probability of $A$ on input $w$ accepting is greater than $1/2$, \ie $w\in L\implies\Pr[A(w) \mathrm{~accepts}]>1/2$.
+\paragraph{\accl{PPT}}
+We often use the phrase \ac{PPT} to describe an efficient algorithm.
+The actual definition of \ac{PPT}, first defined \cite{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
+
+\begin{definition}[\acl{PP}]\label{def:ppt}
+\ac{PPT} denotes the class of decision problems solvable by a \ac{PTM} $A$ such that
+\begin{itemize}
+	\item $A$ runs in polynomial-time,
+	\item at least $1/2$ of the computation paths accept when the answer is `yes', and
+	\item less than $1/2$ of the computation paths accept when the answer is `no'.
+\end{itemize}
 \eod
 \end{definition}
 
+\noindent
+The informal description for \aclp{PTM} is given in Definition \ref{def:ptm}.
+We refer the reader to works concerned with complexity theory like \cite{santos1969,WaterlooComplexity} for a formal definition.
+
+\begin{definition}[\acl{PTM} \cite{gill1977}]\label{def:ptm}
+A \ac{PTM} is a Turing machine with distinguished states called coin-tossing states.
+For each coin-tossing state, the finite control unit specifies two possible next states.
+The computation of a \ac{PTM} is deterministic except that in coin-tossing states the machine tosses an unbiased coin to decide between the two possible next states.
+\end{definition}
+
+\noindent
+Note that the running time is always parametrised with the security parameter \secpar.
+You can think of \ac{PPT} as a notion for a ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
+In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
 
 \subsection{Notations}
 In addition to common notations (we do not recall here), we give here all notations used throughout this work.
