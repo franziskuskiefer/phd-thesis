@@ -127,15 +127,17 @@ Even though efforts have been made to reconcile the two completely different app
 For more discussion on these two worlds we refer the interested reader to \cite{cortier2011survey}.
 
 \subsection{Game-Based Security}
-Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.\fk{Needs citation!!!}
+Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.\fk{Needs citation??!!}
 During this game (or experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
 Eventually, the adversary outputs his answer to the challenger who decides whether the adversary wins the game or not.
-Oracles are black-box functions, the adversary can query.
-On (possibly empty) input by the adversary they return the result of their computation.
-\fk[inline]{Rewrite above!}
 
-The actual security definition and strength of the adversary depends on the oracles available to the adversary.
-There are different commonly used ways of modelling security.
+Oracles are black-box functions simulating parts of the protocols behaviour, the adversary can query.
+On (possibly empty) input they return the result of their computation to the caller.
+Thereby, oracles define an interface for the adversary to interact with the primitive.
+Thus, the actual security definition and strength of the adversary depends on the oracles available.
+
+Since simple reduction proofs from a protocol to a hard problem are rare, techniques have been developed to do this step by step.
+An example on game-based security proof using ``sequences of games'' is given in\cite{Shoup2004}.
 
 \subsection{Simulation-Based Security}
 The idea of simulation-based security proofs is due to \citeauthor{Goldreich87} \cite{Goldreich87} \citeyear{Goldreich87}.
@@ -248,6 +250,12 @@ threshold-based PAKE protocols, e.g.~\cite{Abdalla2005b}, where the client's pas
 \paragraph{Security against Malicious Servers}
 
 \subsection{Multi-Factor Authenticated Key Exchange}
+As mentioned before, using passwords is only one possible authentication mechanism.
+Combining several authentication techniques leads to \emph{multi-factor} authentication protocols.
+In \cite{Burr11} four security levels for authentication are defined.
+Starting from level three at least two authentication factors are necessary.
+\fk[inline]{some papers...}
+\fk[inline]{google authenticator etc.}
 
 % *****************************************************************************
 % Section: How to Ease the Pain
