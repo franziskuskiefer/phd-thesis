@@ -6,6 +6,72 @@ We start with general notations and useful definitions before giving an overview
 \fk[inline]{What else do we need as background?}
 
 \section{Definitions \& Notations}
+While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \cite{katz2008introduction}.
+\graffito{You might get unexpected results using math in chapter or
+section heads. Consider the \texttt{pdfspacing} option.}
+
+\subsection{Mathematical Terms}
+
+\subsubsection{Groups}
+Groups are an important mathematical structure in cryptography.
+In the following we give some useful definitions.
+
+\begin{definition}[Groups]\label{def:groups}
+Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
+\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element and is \emph{commutative}:
+\begin{itemize}
+	\item For all $g,h\in\GG$, $g\circ h \in\GG$
+	\item There exists an element $e\in\GG$, called \emph{identity}, such that for all $g\in\GG$, $e\circ g=g=g\circ e$.
+	\item For all $g\in\GG$ there exists an \emph{inverse} element $h\in\GG$ such that $g\circ h=e=h\circ e$.
+	\item For all $g,h,k\in\GG$, $(g\circ h)\circ k=g\circ (h \circ k)$.
+\end{itemize}
+\eod
+\end{definition}
+
+\noindent
+The \emph{order} of a finite group \GG is denoted by $|\GG|$ and is defined as the number of elements in \GG.
+An \emph{abelian} group additionally is commutative, \ie for all $g,h\in\GG$, $g\circ h=h\circ g$.
+In this work, and cryptography in general, we mainly use cyclic groups.
+
+\begin{definition}[Cyclic Groups]\label{def:cyclicgroups}
+Let \GG denote a finite group of order $p$.
+\GG is \emph{cyclic} if there exists a \emph{generator} $g\in\GG$ such that $\{g^0,g^1,\dots,g^{p-1}\}=\GG$.
+\eod
+\end{definition}
+
+\noindent
+Since the computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used are cyclic.
+Therefore, we usually use groups of prime order $p$ since groups of prime order are cyclic.
+Another useful feature of prime order groups is that all elements of \GG, except the identity, are generators of \GG.
+Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group.
+
+
+
+\subsection{Computational Assumptions}
+In this section we recall the uses computational assumptions that are believed to be hard.
+The \ac{DLP} is the basis of all group based assumptions.
+
+\begin{definition}[\acl{DLP}]\label{def:dlp}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$.
+\eod
+\end{definition}
+
+\noindent
+Based \ac{DLP} several assumptions have been proposed.
+The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
+
+\begin{definition}[\acl{DDH}]\label{def:ddh}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$.
+\eod
+\end{definition}
+
+\begin{definition}[\acl{CDH}]\label{def:cdh}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
+\eod
+\end{definition}
 
 \subsection{Definitions}
 
@@ -14,7 +80,22 @@ A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exi
 \eod
 \end{definition}
 
+\noindent
+Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
+As mentioned earlier, security models used in this work are from the computational world.
+In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on a security parameter.
+Security is therefore only given for \emph{reasonable} security parameters.
+To express this asymptotic notation is used.
+
 \begin{definition}[Asymptotic Notation]\label{def:asymptotic}
+Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
+\begin{itemize}
+	\item $f(n)=\cO(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\leq c\cdot g(n)$.
+	\item $f(n)=\Omega(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\geq c\cdot g(n)$.
+	\item $f(n)=\Theta(g(n)):$ Both $f(n)=\cO(g(n))$ and $f(n)=\Omega(g(n))$ hold.
+	\item $f(n)=o(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=0$
+	\item $f(n)=\omega(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=\infty$
+\end{itemize}
 \eod
 \end{definition}
 
@@ -66,6 +147,7 @@ In addition to common notations (we do not recall here), we give here all notati
 	\item Public/private key-pairs are denoted by $(\pk,\sk)$
 	\item Negligible functions are denoted by $\varepsilon(\cdot)$.
 	\item \aclp{PRF} are denoted by \PRF.
+	\item \ZZ, \NN, \RR, $\NN_0$, $\NN_{\geq 0}$
 \end{itemize}
 
 \section{Computationally Hard Problems}

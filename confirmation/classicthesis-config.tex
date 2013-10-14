@@ -86,6 +86,7 @@
 
 \PassOptionsToPackage{fleqn}{amsmath}		% math environments and more by the AMS 
  \usepackage{amsmath}
+ %\usepackage{amsthm} % need also amsthm for e.g., \qed -> also gives us newtheorem!
 
 % ******************************************************************** 
 % General useful packages
@@ -107,8 +108,9 @@
 \renewcommand\bibsection{} % avoid pagebreak before publications
 \usepackage[dvipsnames,english]{xcolor}
 \usepackage[colorinlistoftodos]{todonotes} % add shiny todos
-\usepackage{theorem} % for environment
+\usepackage{theorem} % for environment -> not needed due to amsthm
 \usepackage{latexsym} % for Diamond symbol
+\usepackage{bm} % give us some real bold math
 % ****************************************************************************************************
 % rewrite stuff whether using draft or final version
 % ****************************************************************************************************
@@ -135,7 +137,10 @@
 \newcommand{\myfloatalign}{\centering} % to be used with each float for alignment
 \usepackage{caption}
 \captionsetup{format=hang,font=small}
-\usepackage{subfig}  
+% FIXME
+\usepackage{subfig}  % deprecated !!!
+%\usepackage{subfigure} % deprecated !!!
+%\usepackage{subcaption}
 % ****************************************************************************************************
 
 
@@ -319,6 +324,9 @@
   \quad\hbox{#1}}
 \newcommand\eod{\xqed{$\Diamond$}}
 
+% define own qed symbol
+\newcommand\qed{\xqed{$\blacksquare$}}
+
 %****************************************************************************************************
 % 9. Handy macros
 % ****************************************************************************************************
@@ -360,5 +368,22 @@
 \newcommand{\NN}{\ensuremath{\mathbb{N}}\xspace}
 \newcommand{\PP}{\ensuremath{\mathbb{P}}\xspace}
 \newcommand{\ZZ}{\ensuremath{\mathbb{Z}}\xspace}
+\newcommand{\RR}{\ensuremath{\mathbb{R}}\xspace}
 \newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
 \newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
+
+% Caligraphic Letters
+\newcommand{\cA}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\cB}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand{\cC}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\cD}{\ensuremath{\mathcal{D}}\xspace}
+\newcommand{\cI}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\cK}{\ensuremath{\mathcal{K}}\xspace}
+\newcommand{\cM}{\ensuremath{\mathcal{M}}\xspace}
+\newcommand{\cO}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\cS}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\cX}{\ensuremath{\mathcal{X}}\xspace}
+
+% Passwords
+\newcommand{\pwd}{\ensuremath{\mathrm{pwd}}\xspace}
+\newcommand{\pwdv}{\ensuremath{\mathrm{{\bf pwd}}}\xspace}
