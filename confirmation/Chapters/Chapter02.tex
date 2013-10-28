@@ -11,6 +11,7 @@ While these definitions are all well known and do not need reference, most of th
 section heads. Consider the \texttt{pdfspacing} option.}
 
 \subsection{Mathematical Terms}
+We will not give an entire mathematical introduction but recall the most important definitions needed in our context.
 
 \subsubsection{Groups}
 Groups are an important mathematical structure in cryptography.
@@ -127,6 +128,36 @@ The computation of a \ac{PTM} is deterministic except that in coin-tossing state
 Note that the running time is always parametrised with the security parameter \secpar.
 You can think of \ac{PPT} as a notion for a ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
 In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
+
+\paragraph{Chosen-Ciphertext Attacks}
+Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
+
+\begin{definition}[IND-CCA2 Security]\label{def:indcca2}
+An encryption scheme $\Pi=(\KGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that :
+\[\Adv_{\Pi,\cA}^{\ccatwo}(\secpar)=\left|\Pr[\Exp^{\ccatwo}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+
+\noindent
+$\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
+\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em}$(m_0,m_1)\gets\cA^{\cO(\Enc_\pk),\cO(\Dec_\sk)}(\secpar,\pk)$\\
+\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
+\hspace*{2em}$b'\gets\cA^{\cO(\Enc_\pk),\cO(\Dec_\sk)}(\secpar,\pk,m_0,m_1,c)$\\
+\hspace*{2em}return $b=b'$
+\eod
+\end{definition}
+
+\noindent
+Note that $\cA$ must not query the decryption oracle with $c$.
+
+\paragraph{The Random Oracle Model}
+Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
+The other popular model is the so-called \emph{standard model} where no such function exists.
+While this function $H$ does not actually exist in the real world it is useful in many proves.
+It is usually instantiated with a cryptographic hash function.
+The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
+It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
+The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
+If $H$ has seen $x$ before, it returns the previously chosen element $y$.
 
 \subsection{Notations}
 In addition to common notations (we do not recall here), we give here all notations used throughout this work.

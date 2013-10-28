@@ -35,7 +35,7 @@
 %\cleardoublepage\include{FrontBackmatter/Dedication}
 %\cleardoublepage\include{FrontBackmatter/Foreword}
 \cleardoublepage\include{FrontBackmatter/Abstract}
-\cleardoublepage\include{FrontBackmatter/Publication}
+%\cleardoublepage\include{FrontBackmatter/Publication}
 %\cleardoublepage\include{FrontBackmatter/Acknowledgments}
 \pagestyle{scrheadings}
 \cleardoublepage\include{FrontBackmatter/Contents}
@@ -60,6 +60,7 @@
 \include{Chapters/Chapter02}
 \include{Chapters/Chapter03}
 \include{Chapters/Chapter04}
+\include{Chapters/Chapter05}
 
 
 %********************************************************************
@@ -67,16 +68,17 @@
 %*******************************************************
 \appendix
 \cleardoublepage
-%\part*{Appendix}
-\include{Chapters/Chapter0A}
+\part*{Appendix}
+%\include{Chapters/Chapter0A}
+\include{FrontBackmatter/Papers}
 
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
 \let\bibsection\oldbibsection % restore defaul bibsection behaviour
 \cleardoublepage\include{FrontBackmatter/Bibliography}
-\cleardoublepage\include{FrontBackmatter/Colophon}
-\cleardoublepage\include{FrontBackmatter/Declaration}
+%\cleardoublepage\include{FrontBackmatter/Colophon}
+%\cleardoublepage\include{FrontBackmatter/Declaration}
 
 %********************************************************************
 % Game Over: Restore, Restart, or Quit?
