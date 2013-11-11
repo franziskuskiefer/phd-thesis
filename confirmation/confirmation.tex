@@ -34,11 +34,11 @@
 \include{FrontBackmatter/Titleback}
 %\cleardoublepage\include{FrontBackmatter/Dedication}
 %\cleardoublepage\include{FrontBackmatter/Foreword}
-\cleardoublepage\include{FrontBackmatter/Abstract}
+\include{FrontBackmatter/Abstract}
 %\cleardoublepage\include{FrontBackmatter/Publication}
 %\cleardoublepage\include{FrontBackmatter/Acknowledgments}
 \pagestyle{scrheadings}
-\cleardoublepage\include{FrontBackmatter/Contents}
+\include{FrontBackmatter/Contents}
 
 %********************************************************************
 % Mainmatter
@@ -46,7 +46,6 @@
 \pagenumbering{arabic}
 %\setcounter{page}{90}
 % use \cleardoublepage here to avoid problems with pdfbookmark
-\cleardoublepage
 %\part{Human Authentication}
 \include{Chapters/Chapter01}
 %\cleardoublepage
@@ -61,22 +60,21 @@
 \include{Chapters/Chapter03}
 \include{Chapters/Chapter04}
 \include{Chapters/Chapter05}
+\include{Chapters/Chapter06}
 
 
 %********************************************************************
 % Backmatter
 %*******************************************************
 \appendix
-\cleardoublepage
-\part*{Appendix}
 %\include{Chapters/Chapter0A}
 \include{FrontBackmatter/Papers}
 
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
-\let\bibsection\oldbibsection % restore defaul bibsection behaviour
-\cleardoublepage\include{FrontBackmatter/Bibliography}
+%\let\bibsection\oldbibsection % restore defaul bibsection behaviour
+\include{FrontBackmatter/Bibliography}
 %\cleardoublepage\include{FrontBackmatter/Colophon}
 %\cleardoublepage\include{FrontBackmatter/Declaration}
 

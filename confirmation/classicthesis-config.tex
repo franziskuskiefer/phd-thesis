@@ -39,7 +39,7 @@
 % ****************************************************************************************************
 % 2. Personal data and user ad-hoc commands
 % ****************************************************************************************************
-\newcommand{\myTitle}{Human Authentication \& Cryptography from Low-Entropy Secrets\xspace}
+\newcommand{\myTitle}{Password-Based Authentication} %Human Authentication \& Cryptography from Low-Entropy Secrets\xspace}
 \newcommand{\mySubtitle}{Confirmation Report\xspace}
 \newcommand{\myDegree}{Master of Science (Dr.-Ing.)\xspace}
 \newcommand{\myName}{Franziskus Kiefer\xspace}
@@ -103,15 +103,16 @@
 %\renewcommand*{\acsfont}[1]{\textssc{#1}} % for MinionPro
 \renewcommand{\bflabel}[1]{{#1}\hfill} % fix the list of acronyms
 \usepackage{multibib} % allow multiple bibliographies
-\newcites{pubs}{Publications} % bibliography containing own publications
-\let\oldbibsection\bibsection % store behaviour
-\renewcommand\bibsection{} % avoid pagebreak before publications
+%\newcites{pubs}{Publications} % bibliography containing own publications
+%\let\oldbibsection\bibsection % store behaviour
+%\renewcommand\bibsection{} % avoid pagebreak before publications
 \usepackage[dvipsnames,english]{xcolor}
 \usepackage[colorinlistoftodos]{todonotes} % add shiny todos
 \usepackage{theorem} % for environment -> not needed due to amsthm
 \usepackage{latexsym} % for Diamond symbol
 \usepackage{bm} % give us some real bold math
 \usepackage{pdfpages} % add whole papers
+\usepackage{mdframed} % drawing frames
 % ****************************************************************************************************
 % rewrite stuff whether using draft or final version
 % ****************************************************************************************************
@@ -376,23 +377,47 @@
 \newcommand{\cB}{\ensuremath{\mathcal{B}}\xspace}
 \newcommand{\cC}{\ensuremath{\mathcal{C}}\xspace}
 \newcommand{\cD}{\ensuremath{\mathcal{D}}\xspace}
+\newcommand{\cF}{\ensuremath{\mathcal{F}}\xspace}
 \newcommand{\cI}{\ensuremath{\mathcal{I}}\xspace}
 \newcommand{\cK}{\ensuremath{\mathcal{K}}\xspace}
 \newcommand{\cM}{\ensuremath{\mathcal{M}}\xspace}
 \newcommand{\cO}{\ensuremath{\mathcal{O}}\xspace}
 \newcommand{\cS}{\ensuremath{\mathcal{S}}\xspace}
 \newcommand{\cX}{\ensuremath{\mathcal{X}}\xspace}
+\newcommand{\cZ}{\ensuremath{\mathcal{Z}}\xspace}
 
 % Passwords
-\newcommand{\pwd}{\ensuremath{\mathrm{pwd}}\xspace}
-\newcommand{\pwdv}{\ensuremath{\mathrm{{\bf pwd}}}\xspace}
+\newcommand{\pwd}{\ensuremath{\mathtt{pwd}}\xspace}
+\newcommand{\pwdv}{\ensuremath{\mathtt{{\bf pwd}}}\xspace}
 
 % functions
-\newcommand{\KGen}{\ensuremath{\mathtt{KGen}}\xspace}
-\newcommand{\Enc}{\ensuremath{\mathtt{Enc}}\xspace}
-\newcommand{\Dec}{\ensuremath{\mathtt{Dec}}\xspace}
-\newcommand{\Exp}{\ensuremath{\mathtt{Exp}}\xspace}
-\newcommand{\PRF}{\ensuremath{\mathtt{PRF}}\xspace}
+\newcommand{\KGen}{\ensuremath{\mathsf{KGen}}\xspace}
+\newcommand{\Enc}{\ensuremath{\mathsf{Enc}}\xspace}
+\newcommand{\Dec}{\ensuremath{\mathsf{Dec}}\xspace}
+\newcommand{\Exp}{\ensuremath{\mathsf{Exp}}\xspace}
+\newcommand{\PRF}{\ensuremath{\mathsf{PRF}}\xspace}
 
 \newcommand{\Adv}{\ensuremath{\mathsf{Adv}}\xspace}
 \newcommand{\ccatwo}{\ensuremath{\mathsf{IND-CCA2}}\xspace}
+\newcommand{\AKESEC}{\ensuremath{\mathsf{AKE-SEC}}\xspace}
+
+% PAKE model
+\newcommand{\pid}{\ensuremath{\mathtt{pid}}\xspace}
+\newcommand{\sid}{\ensuremath{\mathtt{sid}}\xspace}
+\newcommand{\ssid}{\ensuremath{\mathtt{ssid}}\xspace}
+\newcommand{\trans}{\ensuremath{\mathtt{trans}}\xspace}
+\newcommand{\key}{\ensuremath{\mathtt{k}}\xspace}
+\newcommand{\mIn}{\ensuremath{\mathtt{m}_{\mathrm{in}}}\xspace}
+\newcommand{\mOut}{\ensuremath{\mathtt{m}_{\mathrm{out}}}\xspace}
+\newcommand{\state}{\ensuremath{\mathtt{state}}\xspace}
+\newcommand{\used}{\ensuremath{\mathtt{used}}\xspace}
+\newcommand{\role}{\ensuremath{\mathtt{role}}\xspace}
+\newcommand{\client}{\ensuremath{\mathtt{client}}\xspace}
+\newcommand{\server}{\ensuremath{\mathtt{server}}\xspace}
+\newcommand{\NULL}{\ensuremath{\mathtt{NULL}}\xspace}
+
+\newcommand{\cFPAKE}{\ensuremath{\cF_{\mathrm{PAKE}}}\xspace}
+\newcommand{\NS}{\ensuremath{\mathtt{NS}}\xspace}
+\newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
+\newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
+

@@ -1,4 +1,52 @@
 %************************************************
-\chapter{Password Policies}\label{ch:policies}
+\chapter{Oblivious Password Authenticated Key Exchange}\label{ch:opake}
 %************************************************
-\fk[inline]{ToDo: Policies}
+In this chapter we will present findings in the area of \ac{PAKE} research.
+It is based on work from three research papers, appended in Appendix \ref{paper:opake}, \ref{paper:corrupt} and \ref{paper:2pake}.
+For in-depth description and formal definitions we refer to the respective appendices and concentrate on the high-level concepts in these papers.
+
+%************************************************
+\section{Oblivious Password Authenticated Key Exchange} \label{sec:opake}
+%************************************************
+This section recalls the high-level findings of Appendix \ref{paper:opake}.
+Note that the work in \ref{paper:opake}, while largely rewritten and significantly extended, is based on the M.Sc. Thesis \cite{Kiefer2012}.
+
+We introduce the notion of \acl{OPAKE} as a solution to the problem of failed login attempts and a general compiler to transform a large class of \ac{PAKE} into \ac{OPAKE} protocols.
+\ac{OPAKE} allows a client that shares \emph{one} password with a server to use a \emph{set of passwords} within one \ac{PAKE} session.
+It succeeds if and only if one of those input passwords matches the one stored on the server side. The term \emph{oblivious} is used to emphasize that no information about any password, input by the client, is made available to the server.
+Using special processing techniques, our \ac{OPAKE} compiler reaches nearly constant runtime on the server side, independent of the size of the client's password set.
+We prove security of the \ac{OPAKE} compiler under standard assumptions using the latest game-based \ac{PAKE} model by Abdalla, Fouque and Pointcheval (PKC 2005), tailored to our needs.
+We identify the requirements that \ac{PAKE} protocols must satisfy in order to suit the compiler and give a concrete \ac{OPAKE} instantiation.
+The compiled protocol is implemented and its performance analysis attests to the practicality of the compiler.
+Furthermore, we implement a browser plugin demonstrating how to use \ac{OPAKE} in practice.
+
+The idea of the \ac{OPAKE} compiler is to mix $n$ \ac{PAKE} messages on client side such that the server can extract the ``right'' message using the shared password and reply only to that.
+This, however, is a non-trivial problem because \ac{PAKE} messages do not provide information that would allow the server to check locally whether a given password was used in their computation; as this would offer the possibility of offline dictionary attacks.
+
+Our solution for the identification of the ``right'' \ac{PAKE} session is a careful composition of two encoding techniques that were introduced in a different context yet allow us to generically construct \ac{AKE}-secure \ac{OPAKE} protocols from (suitable) \ac{AKE}-secure \ac{PAKE} protocols, preserving constant round complexity and offering nearly constant server load.
+
+Our first building block is \ac{IHME} \cite{Manulis2010,Manulis2011}.
+An \ac{IHME} scheme assigns a different index to each given message and encodes the resulting index-message pairs into a single structure from which messages can be recovered on the receiver side using the corresponding indices.
+The \ac{IHME} structure hides indices that were used for encoding and therefore all encoded messages must contain enough entropy to prevent dictionary attacks over the index space.
+An \ac{IHME} scheme consists of two algorithms \texttt{encode} and \texttt{decode}.
+The \texttt{encode} algorithm takes as input a set of index-message pairs $(i_1, m_1),\ldots,(i_n, m_n)$ and outputs a structure $S$ whereas the \texttt{decode} algorithm can extract $m_j$, $j\in[1,n]$ from $S$ using the corresponding index $i_j$.
+The corresponding index-hiding property demands that no information about indices $i_j$ is leaked to the adversary that doesn't know the corresponding messages $m_j$ and is defined for messages that are chosen uniformly from the \ac{IHME} message space.
+In order to enable encoding of \ac{PAKE} messages using \ac{IHME} with passwords as indices we apply our second building block, namely \emph{admissible encoding} \cite{BonehF01,BrierCIMRT10,pseudorandomSignatures}.
+Briefly, a function $F:S\rightarrow R$ is an \emph{$\epsilon$-admissible encoding} for $(S,R)$ with $|S|>|R|$ when for all uniformly distributed $r\in R$, the distribution of the inverse transformation $\cI_F(r)$ is $\epsilon$-statistically indistinguishable from the uniform distribution over $S$.
+$\cI_F$ enables us to map \ac{PAKE} messages into the \ac{IHME} message space where necessary.
+
+The intuition behind the compiler is to let the client run $n$ \ac{PAKE} sessions, one session for each of the $n$ input passwords $\pwdv$, and apply an index-hiding message encoding on each message-password pair.
+The server can apply the shared password $\pwd$ as index to \ac{IHME} to extract the ``right'' \ac{PAKE} message. 
+For this message the server computes the next round message of the given \ac{PAKE} protocol and returns the message to the client.
+As soon as the underlying \ac{PAKE} protocol terminates, the server generates a confirmation message, which is then used by the client to derive the final session key.
+
+To show the practicality of the \ac{OPAKE} compiler we implement it in \verb/C++/, and demonstrate how the compiler can be applied to implementations of the \ac{AKE}-secure, random-oracle-based SPAKE protocol from \cite{Abdalla2005}.
+Based on the Firefox extension and PHP server code developed in \cite{MSD13} we implement a Firefox plugin and Apache web server module that allows to use \ac{OPAKE} on a website as a login mechanism.
+While the actual user interface does not significantly differ from the implementation in \cite{MSD13}, which is focused on the standard PAKE functionality, the underlying architecture of our \ac{OPAKE} plugin and user experience is new.
+We extend the architecture from \cite{MSD13} with a native Firefox plugin and Apache module (implemented in \texttt{C++}) that allows us to use well established cryptographic libraries and our previously described implementation of \ac{OPAKE}.
+
+\subsection{Future Work}
+In near future the implementation will be moved towards extension-only code.
+This allows seamless installation and operation of the protocols in Firefox.
+This will be either done using Emscripten compiled C/C++ code and cryptographic libraries or by pure JavaScript implementation.
+We discuss these issues in Chapter \ref{ch:futurework}.
