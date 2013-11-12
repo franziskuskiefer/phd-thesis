@@ -2,13 +2,13 @@
 \chapter{PAKE and Malicious Servers}\label{ch:malservers}
 %************************************************
 In this chapter we summarise contributions from Appendix \ref{paper:2pake} on distributed \aclp{SPHF} and two-server \ac{PAKE} as a mechanism to handle malicious servers and server compromise in \acl{PAKE}.
-We further give an outlook on planned work on blind password policy checking.
+We further give an outlook on future work in this area and on blind password policy checking.
 
 %************************************************
 \section{Distributed Smooth Projective Hashing \& Two-Server PAKE} \label{sec:twopake}
 %************************************************
 This section is based on unpublished work presented in Appendix \ref{paper:2pake}.
-We recall high-level intuition of Appendix \ref{paper:2pake} and discuss future work on this topic.
+We recall high-level intuition and most important findings of Appendix \ref{paper:2pake} and discuss future work on this topic.
 
 While smooth projective hashing got a lot attention in the last ten years it has been used only in two-party protocols.
 Smooth projective hashing allows to compute a hash value of a word from a language $L$ in two different ways.
@@ -27,9 +27,115 @@ In our setting of languages of ciphertext the public part of \texttt{aux} is ess
 We define that a distributed \ac{SPHF} consists of two \texttt{Hash} functions.
 One uses a set of words and hashing keys instead of a single word, hash key pair while the other operates on a set of hashing keys and a single word.
 We introduce an extended notion of smooth projective hashing that allows us later to distribute the computation of their functions.
-\fk[inline]{finish....}
+
+For distributed \SPHFF we require the existence of a function $h:\PP\mapsto\PP^x$ such that all elements of a word in $L_\aux$ are words of their respective language $L_{h(\aux)[i]}$ and the combination of the elements in ciphertexts $C$ are correct in respect to the combined $\aux'$.
+More precisely, for every ciphertext $C$ of the message in $\aux'$, there exists a modified decryption algorithm $\Dec'$ and a combining function $g$ such that $\Dec'_{\pi}(C_0)=\Dec'_{\pi}(g(C_1,\dots,C_x))$ for $C_0\gets\Enc_{\pk}^\cL(\aux)$ and $C_i\gets\Enc_{\pk}^\cL(h(\aux)[i])$ for $i=1,\dots,x$, where $\pi$ denotes the secret key according to the public key $\pk$ in the \ac{CRS}.
+Let $\odot$ be defined as follows: for $a\in \GG,~ r\in\ZZ_p,~ b\in \GG^{x\times y},~ s\in\ZZ_p^{1\times y},~ c\in \GG^{y\times 1}:$~ $a\odot r = r\odot a = a^r\in \GG$, using common matrix and vector operations on it. 
+
+\begin{definition}[\SPHFF]\label{def:symgensphf}
+Let $L_\aux$ denote a language such that $C=(C_0,C_1,\dots,C_x)\in L_\aux$ if there exists a witness $w=(w_0,w_1,\dots,w_x)$ proving so and there exist functions $h(\aux)=(\aux_1,\dots,\aux_x)$ and $g:\GG^l\mapsto\GG^{l'}$ as described above.
+An extended smooth projective hash function for language $L_\aux$ with $\Gamma\in\GG^{k\times n}$ consists of the following 6 algorithms:
+
+\begin{itemize}
+	\item $\hk_i\ralgout\HKGen(L_\aux)$ generates a hashing key $\hk_i\in\ZZ_p^{1\times n}$ for language $L_\aux$.
+	
+	\item $\hp_i\algout\PKGen(\hk,L_\aux)$ derives the projection key $\hp_i=\Gamma \odot \hk\in\GG^{1\times k}$.
+	
+	\item $h^x\algout\Hash^x(\hk_0,L_\aux,C_1,\dots,C_x)$ outputs the hash value
+	$$h^x=\Theta^x_{\aux}(C_1,\dots,C_x)\odot\hk_0=\prod^{n}_{j=1} \theta_\aux^j(C_1,\dots,C_x)^{\hk_0[j]}.$$
+	
+	\item $h^x\algout\PHash^x(\hp_0,L_\aux,C_1,\dots,C_x,w_1,\dots,w_x)$ returns the hash value where $\lambda^i=\Omega(w_i,C_i)$
+	\[h^x=\prod^{x}_{i=1}(\lambda^i\odot \hp_0).\] 
+	
+	\item $h^0\algout\Hash^0(\hk_1,\dots,\hk_x,L_\aux,C_0)$ outputs the hash value 
+	\[h^0=\prod^{x}_{i=1}(\Theta_{\aux}^0(C_0)\odot\hk_i)=\Theta_{\aux}^0(C_0)\odot \sum^x_{i=1}\hk_i.\]
+	
+	\item $h^0\algout\PHash^0(\hp_1,\dots,\hp_x,L_\aux,C_0,w_0)$ returns the hash value where $\lambda^0=\Omega(w_0,C_0)$
+	\[h^0=\prod^{x}_{i=1}(\lambda^0\odot \hp_i).\]
+\end{itemize}
+\eod
+\end{definition}
+
+\noindent
+Using \SPHFF we can define distributed computation protocols for $\PHash^x$ and $\Hash^0$ as follows which leads directly to the two-server \ac{PAKE} framework given in Figure \ref{fig:twopake}.
+\begin{itemize}
+\item $\PHash^x_D$ is executed between $x$ parties $P_1,\dots,P_x$.
+	Each $P_i$ performs $\PHash^x_D$ on input $(\hp_0,\aux_i,\allowbreak C_1,\dots,C_x,w_i)$ such that $P_1$ eventually holds $h^x$ while all $P_i$ for $i>1$ do not learn anything about $h^x$.
+	
+	\item $\Hash^0_D$ is executed between $x$ parties $P_1,\dots,P_x$.
+	Each $P_i$ performs $\Hash^0_D$ on input $(\aux_i,\sk_i,\hk_i,\allowbreak \pk_1,\dots,\pk_x,C_0,\dots,C_x)$ such that $P_1$ eventually holds $h^0$ and all $P_i$ for $i>1$ do not learn anything about $h^0$.
+\end{itemize}
+
+\noindent
+Despite the new two-server \ac{PAKE} framework, \SPHFF allows us to ``explain'' the two-server protocol due to \citeauthor{Katz2012a} \cite{Katz2012a}.
+Their protocol is based on the first two-party \ac{PAKE} using (implicitly) smooth projective hashing \cite{KatzOY01}.
+
+\begin{sidewaysfigure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}]
+\matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
+		nodes={draw=none, anchor=center,text depth=1pt},
+		column 2/.style={nodes={minimum width=8em}},
+		column 3/.style={nodes={minimum width=20em}},
+		column 4/.style={nodes={minimum width=8em}}]{
+	{$\bm{C}$} & & {$\bm{S_1}$} \\ [-1mm]
+	
+	$\crs,\pwd$ & & $\crs,\pwd_1$ & \\ [2mm]
+	
+	$\hk_0\gets \HKGen(L_\aux)$ & &
+	$\hk_1\gets \HKGen(L_\aux)$ & \\
+	
+	$\hp_0\gets \PKGen(\hk_0)$ & &
+	$\hp_1\gets \PKGen(\hk_1)$ & \\
+	
+	$C_{0}\gets\Enc_{\pk}^\cL(\ell_0,\pwd;r_0)$ & 
+	$\hp_0,C_{0},\hp_1,C_1$ &
+	$C_1\gets\Enc_\pk^\cL(\ell_1,\pwd_1,r_1)$ &
+	$\hp_2,C_2$ \\
+	
+	check $C_1,C_2$ & & check $C_0,C_2$ & \\
+	
+	$h^0\gets\PHash^0(\hp_1,\hp_2,L_\aux,C_{0},r_0)$ & &
+	$h^0\gets\Hash^0_{D}$ & \hspace*{8em} \\
+
+	& & \hspace*{10em} & \hspace*{8em} \\
+	
+	$h^x\gets\Hash^x(\hk_{0},L_\aux,C_1,C_2)$ & &
+	$h^x\gets\PHash^x_{D}$ & \hspace*{8em} \\ 
+	
+	$\sk_1=h^0 h^x$ & 
+	& $\sk_1=h^0 h^x$ & \hspace*{8em} \\ 
+};
+
+\draw[<->,dashed] (m-5-2.south west)--(m-5-2.south east);
+\draw[->,dashed] (m-5-4.south east)--(m-5-4.south west);
+
+\draw[<->] (m-7-4.south west)--(m-7-4.south east);
+\draw[<->] ([yshift=2pt] m-9-4.south west)--([yshift=2pt] m-9-4.south east);
+\draw[dashed] ([xshift=0pt,yshift=0pt] m-7-3.north west) -- ([xshift=0pt,yshift=4pt] m-7-4.north east);
+\draw[dashed] ([xshift=0pt,yshift=0pt] m-7-3.north west) -- ([xshift=0pt,yshift=0pt] m-9-3.south west);
+\draw[dashed] ([xshift=0pt,yshift=5pt] m-8-3.south west) -- ([xshift=0pt,yshift=5pt] m-8-4.south east);
+\draw[dashed] ([xshift=0pt,yshift=0pt] m-9-3.south west) -- ([xshift=0pt,yshift=-4pt] m-9-4.south east);
+
+\end{tikzpicture}
+\caption[Two-Server PAKE framework using \SPHFF]{Two-Server PAKE framework using \SPHFF
+\\{\tiny Dashed lines denote broadcast messages.}}
+\label{fig:twopake}
+\end{sidewaysfigure}
 
 %************************************************
-\section{Blind Password Policy Checker} \label{sec:policies}
+\section{Future Work}
 %************************************************
-\fk[inline]{ToDo: Policies}
+Two-server password-based protocols are less popular than common two-party protocols and thus lack the diversity of protocols one can find in the two-party setting.
+It therefore offers many possibilities for future research such as \ac{UC}-secure two-server \ac{PAKE} or password-only two-server secret sharing.
+
+%************************************************
+\paragraph{Blind Password Policy Checker} \label{sec:policies}
+%************************************************
+A so far unexplored field in password-based cryptography and closely related to two-server \ac{PAKE} protocols is the are of secure password policy checking.
+While \ac{PAKE} protocols solve the problem of transmitting passwords when logging in, it still has to be stored on the server and thus is vulnerable to server compromise.
+Two-server \ac{PAKE} protocols allow to perform a \ac{PAKE} protocol without the need to disclose, i.e. store, the entire password on one server.
+In this case however it is not possible for a server to check that the client uses a password that is policy conform.
+We therefore research the new field of \emph{blind password policy checking} that allows a server that knows only a share of a password to verify that the actual password is conform with his policy.
+
+

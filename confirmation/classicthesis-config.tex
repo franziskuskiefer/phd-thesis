@@ -15,8 +15,8 @@
 % in order to deactivate the time-stamp on the pages
 % ****************************************************************************************************
 \PassOptionsToPackage{eulerchapternumbers,listings,drafting,%
-				 pdfspacing,%floatperchapter,%linedheaders,%
-				 subfig,beramono,eulermath,parts}{classicthesis}										
+				 pdfspacing,%floatperchapter,%linedheaders,%subfig,
+				 beramono,eulermath,parts}{classicthesis}										
 % ********************************************************************
 % Available options for classicthesis.sty 
 % (see ClassicThesis.pdf for more information):
@@ -113,6 +113,13 @@
 \usepackage{bm} % give us some real bold math
 \usepackage{pdfpages} % add whole papers
 \usepackage{mdframed} % drawing frames
+\usepackage{algorithm} % algorithm environment
+\usepackage[noend]{algorithmic} % algorithmic ...
+\usepackage{setspace} % change line spacing
+\usepackage{tikz} % tikz to draw stuff
+%\usepackage{tikz-qtree}
+\usetikzlibrary{shapes,arrows,positioning,shadows,trees,matrix,chains,calc} % some useful tikz libraries
+\usepackage{rotating} % rotate figures (sidewayfigures)
 % ****************************************************************************************************
 % rewrite stuff whether using draft or final version
 % ****************************************************************************************************
@@ -128,6 +135,15 @@
 \newcommand{\acc}[1]{\NoCaseChange{\ac{#1}}}
 \newcommand{\accl}[1]{\NoCaseChange{\acl{#1}}}
 
+% rewrite algorithm variables
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\renewcommand{\algorithmiccomment}[1]{// #1}
+
+\newenvironment{Algorithm}[1][tbh]%
+{\begin{minipage}{7cm}\centering\begin{algorithm}[H]}%
+{\end{algorithm}\medskip\end{minipage}}
+
 % ****************************************************************************************************
 
 % ****************************************************************************************************
@@ -140,9 +156,9 @@
 \usepackage{caption}
 \captionsetup{format=hang,font=small}
 % FIXME
-\usepackage{subfig}  % deprecated !!!
+%\usepackage{subfig}  % deprecated !!!
 %\usepackage{subfigure} % deprecated !!!
-%\usepackage{subcaption}
+\usepackage{subcaption}
 % ****************************************************************************************************
 
 
@@ -178,7 +194,7 @@
 % Using PDFLaTeX
 % ********************************************************************
 \PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels}{hyperref}
-	\usepackage{hyperref}  % backref linktocpage pagebackref
+	\usepackage[backref]{hyperref}  % backref linktocpage pagebackref
 \pdfcompresslevel=9
 \pdfadjustspacing=1 
 \PassOptionsToPackage{pdftex}{graphicx}
@@ -380,6 +396,7 @@
 \newcommand{\cF}{\ensuremath{\mathcal{F}}\xspace}
 \newcommand{\cI}{\ensuremath{\mathcal{I}}\xspace}
 \newcommand{\cK}{\ensuremath{\mathcal{K}}\xspace}
+\newcommand{\cL}{\ensuremath{\mathcal{L}}\xspace}
 \newcommand{\cM}{\ensuremath{\mathcal{M}}\xspace}
 \newcommand{\cO}{\ensuremath{\mathcal{O}}\xspace}
 \newcommand{\cS}{\ensuremath{\mathcal{S}}\xspace}
@@ -389,6 +406,9 @@
 % Passwords
 \newcommand{\pwd}{\ensuremath{\mathtt{pwd}}\xspace}
 \newcommand{\pwdv}{\ensuremath{\mathtt{{\bf pwd}}}\xspace}
+
+% crs
+\newcommand{\crs}{\ensuremath{\mathtt{crs}}\xspace}
 
 % functions
 \newcommand{\KGen}{\ensuremath{\mathsf{KGen}}\xspace}
@@ -421,3 +441,14 @@
 \newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
 \newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
 
+% SPHF
+\newcommand{\SPHFF}{\ensuremath{\text{SPHF}^x}\xspace}
+\newcommand{\aux}{\ensuremath{\mathtt{aux}}\xspace}
+
+\newcommand{\hk}{\ensuremath{\mathtt{k_h}}\xspace}
+\newcommand{\hp}{\ensuremath{\mathtt{k_p}}\xspace}
+
+\newcommand{\HKGen}{\ensuremath{\mathtt{KGen_H}}\xspace}
+\newcommand{\PKGen}{\ensuremath{\mathtt{KGen_P}}\xspace}
+\newcommand{\Hash}{\ensuremath{\mathtt{Hash}}\xspace}
+\newcommand{\PHash}{\ensuremath{\mathtt{PHash}}\xspace}

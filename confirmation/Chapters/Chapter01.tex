@@ -58,7 +58,7 @@ The most popular standards for \ac{OTP} that are implemented in the Google Authe
 These, mainly short passwords, are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
 They can be seen as transaction bound \acp{OTP}.
 
-\subsection{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
+\section{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
 As mentioned already, most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
 Therefore, it is feasible for a program to walk through the entire dictionary and just try every possible secret (password).
@@ -169,7 +169,7 @@ This is the key distribution problem, implicit to all symmetric key protocols.}
 Thereby, \ac{PAKE} protocols solve the problem of potential password leakage, inherent to the approach based on secure channels.
 
 In general, all PAKE models (see~\cite{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
-While many PAKE constructions require a constant number of communication rounds~\cite{Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}; recent frameworks by \citeauthor{Katz2011} \cite{Katz2011} and \citeauthor{Benhamouda2013} \cite{Benhamouda2013} offer optimal one-round PAKE.
+While many PAKE constructions require a constant number of communication rounds~\cite{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}; recent frameworks by \citeauthor{Katz2011} \cite{Katz2011} and \citeauthor{Benhamouda2013} \cite{Benhamouda2013} offer optimal one-round PAKE.
 
 In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as~\cite{Camenisch2010,Blazy2012} that also lend themselves to the constructions of (somewhat less practical) PAKE protocols.
 
@@ -187,7 +187,7 @@ The original game-based \ac{PAKE} models in~\cite{Bellare2000,Boyko2000} incorpo
 The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take actively part in executions and corrupt protocol participants.
 \citeauthor{Abdalla2005} \cite{Abdalla2005} proposed a \ac{RoR} approach to model semantic security of PAKE protocols by allowing polynomially-many queries to a \Test oracle.
 They showed not only that their \ac{RoR} approach leads to stronger security but were also able to simplify the model.
-The models in~\cite{Bellare2000,Abdalla2005} remain the most popular game-based PAKE models, adopted in the analysis of many protocols, including the random oracle-based protocols~\cite{Abdalla2006,Abdalla2005b} and protocols requiring a \ac{CRS}~\cite{Gennaro2003,Gennaro2008,Katz2009a}.
+The models in~\cite{Bellare2000,Abdalla2005} remain the most popular game-based PAKE models, adopted in the analysis of many protocols, including the random oracle-based protocols~\cite{Abdalla2006,Abdalla2005b} and protocols requiring a \ac{CRS}~\cite{KatzOY01,Gennaro2003,Gennaro2008,Katz2009a}.
 
 %TODO move
 % by removing the \Reveal oracle that provides the adversary with established session keys.
@@ -210,46 +210,67 @@ Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000},
 Their work also comprises the first (and until now the only, but fairly inefficient) protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.\footnote{The work in \cite{Goldreich01} is concerned with the general possibility of such a protocol rather than building a practical one.}
 The protocol has been subsequently simplified at the cost of weakened security in~\cite{NguyenV04}.
 While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has been proposed by \citeauthor{Canetti2005}~\cite{Canetti2005} later.
-In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions, with CRS being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
+In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
+The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citeauthor{Benhamouda2013} \cite{Benhamouda2013}.
 
-\fk[inline]{Check if I missed any PAKE paper}
-\fk[inline]{Add newer protocols (2013)}
+%\fk[inline]{Check if I missed any PAKE paper}
+%\fk[inline]{Add newer protocols (2013)}
 
-\subsection{Other \accl{PAKE} Protocols}
+\subsection{Other Password Authenticated Key Exchange Protocols}
 Besides the straight-forward case where a single client-sever pair uses a common password to authenticate each other and establish a secure channel, there exist several other scenarios we discuss in the following.
 
-\paragraph{Three-Party \accl{PAKE}}
-The three-party setting considers two humans who want to securely communicate with each other.
+\paragraph{Three-Party Password Authenticated Key Exchange}
+The three-party setting (3\ac{PAKE}) considers two humans who want to securely communicate with each other.
 Since sharing passwords with everyone else is not practical, a trusted server (the third party) come into play.
 Thus, the users have to share only one password with the trusted sever, which assists then in the three-party protocol between the two users.
-The initial three-party setting in the password case is due to \citeauthor{Abdalla2005} \cite{Abdalla2005}.
-\fk[inline]{What to do with \cite{Abdalla2007}?}
-\fk[inline]{More papers?}
+The initial three-party security model is due to \citeauthor{Abdalla2005} \cite{Abdalla2005}.
+Subsequent work \cite{CliffTB06,Yoneyama08,TsaiC13} propose new protocols and improved security models.
 
-\paragraph{Group \accl{PAKE}}
-General group protocols can be modified for the password case, \eg \cite{Bresson02,BrChPo05}.
-\fk[inline]{read those and write sth....\\
-\cite{Kim2004,Abdalla2006,Dutta2006}\\
-Efficient, standard model \cite{Bohli2006}\\
-group protocols~\cite{AbdallaP06,AbdallaBVS07}
-}
+\paragraph{Group Password Authenticated Key Exchange}
+Password authenticated group key exchange is another popular protocol, extending two-party \ac{PAKE} to the group setting.
+Authenticated group key exchange protocols allow a \emph{group} of parties, not only two, to negotioate a session key.
+One way to achieve group \ac{PAKE} is to use general group key exchange protocols and modify them for the password setting, \eg \cite{Bresson02,BrChPo05}.
+%However, this usually yields rather inefficient protocols.
+Similar to the classical \ac{PAKE}, group \ac{PAKE} enjoys a large body of research papers \cite{Kim2004,Abdalla2006,Bohli2006,Dutta2006,AbdallaP06,AbdallaBVS07,AbdallaCCP09,AbdallaCGP11}.
 
 \paragraph{Threshold Password Based Authenticated Key Exchange}
 threshold-based PAKE protocols, e.g.~\cite{Abdalla2005b}, where the client's password is shared amongst two (or possibly more) servers that jointly authenticate the client
 
-\paragraph{\accl{PPSS}}
-\ac{PPSS} allows to share a secret, \eg a symmetric key, among several servers, protected by a password. \cite{Bagherzandi2011}\fk{there is one other paper}
+\paragraph{Password Protected Secret Sharing}
+The notion of \ac{PPSS} was introduced by \citeauthor{Bagherzandi2011} \cite{Bagherzandi2011}.
+It allows to share a secret, \eg a symmetric key, among several servers, protected by a password. 
+A security definition in the \acl{UC} framwork was proposed a year later by \citeauthor{Camenisch2012} \cite{Camenisch2012}.
+\ac{PPSS} has many interesing applications such as secure remote storage, an increasingly important use-case.
+A similar notion called \emph{hidden credential retrieval} using only one server has been introduced by \citeauthor{Boyen09} in \cite{Boyen09} to allow users with knowledge of a password to store high-entropy messages securely on a server.
 
-\paragraph{Security against Malicious Servers}
-\fk[inline]{todo}
+
+%TODO:
+%\paragraph{Security against Malicious Servers}
+%\fk[inline]{todo\\
+%* HPAKE\\
+%* SRP?\\
+%* Two-Server PAKE}
 
 \subsection{Multi-Factor Authenticated Key Exchange}
 As mentioned before, using passwords is only one possible authentication mechanism.
 Combining several authentication techniques leads to \emph{multi-factor} authentication protocols.
-In \cite{Burr11} four security levels for authentication are defined.
+The most commonly used reference for (multi-factor) authentication is the \ac{NIST} standard \cite{Burr11} that defines four security levels for authentication.
 Starting from level three at least two authentication factors are necessary.
-\fk[inline]{some papers...}
-\fk[inline]{google authenticator etc.}
+Research in the area of multi-factor authentication \cite{PointchevalZ08,SUC10,LiuWM10,HaoC12} propose protocols and security models for two-party and three-party scenarios.
+Real world implementations include for example Google authenticator \cite{GAuthenticator}.
+However, implementations so far only combine traditional passwords with \aclp{OTP}.
+Using biometric factors is rarely seen in practice so far.
+
+% *****************************************************************************
+% Section: Strong Cryptography from Low-Entropy Secrets
+% *****************************************************************************
+
+\section{Strong Cryptography from Low-Entropy Secrets}
+Despite authentication and key exchange, passwords are used in other contexts such as general strong cryptography.
+Due to the low-entropy of passwords this oviously introduces additional challenges.
+In \cite{AbdallaBCP09} \citeauthor{AbdallaBCP09} show how to build strong cryptography from weak secrets.
+In particular, they propose a method to perform distributed public key cryptography when each party holds only a password, based on the \acl{DDH} assumption.
+\citeauthor{BoyenCFP10} extend the notion in \cite{BoyenCFP10} to the pairing world.
 
 % *****************************************************************************
 % Section: How to Ease the Pain
@@ -265,19 +286,6 @@ They either avoid the process of logging onto a side at all, or automate it as f
 The former is achieved by \ac{SSO} services such as Kerberos \cite{rfc4120} OpenID \cite{OpenID} or OAuth \cite{rfc6749}.
 The latter is done by using password managers in combination with auto completion implementations that store login information for websites and fill the online forms automatically.
 
-% *****************************************************************************
-% Section: Strong Cryptography from Low-Entropy Secrets
-% *****************************************************************************
-
-\section{Strong Cryptography from Low-Entropy Secrets}
-PKE, independent from PAKE
-
-\subsection{Password Protected Secret Sharing}
-\fk[inline]{Some words on PPSS}
-
-\subsection{Password Based Encryption}
-\fk[inline]{some words on PBE}
-
 
 % *****************************************************************************
 % Section: Motivation & Outline
@@ -285,14 +293,15 @@ PKE, independent from PAKE
 \section{Motivation and Outline}
 
 This work consists of five chapters and an appendix.
-We gave a motivational overview and discussion on low-entropy cryptography and passwords already in this introduction.
-While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of (low-entropy) cryptography complete the information on research in this area, necessary for the remainder of this work.
-The main contribution of this work is given in Chapter \ref{ch:pake} and \ref{ch:malservers}.
-The former chapter summarises the contribution in the field of \acl{PAKE} on \ac{PAKE} security models by recalling the high-level intuitions from Appendix \ref{paper:opake} on oblivious \ac{PAKE} and Appendix \ref{paper:corrupt} on forward-secrecy and corruption in \ac{PAKE} models.
+We gave a motivational overview and discussion on low-entropy cryptography and passwords in this introduction.
+While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of (low-entropy) cryptography completes the information on research in this area, necessary for the remainder of this work.
+Password-based cryptography in general, and password-based authentication in particular, is an exciting and important research field with a large body of research on the one hand yet many interesting unexplored areas for future work on the other hand.
+Before summarising the contribution in Chapter \ref{ch:opake} and \ref{ch:malservers} we give formal introduction to \acl{PAKE} security models.
+%The main contribution of this work is given in Chapter \ref{ch:pake}, \ref{ch:opake} and \ref{ch:malservers}.
+Chapter \ref{ch:opake} summarises the contribution in the field of \acl{PAKE}, \ie recalling the high-level intuitions from Appendix \ref{paper:opake} on oblivious \ac{PAKE} and Appendix \ref{paper:corrupt} on forward-secrecy and corruption in \ac{PAKE} models.
 Chapter \ref{ch:malservers} outlines contribution in the area of \ac{PAKE} in the light of malicious servers or server compromise.
-It compiles intuitions from Appendix \ref{paper:2pake} on \aclp{SPHF} and two-server \ac{PAKE} as well as an outlook on just started work on blind password policy checking.
+It compiles intuitions from Appendix \ref{paper:2pake} on \aclp{SPHF} and two-server \ac{PAKE} as well as an outlook on blind password policy checking, which work in progress.
 
-\fk[inline]{ToDo --- Motivation !!!!}
-
-\fk{more citations\\
-* \cite{Abdalla2006a} (provable PAKE in TLS)}
+%TODO:
+%\fk{more citations\\
+%* \cite{Abdalla2006a} (provable PAKE in TLS)}

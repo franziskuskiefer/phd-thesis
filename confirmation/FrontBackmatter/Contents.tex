@@ -46,29 +46,40 @@
     \listoffigures
 
     \vspace*{8ex}
+    
+    %*******************************************************
+    % List of Algorithms
+    %*******************************************************    
+    %\phantomsection 
+    \refstepcounter{dummy}
+    %\addcontentsline{toc}{chapter}{\listfigurename}
+    \pdfbookmark[1]{\listalgorithmname}{loa}
+    \listofalgorithms
+
+    \vspace*{8ex}
 
     %*******************************************************
     % List of Tables
     %*******************************************************
     %\phantomsection 
-    \refstepcounter{dummy}
+%    \refstepcounter{dummy}
     %\addcontentsline{toc}{chapter}{\listtablename}
-    \pdfbookmark[1]{\listtablename}{lot}
-    \listoftables
+%    \pdfbookmark[1]{\listtablename}{lot}
+%    \listoftables
         
-    \vspace*{8ex}
+%    \vspace*{8ex}
 %   \newpage
     
     %*******************************************************
     % List of Listings
     %*******************************************************      
 	  %\phantomsection 
-    \refstepcounter{dummy}
+%    \refstepcounter{dummy}
     %\addcontentsline{toc}{chapter}{\lstlistlistingname}
-    \pdfbookmark[1]{\lstlistlistingname}{lol}
-    \lstlistoflistings 
+%    \pdfbookmark[1]{\lstlistlistingname}{lol}
+%    \lstlistoflistings 
 
-    \vspace*{8ex}
+%    \vspace*{8ex}
        
     %*******************************************************
     % Acronyms
@@ -82,6 +93,7 @@
         \acro{DRY}{Don't Repeat Yourself}
         \acro{API}{Application Programming Interface}
         \acro{UML}{Unified Modeling Language}
+        \acro{HTML}{HyperText Markup Language}
         \acro{NIZKPoK}{Non-Interactive Zero Knowledge Proof of Knowledge}
         \acro{ECC}{Elliptic Curve Cryptography}
         \acro{CPA}{Chosen Plaintext Attack}
@@ -114,6 +126,7 @@
         \acro{IHME}{Index-Hiding Message Encoding}
         \acro{SPHF}{Smooth Projective Hash Function}
         \acro{CCA}{Chosen-Ciphertext Attack}
+        \acro{NIST}{National Institue of Standards and Technology}
     \end{acronym}                     
 \endgroup
 

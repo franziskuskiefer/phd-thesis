@@ -84,6 +84,7 @@ A \ac{PAKE} protocol $\Pi$ is \emph{\ac{AKE}-secure} if for all dictionaries $\c
 \hspace*{2em} $b\rin\bits$\\
 \hspace*{2em} $b'\gets\cA^{\Send,\Execute,\Corrupt,\Test}(\secpar)$\\
 \hspace*{2em} return $b=b'$.
+\eod
 \end{definition}
 
 \paragraph{RoR VS. FtG}
@@ -177,6 +178,7 @@ The availability of a \Corrupt oracle and its input-output behaviour in response
 
 \noindent
 A corruption model that provides the adversary \cA with access to the \Corrupt oracle allows \emph{password modification} if in addition to a pair $(C,S)$ \cA can submit some $\pwd^\ast\in\cD$ as an additional input that will then be used instead of $\pwd_{C,S}$ in all server instances $S_j$ that are invoked later with $C$ as intended \ac{PAKE} partner.
+\eod
 \end{definition}
 
 \noindent
