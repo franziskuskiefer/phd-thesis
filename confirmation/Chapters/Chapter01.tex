@@ -2,29 +2,27 @@
 %************************************************
 \chapter{Introduction}\label{ch:introduction}
 %************************************************
-\fk[inline]{Fix nomenclature (\eg algorithm, protocol, primitive ...)}
-
-This work at hand is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
-In contrast to conventional cryptographic algorithms and protocols, secrets have low-entropy here, such that an adversary is able to iterate through all possible secrets in reasonable time.
-This leads directly to the inherent threat of everything we are dealing with in this work: so-called dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}).
+This work is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
+In contrast to conventional cryptographic algorithms and protocols, secrets used here have low-entropy here, such that an adversary is able to iterate through all possible secrets in reasonable time.
+This leads directly to the inherent threat to everything we are dealing with in this work: so-called dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}).
 So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
 \begin{quote}
-``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\cite{Kaufmann02}
+``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\citeauthor{Kaufmann02} \cite{Kaufmann02}
 \end{quote}
 
 \noindent
 We do not care about humans lack of speed and accuracy in performing cryptographic operations in this work.
 But their inability to remember high-quality cryptographic keys is a major problem.
-Even though there exist several standardized authentication tokens for humans, we heavily rely on passwords.
-In general we distinguish between three big categories of authentication data \cite{Burr11}:
+Even though there exist several standardised authentication tokens for humans, we heavily rely on passwords.
+In general we distinguish between three major categories of authentication data \cite{Burr11}:
 \begin{itemize}
 	\item Something you know (\eg password, \ac{PIN})
 	\item Something you have (\eg mobile phone, cryptographic key)
 	\item Something you are (\eg fingerprint)
 \end{itemize}
 But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he does not write down his passwords).
-To perform cryptography where humans input a secret, those have to be human-memorable.
+To perform cryptography with humans entering a secret, those have to be human-memorable.
 This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
 
 \section{Password Based Cryptography}
@@ -33,22 +31,22 @@ In contrast to other cryptographic mechanisms where \emph{keys} are chosen from 
 Note that dictionaries in our case denote sets of characters rather than \emph{real} lexicon like dictionaries.
 When talking about those we use the term \emph{lexicon}.
 
-Even though password is the the umbrella term, we distinguish between several types of passwords, we discuss in the following.
+Even though password is the umbrella term, we distinguish between several types of passwords, we discuss in the following.
 
 \paragraph{Password}
 The term \emph{password} usually refers to character strings chosen from a dictionary consisting of alpha-numeric characters \texttt{a-z}, \texttt{A-Z}, \texttt{0-9} and special characters like \texttt{\$,\%,@} and so on.
-While many (online) services have password policies in place, humans tend to choose easy memorable and therefore mainly easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
+While many (online) services have password policies in place, humans tend to choose easyly memorable and therefore mainly easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
 To encourage users to use stronger passwords, password-strength meters are used by many services.
 A recent study \cite{Ur2012} on password-strength meters shows that this could have a significant impact on user's password-strength.
 
 \paragraph{\accl{PIN}}
 \acp{PIN} are rather short passwords, chosen from the numeric dictionary containing numbers \texttt{0-9}.
 They are mainly used to secure access to the actual authentication token like credit card or other smart cards.
-Since the card is a second authentication factor (\emph{something you have}) here, a short \ac{PIN} is sufficient to reach reasonable security.
+Since the card is a second authentication factor (\emph{something you have}), a short \ac{PIN} is sufficient to reach reasonable security.
 The smaller dictionary containing only numbers is most presumable due to practical restrictions on the input device, used to enter the \ac{PIN}.
 
 \paragraph{\accl{OTP}}
-While most passwords are meant to be memorized by humans, \acp{OTP} are used only once and therefore don not have to be memorised.
+While most passwords are meant to be memorised by humans, \acp{OTP} are used only once and therefore don not have to be memorised.
 They are mainly chosen from the numeric dictionary \texttt{0-9}.
 \acp{OTP} have become more popular recently as a second factor, in addition to the ``regular'' password, in two-factor authentication, \eg Google \cite{Google2Factor}, Facebook \cite{FB2Factor}, Twitter \cite{Twitter2Factor} and GitHub \cite{Github2Factor}.
 The most popular standards for \ac{OTP} that are implemented in the Google Authenticator App \cite{GAuthenticator} for example, are the \acs{HMAC} based algorithm specified in RFC 4226 \cite{rfc4226} and the time based algorithm specified in RFC 6238 \cite{rfc6238}.
@@ -58,15 +56,15 @@ The most popular standards for \ac{OTP} that are implemented in the Google Authe
 These, mainly short passwords, are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
 They can be seen as transaction bound \acp{OTP}.
 
+% *****************************************************************************
 \section{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
-As mentioned already, most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in tolerable time.
+% *****************************************************************************
+As mentioned already, most cryptographic mechanisms use high-en-tropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in reasonable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
 Therefore, it is feasible for a program to walk through the entire dictionary and just try every possible secret (password).
-This kind of attack is called \emph{dictionary attack} and is inherent to every password based algorithm.
-There exist several approaches to deal with this flaw in each specific field of password based research.
-We will point out the particular mechanism when dealing with each field.
+This kind of attack, \emph{dictionary attack}, is inherent to any password based algorithm and is therefore one of the main challenges in password-based cryptography compared to mechanisms on high-entropy secrets.
 
-In addition to a brute force dictionary attack that iterates an entire dictionary, it is often sufficient to perform a lexicon attack that traverses only a relatively small dictionary containing for example words of the English language.
+Due to poorly chosen passwords it is often sufficient to perform a lexicon attack that traverses only a relatively small dictionary containing for example words of the English language instead of a brute force dictionary attack that iterates the entire dictionary.
 
 \paragraph{Poorly Chosen Passwords}
 While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
@@ -80,27 +78,26 @@ Using for example a list with the most used passwords (\eg \cite{XatoPwds}), bru
 We continue this introduction by giving a brief informal overview on the most important approaches in the research area of provable security.
 In the subsequent sections we discuss different areas in the general field of password based cryptography.
 We start with password based authentication and key exchange protocols, which comprise the biggest part of password based cryptography research.
-The second part is concerned with general cryptographic primitives from low entropy secrets and other password based protocols.
-We finally conclude this chapter with an overview of mechanisms to simplify password related tasks or avoid problems related with password handling.
+The second part deals with general cryptographic primitives from low entropy secrets and other password based protocols.
+We conclude this chapter with an overview of mechanisms to simplify password related tasks or avoid problems related with password handling and an overview of the remainder of this work.
 
 % *****************************************************************************
 % Section: On Provable Security
 % *****************************************************************************
 
 \section{On Provable Security}
-In this section we briefly discuss general security models used in the field of provable security.
-We discuss more specialised methods used in password based cryptography later.
-To prove a cryptographic primitive secure, reductionist arguments are used.
-Thereby, the attempt is made to reduce the security of the primitive under consideration to a problem that is believed to be hard\footnote{Note that this work is not concerned with the question whether specific problems are actual hard. We consider only well investigated problems, which the cryptography community beliefs are hard.}.
-Thus, given a (tight) reduction from the primitive to an underlying problem, one could be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
-For an insightful and skeptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citeauthor{AnotherLook} \cite{AnotherLook}.
+We briefly discuss general security models used in the field of provable security as well as other means of establishing confidence in the security of an algorithm.
+More specialised methods used in password-based cryptography are analysed later.
 
-Cryptographic primitives can only be proven secure in the light of the abilities of an adversary.
+To prove a cryptographic primitive secure, reductionist arguments are used.
+Thereby, the attempt is made to reduce the security of the algorithm/protocol under consideration to a problem that is believed to be hard.\footnote{Note that this work is not concerned with the question whether specific problems are actually hard. We consider only well investigated problems, which the cryptography community beliefs to be hard.}
+Thus, given a (tight) reduction from the primitive to an underlying problem, one could be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
+For an insightful and sceptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citeauthor{AnotherLook} \cite{AnotherLook}.
+
+Cryptographic primitives can only be proven secure considering the abilities of a certain adversary.
 Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
 It always has to be kept in mind that the resulting proof is only valid within the used model.
-We briefly discuss the two main streams in cryptographic research.
-
-\paragraph{The Formal World}
+Before further discussion we give a brief introduction to another approach to analyse security: \emph{The Formal World}.
 A formal view on modelling security goes back to work throughout the 1980's \cite{DeMillo82,Dolev83,Millen87,Meadows91,Kemmerer1988,Burrows90}.
 While they explore different approaches of formal modelling, the so called Dolev-Yao model \cite{Dolev83} may be the best known one.
 In the formal world, everything is modelled by formal expressions rather than bit strings.
@@ -108,14 +105,15 @@ The adversary controls the entire communication channel between participating pa
 While the formal world is relatively simple, it allows only all-or-nothing  and no probability or computational statements.
 
 \paragraph{The Computational World}
-In this work at hand however we are concerned with a somewhat more realistic approach of modelling, the computational modelling.
+In this work at hand however we deal with a somewhat more realistic approach of modelling, the computational modelling.
 The foundation of today's computational models were laid in the 1980's \cite{Goldwasser82,Goldwasser84,Yao82,Blum82}.
-The computational world consists of bit-string messages and cryptographic primitives performing computations on them and is therefore based on complexity theory.
+The computational world consists of bit-string messages and cryptographic primitives performing computations on them.
+It is therefore based on complexity theory.
 In this world the attacker is modelled as a \ac{PPT} Turing machine \cite{Turing37} that must not have significant success probability.
 We give necessary formal definitions in Chapter \ref{ch:background}.
 
 \paragraph{Reconciling the Two Worlds}
-Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in the community using them.
+Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in their communities.
 For more discussion on these two worlds we refer the interested reader to \cite{cortier2011survey}.
 
 \subsection{Game-Based Security}
@@ -126,20 +124,20 @@ Eventually, the adversary outputs his answer to the challenger who decides wheth
 Oracles are black-box functions simulating parts of the protocols behaviour, the adversary can query.
 On (possibly empty) input they return the result of their computation to the caller.
 Thereby, oracles define an interface for the adversary to interact with the primitive.
-Thus, the actual security definition and strength of the adversary depends on the oracles available.
+The actual security definition and strength of the adversary therefore depends on the available oracle.
 
 Since simple reduction proofs from a protocol to a hard problem are rare, techniques have been developed to do this step by step.
-An example on game-based security proof using ``sequences of games'' is given in \cite{Shoup2004}.
+An example on game-based security proof using so called ``sequences of games'' is given in \cite{Shoup2004}.
 
 \subsection{Simulation-Based Security}
 The idea of simulation-based security proofs is due to \citeauthor{Goldreich87} \cite{Goldreich87} \citeyear{Goldreich87}.
 In contrast to the previously described game-based approach simulation-based security does not define a challenger and oracles the adversary interacts with, but an ideal functionality the actual protocol should mimic in the real world.
-The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm or protocol, and the real world with the actual algorithm or protocol.
-Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is also secure.
+The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm/protocol, and the real world with the actual algorithm/protocol.
+Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is secure.
 
 \paragraph{\accl{UC}}
 The \ac{UC} framework proposed by \citeauthor{Canetti2001a} \cite{Canetti2001a} in \citeyear{Canetti2001a} is a popular general purpose simulation-based security model.
-It overcomes an inherent shortcoming of most security models as it allows for secure arbitrary composition of with other primitives once a primitive is proven secure.
+It overcomes an inherent shortcoming of most security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure.
 Most security models only allow to derive statements about the algorithm in a shielded environment.
 As soon as the algorithm is used with other primitives, and thus sharing \ac{IO} channels and data, the security can not be guaranteed anymore.
 The \ac{UC} framework introduces another adversary \UCZ, the environment, that generates all inputs for all parties, and reads their outputs.
@@ -169,18 +167,10 @@ This is the key distribution problem, implicit to all symmetric key protocols.}
 Thereby, \ac{PAKE} protocols solve the problem of potential password leakage, inherent to the approach based on secure channels.
 
 In general, all PAKE models (see~\cite{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
-While many PAKE constructions require a constant number of communication rounds~\cite{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}; recent frameworks by \citeauthor{Katz2011} \cite{Katz2011} and \citeauthor{Benhamouda2013} \cite{Benhamouda2013} offer optimal one-round PAKE.
+While many PAKE constructions require a constant number of communication rounds~\cite{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}; recent frameworks by \citeauthor{Katz2011} \cite{Katz2011} and \citeauthor{Benhamouda2013} \cite{Benhamouda2013} offer optimal one-round \ac{PAKE}.
 
-In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as~\cite{Camenisch2010,Blazy2012} that also lend themselves to the constructions of (somewhat less practical) PAKE protocols.
-
-A problem intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
-Servers store passwords in databases to retrieve them when necessary.
-Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security problem.
-Different approaches have been proposed to mitigate the impact of server compromises.
-We denote these kind of \ac{PAKE} protocols \emph{asymmetric} \ac{PAKE} protocols as the server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
-\citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framwork, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
-
-In the field of \acl{PAKE}, security models aim at \ac{AKE}-security \cite{Bellare1993,Bellare1995} that may be seen in one of the following general settings.
+In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as~\cite{Camenisch2010,Blazy2012} that also lend themselves to the constructions of (somewhat less practical) \ac{PAKE} protocols.
+In the field of \acl{PAKE}, security models aim at \ac{AKE}-security \cite{Bellare1993,Bellare1995} like ``common'' key exchange protocols that may be seen in one of the following general settings.
 
 \paragraph{Game-Based \acc{PAKE}-Security}
 The original game-based \ac{PAKE} models in~\cite{Bellare2000,Boyko2000} incorporate the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
@@ -204,7 +194,6 @@ The term \acl{RoR} has been introduced by \citeauthor{Bellare97} in \cite{Bellar
 The notion of \ac{RoR} in the context of \acl{AKE} protocols has been introduced by \citeauthor{Abdalla2005} to strengthen and simplify the \ac{FtG} approach used in the original model from \cite{Bellare2000} towards the \ac{RoR} approach.
 In the \ac{AKE} context \ac{RoR} allows the adversary to query \emph{multiple} keys before deciding whether all of them have been computed by honest parties performing the protocol, or all of tem  have been randomly chosen from the key space.
 
-
 \paragraph{Simulation-Based \acc{PAKE}-Security}
 Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by \citeauthor{Goldreich01}~\cite{Goldreich01}.
 Their work also comprises the first (and until now the only, but fairly inefficient) protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.\footnote{The work in \cite{Goldreich01} is concerned with the general possibility of such a protocol rather than building a practical one.}
@@ -213,8 +202,14 @@ While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PA
 In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
 The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citeauthor{Benhamouda2013} \cite{Benhamouda2013}.
 
-%\fk[inline]{Check if I missed any PAKE paper}
-%\fk[inline]{Add newer protocols (2013)}
+\paragraph{The Problem of Server Compromise}
+A problem intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
+Servers store passwords in databases to retrieve them when necessary.
+Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security problem.
+Different approaches have been proposed to mitigate the impact of server compromises.
+The server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
+\citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framwork, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
+Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
 
 \subsection{Other Password Authenticated Key Exchange Protocols}
 Besides the straight-forward case where a single client-sever pair uses a common password to authenticate each other and establish a secure channel, there exist several other scenarios we discuss in the following.
@@ -233,8 +228,9 @@ One way to achieve group \ac{PAKE} is to use general group key exchange protocol
 %However, this usually yields rather inefficient protocols.
 Similar to the classical \ac{PAKE}, group \ac{PAKE} enjoys a large body of research papers \cite{Kim2004,Abdalla2006,Bohli2006,Dutta2006,AbdallaP06,AbdallaBVS07,AbdallaCCP09,AbdallaCGP11}.
 
-\paragraph{Threshold Password Based Authenticated Key Exchange}
-threshold-based PAKE protocols, e.g.~\cite{Abdalla2005b}, where the client's password is shared amongst two (or possibly more) servers that jointly authenticate the client
+\paragraph{Threshold and Two-Server PAKE}
+Two-server PAKE protocols \cite{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers.
+They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
 
 \paragraph{Password Protected Secret Sharing}
 The notion of \ac{PPSS} was introduced by \citeauthor{Bagherzandi2011} \cite{Bagherzandi2011}.
@@ -251,10 +247,10 @@ A similar notion called \emph{hidden credential retrieval} using only one server
 %* SRP?\\
 %* Two-Server PAKE}
 
-\subsection{Multi-Factor Authenticated Key Exchange}
-As mentioned before, using passwords is only one possible authentication mechanism.
+\paragraph{Multi-Factor Authenticated Key Exchange}
+As mentioned before, using passwords is only one possible authentication mechanism (for humans).
 Combining several authentication techniques leads to \emph{multi-factor} authentication protocols.
-The most commonly used reference for (multi-factor) authentication is the \ac{NIST} standard \cite{Burr11} that defines four security levels for authentication.
+The most commonly used reference for (multi-factor) authentication is the aforementioned \ac{NIST} standard \cite{Burr11} that defines four security levels for authentication.
 Starting from level three at least two authentication factors are necessary.
 Research in the area of multi-factor authentication \cite{PointchevalZ08,SUC10,LiuWM10,HaoC12} propose protocols and security models for two-party and three-party scenarios.
 Real world implementations include for example Google authenticator \cite{GAuthenticator}.
@@ -277,14 +273,14 @@ In particular, they propose a method to perform distributed public key cryptogra
 % *****************************************************************************
 
 \section{How to Ease the Pain}
-While \ac{PAKE} protocols allow humans to negotiate session keys with servers, it introduces a new problem: passwords.
+While \acl{PAKE} protocols allow humans to negotiate session keys with servers, it does not get rid of the probably biggest problem: passwords.
 As previously discussed humans are not able to remember high-entropy secrets.
 But even remembering short passwords seems too complicated in many cases such that users re-use their passwords and choose them from lexicons to simplify the process of recalling.
-This work is not primarily concerned with these technical aspects but as we reassembles them in some cases we give a brief overview on what is out there.
 To simplify the overall password based login process many technical solutions are in use.
-They either avoid the process of logging onto a side at all, or automate it as far as possible.
+This work is not primarily concerned with these technical aspects but as we reassembles them in some cases we give a brief overview on what is out there.
+Those mechanisms either avoid the process of logging onto a website at all, or automate it as far as possible.
 The former is achieved by \ac{SSO} services such as Kerberos \cite{rfc4120} OpenID \cite{OpenID} or OAuth \cite{rfc6749}.
-The latter is done by using password managers in combination with auto completion implementations that store login information for websites and fill the online forms automatically.
+The latter is done by using password managers in combination with auto completion implementations that store login information for websites and fill the forms automatically.
 
 
 % *****************************************************************************
@@ -292,15 +288,15 @@ The latter is done by using password managers in combination with auto completio
 % *****************************************************************************
 \section{Motivation and Outline}
 
-This work consists of five chapters and an appendix.
-We gave a motivational overview and discussion on low-entropy cryptography and passwords in this introduction.
-While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of (low-entropy) cryptography completes the information on research in this area, necessary for the remainder of this work.
+This work consists of six chapters and an appendix.
+We gave a motivational overview and discussion on provable security, low-entropy cryptography and passwords in this introduction.
+While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of cryptography completes the background on research in this area, necessary for the remainder of this work.
 Password-based cryptography in general, and password-based authentication in particular, is an exciting and important research field with a large body of research on the one hand yet many interesting unexplored areas for future work on the other hand.
-Before summarising the contribution in Chapter \ref{ch:opake} and \ref{ch:malservers} we give formal introduction to \acl{PAKE} security models.
-%The main contribution of this work is given in Chapter \ref{ch:pake}, \ref{ch:opake} and \ref{ch:malservers}.
-Chapter \ref{ch:opake} summarises the contribution in the field of \acl{PAKE}, \ie recalling the high-level intuitions from Appendix \ref{paper:opake} on oblivious \ac{PAKE} and Appendix \ref{paper:corrupt} on forward-secrecy and corruption in \ac{PAKE} models.
+Before summarising the contribution in Chapter \ref{ch:opake} and \ref{ch:malservers} we give formal introduction to \acl{PAKE} security models and summarise results from Appendix \ref{paper:corrupt} on forward-secrecy and corruption in \ac{PAKE} models in Chapter \ref{ch:pake}.
+Chapter \ref{ch:opake} summarises the contribution in the field of \acl{PAKE}, \ie recalling the high-level intuitions from Appendix \ref{paper:opake} on oblivious \ac{PAKE}.
 Chapter \ref{ch:malservers} outlines contribution in the area of \ac{PAKE} in the light of malicious servers or server compromise.
 It compiles intuitions from Appendix \ref{paper:2pake} on \aclp{SPHF} and two-server \ac{PAKE} as well as an outlook on blind password policy checking, which work in progress.
+We conclude this work with an outlook on upcoming projects in Chapter \ref{ch:futurework}.
 
 %TODO:
 %\fk{more citations\\

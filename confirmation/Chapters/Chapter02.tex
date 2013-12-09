@@ -1,7 +1,7 @@
 %*****************************************
 \chapter{Prerequisites}\label{ch:background}
 %*****************************************
-In this chapter we recall some definitions necessary to follow this work.
+In this chapter we recall some definitions useful for following this work.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
 While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \cite{katz2008introduction}.
 %\graffito{You might get unexpected results using math in chapter or section heads. Consider the \texttt{pdfspacing} option.}
@@ -15,11 +15,11 @@ In the following we give some useful definitions.
 
 \begin{definition}[Groups]\label{def:groups}
 Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
-\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element and is \emph{commutative}:
+\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element and it is \emph{associative}:
 \begin{itemize}
 	\item For all $g,h\in\GG$, $g\circ h \in\GG$
 	\item There exists an element $e\in\GG$, called \emph{identity}, such that for all $g\in\GG$, $e\circ g=g=g\circ e$.
-	\item For all $g\in\GG$ there exists an \emph{inverse} element $h\in\GG$ such that $g\circ h=e=h\circ e$.
+	\item For all $g\in\GG$ there exists an \emph{inverse} element $h\in\GG$ such that $g\circ h=e=h\circ g$.
 	\item For all $g,h,k\in\GG$, $(g\circ h)\circ k=g\circ (h \circ k)$.
 \end{itemize}
 \eod
@@ -43,8 +43,8 @@ Another useful feature of prime order groups is that all elements of \GG, except
 Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group.
 
 \subsection{Computational Assumptions}
-In this section we recall the uses computational assumptions that are believed to be hard.
-The \ac{DLP} is the basis of all group based assumptions.
+In this section we recall some computational assumptions in the group context that are believed to be hard.
+The \ac{DLP} is the basis of all assumptions in groups.
 
 \begin{definition}[\acl{DLP}]\label{def:dlp}
 Let \GG denote a group of order $p$ with generator $g$.
@@ -53,7 +53,7 @@ The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to 
 \end{definition}
 
 \noindent
-Based \ac{DLP} several assumptions have been proposed.
+Several \ac{DLP}-based assumptions have been proposed.
 The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
 
 \begin{definition}[\acl{DDH}]\label{def:ddh}
@@ -69,18 +69,16 @@ The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is har
 \end{definition}
 
 \section{Definitions}
-
-\begin{definition}[Negligible Functions]\label{def:negligible}
-A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exists an $N\in\NN$ such that for all $n\in\NN$ with $n>N$ it holds that $f(n)<1/p(n)$.
-\eod
-\end{definition}
-
-\noindent
 Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
 As mentioned earlier, security models used in this work are from the computational world.
 In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on a security parameter.
 Security is therefore only given for \emph{reasonable} security parameters.
 To express this asymptotic notation is used.
+
+\begin{definition}[Negligible Functions]\label{def:negligible}
+A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exists an $N\in\NN$ such that for all $n\in\NN$ with $n>N$ it holds that $f(n)<1/p(n)$.
+\eod
+\end{definition}
 
 \begin{definition}[Asymptotic Notation]\label{def:asymptotic}
 Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
@@ -94,12 +92,12 @@ Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
 \eod
 \end{definition}
 
-\paragraph{\accl{PPT}}
+\paragraph{Probabilistic Polynomial-Time}
 We often use the phrase \ac{PPT} to describe an efficient algorithm.
 The actual definition of \ac{PPT}, first defined \cite{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
 
 \begin{definition}[\acl{PP}]\label{def:ppt}
-\ac{PPT} denotes the class of decision problems solvable by a \ac{PTM} $A$ such that
+\ac{PP} denotes the class of decision problems solvable by a \ac{PTM} $A$ such that
 \begin{itemize}
 	\item $A$ runs in polynomial-time,
 	\item at least $1/2$ of the computation paths accept when the answer is `yes', and
@@ -110,7 +108,7 @@ The actual definition of \ac{PPT}, first defined \cite{gill1977}, is given for \
 
 \noindent
 The informal description for \aclp{PTM} is given in Definition \ref{def:ptm}.
-We refer the reader to works concerned with complexity theory like \cite{santos1969,WaterlooComplexity} for a formal definition.
+We refer the reader to works concerned with complexity theory like \cite{santos1969,WaterlooComplexity} for more on \ac{PTM} and a formal definition.
 
 \begin{definition}[\acl{PTM} \cite{gill1977}]\label{def:ptm}
 A \ac{PTM} is a Turing machine with distinguished states called coin-tossing states.
@@ -120,10 +118,11 @@ The computation of a \ac{PTM} is deterministic except that in coin-tossing state
 
 \noindent
 Note that the running time is always parametrised with the security parameter \secpar.
-You can think of \ac{PPT} as a notion for a ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
+You can think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
 In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
 
 \paragraph{Chosen-Ciphertext Attacks}
+\ac{CCA} defines security for encryption schemes.
 Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
 
 \begin{definition}[IND-CCA2 Security]\label{def:indcca2}
@@ -133,7 +132,7 @@ An encryption scheme $\Pi=(\KGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for al
 \noindent
 $\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
 \hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
-\hspace*{2em}$(m_0,m_1)\gets\cA^{\cO(\Enc_\pk),\cO(\Dec_\sk)}(\secpar,\pk)$\\
+\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
 \hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
 \hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
 \hspace*{2em}return $b=b'$
