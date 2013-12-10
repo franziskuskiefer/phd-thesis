@@ -1,4 +1,4 @@
-\documentclass[notes]{beamer}
+\documentclass[notes,xcolor=dvipsnames]{beamer}
 \usepackage{etex}
 \usepackage{pgf}
 \usepackage{color}
@@ -20,6 +20,7 @@
 \usepackage{filecontents}
 \usepackage{rotating}
 \usepackage{graphicx}
+\usepackage[round]{natbib}
 
 \mode<presentation>
 {
@@ -45,14 +46,13 @@
 
 \input{macros}
 
-\title[Oblivious PAKE and Efficient Handling of Password Trials] % (optional, use only with long paper titles)
-{Oblivious PAKE}
+\title[Password Based Authentication] % (optional, use only with long paper titles)
+{Password Based Authentication}
 
-\subtitle
-{Efficient Handling of Password Trials}
+%\subtitle{Efficient Handling of Password Trials}
 
-\author[F. Kiefer, M. Manulis] % (optional, use only with lots of authors)
-{\textbf{Franziskus Kiefer}, Mark Manulis}
+\author[F. Kiefer] % (optional, use only with lots of authors)
+{Franziskus Kiefer}
 % - Give the names in the same order as the appear in the paper.
 % - Use the \inst{?} command only if the authors have different
 %   affiliation.
@@ -69,8 +69,8 @@
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
 
-\date[CF 2013] % (optional, should be abbreviation of conference name)
-{10th Cryptoforma Meeting: 15/16 April 2013\\ Microsoft Research, Cambridge}
+\date[Confirmation] % (optional, should be abbreviation of conference name)
+{Confirmation Report}
 % - Either use conference name or its abbreviation.
 % - Not really informative to the audience, more for people (including
 %   yourself) who are reading the slides online
@@ -154,26 +154,252 @@
 \end{frame}
 
 
-% Structuring a talk is a difficult task and the following structure
-% may not be suitable. Here are some rules that apply for this
-% solution: 
+\section{Introduction \& Motivation}
 
-% - Exactly two or three sections (other than the summary).
-% - At *most* three subsections per section.
-% - Talk about 30s to 2min per frame. So there should be between about
-%   15 and 30 frames, all told.
+\subsection{Authentication and Key Exchange}
+	
+\begin{frame}{How to Communicate Securely?}
 
-% - A conference audience is likely to know very little of what you
-%   are going to talk about. So *simplify*!
-% - In a 20min talk, getting the main ideas across is hard
-%   enough. Leave out details, even if it means being less precise than
-%   you think necessary.
-% - If you omit details that are vital to the proof/implementation,
-%   just say so once. Everybody will be happy with that.
+	How can two (or more) parties want to communicate securely?
+	
+	\vspace*{2em}
+	\structure{Secure}
+	\begin{itemize}
+		\item Authentic
+		\item Confidential
+	\end{itemize}
 
-\section{Motivation}
+	\vspace*{2em}
+	\structure{Key-Establishement} rather than expensive asymmetric encryption
+	\begin{itemize}
+		\item Key Transport/Distribution
+		\item<1-| alert@2> Key Exchange/Agreement
+	\end{itemize}
+\end{frame}
+	
+\begin{frame}{Authenticated Key Exchange}
 
-\subsection{Password Based Authentication on the Web}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
+	
+	\node[state, align=left] (clientText) at (0,-1) {accept $k$};
+	\node[state] (client1) at (2,-1){};
+	
+	\node[state, align=left] at (0,-2) {};
+	\node[state] (client2) at (2,-2){};	
+	
+	
+	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
+	
+	\node[state, align=right] (serverText) at (6,-1) {accept $k$};
+	\node[state] (server1) at (4,-1) {};
+	
+	\node[state, align=right] at (6,-2) {};
+	\node[state] (server2) at (4,-2) {};
+	
+	\node[cylinder, blue, draw,minimum height=1.5cm, minimum width=1.5cm,aspect=.5, inner xsep=1.5cm, inner ysep=0.5cm] at (2.9,-2) {};
+	\draw[pil,<->] (client1) -- node[above] {Key Exchange} (server1);
+	\draw[pil,<->] (server2) -- node[above] {Secure Channel} (client2);
+	
+	\draw[pil,->] (clientText.west) |- (1.5,-2);
+	\draw[pil,->] (serverText.east) |- (4.5,-2);
+\end{tikzpicture}
+%\caption{Encrypted Key Exchange (EKE)}
+\label{fig:ke}
+\end{figure}
+
+\structure{Authenticated} Key Exchange
+\begin{itemize}
+	\item Requires \alert{common secret}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Password Authenticated Key Exchange}
+
+\begin{frame}{Password Authenticated Key Exchange}{PAKE 1/2}
+	\begin{quote}
+	``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\cite{Kaufmann02}
+	\end{quote}
+	
+	\pause
+	\vspace*{2em}
+	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
+		Common secret can have only limmited entropy
+	\end{beamerboxesrounded}
+	
+\end{frame}
+
+\begin{frame}{Password Authenticated Key Exchange}{PAKE 2/2}
+	Inherent threat of dictionary attacks
+	\begin{itemize}
+		\item Can not prevent online dicionary attacks
+		\item PAKE Security:\\ \alert{security against offline dictionary attacks}
+	\end{itemize}
+	
+	\vspace*{2em}
+	Established security models
+	\begin{itemize}
+		\item Game Based Security Model by \cite{Bellare2000}%[BPR 2001]
+		\item Universally Composable PAKE by \cite{Canetti2005}%[CHKLK 2005]
+	\end{itemize}
+%	Well established research area since 2000
+%	\begin{itemize}
+%		\item Simple password-based encrypted key exchange protocols by \cite{Abdalla2005}
+%		\item Faster and shorter password-authenticated key exchange by \cite{Gennaro2008}
+%		\item Round-Optimal Password-Based Authenticated Key Exchange by \cite{Katz2011}
+%		\item \dots
+%	\end{itemize}
+\end{frame}
+
+\begin{frame}{Password Authenticated Key Exchange}{SPAKE}
+
+ \cite{Abdalla2005}: SPAKE uses DL-hard group $G$ and public $M,N\in G$; hash function $H$ as random oracle
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
+	
+	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $X'\gets X\cdot M^\pwd$};
+	\node[state] (client1) at (2,-1){};
+	
+	\node[state, align=left] at (0,-2) {$K'_A\gets (Y'/N^\pwd)^x$};
+	\node[state] (client2) at (2,-2){};	
+	
+	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
+	
+	
+	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
+	
+	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
+	\node[state] (server1) at (4,-1) {};
+	
+	\node[state, align=right] at (6,-2) {$K'_B\gets (X'/M^\pwd)^y$};
+	\node[state] (server2) at (4,-2) {};
+	
+	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+	
+	\draw[pil] (client1) -- node[above] {$X'$} (server1);
+	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
+\end{tikzpicture}
+%\caption{Encrypted Key Exchange (EKE)}
+\label{fig:eke}
+\end{figure}
+Key derivation:\\
+$K_A\gets H(A,B,X',Y',K'_A,\pwd)$\\
+$K_B\gets H(A,B,X',Y',K'_B,\pwd)$
+
+\end{frame}
+
+\subsection{PAKE Security Models}
+
+\begin{frame}{PAKE Security Model}{Authenticated Key Exchange (AKE) 1/2}
+The PPT adversary $\mathcal{A}$ has access to the following oracles:
+\begin{description}
+    \item[$m'\gets\mathsf{Send}(P_i,P',m)$:] processes incoming message $m$ for the instance $P_i$ and returns its result $m'$.
+    \item[$\mathtt{t}\gets\mathsf{Execute}(P,P')$:] creates two new instances $P_i$ and $P'_j$ and returns the transcript $\mathtt{t}$ of their protocol execution.
+    \item[$\pwd\gets\mathsf{Corrupt}(P, P')$:] return $\pwd_{P,P'}$ and mark $(P,P')$ as corrupted.
+    \item[$\mathtt{k}_\mathcal{A}\gets\mathsf{Test}(P_i)$:] if $b=1$, return $\mathtt{k}^i_P$, else if $b=0$, return a randomly chosen element
+\end{description}
+\end{frame}
+
+\begin{frame}{PAKE Security Model}{Authenticated Key Exchange (AKE) 2/2}
+\begin{definition}[AKE-Security]\label{def:ake}
+A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ online sessions there exists a negligible function $\varepsilon(\cdot)$ such that:
+\[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\varepsilon)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
+
+\noindent$\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda):$ \\
+\hspace*{2em} $b\in_R\{0,1\}$\\
+\hspace*{2em} $b'\gets\mathcal{A}^{\mathsf{Send},\mathsf{Execute},\mathsf{Corrupt},\mathsf{Test}}(\lambda)$\\
+\hspace*{2em} return $b=b'$
+\end{definition}
+\end{frame}
+
+\begin{frame}{Forward-Secrecy in PAKE 1/4}{}
+
+	Forward-Secrecy is modelled with corruptions
+	\begin{itemize}
+		\item Forward-Secrecy: session key will not be compromised if long-term key is compromised in the future
+		\item Corrupt oracle returns long-term secret (password)
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Forward-Secrecy in PAKE 2/4}{}
+
+	Different corruption models in PAKE literature
+	\begin{itemize}
+		\item\emph{Zero:} $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle.
+		\item\emph{Static:} $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle but can initially retrieve passwords $\pwd_{C,S}$ before the experiment starts.
+		\item\emph{Adaptive:} $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve $\pwd_{(C,S)}$.
+		\item\emph{Strong:} $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve state information of all client instances $C_i$ that have been invoked with server $S$, including $\pwd_{C,S}$.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Forward-Secrecy in PAKE 3/4}{}
+
+	\begin{dynblock}
+		% First block
+		\opaqueblock<1>{
+				\begin{quote}
+					``[The static corruption model is unnecessary in PAKE as] the independence among the passwords shared between pairs of honest participants and those shared with malicious users.''
+				\end{quote}
+				\vskip5mm
+			  \hspace*\fill{\small--- \cite{Abdalla2005a}}
+		}
+%		\invblock<2->
+
+		% Second block
+		\opaqueblock<2>{
+				\begin{quote}
+					``In the password-only setting, this [static corruption] actually makes no difference because the adversary can internally simulate these oracles by itself.''
+				\end{quote}
+				\vskip5mm
+			  \hspace*\fill{\small--- \cite{Gennaro2008}}
+		}
+%		\invblock<3->
+
+		% Third block
+		\opaqueblock<3>{
+				\begin{quote}
+					``[...] we consider the original BPR2000 model without [dynamic] Corrupt query because the basic notion of BPR2000 freshness restricts the adversary [...] from corrupting anyone in the model (i.e., effectively restricting $\mathcal{A}$ from asking any Corrupt query).''
+				\end{quote}
+				\vskip5mm
+			  \hspace*\fill{\small--- \cite{ChooBH05}}
+		}
+	\end{dynblock}
+
+\end{frame}
+
+\begin{frame}{Forward-Secrecy in PAKE 4/4}{}
+
+	However
+	\begin{itemize}
+		\item No proof for equality of adaptive and zero corruption model given
+		\item No counterexample in the two-party setting exists
+	\end{itemize}
+	
+	\vspace*{2em}
+	\structure{Contribution}
+	\begin{itemize}
+		\item Consolidation of corruption models
+		\item Impossibility of secure PAKE in the strong corruption model
+		\item Unfortunately, no proof for equality of adaptive and zero corruption model found (yet)
+	\end{itemize}
+
+\end{frame}
+
+\section{Password Based Authentication on the Web}
+
+\begin{frame}{Table of Content}
+\tableofcontents[currentsection]
+\end{frame}
 
 \newsavebox{\savelisting}
 \newenvironment{listing}
@@ -231,131 +457,30 @@
 
 \end{frame}
 
-%\begin{frame}{Password Based Authentication on the Web}{}
-%
-%	\begin{figure}
-%\centering
-%\begin{tikzpicture}
-%	\node[state, align=left] at (0,-1) {\pgfimage[width=1.5cm]{browser}};
-%		
-%	\node[state] (client1) at (1.5,-1){};
-%	\node[state] (client2) at (1.5,-2){};		
-%	
-%	\node[state, align=right] at (7,-1) {\pgfimage[width=1.5cm]{web_server}};
-%
-%	\node[state] (server1) at (4.75,-1) {};
-%	\node[state] (server2) at (4.75,-2) {};
-%	
-%	\draw[pil] (client1) -- node[above] {\texttt{Bob,Pwd}} (server1);
-%	\draw[pil] (server2) -- node[above] {\texttt{access/denied}} (client2);
-%
-%	\node[state, align=left] at (3,0) {\structure{SSL/TLS}};	
-%	\node[cylinder, blue, draw,minimum height=1.5cm, minimum width=2cm,aspect=.5, inner xsep=2cm, inner ysep=1cm] at (3,-1.25) {};
-%\end{tikzpicture}
-%
-%\end{figure}
-%\end{frame}
-
-\begin{frame}{Password Based Authentication on the Web}{Drawbacks}
-	\begin{itemize}
-		\item Requires \structure{PKI}
-		\item Server receives \structure{passwords in clear}
-		\item User has to \structure{remember} passwords \& password-username-server mapping
-	\end{itemize}
-	\pause 
-	\vspace*{2em}	
-	
-	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering }\centering
-		...Not the best way to do it...
-	\end{beamerboxesrounded}
-	
-	\pause 
-	\vspace*{2em}	
-	
-	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Better Solution}\centering
-		Password Based Authenticated Key Exchange
-	\end{beamerboxesrounded}
-	
-\end{frame}
-
-\subsection{Password Based Authenticated Key Exchange}
-
-\begin{frame}{Password Based Authenticated Key Exchange (PAKE)}{}
-
-	PAKE protocols known since over 20 years\\
-	
-	\begin{itemize}
-		\item Security against Offline Dictionary attacks
-		\item Established security models
-		\begin{itemize}
-			\item Game Based Security Model \cite{Bellare2000}%[BPR 2001]
-			\item Universally Composable PAKE \cite{Canetti2005}%[CHKLK 2005]
-		\end{itemize}
-		\item Many secure protocols known
-		\begin{itemize}
-			\item Simple password-based encrypted key exchange protocols \cite{Abdalla2005}
-			\item Faster and shorter password-authenticated key exchange \cite{Gennaro2008}
-			\item Round-Optimal Password-Based Authenticated Key Exchange \cite{Katz2011}
-			\item \dots
-		\end{itemize}
-	\end{itemize}	
-
-\end{frame}
-
-\begin{frame}{PAKE Protocols}{Example: SPAKE}
-
- SPAKE \cite{Abdalla2005} uses DL-hard group $G$ and public $M,N\in G$; hash function $H$ as random oracle
-
-\begin{figure}
-\centering
-\begin{tikzpicture}
-	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
-	
-	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $X'\gets X\cdot M^\pwd$};
-	\node[state] (client1) at (2,-1){};
-	
-	\node[state, align=left] at (0,-2) {$K'_A\gets (Y'/N^\pwd)^x$};
-	\node[state] (client2) at (2,-2){};	
-	
-	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
-	
-	
-	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
-	
-	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
-	\node[state] (server1) at (4,-1) {};
-	
-	\node[state, align=right] at (6,-2) {$K'_B\gets (X'/M^\pwd)^y$};
-	\node[state] (server2) at (4,-2) {};
-	
-	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-	
-	\draw[pil] (client1) -- node[above] {$X'$} (server1);
-	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
-\end{tikzpicture}
-%\caption{Encrypted Key Exchange (EKE)}
-\label{fig:eke}
-\end{figure}
-Key derivation:\\
-$K_A\gets H(A,B,X',Y',K'_A,\pwd)$\\
-$K_B\gets H(A,B,X',Y',K'_B,\pwd)$
-
-\end{frame}
-
-%\begin{frame}{PAKE Protocols}{Advantages}
-%
-%	Offer appealing properties for Web Authentication
-%	\vspace*{2em}
-%	
+%\begin{frame}{Password Based Authentication on the Web}{Drawbacks}
 %	\begin{itemize}
-%		\item No server certificates (PKI) needed
-%		\item Passwords are \structure{not transmitted} at all
-%	\end{itemize}	
-%
+%		\item Requires \structure{PKI}
+%		\item Server receives \structure{passwords in clear}
+%		\item User has to \structure{remember} passwords \& password-username-server mapping
+%	\end{itemize}
+%	\pause 
+%	\vspace*{2em}	
+%	
+%	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+%	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+%	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering }\centering
+%		...Not the best way to do it...
+%	\end{beamerboxesrounded}
+%	
+%	\pause 
+%	\vspace*{2em}	
+%	
+%	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+%	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+%	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Better Solution}\centering
+%		Password Based Authenticated Key Exchange
+%	\end{beamerboxesrounded}
+%	
 %\end{frame}
 
 \begin{frame}{PAKE on the Web}{}
@@ -366,20 +491,14 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 	\node[state, align=left] at (-0.5,-2) {\pgfimage[width=2cm]{browser}};
 		
 	\node[state] (client1) at (1.5,-1){};
-%	\node[state] (client2) at (1.5,-2){};
-%	\node[state] (client3) at (1.5,-3){};
 	\node[state] (client4) at (1.5,-2.5){};
 	
 	\node[state, align=right] at (7.5,-2) {\pgfimage[width=2cm]{web_server}};
 
 	\node[state] (server1) at (4.75,-1) {};
-%	\node[state] (server2) at (4.75,-2) {};
-%	\node[state] (server3) at (4.75,-3) {};
 	\node[state] (server4) at (4.75,-2.5) {};
 	
 	\draw[pil,<->] (client1) -- node[above] {\texttt{PAKE}} (server1);
-%	\draw[pil] (server2) -- node[above] {$\mathtt{challenge}_K$} (client2);
-%	\draw[pil] (client3) -- node[above] {$\mathtt{response}_K$} (server3);
 
 	\node[state, align=left] at (3,-1.5) {\structure{Secured$_K$}};	
 	\node[cylinder, blue, draw,minimum height=1.5cm, minimum width=1.5cm,aspect=.5, inner xsep=2cm, inner ysep=0.5cm] at (3,-2.5) {};
@@ -390,12 +509,6 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 
 \vspace*{1em}
 
-%	\begin{itemize}
-%		\item Establish client -- server connection
-%		\item Run PAKE protocol
-%		\item Establish secure channel using the exchanged key
-%	\end{itemize}
-	
 	\begin{itemize}
 		\item No server certificates (PKI) needed
 		\item Passwords are \structure{not transmitted} at all
@@ -407,9 +520,11 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 
 \end{frame}
 
+\subsection{Oblivious PAKE}
+
 \begin{frame}{The Problem of Failed Logins}{}
 
-	Users are still not good with passwords \cite{Florencio2007,Gaw2006a}:
+	Users still struggle with passwords (cf. \cite{Florencio2007,Gaw2006a}):
 	
 	\begin{itemize}
 		\item 2.4 failed login attempts on average
@@ -441,9 +556,7 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 	SPAKE execution for $3$ passwords: $3\times4$ Exponentiations%, $3\times2$ Multiplications, $3$ Inversions, $3$ Hashes
 \end{frame}
 
-\subsection{Goals of this Work}
-
-\begin{frame}{Oblivious PAKE}{}
+\begin{frame}{Oblivious PAKE}{Contribution}
 
 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
@@ -464,8 +577,6 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 	\end{itemize}
 	
 \end{frame}
-
-\section{Oblivious PAKE}
 
 \subsection{Setting}
 
@@ -514,31 +625,31 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 	
 \end{frame}
 
-\begin{frame}{Oblivious PAKE}{Setting}
-\begin{figure}
-	\includegraphics[width=\textwidth]{impl.png}
-\end{figure}
-\end{frame}
+%\begin{frame}{Oblivious PAKE}{Setting}
+%\begin{figure}
+%	\includegraphics[width=\textwidth]{loginForm2.png} %FIXME
+%\end{figure}
+%\end{frame}
 
-\begin{frame}{Oblivious PAKE}{Security Model}
-	Game based security model from \cite{Bellare2000,Abdalla2005a}: %[BPR 2001, AFP 2005]:
-	\begin{itemize}
-		\item Real-or-Random (multiple Test queries)
-		\item Forward Secrecy (Corrupt oracle)
-		\item Extended to allow multiple input passwords
-	\end{itemize}
-	
-	\begin{figure}
-		\fbox{
-		\begin{tikzpicture}
-			\node[state, align=left] at (3,-1) {$c\in\NN, b\rin\bits$\\
-				$\forall(P,P')\in\cC\times\cS$, pick $\pwd_{P,P'}\rin\cD$\\
-				$b'\gets\cA^{\send,\execute,\corrupt,\test}(\secpar, c)$\\
-				return $b\cmp b'$};
-		\end{tikzpicture}}
-	\end{figure}
+%\begin{frame}{Oblivious PAKE}{Security Model}
+%	Game based security model from \cite{Bellare2000,Abdalla2005a}: %[BPR 2001, AFP 2005]:
+%	\begin{itemize}
+%		\item Real-or-Random (multiple Test queries)
+%		\item Forward Secrecy (Corrupt oracle)
+%		\item Extended to allow multiple input passwords
+%	\end{itemize}
+%	
+%	\begin{figure}
+%		\fbox{
+%		\begin{tikzpicture}
+%			\node[state, align=left] at (3,-1) {$c\in\NN, b\rin\bits$\\
+%				$\forall(P,P')\in\cC\times\cS$, pick $\pwd_{P,P'}\rin\cD$\\
+%				$b'\gets\cA^{\send,\execute,\corrupt,\test}(\secpar, c)$\\
+%				return $b\cmp b'$};
+%		\end{tikzpicture}}
+%	\end{figure}
 
-\end{frame}
+%\end{frame}
 
 \begin{frame}{Oblivious PAKE}{Na{\"i}ve Solution}
 
@@ -550,7 +661,7 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 \opaqueblock<1>{\vspace*{-1em}
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{npake}
+\includegraphics[width=\textwidth]{npake.pdf}
 \end{figure}
 }
 \invblock<2->
@@ -654,7 +765,7 @@ Successful iff 1 session successful
 \end{frame}
 }
 
-\subsection{Idea}
+%\subsection{Idea}
 
 \drawopake{?}{?}{?}{?}{Idea}{\drawoverlays}
 
@@ -663,7 +774,7 @@ Successful iff 1 session successful
 
 \begin{frame}{Building Blocks}{Index-Hiding Message Encoding (IHME)}
 
-	IHME, introduced in \cite{Manulis2010}, is a message encoding with following properties: %[MPP 2010]
+	IHME, introduced by \cite{Manulis2010}, is a message encoding with following properties: %[MPP 2010]
 	%\vspace*{1em}
 	\begin{itemize}
 		\item Encodes set of index, message pairs $(i,m)$
@@ -711,7 +822,7 @@ Successful iff 1 session successful
 \drawopake{?}{\begin{sideways}\alert{IHME.iEncode}\end{sideways}}{\begin{sideways}\alert{IHME.iDecode}\end{sideways}}{?}{IHME}{\drawoverlay}
 
 \begin{frame}{Building Blocks}{Admissible Encodings}
-	Admissible Encodings $F:S\rightarrow R, \cI_F:R\rightarrow S$, introduced in \cite{BonehF01,BrierCIMRT10,pseudorandomSignatures} encodes elements from set $S$ to $R$ such that: %[BF 2001, FGKMP 2013]
+	Admissible Encodings $F:S\rightarrow R, \cI_F:R\rightarrow S$, introduced by \cite{BonehF01} encodes elements from set $S$ to $R$ such that: %[BF 2001, FGKMP 2013] ,BrierCIMRT10,pseudorandomSignatures
 	\begin{itemize}
 		\item $\cI_F(r)$ is statistically indistinguishable from uniform distribution over $S$
 		\item Efficient computable
@@ -722,7 +833,7 @@ Successful iff 1 session successful
 	
 %	\begin{itemize}
 %		\item 
-		SPAKE uses Admissible Encoding to map arbitrary subgroups $G_q \subseteq \ZZ_N^\ast \mapsto \ZZ_N$ of prime order $q$\\ (cf. ~\cite[Lemma~12]{pseudorandomSignatures}) %p^\times
+		SPAKE uses Admissible Encoding to map arbitrary subgroups $G_q \subseteq \ZZ_N^\ast \mapsto \ZZ_N$ of prime order $q$\\  ~\cite[Lemma~12]{pseudorandomSignatures} %p^\times
 %		\item Set $R=\{0,\dots,N-1\}=\ZZ_N$ of natural numbers, for arbitrary $N\in\NN$. (cf. ~\cite[Lemma~12]{pseudorandomSignatures})
 %	\end{itemize}		
 	
@@ -741,109 +852,109 @@ Successful iff 1 session successful
 
 \drawopake{\begin{sideways}\alert{Admissible Encoding$^{-1}$}\end{sideways}}{\begin{sideways}IHME.iEncode\end{sideways}}{\begin{sideways}IHME.iDecode\end{sideways}}{\begin{sideways}\alert{Admissible Encoding}\end{sideways}}{Key Confirmation}{}
 
-\subsection{O-PAKE Compiler}
+%\subsection{O-PAKE Compiler}
 
-\begin{frame}{O-PAKE Compiler}{On the example of SPAKE}
-	
-\begin{figure}
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}
-	\node[state, align=center, text width=6cm] (client) at (0,1.25) {\pgfimage[width=0.8cm]{os_tux}\\ Client, $\pwdv$};
-	
-	\node[state, align=left, text width=6cm] at (0,-1) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $x\rin\ZZ_p, X\gets g^x$\\\hspace*{1em}  $X'_i\gets X\cdot M^{\pwd_i}$\\\hspace*{1em} \alert{$P=P\bigcup(\pwd_i,\cI_F(X'_i))$} \\ \alert{$S\gets$IHME.encode$(P)$}};
-	\node[state, text width=6cm] (client1) at (6,-1){};
-	
-	\node[state, text width=6cm, align=left] at (0,-5) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $K'_A\gets (Y'/N^\pwd)^x$\\\hspace*{1em} $K_A^i\gets H(A,B,X',Y',K'_A,\pwd)$\\\hspace*{1em}\alert{$C'\gets\PRF_{K_A^i}(S,Y',0)$}\\\hspace*{1em}\alert{IF $C\cmp C'$}\\\hspace*{2em} \alert{$K_{A_F}\gets\PRF_{K_A}(S,Y',1)$}\\\hspace*{2em}\alert{break}};
-	\node[state, text width=6cm] (client2) at (0,-3){};
-	
-	\node[state, text width=6cm] (client3) at (0,-4.5){};
-	
-	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
-	
-	
-	\node[state, text width=6cm, align=center] (server) at (6,1.25) {\pgfimage[width=0.8cm]{techie_sailor}\\ Server, $\pwd$};
-	
-	\node[state, text width=6cm, align=left] at (7.5,-1) {\setlength{\baselineskip}{20pt}\alert{$X^\ast\gets$IHME.decode$(\pwd,S)$\\ $X'\gets F(X^\ast)$}\\$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
-	\node[state, text width=6cm] (server1) at (7,-1) {};
-	
-	\node[state, text width=6cm, align=left] at (7.5,-4) {\setlength{\baselineskip}{20pt}$K'_B\gets (X'/M^\pwd)^y$\\ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$\\\alert{$C\gets\PRF_{K_B}(S,Y',0)$}\\\alert{$K_{B_F}\gets\PRF_{K_B}(S,Y',1)$}};
-	\node[state, text width=6cm] (server2) at (1,-3) {};
-	
-	\node[state, text width=6cm] (server3) at (1,-4.5) {};
-	
-	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-	
-	\draw[pil] (client1) -- node[above] {\alert{$S$}} (server1);
-	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
-	\draw[red,pil] (server3) -- node[above] {\alert{$C$}} (client3);
-\end{tikzpicture}}
-\end{figure}
+%\begin{frame}{O-PAKE Compiler}{On the example of SPAKE}
+%	
+%\begin{figure}
+%\centering
+%\resizebox{\textwidth}{!}{%
+%\begin{tikzpicture}
+%	\node[state, align=center, text width=6cm] (client) at (0,1.25) {\pgfimage[width=0.8cm]{os_tux}\\ Client, $\pwdv$};
+%	
+%	\node[state, align=left, text width=6cm] at (0,-1) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $x\rin\ZZ_p, X\gets g^x$\\\hspace*{1em}  $X'_i\gets X\cdot M^{\pwd_i}$\\\hspace*{1em} \alert{$P=P\bigcup(\pwd_i,\cI_F(X'_i))$} \\ \alert{$S\gets$IHME.encode$(P)$}};
+%	\node[state, text width=6cm] (client1) at (6,-1){};
+%	
+%	\node[state, text width=6cm, align=left] at (0,-5) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $K'_A\gets (Y'/N^\pwd)^x$\\\hspace*{1em} $K_A^i\gets H(A,B,X',Y',K'_A,\pwd)$\\\hspace*{1em}\alert{$C'\gets\PRF_{K_A^i}(S,Y',0)$}\\\hspace*{1em}\alert{IF $C\cmp C'$}\\\hspace*{2em} \alert{$K_{A_F}\gets\PRF_{K_A}(S,Y',1)$}\\\hspace*{2em}\alert{break}};
+%	\node[state, text width=6cm] (client2) at (0,-3){};
+%	
+%	\node[state, text width=6cm] (client3) at (0,-4.5){};
+%	
+%	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
+%	
+%	
+%	\node[state, text width=6cm, align=center] (server) at (6,1.25) {\pgfimage[width=0.8cm]{techie_sailor}\\ Server, $\pwd$};
+%	
+%	\node[state, text width=6cm, align=left] at (7.5,-1) {\setlength{\baselineskip}{20pt}\alert{$X^\ast\gets$IHME.decode$(\pwd,S)$\\ $X'\gets F(X^\ast)$}\\$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
+%	\node[state, text width=6cm] (server1) at (7,-1) {};
+%	
+%	\node[state, text width=6cm, align=left] at (7.5,-4) {\setlength{\baselineskip}{20pt}$K'_B\gets (X'/M^\pwd)^y$\\ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$\\\alert{$C\gets\PRF_{K_B}(S,Y',0)$}\\\alert{$K_{B_F}\gets\PRF_{K_B}(S,Y',1)$}};
+%	\node[state, text width=6cm] (server2) at (1,-3) {};
+%	
+%	\node[state, text width=6cm] (server3) at (1,-4.5) {};
+%	
+%	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+%	
+%	\draw[pil] (client1) -- node[above] {\alert{$S$}} (server1);
+%	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
+%	\draw[red,pil] (server3) -- node[above] {\alert{$C$}} (client3);
+%\end{tikzpicture}}
+%\end{figure}
 
-\end{frame}
+%\end{frame}
 
-\subsection{Implementation \& Performance}
+%\subsection{Implementation \& Performance}
 
-\begin{frame}{OPAKE Implementation}{}
-	\structure{Modular} implementation
-	\begin{itemize}
-		\item Generic Oblivious PAKE Protocol, including
-		\begin{itemize}
-			\item IHME
-			\item Admissible Encodings for $G_q\mapsto\ZZ_N$
-		\end{itemize}
-	\end{itemize}
+%\begin{frame}{OPAKE Implementation}{}
+%	\structure{Modular} implementation
+%	\begin{itemize}
+%		\item Generic Oblivious PAKE Protocol, including
+%		\begin{itemize}
+%			\item IHME
+%			\item Admissible Encodings for $G_q\mapsto\ZZ_N$
+%		\end{itemize}
+%	\end{itemize}
 
-	\pause
-	\vspace*{2em}
-	Implementing an O-PAKE instance includes:
-	\begin{itemize}
-		\item Implementation of suitable PAKE protocols
-		\item Poss. implementation of an admissible encoding
-	\end{itemize}
-	
-\end{frame}
+%	\pause
+%	\vspace*{2em}
+%	Implementing an O-PAKE instance includes:
+%	\begin{itemize}
+%		\item Implementation of suitable PAKE protocols
+%		\item Poss. implementation of an admissible encoding
+%	\end{itemize}
+%	
+%\end{frame}
 
-\begin{frame}[fragile]{OPAKE Performance}{Oblivious SPAKE Implementation}
-\begin{figure}[tbp]
-\centering
-%	\begin{subfigure}[b]{0.5\textwidth}
+%\begin{frame}[fragile]{OPAKE Performance}{Oblivious SPAKE Implementation}
+%\begin{figure}[tbp]
+%\centering
+%%	\begin{subfigure}[b]{0.5\textwidth}
+%%		\begin{tikzpicture}[scale=0.85]
+%%		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=1200,ymin=0]
+%%			\addplot+[mark=square,black] table[x index=0,y index=6,col sep=space] {measurements.txt};
+%%			\addlegendentry{O-RG-PAKE}		
+%%			\addplot+[mark=triangle,black] table[x index=0,y index=8,col sep=space] {measurements.txt};
+%%			\addlegendentry{N-RG-PAKE}
+%%		\end{axis}
+%%		\end{tikzpicture}
+%%		%\caption{Oblivious RG-PAKE}
+%%		%\label{fig:orgpake}
+%%	\end{subfigure}\hspace*{0.5cm}
+%%	\begin{subfigure}[b]{0.5\textwidth}
 %		\begin{tikzpicture}[scale=0.85]
-%		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=1200,ymin=0]
-%			\addplot+[mark=square,black] table[x index=0,y index=6,col sep=space] {measurements.txt};
-%			\addlegendentry{O-RG-PAKE}		
-%			\addplot+[mark=triangle,black] table[x index=0,y index=8,col sep=space] {measurements.txt};
-%			\addlegendentry{N-RG-PAKE}
+%		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=50,ymin=0]
+%			\addplot+[mark=square*] table[x index=0,y index=2,col sep=space] {measurements.txt};
+%			\addlegendentry{O-SPAKE}
+%			\addplot+[mark=triangle*] table[x index=0,y index=4,col sep=space] {measurements.txt};
+%			\addlegendentry{N-SPAKE}
 %		\end{axis}
 %		\end{tikzpicture}
-%		%\caption{Oblivious RG-PAKE}
-%		%\label{fig:orgpake}
-%	\end{subfigure}\hspace*{0.5cm}
-%	\begin{subfigure}[b]{0.5\textwidth}
-		\begin{tikzpicture}[scale=0.85]
-		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=50,ymin=0]
-			\addplot+[mark=square*] table[x index=0,y index=2,col sep=space] {measurements.txt};
-			\addlegendentry{O-SPAKE}
-			\addplot+[mark=triangle*] table[x index=0,y index=4,col sep=space] {measurements.txt};
-			\addlegendentry{N-SPAKE}
-		\end{axis}
-		\end{tikzpicture}
-		%\caption{Oblivious SPAKE}
-		%\label{fig:ospake}
-%	\end{subfigure}
-%	\caption{Server-side Timings for Oblivious RG-PAKE (left) and SPAKE (right) Protocols}\label{fig:orgpake}
-\end{figure}
-\end{frame}
+%		%\caption{Oblivious SPAKE}
+%		%\label{fig:ospake}
+%%	\end{subfigure}
+%%	\caption{Server-side Timings for Oblivious RG-PAKE (left) and SPAKE (right) Protocols}\label{fig:orgpake}
+%\end{figure}
+%\end{frame}
 
-\section{Summary}
+\subsection{Summary (Oblivious PAKE)}
 
-\begin{frame}{Summary}
+\begin{frame}{Summary (Oblivious PAKE)}
 
   \begin{itemize}
   \item We proposed \alert{Oblivious PAKE} with multiple client passwords
   \item \alert{Constant server runtime} even on failed login attempts
   \item \alert{Modular implementation} of the compiler
-  \item Compiler implementation using SPAKE \cite{Abdalla2005} and RG-PAKE \cite{Gennaro2008}
+  \item Compiler implementation using SPAKE by \cite{Abdalla2005} and RG-PAKE by \cite{Gennaro2008}
   \end{itemize}
   
   \vskip0pt plus.5fill
@@ -856,6 +967,65 @@ Successful iff 1 session successful
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+
+%===============================================================================
+% 2PAKE
+%===============================================================================
+\section{Distributed Smooth Projective Hashing \& 2-Server PAKE}
+
+\begin{frame}{Table of Content}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Two-Server PAKE}
+
+\end{frame}
+
+\subsection{Distributed Smooth Projective Hashing}
+
+\begin{frame}{Smooth Projective Hashing}
+
+\end{frame}
+
+\begin{frame}{Extended Smooth Projective Hashing}
+
+\end{frame}
+
+\begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
+
+\end{frame}
+
+\subsection{A New 2-Server PAKE Framework}
+
+\begin{frame}{2-Server PAKE from DSPHF}
+
+\end{frame}
+
+%===============================================================================
+% Future Work
+%===============================================================================
+\section{Summary \& Future Work}
+
+\begin{frame}{Table of Content}
+\tableofcontents[currentsection]
+\end{frame}
+
+\subsection{Summary}
+
+\begin{frame}{Summary}
+
+\end{frame}
+
+\subsection{Future Work}
+
+\begin{frame}{Future Work}
+
+\end{frame}
+
+%===============================================================================
+% Appendix
+%===============================================================================
 
 \newcommand{\beginbackup}{
    \newcounter{framenumbervorappendix}
@@ -873,11 +1043,10 @@ Successful iff 1 session successful
 
 \begin{frame}[allowframebreaks]
   \frametitle<presentation>{References}
-  \bibliographystyle{alpha}
+  \bibliographystyle{abbrvnat}
   \bibliography{references}
 \end{frame}
 \backupend
 
 \end{document}
-
 

@@ -1,1 +1,6 @@
 svg
+*.bcv
+*.nav
+*.snm
+*.vrb
+*.bcf
