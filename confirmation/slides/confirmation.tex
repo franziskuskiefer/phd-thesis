@@ -978,27 +978,102 @@ Successful iff 1 session successful
 \tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Two-Server PAKE}
-
-\end{frame}
-
 \subsection{Distributed Smooth Projective Hashing}
 
 \begin{frame}{Smooth Projective Hashing}
+
+\begin{dynblock}
+\opaqueblock<1>{\hspace*{1em}
+Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.
+\begin{itemize}
+	\item $\mathsf{KGen_H}(L_x)$ generates a hashing key $k_h\in_R\ZZ_p^{1\times n}$ for language $L_x$.
+	\item $\mathsf{KGen_P}(k_h,L_x)$ derives the projection key $k_h=\Gamma\odot k_h\in\GG^{k\times 1}$, possibly depending on $C$.
+	\item $\mathsf{Hash}(k_h,L_x,C)$ outputs the hash value $h=\Theta_x(C)\odot k_h\in\GG$.
+	\item $\mathsf{PHash}(k_p,L_x,C,w)$ returns the hash value $h=\lambda\odot k_p\in\GG$, with $\lambda=\Omega(w)$.
+\end{itemize}
+}
+\invblock<2->
+
+\opaqueblock<2>{\hspace*{1em}
+	\begin{itemize}
+		\item \emph{Correctness}: If $C\in L$, with $w$ proving so, then $\mathsf{Hash}(k_h,L_x,C)=\mathsf{PHash}(k_p,L_x,C,w)$.
+		\item \emph{Smoothness}: If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element from $\GG$.
+		\item \emph{Pseudorandomness}: If $C\in L_x$, the hash value $h$ is indistinguishable from a random element from $\GG$.
+	\end{itemize}
+}
+\end{dynblock}
 
 \end{frame}
 
 \begin{frame}{Extended Smooth Projective Hashing}
 
+\begin{itemize}
+	\item $\mathsf{KGen_H}(L_x)$ generates a hashing key $k_h\in_R\ZZ_p^{1\times n}$ for language $L_x$.
+	\item $\mathsf{KGen_P}(k_h,L_x)$ derives the projection key $k_h=\Gamma\odot k_h\in\GG^{k\times 1}$, possibly depending on $C$.
+	\item $\mathsf{Hash}_x (k_{h,0},L_x,C_1,\dots,C_x)$ outputs the hash value $h_x=\Theta^x_{x}(C_1,\dots,C_x)\odot k_{h,0}$.
+	\item $\mathsf{PHash}_x (k_{p,0},L_x,C_1,\dots,C_x,w_1,\dots,w_x)$ returns the hash value $h_x=\prod^{x}_{i=1}(\lambda^i\odot k_{p,0})$, where $\lambda^i=\Omega(w_i,C_i)$.
+	\item $\mathsf{Hash}_0(k_{h,1},\dots,k_{h,x},L_x,C_0)$ outputs the hash value $h_0=\prod^{x}_{i=1}(\Theta_{x}^0(C_0)\odot k_{h,i})=\Theta_{x}^0(C_0)\odot \sum^x_{i=1} k_{h,i}$.
+	\item $\mathsf{PHash}_0(k_{p,1},\dots,k_{p,x},L_x,C_0,w_0)$ returns the hash value $h_0=\prod^{x}_{i=1}(\lambda^0\odot k_{p,i})$, with $\lambda^0=\Omega(w_0,C_0)$.
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
+
+\structure{$\mathsf{PHash}_x^D$} between parties $P_1,\dots,P_x$.\\
+	\hspace*{1em} Each $P_i$ performs $\mathsf{PHash}_x^D$ on input $(k_{p,0},\mathtt{crs},\allowbreak C_1,\dots,C_x,w_i)$ such that $P_1$ eventually holds $h_x$.
+	
+	\vspace*{2em}
+\structure{$\mathsf{Hash}_0^D$} between parties $P_1,\dots,P_x$.\\
+	\hspace*{1em} Each $P_i$ performs $\mathsf{Hash}_0^D$ on input $(x'_i,\sk_i,k_{h,i}, \pk_1,\dots,\pk_x,C_0,\dots,C_x)$ such that $P_1$ eventually holds $h_0$.
 
 \end{frame}
 
 \subsection{A New 2-Server PAKE Framework}
 
+\begin{frame}{Two-Server PAKE}
+
+		\begin{figure}
+		\begin{tikzpicture}
+			\node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
+			\node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+			\draw[pil] ($(client.west)+(1.2,0)$) -- (server1);
+			\draw[pil] ($(client.west)+(1.2,0)$) -- (server2);
+		\end{tikzpicture}
+		\end{figure}
+
+\end{frame}
+
 \begin{frame}{2-Server PAKE from DSPHF}
+
+		\begin{figure}
+		\begin{tikzpicture}
+			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\\hspace*{0cm}\\};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
+			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	
+			\draw[pil,->] ($(client.west)+(2,0.2)$) -| node[above,anchor=center,xshift=-1.5cm,yshift=-0.8cm]{$k_p,C$} (server1);
+			\draw[pil,->] ($(client.west)+(2,-0.2)$) -| node[below,anchor=center,xshift=-1.5cm,yshift=0.8cm]{$k_p,C$} (server2);
+			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[above,anchor=center]{$k_{p,1},C_1$} (server1);
+			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[below,anchor=center]{$k_{p,2},C_2$} (server2);
+		\end{tikzpicture}
+		\end{figure}
+
+\end{frame}
+
+\begin{frame}{2-Server PAKE from DSPHF}
+
+		\begin{figure}
+		\begin{tikzpicture}
+			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\ $\mathsf{PHash}_0\cdot\mathsf{Hash}_x$\\ $\rightarrow \sk$};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$\\ $\rightarrow \sk$};
+			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	
+			\draw[pil,<->] (server1) -- node[anchor=center,xshift=-0.1cm]{$\mathsf{PHash}_x^D$~~~~$\mathsf{Hash}_0^D$} (server2);
+%			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[below,anchor=center]{$k_{p,2},C_2$} (server2);
+		\end{tikzpicture}
+		\end{figure}
 
 \end{frame}
 
@@ -1013,13 +1088,33 @@ Successful iff 1 session successful
 
 \subsection{Summary}
 
-\begin{frame}{Summary}
+\begin{frame}{Summary of Contributions}
+
+\begin{itemize}\itemsep1em
+	\item Consolidation of corruption models
+	\item Oblivious PAKE
+	\item Distributed SPHF \& \\ New 2-Server PAKE framework
+\end{itemize}
 
 \end{frame}
 
 \subsection{Future Work}
 
 \begin{frame}{Future Work}
+
+	\structure{Work in Progress}
+	\begin{itemize}
+		\item Secure Mobile Logins
+		\item Zero Knowledge Password Policy Checker
+	\end{itemize}
+
+	\vspace*{2em}
+	\structure{Planned Projects}
+	\begin{itemize}
+		\item 2-Server PAKE in UC
+		\item 2-Server password authenticated secret sharing in the password-only model
+		\item Trying to understand the forward-secrecy in game-based PAKE
+	\end{itemize}
 
 \end{frame}
 
