@@ -182,7 +182,7 @@
 \begin{figure}
 \centering
 \begin{tikzpicture}
-	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
+	\node[state,align=center] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}\\\alert{s}};
 	
 	\node[state, align=left] (clientText) at (0,-1) {accept $k$};
 	\node[state] (client1) at (2,-1){};
@@ -191,7 +191,7 @@
 	\node[state] (client2) at (2,-2){};	
 	
 	
-	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
+	\node[state,align=center] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}\\\alert{s}};
 	
 	\node[state, align=right] (serverText) at (6,-1) {accept $k$};
 	\node[state] (server1) at (4,-1) {};
@@ -212,7 +212,7 @@
 
 \structure{Authenticated} Key Exchange
 \begin{itemize}
-	\item Requires \alert{common secret}
+	\item Requires \alert{(common) secret}
 \end{itemize}
 
 \end{frame}
@@ -229,7 +229,7 @@
 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
-		Common secret can have only limmited entropy
+		Common secret with limited entropy
 	\end{beamerboxesrounded}
 	
 \end{frame}
@@ -238,7 +238,7 @@
 	Inherent threat of dictionary attacks
 	\begin{itemize}
 		\item Can not prevent online dicionary attacks
-		\item PAKE Security:\\ \alert{security against offline dictionary attacks}
+		\item PAKE Security:\\\begin{center} \alert{security against offline dictionary attacks}\end{center}
 	\end{itemize}
 	
 	\vspace*{2em}
@@ -265,10 +265,10 @@
 \begin{tikzpicture}
 	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
 	
-	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $X'\gets X\cdot M^\pwd$};
+	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $\color{red} X'\gets X\cdot M^\pwd$};
 	\node[state] (client1) at (2,-1){};
 	
-	\node[state, align=left] at (0,-2) {$K'_A\gets (Y'/N^\pwd)^x$};
+	\node[state, align=left] at (0,-2) {$K'_A\gets {\color{red} (Y'/N^\pwd)}^x$};
 	\node[state] (client2) at (2,-2){};	
 	
 	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
@@ -276,10 +276,10 @@
 	
 	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
 	
-	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
+	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $\color{red} Y\gets Y\cdot N^\pwd$};
 	\node[state] (server1) at (4,-1) {};
 	
-	\node[state, align=right] at (6,-2) {$K'_B\gets (X'/M^\pwd)^y$};
+	\node[state, align=right] at (6,-2) {$K'_B\gets {\color{red} (X'/M^\pwd)}^y$};
 	\node[state] (server2) at (4,-2) {};
 	
 	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
@@ -287,7 +287,6 @@
 	\draw[pil] (client1) -- node[above] {$X'$} (server1);
 	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
 \end{tikzpicture}
-%\caption{Encrypted Key Exchange (EKE)}
 \label{fig:eke}
 \end{figure}
 Key derivation:\\
@@ -301,16 +300,16 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 \begin{frame}{PAKE Security Model}{Authenticated Key Exchange (AKE) 1/2}
 The PPT adversary $\mathcal{A}$ has access to the following oracles:
 \begin{description}
-    \item[$m'\gets\mathsf{Send}(P_i,P',m)$:] processes incoming message $m$ for the instance $P_i$ and returns its result $m'$.
-    \item[$\mathtt{t}\gets\mathsf{Execute}(P,P')$:] creates two new instances $P_i$ and $P'_j$ and returns the transcript $\mathtt{t}$ of their protocol execution.
-    \item[$\pwd\gets\mathsf{Corrupt}(P, P')$:] return $\pwd_{P,P'}$ and mark $(P,P')$ as corrupted.
-    \item[$\mathtt{k}_\mathcal{A}\gets\mathsf{Test}(P_i)$:] if $b=1$, return $\mathtt{k}^i_P$, else if $b=0$, return a randomly chosen element
+    \item[$m'\gets\mathsf{Send}(P,P',m)$:] \hfill \\ simulates active attack.
+    \item[$\mathtt{t}\gets\mathsf{Execute}(P,P')$:] \hfill \\ simulates passive attack
+    \item[$\pwd\gets\mathsf{Corrupt}(P, P')$:] \hfill \\ simulates password leakage
+    \item[$\mathtt{k}_\mathcal{A}\gets\mathsf{Test}(P)$:] \hfill \\ returns real or random key (security definition)
 \end{description}
 \end{frame}
 
 \begin{frame}{PAKE Security Model}{Authenticated Key Exchange (AKE) 2/2}
 \begin{definition}[AKE-Security]\label{def:ake}
-A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ online sessions there exists a negligible function $\varepsilon(\cdot)$ such that:
+A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ active attacks there exists a negligible function $\varepsilon(\cdot)$ such that:
 \[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\varepsilon)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
 
 \noindent$\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda):$ \\
@@ -318,7 +317,9 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
 \hspace*{2em} $b'\gets\mathcal{A}^{\mathsf{Send},\mathsf{Execute},\mathsf{Corrupt},\mathsf{Test}}(\lambda)$\\
 \hspace*{2em} return $b=b'$
 \end{definition}
+$\mathsf{Test}$ may only be asked on \emph{fresh} session.
 \end{frame}
+
 
 \begin{frame}{Forward-Secrecy in PAKE 1/4}{}
 
@@ -330,15 +331,14 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
 
 \end{frame}
 
-\begin{frame}{Forward-Secrecy in PAKE 2/4}{}
+\begin{frame}{Forward-Secrecy in PAKE 2/4}{Corruption Models}
 
-	Different corruption models in PAKE literature
-	\begin{itemize}
-		\item\emph{Zero:} $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle.
-		\item\emph{Static:} $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle but can initially retrieve passwords $\pwd_{C,S}$ before the experiment starts.
-		\item\emph{Adaptive:} $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve $\pwd_{(C,S)}$.
-		\item\emph{Strong:} $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve state information of all client instances $C_i$ that have been invoked with server $S$, including $\pwd_{C,S}$.
-	\end{itemize}
+	\begin{description}
+		\item[Zero] \hfill \\ $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle.
+		\item[Static] \hfill \\ $\mathcal{A}$ has no access to the $\mathsf{Corrupt}$ oracle but can initially retrieve passwords before the experiment starts.
+		\item[Adaptive] \hfill \\ $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve $\pwd_{(C,S)}$.
+		\item[Strong] \hfill \\  $\mathcal{A}$ has access to the $\mathsf{Corrupt}(C,S)$ oracle to retrieve state information of all client instances $C_i$ that have been invoked with server $S$, including $\pwd_{C,S}$.
+	\end{description}
 
 \end{frame}
 
@@ -348,7 +348,7 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
 		% First block
 		\opaqueblock<1>{
 				\begin{quote}
-					``[The static corruption model is unnecessary in PAKE as] the independence among the passwords shared between pairs of honest participants and those shared with malicious users.''
+					``The set of malicious users did not need to be considered in the 2-party due to the independence among the passwords shared between pairs of honest participants and those shared with malicious users.''
 				\end{quote}
 				\vskip5mm
 			  \hspace*\fill{\small--- \cite{Abdalla2005a}}
@@ -381,7 +381,7 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
 
 	However
 	\begin{itemize}
-		\item No proof for equality of adaptive and zero corruption model given
+		\item No proof for equality of static/adaptive and zero corruption model given
 		\item No counterexample in the two-party setting exists
 	\end{itemize}
 	
@@ -543,6 +543,7 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
 %	    		\item Communication overhead
 	    	\end{itemize}
     \end{column}
+	\vspace*{2em}
     \begin{column}{.475\linewidth}
     		{\centering\structure{TLS-based}}\\
     		\begin{itemize}
@@ -552,8 +553,7 @@ A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$
     		\end{itemize}
     \end{column}
   \end{columns}
-	\vspace*{2em}
-	SPAKE execution for $3$ passwords: $3\times4$ Exponentiations%, $3\times2$ Multiplications, $3$ Inversions, $3$ Hashes
+%	SPAKE execution for $3$ passwords: $3\times4$ Exponentiations%, $3\times2$ Multiplications, $3$ Inversions, $3$ Hashes
 \end{frame}
 
 \begin{frame}{Oblivious PAKE}{Contribution}
@@ -962,8 +962,9 @@ Successful iff 1 session successful
   \item
     Outlook
     \begin{itemize}
-    \item Real world application (e.g. browser integration)
+%    \item Real world application (e.g. browser integration)
     \item Reduce Communication overhead
+    \item ...
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -985,65 +986,103 @@ Successful iff 1 session successful
 \begin{dynblock}
 \opaqueblock<1>{\hspace*{1em}
 Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.
-\begin{itemize}
-	\item $\mathsf{KGen_H}(L_x)$ generates a hashing key $k_h\in_R\ZZ_p^{1\times n}$ for language $L_x$.
-	\item $\mathsf{KGen_P}(k_h,L_x)$ derives the projection key $k_h=\Gamma\odot k_h\in\GG^{k\times 1}$, possibly depending on $C$.
-	\item $\mathsf{Hash}(k_h,L_x,C)$ outputs the hash value $h=\Theta_x(C)\odot k_h\in\GG$.
-	\item $\mathsf{PHash}(k_p,L_x,C,w)$ returns the hash value $h=\lambda\odot k_p\in\GG$, with $\lambda=\Omega(w)$.
-\end{itemize}
+\begin{description}
+	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
+	\item[$\mathsf{KGen_P}(k_h,L_x,C)$]\hfill\\ derives the projection key $k_p$, possibly depending on $C$.
+	\item[$\mathsf{Hash}(k_h,L_x,C)$] \hfill\\ outputs the hash value $h$.
+	\item[$\mathsf{PHash}(k_p,L_x,C,w)$] \hfill\\ returns the hash value $h$.
+\end{description}
 }
 \invblock<2->
 
 \opaqueblock<2>{\hspace*{1em}
-	\begin{itemize}
-		\item \emph{Correctness}: If $C\in L$, with $w$ proving so, then $\mathsf{Hash}(k_h,L_x,C)=\mathsf{PHash}(k_p,L_x,C,w)$.
-		\item \emph{Smoothness}: If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element from $\GG$.
-		\item \emph{Pseudorandomness}: If $C\in L_x$, the hash value $h$ is indistinguishable from a random element from $\GG$.
-	\end{itemize}
+	\begin{description}
+		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(k_h,L_x,C)=\mathsf{PHash}(k_p,L_x,C,w)$.
+		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
+		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
+	\end{description}
 }
 \end{dynblock}
 
 \end{frame}
 
-\begin{frame}{Extended Smooth Projective Hashing}
+\begin{frame}{PAKE from SPHF}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\node[state, align=center] (client) at (0,1) {\pgfimage[width=0.8cm]{os_tux}\\ $\pwd$};
+	
+	\node[state, align=left] at (0,-1) {$k_h\gets\mathsf{KGen_H}(L_x)$\\  $k_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C\gets\mathsf{Enc}_\pk(\pwd;r)$};
+	\node[state] (client1) at (2,-1){};
+	
+	\node[state] (client2) at (2,-2){};	
+	\node[state, align=left] at (0,-3) {$k\gets\mathsf{Hash}(k_h,L_x,C')$\\$\cdot\mathsf{PHash}(k'_p,L_x,C,r)$};
+	
+	\node[state, align=center] (server) at (6,1) {\pgfimage[width=0.8cm]{techie_sailor}\\ $\pwd$};
+	
+	\node[state, align=right] at (6,-1) {$k'_h\gets\mathsf{KGen_H}(L_x)$\\  $k'_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C'\gets\mathsf{Enc}_\pk(\pwd;r')$};
+	\node[state] (server1) at (4,-1) {};
+	
+	\node[state] (server2) at (4,-2) {};
+	\node[state, align=right] at (6,-3) {$k\gets\mathsf{Hash}(k'_h,L_x,C)$\\$\cdot\mathsf{PHash}(k_p,L_x,C',r')$};
+	
+	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+	
+	\draw[pil] (client1) -- node[above] {$C,k_p$} (server1);
+	\draw[pil] (server2) -- node[above] {$C',k'_p$} (client2);
+\end{tikzpicture}
+\label{fig:eke}
+\end{figure}
+\end{frame}
 
-\begin{itemize}
-	\item $\mathsf{KGen_H}(L_x)$ generates a hashing key $k_h\in_R\ZZ_p^{1\times n}$ for language $L_x$.
-	\item $\mathsf{KGen_P}(k_h,L_x)$ derives the projection key $k_h=\Gamma\odot k_h\in\GG^{k\times 1}$, possibly depending on $C$.
-	\item $\mathsf{Hash}_x (k_{h,0},L_x,C_1,\dots,C_x)$ outputs the hash value $h_x=\Theta^x_{x}(C_1,\dots,C_x)\odot k_{h,0}$.
-	\item $\mathsf{PHash}_x (k_{p,0},L_x,C_1,\dots,C_x,w_1,\dots,w_x)$ returns the hash value $h_x=\prod^{x}_{i=1}(\lambda^i\odot k_{p,0})$, where $\lambda^i=\Omega(w_i,C_i)$.
-	\item $\mathsf{Hash}_0(k_{h,1},\dots,k_{h,x},L_x,C_0)$ outputs the hash value $h_0=\prod^{x}_{i=1}(\Theta_{x}^0(C_0)\odot k_{h,i})=\Theta_{x}^0(C_0)\odot \sum^x_{i=1} k_{h,i}$.
-	\item $\mathsf{PHash}_0(k_{p,1},\dots,k_{p,x},L_x,C_0,w_0)$ returns the hash value $h_0=\prod^{x}_{i=1}(\lambda^0\odot k_{p,i})$, with $\lambda^0=\Omega(w_0,C_0)$.
-\end{itemize}
+\begin{frame}{Extended Smooth Projective Hashing 1/2}
+
+%Languages of ciphertexts: $C\gets\mathsf{Enc}_{\pk}(x)$
+%2-Server PAKE between \begin{center} Client$(\pwd)$, Server$_1(\pwd_1)$, Server$_2(\pwd_2)$\end{center}
+
+\begin{figure}
+\begin{tikzpicture}
+	\node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
+	\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
+	\node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	\draw[pil] ($(client.west)+(1.2,0)$) -- (server1);
+	\draw[pil] ($(client.west)+(1.2,0)$) -- (server2);
+\end{tikzpicture}
+\end{figure}
+
+\setbeamercolor{uppercol}{fg=white,bg=blue!40}%
+\setbeamercolor{lowercol}{fg=black,bg=blue!20}%
+\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Idea}
+	Encrypt $\pwd$, $\pwd_1$ and $\pwd_2$ $\rightarrow$ Use extended SPHF to compute keys
+\end{beamerboxesrounded}
+
+\end{frame}
+
+\begin{frame}{Extended Smooth Projective Hashing 2/2}
+
+\begin{description}
+	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
+	\item[$\mathsf{KGen_P}(k_h,L_x)$]\hfill\\ derives the projection key $k_h$.
+	\item[$\mathsf{Hash}_x (k_{h,0},L_x,C_1,\dots,C_x)$]\hfill\\ outputs the hash value $h_x$.
+	\item[$\mathsf{PHash}_x (k_{p,0},L_x,C_1,\dots,C_x,w_1,\dots,w_x)$]\hfill\\ returns the hash value $h_x$.
+	\item[$\mathsf{Hash}_0(k_{h,1},\dots,k_{h,x},L_x,C_0)$]\hfill\\ outputs the hash value $h_0$.
+	\item[$\mathsf{PHash}_0(k_{p,1},\dots,k_{p,x},L_x,C_0,w_0)$]\hfill\\ returns the hash value $h_0$.
+\end{description}
 
 \end{frame}
 
 \begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
 
 \structure{$\mathsf{PHash}_x^D$} between parties $P_1,\dots,P_x$.\\
-	\hspace*{1em} Each $P_i$ performs $\mathsf{PHash}_x^D$ on input $(k_{p,0},\mathtt{crs},\allowbreak C_1,\dots,C_x,w_i)$ such that $P_1$ eventually holds $h_x$.
+	\hspace*{2em} Each $P_i$ performs $\mathsf{PHash}_x^D$ on input $$(k_{p,0},C_1,\dots,C_x,w_i)$$\hspace*{2em} such that $P_1$ eventually holds $h_x$.
 	
 	\vspace*{2em}
 \structure{$\mathsf{Hash}_0^D$} between parties $P_1,\dots,P_x$.\\
-	\hspace*{1em} Each $P_i$ performs $\mathsf{Hash}_0^D$ on input $(x'_i,\sk_i,k_{h,i}, \pk_1,\dots,\pk_x,C_0,\dots,C_x)$ such that $P_1$ eventually holds $h_0$.
+	\hspace*{2em} Each $P_i$ performs $\mathsf{Hash}_0^D$ on input $$(\pwd_i,k_{h,i}, C_0,\dots,C_x)$$\hspace*{2em} such that $P_1$ eventually holds $h_0$.
 
 \end{frame}
 
 \subsection{A New 2-Server PAKE Framework}
-
-\begin{frame}{Two-Server PAKE}
-
-		\begin{figure}
-		\begin{tikzpicture}
-			\node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
-			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
-			\node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
-			\draw[pil] ($(client.west)+(1.2,0)$) -- (server1);
-			\draw[pil] ($(client.west)+(1.2,0)$) -- (server2);
-		\end{tikzpicture}
-		\end{figure}
-
-\end{frame}
 
 \begin{frame}{2-Server PAKE from DSPHF}
 
