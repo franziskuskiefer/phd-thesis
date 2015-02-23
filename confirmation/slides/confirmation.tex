@@ -8,6 +8,7 @@
 \usepackage{adjustbox}
 \usepackage{spverbatim}
 \usepackage{subcaption}
+\captionsetup{compatibility=false}
 \usepackage{textpos}
 \usepackage{etoolbox}
 \usepackage{xparse}
@@ -1063,22 +1064,22 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \begin{description}
 	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
 	\item[$\mathsf{KGen_P}(k_h,L_x)$]\hfill\\ derives the projection key $k_h$.
-	\item[$\mathsf{Hash}_x (k_{h,0},L_x,C_1,\dots,C_x)$]\hfill\\ outputs the hash value $h_x$.
-	\item[$\mathsf{PHash}_x (k_{p,0},L_x,C_1,\dots,C_x,w_1,\dots,w_x)$]\hfill\\ returns the hash value $h_x$.
-	\item[$\mathsf{Hash}_0(k_{h,1},\dots,k_{h,x},L_x,C_0)$]\hfill\\ outputs the hash value $h_0$.
-	\item[$\mathsf{PHash}_0(k_{p,1},\dots,k_{p,x},L_x,C_0,w_0)$]\hfill\\ returns the hash value $h_0$.
+	\item[$\mathsf{Hash}_x (k_{h,0},L_x,C_1,C_2)$]\hfill\\ outputs the hash value $h_x$.
+	\item[$\mathsf{PHash}_x (k_{p,0},L_x,C_1,C_2,w_1,w_2)$]\hfill\\ returns the hash value $h_x$.
+	\item[$\mathsf{Hash}_0(k_{h,1},k_{h,2},L_x,C_0)$]\hfill\\ outputs the hash value $h_0$.
+	\item[$\mathsf{PHash}_0(k_{p,1},k_{p,2},L_x,C_0,w_0)$]\hfill\\ returns the hash value $h_0$.
 \end{description}
 
 \end{frame}
 
 \begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
 
-\structure{$\mathsf{PHash}_x^D$} between parties $P_1,\dots,P_x$.\\
-	\hspace*{2em} Each $P_i$ performs $\mathsf{PHash}_x^D$ on input $$(k_{p,0},C_1,\dots,C_x,w_i)$$\hspace*{2em} such that $P_1$ eventually holds $h_x$.
+\structure{$\mathsf{PHash}_x^D$} between $S_1$ and $S_2$.\\
+	\hspace*{2em} Each $S_i$ performs $\mathsf{PHash}_x^D$ on input $$(k_{p,0},C_1,C_2,w_i)$$\hspace*{2em} such that $S_1$ eventually holds $h_x$.
 	
 	\vspace*{2em}
-\structure{$\mathsf{Hash}_0^D$} between parties $P_1,\dots,P_x$.\\
-	\hspace*{2em} Each $P_i$ performs $\mathsf{Hash}_0^D$ on input $$(\pwd_i,k_{h,i}, C_0,\dots,C_x)$$\hspace*{2em} such that $P_1$ eventually holds $h_0$.
+\structure{$\mathsf{Hash}_0^D$} between $S_1$ and $S_2$.\\
+	\hspace*{2em} Each $S_i$ performs $\mathsf{Hash}_0^D$ on input $$(\pwd_i,k_{h,i}, C_0)$$\hspace*{2em} such that $S_1$ eventually holds $h_0$.
 
 \end{frame}
 
@@ -1106,7 +1107,7 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 		\begin{figure}
 		\begin{tikzpicture}
 			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\ $\mathsf{PHash}_0\cdot\mathsf{Hash}_x$\\ $\rightarrow \sk$};
-			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$\\ $\rightarrow \sk$};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$\\ $h_x\cdot h_0\rightarrow \sk$};
 			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
 	
 			\draw[pil,<->] (server1) -- node[anchor=center,xshift=-0.1cm]{$\mathsf{PHash}_x^D$~~~~$\mathsf{Hash}_0^D$} (server2);
@@ -1183,4 +1184,3 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \backupend
 
 \end{document}
-
