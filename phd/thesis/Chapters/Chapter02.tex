@@ -1,0 +1,175 @@
+%*****************************************
+\chapter{Prerequisites}\label{ch:background}
+%*****************************************
+In this chapter we recall some definitions useful for following this work.
+We start with some general mathematical fundamentals before giving generally useful definition in our setting.
+While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \cite{katz2008introduction}.
+%\graffito{You might get unexpected results using math in chapter or section heads. Consider the \texttt{pdfspacing} option.}
+
+\section{Fundamentals of Mathematics}
+We will not give an entire mathematical introduction but recall the most important definitions needed in our context.
+
+\subsection{Groups}
+Groups are an important mathematical structure in cryptography.
+In the following we give some useful definitions.
+
+\begin{definition}[Groups]\label{def:groups}
+Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
+\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element and it is \emph{associative}:
+\begin{itemize}
+	\item For all $g,h\in\GG$, $g\circ h \in\GG$
+	\item There exists an element $e\in\GG$, called \emph{identity}, such that for all $g\in\GG$, $e\circ g=g=g\circ e$.
+	\item For all $g\in\GG$ there exists an \emph{inverse} element $h\in\GG$ such that $g\circ h=e=h\circ g$.
+	\item For all $g,h,k\in\GG$, $(g\circ h)\circ k=g\circ (h \circ k)$.
+\end{itemize}
+\eod
+\end{definition}
+
+\noindent
+The \emph{order} of a finite group \GG is denoted by $|\GG|$ and is defined as the number of elements in \GG.
+An \emph{abelian} group additionally is commutative, \ie for all $g,h\in\GG$, $g\circ h=h\circ g$.
+In this work, and cryptography in general, we mainly use cyclic groups.
+
+\begin{definition}[Cyclic Groups]\label{def:cyclicgroups}
+Let \GG denote a finite group of order $p$.
+\GG is \emph{cyclic} if there exists a \emph{generator} $g\in\GG$ such that $\{g^0,g^1,\dots,g^{p-1}\}=\GG$.
+\eod
+\end{definition}
+
+\noindent
+Since the computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used are cyclic.
+Therefore, we usually use groups of prime order $p$ since groups of prime order are cyclic.
+Another useful feature of prime order groups is that all elements of \GG, except the identity, are generators of \GG.
+Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group.
+
+\subsection{Computational Assumptions}
+In this section we recall some computational assumptions in the group context that are believed to be hard.
+The \ac{DLP} is the basis of all assumptions in groups.
+
+\begin{definition}[\acl{DLP}]\label{def:dlp}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$.
+\eod
+\end{definition}
+
+\noindent
+Several \ac{DLP}-based assumptions have been proposed.
+The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
+
+\begin{definition}[\acl{DDH}]\label{def:ddh}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$.
+\eod
+\end{definition}
+
+\begin{definition}[\acl{CDH}]\label{def:cdh}
+Let \GG denote a group of order $p$ with generator $g$.
+The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
+\eod
+\end{definition}
+
+\section{Definitions}
+Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
+As mentioned earlier, security models used in this work are from the computational world.
+In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on a security parameter.
+Security is therefore only given for \emph{reasonable} security parameters.
+To express this asymptotic notation is used.
+
+\begin{definition}[Negligible Functions]\label{def:negligible}
+A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exists an $N\in\NN$ such that for all $n\in\NN$ with $n>N$ it holds that $f(n)<1/p(n)$.
+\eod
+\end{definition}
+
+\begin{definition}[Asymptotic Notation]\label{def:asymptotic}
+Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
+\begin{itemize}
+	\item $f(n)=\cO(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\leq c\cdot g(n)$.
+	\item $f(n)=\Omega(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\geq c\cdot g(n)$.
+	\item $f(n)=\Theta(g(n)):$ Both $f(n)=\cO(g(n))$ and $f(n)=\Omega(g(n))$ hold.
+	\item $f(n)=o(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=0$
+	\item $f(n)=\omega(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=\infty$
+\end{itemize}
+\eod
+\end{definition}
+
+\paragraph{Probabilistic Polynomial-Time}
+We often use the phrase \ac{PPT} to describe an efficient algorithm.
+The actual definition of \ac{PPT}, first defined \cite{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
+
+\begin{definition}[\acl{PP}]\label{def:ppt}
+\ac{PP} denotes the class of decision problems solvable by a \ac{PTM} $A$ such that
+\begin{itemize}
+	\item $A$ runs in polynomial-time,
+	\item at least $1/2$ of the computation paths accept when the answer is `yes', and
+	\item less than $1/2$ of the computation paths accept when the answer is `no'.
+\end{itemize}
+\eod
+\end{definition}
+
+\noindent
+The informal description for \aclp{PTM} is given in Definition \ref{def:ptm}.
+We refer the reader to works concerned with complexity theory like \cite{santos1969,WaterlooComplexity} for more on \ac{PTM} and a formal definition.
+
+\begin{definition}[\acl{PTM} \cite{gill1977}]\label{def:ptm}
+A \ac{PTM} is a Turing machine with distinguished states called coin-tossing states.
+For each coin-tossing state, the finite control unit specifies two possible next states.
+The computation of a \ac{PTM} is deterministic except that in coin-tossing states the machine tosses an unbiased coin to decide between the two possible next states.
+\end{definition}
+
+\noindent
+Note that the running time is always parametrised with the security parameter \secpar.
+You can think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
+In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
+
+\paragraph{Chosen-Ciphertext Attacks}
+\ac{CCA} defines security for encryption schemes.
+Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
+
+\begin{definition}[IND-CCA2 Security]\label{def:indcca2}
+An encryption scheme $\Pi=(\KGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that :
+\[\Adv_{\Pi,\cA}^{\ccatwo}(\secpar)=\left|\Pr[\Exp^{\ccatwo}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+
+\noindent
+$\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
+\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
+\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
+\hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
+\hspace*{2em}return $b=b'$
+\eod
+\end{definition}
+
+\noindent
+Note that $\cA$ must not query the decryption oracle with $c$.
+
+\paragraph{The Random Oracle Model}
+Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
+The other popular model is the so-called \emph{standard model} where no such function exists.
+While this function $H$ does not actually exist in the real world it is useful in many proves.
+It is usually instantiated with a cryptographic hash function.
+The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
+It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
+The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
+If $H$ has seen $x$ before, it returns the previously chosen element $y$.
+
+%\subsection{Notations}
+%In addition to common notations (we do not recall here), we give here all notations used throughout this work.
+%\fk[inline]{See / add what exactly I need later !}
+%\begin{itemize}
+%	\item If $A$ is an algorithm, then $x\algout A(y)$ denotes running $A$ with input $y$ and storing the result in $x$.
+%	\item If $A$ is a randomized algorithm, then $x\ralgout A(y;r)$ denotes running $A$ with input $y$ and randomness $r$, and storing the result in $x$.
+%	\item If $U$ is a set, then $x\rin U$ denotes that $x$ is chosen uniformly at random form $U$.
+%	\item A variable $y$ is assigned to $x$ by $x:=y$.
+%	\item The boolean operations \emph{and} and \emph{or} are denoted by $\wedge$ and $\vee$.
+%	\item Exclusive or (xor) is denoted by $\oplus$.
+%	\item Set of binary strings of length $n$ $\bits^n$.
+%	\item The length of a binary string $x$ is denoted by $|x|$, the bit-length of an integer $y$ is denoted by $\|y\|$.
+%	\item $\bigo,\Theta,\Omega,\omega$
+%	\item Since $\log_2$ is the most used logarithm we denote it by $\log$.
+%	\item The security parameter is denoted $\secpar$.
+%	\item Oracle access to $O(\cdot)$ for algorithm $A$ is denoted by $A^{O(\cdot)}$.
+%	\item Public/private key-pairs are denoted by $(\pk,\sk)$
+%	\item Negligible functions are denoted by $\varepsilon(\cdot)$.
+%	\item \aclp{PRF} are denoted by \PRF.
+%	\item \ZZ, \NN, \RR, $\NN_0$, $\NN_{\geq 0}$
+%\end{itemize}

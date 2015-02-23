@@ -1,0 +1,46 @@
+%************************************************
+\chapter{Conclusion \& Future Work}\label{ch:futurework}
+%************************************************
+The work at hand gives an introduction into password-based cryptography with focus on \acl{PAKE}.
+It summarises work done on \ac{PAKE} models as well as two-party and two-server \ac{PAKE} protocols.
+Future work includes, but is not limited to, aforementioned research on two-server protocols, password policy checking and real world \ac{PAKE} implementations.
+While already in progress, expected results on ongoing work is described in the following.
+
+\paragraph{PAKE as Drop-in Replacement for Current Techniques}\hspace*{1em}\\
+We explore challenges and possibilities for deploying \ac{PAKE} as a drop-in replacement for current \ac{HTML} form based authentication mechanisms.
+This includes a prototype that allows servers to easily integrate \ac{PAKE} as login mechanism and thus replace currently used insecure techniques.
+On the client side it allows users to log on to a website the way they are familiar with on desktop and mobile devices but using trusted input and secure \ac{PAKE} protocols in the background.
+
+\paragraph{Password Policy Checker}
+To tackle the inherent threat of two-party \ac{PAKE} protocol that server compromise and malicious servers pose we investigate possible solutions for secure password registration algorithms.
+This involces in particular the aforementioned blind password policy checker.
+
+\paragraph{Two-Server Protocols}
+Two-server password-based protocols solve many of the inherent problems in the two-party case that stem from the use of low-entropy passwords.
+However, lack of research in this area offers many possibilities for future work.
+We will look here at two-server password authenticated secret sharing and two-server \ac{PAKE} protocols.
+
+
+%\fk[inline]{ToDo: Future Work}
+%\begin{itemize}
+%	\item password policy checker
+%	\item 2PASS (original intention of before 2PAKE)
+%	\item System paper on PAKE as drop-in replacement for TLS-based approach
+%\end{itemize}
+
+%\section{Overall Topics of my PhD}
+%\begin{itemize}
+%	\item Secure online Login with passwords (practical aspects)
+%	\item Security against malicious servers (opake, 2pake, 2pass, policy checker)
+%	\item Better understanding of security models
+%\end{itemize}
+
+%\noindent
+%The overall topic of my PhD is password-based authentication.
+%Thereby I tackle the following challenges
+%\begin{itemize}
+%	\item deploying PAKE for website login
+%	\item security against malicious servers
+%	\item user challenges
+%	\item understanding of password-based security models
+%\end{itemize}
