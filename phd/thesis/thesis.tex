@@ -161,6 +161,7 @@
 \include{Chapters/chapter3}
 \include{Chapters/chapter4}
 \include{Chapters/chapter5}
+\include{Chapters/chapter6}
 
 
 
@@ -178,7 +179,7 @@
 \bibliographystyle{apalike}
 %\bibliographystyle{plainnat} % use this to have URLs listed in References
 \cleardoublepage
-\bibliography{References/Bibliography} % Path to your References.bib file
+\bibliography{References/Bibliography,References/publications} % Path to your References.bib file
 
 
 % If you would like to use BibLaTeX for your references, pass `custombib' as
@@ -193,12 +194,12 @@
 
 % ********************************** Appendices ********************************
 
-% \begin{appendices} % Using appendices environment for more functionality
-% 
-% \include{Appendix1/appendix1}
+\begin{appendices} % Using appendices environment for more functionality
+
+\include{Appendices/appendix1}
 % \include{Appendix2/appendix2}
-% 
-% \end{appendices}
+
+\end{appendices}
 
 % *************************************** Index ********************************
 \printthesisindex % If index is present

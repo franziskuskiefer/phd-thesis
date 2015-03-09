@@ -1,12 +1,18 @@
 \chapter{Password-based Authentication in the Two-Party Setting}
+Using passwords for authentication is it's most common use case.
+As discussed in the introduction, this is still done with the inherently flawed approach of \ac{HTML}-over-\ac{TLS} despite the existence of secure \ac{PAKE} protocols.
+In this section we propose new mechanisms to register user accounts with secure password policy checks and give a new verifier-based \ac{PAKE} protocol to authenticate with these accounts.
+
+This chapter is based on work in \cite{KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
+
+%********************************** %Registering Passwords  **************************************
+\section{Registering Passwords}
+
+\mynote{ZKPPC from ESORICS'14 \cite{KieferM14b}}
+\mynote{BPR from ???(ePrint/ACNS'15)  \cite{KieferM15a}}
+\mynote{BPR using MSIC ???(ePrint/ESORICS'15) \cite{DongK15a}}
 
 
 %********************************** %PAKE  **************************************
 \section{Password Authenticated Key Exchange}
-\mynote{Verifier-based PAKE from ESORICS'14}
-
-%********************************** %Registering Passwords  **************************************
-\section{Registering Passwords}
-\mynote{ZKPPC from ESORICS'14}
-\mynote{BPR from ???(ePrint/ACNS'15)}
-\mynote{BPR using MSIC ???(ePrint/ESORICS'15)}
+\mynote{Verifier-based PAKE from ESORICS'14  \cite{KieferM14b}}

@@ -1,18 +1,19 @@
 \chapter{Password-based Authentication in the Three-Party Setting}
 
-%********************************** %Multi-Server PAKE  **************************************
-\section{Multi-Party Password Authenticated Key Exchange}
-\mynote{literature review/related work section}
+While \ac{PAKE} solves one of the most pressing problems in user authentication, it is still vulnerable to offline dictionary attacks once the server is compromised.
+To alleviate the impact of password leaks on the server threshold \ac{PAKE} has been proposed.
+However, research in this area is rather limited compared to the single-server case.
+This chapter proposes a complete framework to use two-server \ac{PAKE} for user authentication, consisting of a blind password registration protocol and a \ac{UC}-secure two-server \ac{PAKE} protocol.
 
-\subsection{Threshold PAKE}
-
-\subsection{Two-Server PAKE}
-
-%********************************** %2PAKE  **************************************
-\section{Two-Server PAKE}
-\mynote{DSPHF ACNS'14}
-\mynote{2PAKE UC ???(ePrint)}
+This chapter is based on work in \cite{KieferM14b,KieferM15b,KieferM15c}.
 
 %********************************** %2PAKE Registration  **************************************
 \section{Two-Server Password Registration}
-\mynote{2BPR ???(ePrint/ESORICS'15)}
+\mynote{2BPR ???(ePrint/ESORICS'15) \cite{KieferM15c}}
+
+
+
+%********************************** %2PAKE  **************************************
+\section{Two-Server PAKE}
+\mynote{DSPHF ACNS'14 \cite{KieferM14b}}
+\mynote{2PAKE UC ???(ePrint) \cite{KieferM15b}}

@@ -73,6 +73,11 @@
 
 \usepackage[list-header=chapter]{acro}
 \usepackage{xspace}
+\usepackage{amsthm} % Definition is not defined
+  \newtheorem{definition}{Definition}
+\usepackage{bibentry} % getting full reference
+\nobibliography* % reuse existing bibtex files
+  
 
 % ******************************* Line Spacing *********************************
 
@@ -145,8 +150,8 @@
 
 % ********************** TOC depth and numbering depth *************************
 
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 
 % ******************************* Nomenclature *********************************
@@ -311,3 +316,9 @@
 \newcommand{\eg}{e.\,g.,\xspace}
 \newcommand{\Eg}{E.\,g.,\xspace} 
 \newcommand{\etal}{et al.\xspace}
+
+% end of definition symbol
+\newcommand\xqed[1]{%
+  \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+  \quad\hbox{#1}}
+\newcommand\eod{\xqed{$\Diamond$}}
