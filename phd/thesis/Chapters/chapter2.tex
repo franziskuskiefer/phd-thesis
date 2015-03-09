@@ -45,13 +45,32 @@ Since the computational assumptions on groups used in cryptography rely on the c
 Therefore, we usually use groups of prime order $p$ since groups of prime order are cyclic.
 Another useful feature of prime order groups is that all elements of \GG, except the identity, are generators of \GG.
 Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group.
+We write $\GG=\genG$ to denote a group \GG is generate by $g$.
 
 \subsection{Elliptic Curves}
+This work is only marginally concerned with elliptic curve cryptography.
+We therefore keep this section short and refer to \cite{HankersonMS03} for further introduction into elliptic curves in cryptography.
 
+An \emph{elliptic curve} $E$ over prime-field $\FF_p$ is given by 
+\[
+  y^2 = x^3 + ax + b \mod p,
+\]
+with $a,b\in\FF_p$ and $4a^3 + 27b^2 \not= 0 \mod p$.
+Points on curve $E$ are given by pairs $(x,y)\in\FF^2_p$ that fulfil those equations.
+The set containing all these points, plus the point at infinity $\infty$, are denoted $E(\FF_p)$.
+$E(\FF_p)$ with $\infty$ as identity and common arithmetic operations such as addition, subtraction, multiplication, and inversion forms an abelian group.
+Note that we use the multiplicative notation for elliptic curves (even though it is an additive group).
 
 \subsection{Pairings}
+Let $\GG_1=\genG[1], \GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote cyclic groups of prime-order $p$.
+A pairing is defined by an efficient bilinear map $e: \GG_1 \times \GG_2 \mapsto \GG_T$ with $e(g_1^x, g_2^y) = g_T^{xy}$ for $x,y\in\ZZ_p$.
+In cryptography we usually distinguish between three different types of pairings \cite{GalbraithPS08}:
 
-
+\begin{itemize}
+  \item Type I: $\GG_1 = \GG_2$;
+  \item Type II: $\GG_1 \not= \GG_2$ and there exists an efficiently computable homomorphism $\phi: \GG_2 \mapsto \GG_1$ (bot not for $\GG_1 \mapsto \GG_2$);
+  \item Type III: $\GG_1 \not= \GG_2$, without any efficiently computable homomorphism between $\GG_1$ and $\GG_2$.
+\end{itemize}
 
 \subsection{Computational Assumptions}
 In this section we recall some computational assumptions in the group context that are believed to be hard.
