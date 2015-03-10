@@ -58,7 +58,7 @@
 \usepackage{multirow}
 
 %\usepackage{multicol}
-%\usepackage{longtable}
+\usepackage{longtable}
 %\usepackage{tabularx}
 
 
@@ -71,7 +71,17 @@
 
 % ***************************** My Custom Packages ******************************
 
-\usepackage[list-header=chapter]{acro}
+\usepackage{enumitem} % for setlist
+\newlist{acronyms}{description}{1}
+\newcommand*\addcolon[1]{#1:}
+\setlist[acronyms]{
+  labelwidth=5em,
+  leftmargin=5.5em,
+  noitemsep,
+  itemindent=0pt,
+%   font=\addcolon
+}
+\usepackage[list-type=acronyms,list-header=chapter]{acro}
 \usepackage{xspace}
 \usepackage{amsthm} % Definition is not defined
   \newtheorem{definition}{Definition}

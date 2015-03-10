@@ -98,6 +98,12 @@ The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is har
 \eod
 \end{definition}
 
+\begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
+Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ with associated bilinear map $e$.
+The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
+\eod
+\end{definition}
+
 %********************************** %Definitions  **************************************
 \section{Definitions}
 Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
@@ -165,12 +171,10 @@ $\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
 \hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
 \hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
 \hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
-\hspace*{2em}return $b=b'$
+\hspace*{2em}return $b=b'$\\
+Note that $\cA$ must not query the decryption oracle with $c$.
 \eod
 \end{definition}
-
-\noindent
-Note that $\cA$ must not query the decryption oracle with $c$.
 
 \paragraph{The Random Oracle Model}
 Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
@@ -207,3 +211,14 @@ In addition to common notations (we do not recall here), we give here all notati
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
+\mynote{Describe building blocks}
+\begin{itemize}
+  \item ZK/NIZK/ZKPoK/NIZKPoK
+  \item commited ZK
+  \item commitments
+  \item Cramer-Shoup encryption
+  \item ElGamal encryption
+\end{itemize}
+
+
+
