@@ -17,7 +17,7 @@ This leads directly to the inherent threat to everything we are dealing with in 
 So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
 \begin{quote}
-``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\citeauthor{Kaufmann02} \cite{Kaufmann02}
+``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\citeauthor*{Kaufmann02} \cite{Kaufmann02}
 \end{quote}
 
 \noindent
@@ -204,12 +204,12 @@ The notion of \ac{RoR} in the context of \acl{AKE} protocols has been introduced
 In the \ac{AKE} context \ac{RoR} allows the adversary to query \emph{multiple} keys before deciding whether all of them have been computed by honest parties performing the protocol, or all of tem  have been randomly chosen from the key space.
 
 \paragraph{Simulation-Based \ac{PAKE}-Security}
-Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by \citeauthor{Goldreich01}~\cite{Goldreich01}.
+Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by \citet{Goldreich01}.
 Their work also comprises the first (and until now the only, but fairly inefficient) protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.\footnote{The work in \cite{Goldreich01} is concerned with the general possibility of such a protocol rather than building a practical one.}
 The protocol has been subsequently simplified at the cost of weakened security in~\cite{NguyenV04}.
-While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has been proposed by \citeauthor{Canetti2005}~\cite{Canetti2005} later.
+While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has been proposed by \citet{Canetti2005} later.
 In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
-The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citeauthor{Benhamouda2013} \cite{Benhamouda2013}.
+The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citet{Benhamouda2013}.
 
 \paragraph{The Problem of Server Compromise}
 A problem intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
@@ -217,8 +217,47 @@ Servers store passwords in databases to retrieve them when necessary.
 Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security problem.
 Different approaches have been proposed to mitigate the impact of server compromises.
 The server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
-\citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framwork, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
+\citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framework, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
 Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
+
+
+\subsection{Verifier-based Password Authenticated Key Exchange}\label{sec:intro:verifier-basedPAKE}
+The problem of server compromise has been mentioned from the first PAKE protocols by \citet{BellovinM93} (augmented EKE) describing the threats arising from stolen password databases.
+\citet{BellovinM93} describe how password authenticated key-exchange can be performed while the server stores only a verifier of the actual password.
+While this might sound compelling, the research community never picked up on \ac{VPAKE} as we will call it here.
+The fact that passwords require protection on the server that stores them is unquestionable.
+In order to offer better protection against password databases compromise servers are supposed to store only the randomised password hash and the random salt that was used.
+
+A large number of break-ins into server databases makes \ac{VPAKE} a particularly valuable concept for remote password-based authentication since in order to recover the actual client password the attacker must perform a costly dictionary attack on its password hash.
+Increasing number of successful password leaks~\cite{rockyouBreach,cupidBreach,adobeBreach} suggests however that many servers do not apply randomised password hashing at all. 
+
+\subsubsection{On Rainbow Tables}
+The reason for protecting passwords on a server are rather simple.
+Computing a verifier from a password using only a one-way function allows an attacker to precompute a list of verifiers such that inverting the one-way function can be performed rather efficiently considering human password choices.
+Those lists can further be shared and re-used are commonly called \emph{rainbow tables}.
+Note that actual rainbow tables usually build hash chains to reduce their size.
+We refrain from further description of rainbow table as they are out of scope of this thesis.
+Adding a small amount of true randomness to the input of the one-way function alleviates these attacks as rainbow tables for all possible random values would have to be created, which leads to a time/memory trade-off up to a point where storing rainbow tables becomes inefficient.
+This additional randomness is commonly referred to as \emph{salt}.
+
+\subsubsection{Verifier-based PAKE --- Protocols and Models}
+In \ac{VPAKE} protocols the client authenticates itself with the password whereas the server uses stored password hash and salt to perform the check.
+This concept is also known as asymmetric \cite{Bellare2000} or augmented \ac{PAKE} \cite{BellovinM93}.
+As mentioned before, \citet{Gentry2006} propose a way of transforming \ac{PAKE} protocols into \ac{UC}-secure \ac{VPAKE} protocols.
+\citet{BenhamoudaP13} recently proposed the first game-based security model, based on the well known BPR model for \ac{PAKE} protocols.
+
+\subsubsection{Discussion}
+One reason for the relatively limited interest in \acl{VPAKE} might be the somewhat artificial security benefits and models.
+Security models for \ac{PAKE} protocols consider security of a key-exchange protocol using a password as authentication mechanism.
+They however do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
+\ac{VPAKE} security models try to capture whether the protocol is secure (in the sense of \acl{PAKE}) \emph{and} if the server securely handles and stores the passwords/verifiers.
+Since those security goals are significantly different and unrelated, it is difficult to find a meaningful security model for it.
+
+Another reason for low adoption rate of \ac{VPAKE} in the research community is its questionable benefit.
+While it is arguably that secure handling and storage of passwords is important, \ac{VPAKE} offers little benefit compared to \ac{PAKE}.
+Since necessary randomness has to be stored on the server (recall that the client is stateless and can only handle human memorable secrets), it has to be transferred to the client at some point in the protocol.
+However, when the randomness has to be transmitted from the server to the client, there is no reason not to do this as early in the protocol as possible and then use the verifier for authentication rather than the password in a common \ac{PAKE} protocol.
+
 
 \subsection{Other Password Authenticated Key Exchange Protocols}
 Besides the straight-forward case where a single client-sever pair uses a common password to authenticate each other and establish a secure channel, there exist several other scenarios we discuss in the following.
@@ -267,15 +306,32 @@ However, implementations so far only combine traditional passwords with \aclp{OT
 Using biometric factors is rarely seen in practice so far.
 
 % *****************************************************************************
+% Section: Password Registration
+% *****************************************************************************
+
+\section{Password Registration}
+Another important part that is often overlooked in cryptographic research is the handling of password registration.
+While registration of symmetric keys is not an interesting cryptographic problem since security there has to be guaranteed by other means, password registration is more involved.
+This is due to two different reasons;
+First, passwords are not necessarily symmetric secrets.
+In the verifier-based setting (cf. Section \ref{sec:intro:verifier-basedPAKE}) the server stores only a randomised function of the password and the randomness.
+Second, passwords are not chosen uniformly at random in practice and require additional attention.
+In particular, systems commonly impose password policies on passwords in order to ensure a certain entropy in the password.
+This should guarantee strong passwords that withstand dictionary and brute-force attacks.
+% For this reason, remote password registration should ideally be performed without the need for the client to send its password to the server; in other words, without trusting the server to securely process and store client passwords.
+
+\mynote{add more to password registration here ...}
+
+% *****************************************************************************
 % Section: Strong Cryptography from Low-Entropy Secrets
 % *****************************************************************************
 
 \section{Strong Cryptography from Low-Entropy Secrets}
 Despite authentication and key exchange, passwords are used in other contexts such as general strong cryptography.
 Due to the low-entropy of passwords this oviously introduces additional challenges.
-In \cite{AbdallaBCP09} \citeauthor{AbdallaBCP09} show how to build strong cryptography from weak secrets.
+\citet{AbdallaBCP09} show how to build strong cryptography from weak secrets.
 In particular, they propose a method to perform distributed public key cryptography when each party holds only a password, based on the \acl{DDH} assumption.
-\citeauthor{BoyenCFP10} extend the notion in \cite{BoyenCFP10} to the pairing world.
+\citet{BoyenCFP10} extend the notion to the pairing world.
 
 % *****************************************************************************
 % Section: How to Ease the Pain
