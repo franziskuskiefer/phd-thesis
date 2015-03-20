@@ -247,14 +247,6 @@ In addition to common notations (we do not recall here), we give here all notati
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
-\mynote{Describe building blocks}
-\begin{itemize}
-  \item ZK/NIZK/ZKPoK/NIZKPoK
-  \item commited ZK
-  \item commitments
-  \item Cramer-Shoup encryption
-  \item ElGamal encryption
-\end{itemize}
 
 \subsection{Commitments}
 Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
@@ -266,7 +258,16 @@ A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC
     $\Pr[b=b'] \leq 1/2+\varepsilon_{\mathrm{hi}}(\secpar)$.
 \end{itemize}
 
+\subsubsection{Pedersen commitments \cite{Pedersen91}}
+We will use perfectly hiding, computationally binding, homomorphic Pedersen commitments \cite{Pedersen91} defined as follows.
+Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,q,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group $G$ of prime order $q$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
+Pedersen commitments are \emph{additively homomorph}, i.e. for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in0,\dots,m$ it holds that $\prod_{i=0}^{m}C_i=\Com(\sum_{i=0}^{m}x_i$; $\sum_{i=0}^{m}r_i)$.
 
+\paragraph{Trapdoor commitments}
+In order to build zero-knowledge proofs of knowledge with malicious verifiers we require a trapdoor commitment scheme, which allows a party knowing the correct trapdoor to open a commitment to any value (equivocable commitment).
+Fortunately, Pedersen commitments are trapdoor commitments as they can be opened to any element using the discrete logarithm $\log_g h$ as a trapdoor.
+
+%----------------------------------- Zero Knowledge Proofs-----------------------
 \subsection{Zero Knowledge Proofs}
 A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so.
 An interactive protocol \ZKP for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
@@ -282,3 +283,196 @@ A zero-knowledge proof of knowledge \ZKPoK is a zero-knowledge proof with the fo
 	\item Soundness: There exists an efficient knowledge extractor $\Ext$ that can extract a witness from any malicious prover $P^*(x)$ with $x\in L$ that has non-negligible probability of making $V$ accept.
 \end{itemize}
 
+\subsubsection{Committed Zero-knowledge Proofs}
+We use the following committed $\Sigma$-protocol to ensure extractability (\ZKPoK) and simulatability when interacting with a malicious verifier~\cite{Damgard00,JareckiL00}.
+Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_q$ a collision-resistant hash function.
+A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:
+\begin{itemize}
+  \item The prover computes the first message $m_1\gets P_1(x,w,r)$, computes 
+  \[M_1\gets\Com(H(x,m_1); r_1)=g^{H(x,m_1)}h^{r_1},\]
+  and sends $M_1$ to the verifier.
+  \item The verifier chooses challenge $c\rin\ZZ_q$ and returns it to the prover.
+  \item The prover computes the second message $m_2\gets P_2(x,w,r,c)$, computes 
+  \[M_2\gets\Com(H(m_2); r_2)=g^{H(m_2)}h^{r_2},\]
+   and sends $M_2$ to the verifier.
+  \item Further, the prover sends the opens the commitments $M_1$ and $M_2$ sending $(x,m_1,m_2,r_1,r_2)$ to the verifier.
+  \item The verifier accepts iff both commitments are valid and if the verification of the $\Sigma$-protocol $(x,m_1,c,m_2)$ is successful.
+\end{itemize}
+
+\noindent
+Despite being zero-knowledge in the malicious verifier setting, this type of protocol has the advantage of concurrent zero-knowledge (since no rewinding is necessary \cite{Damgard00,JareckiL00}).
+
+
+%----------------------- PK Encryption schemes---------------------------
+\subsection{Public Key Encryption}
+
+\subsubsection{Cramer-Shoup Encryption}\label{sec:csencryption}
+
+We use SPHFs on labelled \emph{Cramer-Shoup (CS)} encryptions throughout this work. %, i.e. $\cL=\CS$.
+Here we briefly recall its definition.
+Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
+We assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generators $g_1$ and $g_2$ such that $g_1^m\in\GG$.
+The CS public key is defined as $\pk=(p,\GG,g_{1},g_{2},c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\tau=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
+
+\subsubsection{ElGamal Encryption}\label{sec:elgamalencryption}
+
+Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
+Note that we assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generator $g$ such that $g^m\in\GG$.
+The ElGamal public key is defined as $\pk=(q,\GG,g,h)$ with $h=g^z$ such that $\dk=z$ denotes the decryption key.
+Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
+
+
+%----------------------- SPHF---------------------------
+\subsection{Smooth Projective Hashing}
+We focus in this work on two-server PAKE and therefore describe SPHF and its variants only for our purpose, for general definitions see \cite{cryptoeprint:2013:034,KieferM14a}.
+First, we recall definitions for classical SPHF tailored to the PAKE use-case and cyclic groups $\GG$ of prime-order $q$.
+Hence, we use languages of ciphertexts with the password as message and the randomness as witness.
+An SPHF language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd. 
+The public parts of the language are given by the common reference string \crs containing the public key \pk of the used encryption scheme.
+By $\tau$ we denote the \crs trapdoor, the secret key to \pk.
+We denote $\cL$ the encryption scheme used to generate words in \Lpwd.
+Unless stated otherwise we assume that $\cL$ is a labelled CCA-secure encryption scheme.
+
+% FIXME: \fk{remark for \GG}
+
+\begin{definition}[Languages of Ciphertexts]\label{def:language}
+Let $L_\pwd \subseteq \{(\Label, C, \pwd^\ast)\}=\cC$ denote the language of labelled ciphertexts under consideration with ciphertext $(\Label,C)$ under \pk and password $\pwd^\ast\in\cD$.
+A ciphertext $C$ is in language $L_\pwd$ iff there exists randomness $r$ such that $C\gets\Enc^{\cL}_\pk(\ell,\pwd;r)$.
+\end{definition}
+
+\noindent
+Smooth projective hashing for languages of ciphertexts is then defined as follows.
+Note that we describe only KV-SPHF where the projection key does not depend on the word (ciphertext).
+
+\begin{definition}[KV-SPHF]\label{def:sphf}
+Let $\Lpwd$ denote a language of ciphertexts such that $C\in \Lpwd$ if there exists randomness $r$ proving so.
+A \emph{smooth projective hash function} for ciphertext language \Lpwd consists of the following four algorithms:
+
+\begin{itemize}
+	\item $\HKGen(\Lpwd)$ generates a random hashing key \hk for language \Lpwd.
+	\item $\PKGen(\hk,\Lpwd)$ derives the projection key $\hp$ from hashing key \hk. 
+	\item $\Hash(\hk,\Lpwd,C)$ computes hash value $h$ from hashing key \hk and ciphertext $C$.
+	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. 
+\end{itemize}
+\end{definition}
+
+\noindent
+A SPHF has to fulfil the following three properties:
+\begin{itemize}
+	\item \emph{Correctness}: If $C\in L$, with $r$ proving so, then $\Hash(\hk,\Lpwd,C)=\PHash(\hp,\Lpwd,C,r)$.
+	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni C\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
+	\item \emph{Pseudorandomness}: If $C\in\Lpwd$, the hash value $h$ is (computationally) indistinguishable from a random element. 
+\end{itemize}
+
+\noindent
+In a nutshell, smoothness ensures that the hash value always looks random in $\GG$ when computed on an element not in the language, while pseudorandomness ensures that it looks random in $\GG$ when computed on an element in the language.
+Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness (first proposed in \cite{Katz2011}).
+The corresponding notion of adaptive smoothness with word-independent keys is defined as follows.
+For any function $f:\GG \mapsto \cC\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
+\begin{align*}
+& \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,f(\hp))\} \\
+\stackrel{\varepsilon}{=}~ & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}
+\end{align*}
+
+\noindent
+Gennaro and Lindell \cite{Gennaro2003} introduced pseudorandomness of SPHFs to show that \Hash and \PHash are the only way to compute the hash value even though the adversary knows some tuples $(\hp,C,\Hash(\hk,\allowbreak\Lpwd,C))$ for $C\in\Lpwd$.
+An SPHF is pseudorandom if the hash values produced by \Hash and \PHash are indistinguishable from random without the knowledge of the uniformly chosen hash key \hk or a witness $w$, i.e. for all $C\in\Lpwd$ the following distributions are computationally $\varepsilon$-close:
+\begin{align*}
+& \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,C)\} \\
+\stackrel{\varepsilon}{=}~ & \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}
+\end{align*}
+
+\noindent
+The formalisation from Katz and Vaikuntanathan \cite{Katz2011} define pseudorandomness to hold even if hashing keys and ciphertexts are re-used.
+
+\begin{definition}[Pseudorandomness]\label{def:prplusc}
+An \SPHF $\Pi$ offers pseudorandomness if for all PPT algorithms $\cA$ and polynomials $l$ there exists a negligible function $\varepsilon(\cdot)$ such that
+\[\Adv_{\Pi,\cA}^{\Pr}=\left|\Pr[\Exp_{\Pi,\cA}^{\Pr}(\secpar)=1] - \frac12 \right|\leq \varepsilon(\secpar)\]
+
+\noindent
+$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ Choose $b\rin\bits$, call $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot),\Dec^\cL_\pi(\cdot)}(\secpar,\hp_1,\dots,\hp_l)$ with $\hp_i\gets\PKGen(\hk_i,\Lpwd,C)$ and $\hk_i\gets\HKGen(\Lpwd)$ for all $i\in 1,\dots,l$.
+Return $b=b'$.
+
+\begin{description}
+	\item[$\Omega^{\cL}_\pk(\ell,\pwd)$] returns elements $C\in \Laux$ with $C\gets\Enc^\cL_\pk(\Label,\allowbreak\pwd;r)$ using encryption algorithm \cL and label \Label.
+    	It additionally returns $\Hash(\hk_{i},\Lpwd,C)$ if $b=0$ or $h_{i}\rin\GG$ if $b=1$ for all $i\in 1,\dots, l$.
+	
+	\item[$\Dec^\cL_\pi(\Label,C)$] decrypts the ciphertext $C$ with label \Label if $(\Label,C)$ was not obtained from $\Omega^\cL_\pk$.
+\end{description}
+\end{definition}
+
+\subsubsection{SPHF on Cramer-Shoup Ciphertexts}
+Benhamouda et al. propose a new perfectly smooth SPHF for labelled Cramer-Shoup encryptions in \cite{Benhamouda2013}.
+The SPHF is defined as follows:
+\begin{itemize}
+  \item $\HKGen(\Lpwd)$ return $\hk=(\eta_1,\eta_2,\theta,\mu,\nu)\rin\ZZ_q^{1\times 5}$
+  \item $\PKGen(\hk, \Lpwd)$ returns $\hp=(\hp_1=g_1^{\eta_1} g_2^{\theta} h^\mu c^\nu, \hp_2=g_1^{\eta_2} d^{\nu})$
+  \item $\Hash(\hk, \Lpwd, C)$ computes $h=u_1^{\eta_1+\xi\eta_2} u_2^{\theta} (e/g_1^{\pwd})^\mu v^\nu$
+  \item $\PHash(\hp, \Lpwd, C, r)$ computes $h=(\hp_1 \hp_2^\xi)^r$
+\end{itemize}
+
+\subsection{Trapdoor \SPHF (\TSPHF)}\label{sec:tsphf}
+To build efficient one-round UC-secure PAKE protocols Benhamouda et al. \cite{Benhamouda2013} introduce the notion of \TSPHF.
+We briefly recall their definition and additional security properties such as $(t,\varepsilon)$-soundness and computational smoothness in the light of PAKE protocols.
+\TSPHF adds three additional functions to the classical SPHF definition that allow computation of the hash value knowing only the projection key, ciphertext and trapdoor $\tau'$.\footnote{Note that $\tau'$ is a different trapdoor than the CRS trapdoor $\tau$.}
+
+\begin{definition}[Trapdoor SPHF]\label{def:tsphf}
+Let $\Lpwd$ denote a language of ciphertexts such that $C\in \Lpwd$ if there exists randomness $r$ proving so.
+A \emph{trapdoor smooth projective hash function} for ciphertext language \Lpwd consists of the following seven algorithms:
+
+\begin{itemize}
+  \item \HKGen, \PKGen, \Hash and \PHash are as given in Definition \ref{def:sphf}
+	\item $\TSetup(\crs)$ generates a second $\crs'$ with trapdoor $\tau'$ on input of a \crs
+	\item $\VerHp(\hp, \Lpwd)$ returns $1$ iff \hp is a valid projection key, $0$ otherwise
+	\item $\THash(\hp, \Lpwd, C, \tau')$ computes the hash value $h$ of $C$ using the projection key \hp and trapdoor $\tau'$
+\end{itemize}
+
+\noindent
+We assume $\crs'$ is, like \crs, made available to all parties.
+\end{definition}
+
+\emph{Correctness} of T-SPHFs extends correctness of SPHFs by the statement that for every valid ciphertext $C$, generated by \cL, and honestly generated keys \hk and \hp, it holds that $\VerHp(\hp, \Lpwd)=1$ and $\Hash(\hk, \Lpwd, C)=\THash(\hp, \Lpwd, C, \tau')$.
+To capture soundness of T-SPHFs \cite{Benhamouda2013} introduces \emph{$(t,\varepsilon)$-soundness}, complementing the previous correctness extension.
+
+\begin{definition}[$(t,\varepsilon)$-soundness]
+Given \crs, $\crs'$ and $\tau$, no adversary running in time at most $t$ can produce a projection key \hp, a password \pwd, a word $C$, and valid witness $r$ such that \hp is valid, i.e. $\VerHp(\hp,\Lpwd)=1$, but $\THash(\hp,\Lpwd,C,\tau')\not=\PHash(\hp,\Lpwd,C,r)$ with probability at least $\varepsilon(\secpar)$.
+Perfect soundness states that the property holds for any $t$ and any $\varepsilon(\secpar)>0$.
+\end{definition} 
+
+\noindent
+As statistical smoothness is impossible for T-SPHF, \cite{Benhamouda2013} introduces the notion computational smoothness, which is similar to the definition of pseudorandomness for SPHFs.
+
+\begin{definition}[Computational Smoothness \cite{Benhamouda2013}]
+An SPHF is $(t,\varepsilon)$-smooth if for all adversaries $\cA$ running in time at most $t$
+\[ \Adv_{\Pi, \cA}^{\smooth{b}} = \left|\Pr[\Exp^{\smooth{1}}_{\SPHF,\cA}(\secpar)=1] - \Pr[\Exp^{\smooth{0}}_{\SPHF,\cA}(\secpar)=1]\right| \leq \varepsilon(\secpar).\]
+
+\noindent
+$\Exp^{\smooth{b}}_{\SPHF,\cA}(\secpar):$ Generate $(\crs',\tau')\ralgout\TSetup(\crs)$.
+The adversary, given $\crs, \crs'$ and $\tau$, is then allowed to query $\cO_{\PKGen}(\cdot)$ and $\cO_{\Hash_b}(\cdot)$ once before returning a bit $b'$.
+Return $b=b'$.\\
+
+\noindent
+On input \pwd the $\cO_{\PKGen}$ oracle draws a new hash key \hk for \TSPHF on \Lpwd, computes the according projection key \hp using \PKGen, and returns it to the adversary.
+The $\cO_{\Hash}$ oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.\\
+\end{definition}
+
+
+\subsubsection{\TSPHF on Cramer-Shoup Ciphertexts}
+Benhamouda et al. propose a \TSPHF for labelled CS ciphertexts in \cite{Benhamouda2013} under the SXDH assumption.
+The \TSPHF is a straight-forward extension of the previously described \SPHF in labelled CS ciphertexts.
+Let $(q, \GG_1, \GG_2, \GG_T, e)$ denote a bilinear group and replace \GG from the previous \SPHF with $\GG_1$ and $g_1,g_2$ by $g_{1,1},g_{1,2}$, generators for $\GG_1$.
+All other previous parameters are in $\GG_1$ instead of \GG and $g_2$ is generator of $\GG_2$.
+The additional algorithms for \TSPHF and changes to the hash functions are defined as follows.
+\begin{itemize}
+  \item $\TSetup(\crs)$ draws a random $\tau'\rin\ZZ_q$ and sets $\crs'=\zeta=g_2^{\tau'}$.
+  \item $\PKGen(\hk, \Lpwd)$ generates $\hp=(\hp_1=g_1^{\eta_1} g_2^{\theta} h^\mu c^\nu$, $\hp_2=g_1^{\eta_2} d^{\nu}$, $\hp_3)$ with 
+      $\hp_3=(\chi_{1,1}, \chi_{1,2}, \chi_2$, $\chi_3, \chi_4)$ for 
+      $\chi_{1,1}={\zeta}^{\eta_1}, \chi_{1,2}={\zeta}^{\eta_2}, \chi_2={\zeta}^{\theta}, \chi_3={\zeta}^{\mu}, \chi_4={\zeta}^{\nu}$
+  \item $\Hash(\hk, \Lpwd, C)$ computes $h'=u_1^{\eta_1+\xi\eta_2} u_2^{\theta} (e/g_1^{\pwd})^\mu v^\nu$ as before and outputs $h=e(h',g_2)$
+  \item $\PHash(\hp, \Lpwd, C, r)$ computes $h'=(\hp_1 \hp_2^\xi)^r$ as before and outputs $h=e(h',g_2)$
+  \item $\VerHp(\hp, \Lpwd)$ verifies that 
+      $e(\hp_1, \crs')\stackrel{?}{=} e(g_{1,1}, \chi_{1,1})\cdot e(g_{1,2}, \chi_2)\cdot e(h_1, \chi_3)\cdot e(c, \chi_4)$ and
+      $e(\hp_2, \crs')$ $\stackrel{?}{=}$ $e(g_{1,1}$, $\chi_{1,2})\cdot e(d, \chi_4)$
+  \item $\THash(\hp, \Lpwd, C, \tau')$ computes $\left[ e(u_1, \chi_{1,1} \chi_{1,2}^{\xi})\cdot e(u_2, \chi_2)\cdot e(e/g_{1,1}^{\pwd}, \chi_3)\cdot e(v, \chi_4) \right]^{1/\tau'}$
+\end{itemize}

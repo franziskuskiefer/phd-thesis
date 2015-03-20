@@ -68,6 +68,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{siunitx} % use this package module for SI units
+\usepackage{bm} % for \bm, bold math characters
 
 % ***************************** My Custom Packages ******************************
 
@@ -254,6 +255,7 @@
 
 \newcommand{\pk}{\ensuremath{\mathtt{pk}}\xspace}
 \newcommand{\sk}{\ensuremath{\mathtt{sk}}\xspace}
+\newcommand{\dk}{\ensuremath{\mathtt{dk}}\xspace}
 
 \newcommand{\genG}[1][]{\ensuremath{\langle g_{#1} \rangle}\xspace}
 
@@ -304,6 +306,7 @@
 \newcommand{\Com}{\ensuremath{\mathtt{Com}}\xspace}
 \newcommand{\Open}{\ensuremath{\mathtt{Open}}\xspace}
 \newcommand{\Commitment}{\ensuremath{\mathtt{C}}\xspace}
+\newcommand{\Pedersen}{\ensuremath{\mathtt{C_P}}\xspace}
 
 % PAKE model
 \newcommand{\pid}{\ensuremath{\mathtt{pid}}\xspace}
@@ -325,7 +328,13 @@
 \newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
 \newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
 
+% Encryption
+\newcommand{\CS}{\ensuremath{\mathrm{CS}}\xspace}
+\newcommand{\EG}{\ensuremath{\mathrm{EG}}\xspace}
+\newcommand{\Label}{\ensuremath{\ell}\xspace}
+
 % SPHF
+\newcommand{\SPHF}{\ensuremath{\text{SPHF}}\xspace}
 \newcommand{\SPHFF}{\ensuremath{\text{SPHF}^x}\xspace}
 \newcommand{\aux}{\ensuremath{\mathtt{aux}}\xspace}
 
@@ -336,6 +345,17 @@
 \newcommand{\PKGen}{\ensuremath{\mathtt{KGen_P}}\xspace}
 \newcommand{\Hash}{\ensuremath{\mathtt{Hash}}\xspace}
 \newcommand{\PHash}{\ensuremath{\mathtt{PHash}}\xspace}
+
+\newcommand{\Lpwd}{\ensuremath{L_\pwd}\xspace}
+\newcommand{\Laux}{\ensuremath{L_\aux}\xspace}
+
+\newcommand{\smooth}[1]{\ensuremath{\mathtt{smooth-#1}}\xspace}
+
+\newcommand{\TSPHF}{\ensuremath{\text{T-SPHF}}\xspace}
+\newcommand{\TSetup}{\ensuremath{\mathtt{TSetup}}\xspace}
+\newcommand{\VerHp}{\ensuremath{\mathtt{VerKp}}\xspace}
+\newcommand{\THash}{\ensuremath{\mathtt{THash}}\xspace}
+
 
 % general abbrevs.
 \newcommand{\ie}{i.\,e.\xspace}
