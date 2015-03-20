@@ -34,6 +34,10 @@ But since everything someone has or is may be stolen or duplicated, knowledge (o
 To perform cryptography with humans entering a secret, those have to be human-memorable.
 This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
 
+% *****************************************************************************
+% Password Based Cryptography
+% *****************************************************************************
+
 \section{Password Based Cryptography}
 Password based cryptography can be classified (with some exceptions) as symmetric within the field of cryptographic research.
 In contrast to other cryptographic mechanisms where \emph{keys} are chosen from a \emph{key space}, \emph{passwords} are chosen from a \emph{dictionary}.
@@ -47,6 +51,8 @@ The term \emph{password} usually refers to character strings chosen from a dicti
 While many (online) services have password policies in place, humans tend to choose easyly memorable and therefore mainly easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
 To encourage users to use stronger passwords, password-strength meters are used by many services.
 A recent study \cite{Ur2012} on password-strength meters shows that this could have a significant impact on user's password-strength.
+
+\mynote{mention graphical and other passwords}
 
 \paragraph{\acl{PIN}}
 \acp{PIN} are rather short passwords, chosen from the numeric dictionary containing numbers \texttt{0-9}.
@@ -65,9 +71,12 @@ The most popular standards for \ac{OTP} that are implemented in the Google Authe
 These, mainly short passwords, are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
 They can be seen as transaction bound \acp{OTP}.
 
+
 % *****************************************************************************
+% The inherent Threat of Dictionary Attacks
+% *****************************************************************************
+
 \section{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
-% *****************************************************************************
 As mentioned already, most cryptographic mechanisms use high-en-tropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in reasonable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
 Therefore, it is feasible for a program to walk through the entire dictionary and just try every possible secret (password).
@@ -81,6 +90,11 @@ By choosing passwords that are available in lexicons or easy to derive from othe
 Password cracking programs like \emph{John the Ripper} \cite{JohnTheRipper} gather lexicons of different languages in password lists \cite{JohnTheRipperWordlist}.
 Not only language lexicons can be used for brute-force attacks on passwords, but password lists of often used passwords that got somehow leaked.
 Using for example a list with the most used passwords (\eg \cite{XatoPwds}), brute-force attacks on online accounts may be performed very efficiently.
+
+
+% *****************************************************************************
+% Outline
+% *****************************************************************************
 
 \section{Outline of this Chapter}
 
@@ -101,7 +115,7 @@ More specialised methods used in password-based cryptography are analysed later.
 To prove a cryptographic primitive secure, reductionist arguments are used.
 Thereby, the attempt is made to reduce the security of the algorithm/protocol under consideration to a problem that is believed to be hard.\footnote{Note that this work is not concerned with the question whether specific problems are actually hard. We consider only well investigated problems, which the cryptography community beliefs to be hard.}
 Thus, given a (tight) reduction from the primitive to an underlying problem, one could be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
-For an insightful and sceptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citeauthor{AnotherLook} \cite{AnotherLook}.
+For an insightful and sceptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citet{AnotherLook}.
 
 Cryptographic primitives can only be proven secure considering the abilities of a certain adversary.
 Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
@@ -125,6 +139,7 @@ We give necessary formal definitions in Chapter \ref{ch:background}.
 Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in their communities.
 For more discussion on these two worlds we refer the interested reader to \cite{cortier2011survey}.
 
+%********************************** %Game-based Security  **************************************
 \subsection{Game-Based Security}
 Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.
 During this game (or experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
@@ -138,14 +153,15 @@ The actual security definition and strength of the adversary therefore depends o
 Since simple reduction proofs from a protocol to a hard problem are rare, techniques have been developed to do this step by step.
 An example on game-based security proof using so called ``sequences of games'' is given in \cite{Shoup2004}.
 
+%********************************** %Simulation-based Security  **************************************
 \subsection{Simulation-Based Security}
-The idea of simulation-based security proofs is due to \citeauthor{Goldreich87} \cite{Goldreich87} \citeyear{Goldreich87}.
+The idea of simulation-based security proofs is due to \citet{Goldreich87}.
 In contrast to the previously described game-based approach simulation-based security does not define a challenger and oracles the adversary interacts with, but an ideal functionality the actual protocol should mimic in the real world.
 The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm/protocol, and the real world with the actual algorithm/protocol.
 Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is secure.
 
 \paragraph{\acl{UC}}
-The \ac{UC} framework proposed by \citeauthor{Canetti2001a} \cite{Canetti2001a} in \citeyear{Canetti2001a} is a popular general purpose simulation-based security model.
+The \ac{UC} framework proposed by \citet{Canetti2001a} is a popular general purpose simulation-based security model.
 It overcomes an inherent shortcoming of most security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure.
 Most security models only allow to derive statements about the algorithm in a shielded environment.
 As soon as the algorithm is used with other primitives, and thus sharing \ac{IO} channels and data, the security can not be guaranteed anymore.
@@ -160,6 +176,7 @@ A protocol is secure in \ac{UC} when it realizes a given ideal functionality \UC
 In this section we give a broad overview on password based authentication and key exchange protocols found in literature.
 We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialized protocol classes like threshold \ac{PAKE} or group \ac{PAKE}.
 
+%********************************** %PAKE  **************************************
 \subsection{Password Based Authenticated Key Exchange}
 The notion of \emph{\ac{PAKE}} was introduced by \citeauthor{bellovin92}~\cite{bellovin92} and corresponding security models were initially developed by \citeauthor{Bellare2000}~\cite{Bellare2000}, \citeauthor{Boyko2000}~\cite{Boyko2000}, and \citeauthor{Goldreich01}~\cite{Goldreich01}.
 The first and maybe best known \ac{PAKE} protocols include SPEKE \cite{Jablon96} and EKE \cite{bellovin92,Bellare2000}.
@@ -220,7 +237,7 @@ The server is not working with the password as input, but some other long-term s
 \citeauthor{Gentry2006} propose the first general technique \cite{Gentry2006}, proven in the \ac{UC} framework, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
 Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
 
-
+%********************************** %VPAKE  **************************************
 \subsection{Verifier-based Password Authenticated Key Exchange}\label{sec:intro:verifier-basedPAKE}
 The problem of server compromise has been mentioned from the first PAKE protocols by \citet{BellovinM93} (augmented EKE) describing the threats arising from stolen password databases.
 \citet{BellovinM93} describe how password authenticated key-exchange can be performed while the server stores only a verifier of the actual password.
@@ -259,6 +276,13 @@ Since necessary randomness has to be stored on the server (recall that the clien
 However, when the randomness has to be transmitted from the server to the client, there is no reason not to do this as early in the protocol as possible and then use the verifier for authentication rather than the password in a common \ac{PAKE} protocol.
 
 
+%********************************** %TPAKE and 2PAKE  **************************************
+\subsection{Threshold and Two-Server PAKE}
+Two-server PAKE protocols \cite{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers.
+They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
+
+
+%********************************** %Other PAKE protocols  **************************************
 \subsection{Other Password Authenticated Key Exchange Protocols}
 Besides the straight-forward case where a single client-sever pair uses a common password to authenticate each other and establish a secure channel, there exist several other scenarios we discuss in the following.
 
@@ -275,10 +299,6 @@ Authenticated group key exchange protocols allow a \emph{group} of parties, not 
 One way to achieve group \ac{PAKE} is to use general group key exchange protocols and modify them for the password setting, \eg \cite{Bresson02,BrChPo05}.
 %However, this usually yields rather inefficient protocols.
 Similar to the classical \ac{PAKE}, group \ac{PAKE} enjoys a large body of research papers \cite{Kim2004,Abdalla2006,Bohli2006,Dutta2006,AbdallaP06,AbdallaBVS07,AbdallaCCP09,AbdallaCGP11}.
-
-\paragraph{Threshold and Two-Server PAKE}
-Two-server PAKE protocols \cite{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers.
-They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
 
 \paragraph{Password Protected Secret Sharing}
 The notion of \ac{PPSS} was introduced by \citeauthor{Bagherzandi2011} \cite{Bagherzandi2011}.
@@ -364,21 +384,21 @@ It compiles intuitions from Appendix \ref{paper:2pake} on \aclp{SPHF} and two-se
 We conclude this work with an outlook on upcoming projects in Chapter \ref{ch:futurework}.
 
 
-%********************************** %Summary  **************************************
+% *****************************************************************************
+% Summary
+% *****************************************************************************
 \section{Summary of Results}
 
 \mynote{there'll be a lot to write....}
-\ac{PIN} and \acp{PIN}
-\ac{UML}, \ac{API}
 
 
-%********************************** %Related Work  **************************************
-\section{Related Work}
-
-%********************************** %Multi-Server PAKE  **************************************
-\subsection{Multi-Party Password Authenticated Key Exchange}
-\mynote{literature review/related work section}
-
-\subsubsection{Threshold PAKE}
-
-\subsubsection{Two-Server PAKE}
+% %********************************** %Related Work  **************************************
+% \section{Related Work}
+% 
+% %********************************** %Multi-Server PAKE  **************************************
+% \subsection{Multi-Party Password Authenticated Key Exchange}
+% \mynote{literature review/related work section}
+% 
+% \subsubsection{Threshold PAKE}
+% 
+% \subsubsection{Two-Server PAKE}

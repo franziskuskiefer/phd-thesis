@@ -15,7 +15,7 @@ We will not give an entire mathematical introduction but recall the most importa
 
 \subsection{Groups}
 Groups are an important mathematical structure in cryptography.
-In the following we give some useful definitions.
+In the following we give some useful definitions in the context of cyclic and composite order groups.
 
 \begin{definition}[Groups]\label{def:groups}
 Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
@@ -41,11 +41,21 @@ Let \GG denote a finite group of order $p$.
 \end{definition}
 
 \noindent
-Since the computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used are cyclic.
+Let $\phi(p)=|\ZZ^\ast_p|$ denote the cardinality of $\ZZ^\ast_p$.
+
+\subsubsection{Cyclic Groups}
+Since many computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used in this context are cyclic.
 Therefore, we usually use groups of prime order $p$ since groups of prime order are cyclic.
-Another useful feature of prime order groups is that all elements of \GG, except the identity, are generators of \GG.
-Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group.
+Another useful feature of prime order groups is that all elements of group \GG, except the identity, are generators of \GG.
 We write $\GG=\genG$ to denote a group \GG is generate by $g$.
+Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group as well.
+In the case of cyclic groups where $p$ is prime all elements in $\ZZ^\ast_p$ are relatively prime to $p$ (and thus invertible modulo $p$) such that $\phi(p)=p-1$.
+
+\subsubsection{Composite Order Groups}
+Composite order groups $\ZZ^\ast_N$ for integer $N=pq$ that is a product of two distinct primes $p$ and $q$ are another useful group for cryptography.
+Note that $\ZZ^\ast_N=\{x\in{1,\dots,N-1}~|~\gcd(x,N)=1\}$ is always an abelian group under multiplication modulo integer $N>1$.
+The cardinality of $\ZZ^\ast_N$ is given by $\phi(p)=(p-1)(q-1)$.
+
 
 \subsection{Elliptic Curves}
 This work is only marginally concerned with elliptic curve cryptography.
@@ -73,11 +83,17 @@ In cryptography we usually distinguish between three different types of pairings
 \end{itemize}
 
 \subsection{Computational Assumptions}
+In this section we recall computational assumption used in the remainder of this thesis.
+We distinguish between assumptions on cyclic groups and assumptions on composite order groups.
+
+\mynote{give games here with security parameter}
+
+\subsubsection{Cyclic Groups}
 In this section we recall some computational assumptions in the group context that are believed to be hard.
 The \ac{DLP} is the basis of all assumptions in groups.
 
 \begin{definition}[\acl{DLP}]\label{def:dlp}
-Let \GG denote a group of order $p$ with generator $g$.
+Let \GG denote a group of prime order $p$ with generator $g$.
 The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$.
 \eod
 \end{definition}
@@ -101,6 +117,26 @@ The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is har
 \begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
 Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ with associated bilinear map $e$.
 The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
+\eod
+\end{definition}
+
+\subsubsection{Composite Order Groups}
+The basic problem underlying all hardness assumptions in composite order groups is the factorisation problem.
+
+\begin{definition}[Factoring is hard]\label{def:factoring}
+Let $N=pq$ denote an integer with prime factors $p$ and $q$.
+The factoring problem in $\ZZ^\ast_N$ states that given modulus $N$ it is hard to compute $p',q'$ such that $N=p'q'$.
+\eod
+\end{definition}
+
+\begin{definition}[RSA Assumption]\label{def:rsa}
+Let $N=pq$ denote an integer with prime factors $p$ and $q$ and $y\rin\ZZ^\ast_N$ a random element from $\ZZ^\ast_N$.
+The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ with $\gcd(e, \phi(N))=1$ and $ed=1\mod \phi(N)$ it is hard to compute $x$ such that $x^e = y \mod N$.
+\eod
+\end{definition}
+
+\begin{definition}[One-more RSA]\label{def:onemoreRSA}
+...
 \eod
 \end{definition}
 
@@ -220,4 +256,29 @@ In addition to common notations (we do not recall here), we give here all notati
   \item ElGamal encryption
 \end{itemize}
 
+\subsection{Commitments}
+Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
+A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC(\secpar)$ and $(C,d)\gets\Com(x;r)$ are computable in polynomial time, \emph{complete} if $\Com(d)=(C,d)$ for $(C,d)\gets\Com(x;r)$, and secure if it is
+\begin{itemize}
+  \item Binding: For all PPT adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{bi}}(\cdot)$ such that for all $(x,x',r,r',C)\gets A$:
+    $\Pr[x\not=x'\wedge (C,d)=\Com(x;r)\wedge (C,d')=\Com(x';r')] \leq \varepsilon_{\mathrm{bi}}(\secpar)$,
+  \item Hiding: For all PPT adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{hi}}(\cdot)$ such that for all $x_0,x_1$ with $|x_0|=|x_1|$ and $b\rin\bits, (C,d)\gets\Com(x_b;r)$ and $b'\gets A(C,x_1,x_2)$:
+    $\Pr[b=b'] \leq 1/2+\varepsilon_{\mathrm{hi}}(\secpar)$.
+\end{itemize}
+
+
+\subsection{Zero Knowledge Proofs}
+A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so.
+An interactive protocol \ZKP for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
+\begin{itemize}
+	\item Completeness: If $x\in L$, $V$ accepts if $P$ holds a witness proving so.
+	\item Soundness: For every malicious prover $P^\ast(x)$ with $x\in L$ that the probability of making $V$ accept is negligible.
+	\item Zero-Knowledge: If $x\in L$, then there exists an efficient simulator \Sim that on input of $x$ is able to generate a view, indistinguishable from the view of a malicious verifier $V^\ast$.
+\end{itemize}
+
+\paragraph{Zero-Knowledge Proof of Knowledge}
+A zero-knowledge proof of knowledge \ZKPoK is a zero-knowledge proof with the following special soundness definition:
+\begin{itemize}
+	\item Soundness: There exists an efficient knowledge extractor $\Ext$ that can extract a witness from any malicious prover $P^*(x)$ with $x\in L$ that has non-negligible probability of making $V$ accept.
+\end{itemize}
 
