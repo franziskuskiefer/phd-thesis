@@ -193,25 +193,6 @@ Note that the running time is always parametrised with the security parameter \s
 You can think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
 In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
 
-\paragraph{Chosen-Ciphertext Attacks}
-\ac{CCA} defines security for encryption schemes.
-Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
-
-\begin{definition}[IND-CCA2 Security]\label{def:indcca2}
-An encryption scheme $\Pi=(\KGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
-\[\Adv_{\Pi,\cA}^{\ccatwo}(\secpar)=\left|\Pr[\Exp^{\ccatwo}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
-
-\noindent
-$\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
-\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
-\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
-\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
-\hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
-\hspace*{2em}return $b=b'$\\
-Note that $\cA$ must not query the decryption oracle with $c$.
-\eod
-\end{definition}
-
 \paragraph{The Random Oracle Model}
 Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
 The other popular model is the so-called \emph{standard model} where no such function exists.
@@ -306,7 +287,71 @@ Despite being zero-knowledge in the malicious verifier setting, this type of pro
 %----------------------- PK Encryption schemes---------------------------
 \subsection{Public Key Encryption}
 
-\subsubsection{Cramer-Shoup Encryption}\label{sec:csencryption}
+Public key encryption allows party $A$ holding a \emph{public key \pk} of some party $B$ to encrypt a message $m$ in ciphertext $c$ such that only the party holding the according \emph{secret key \sk} ($B$ in this case) to decrypt the ciphertext $c$ to $m$.
+It is formally defined as follows.
+
+\begin{definition}[Public Key Encryption]\label{def:pkencryption}
+A public key encryption scheme $\PKE=(\PKEGen, \Enc, \Dec)$ consists of the following three algorithms:
+\begin{itemize}
+  \item $\PKEGen(\secpar)$ generates a secret/public key-pair $(\sk,\pk)$ on input of the security parameter \secpar
+  \item $\Enc_\pk(m; r)$ encrypts message $m$ with \pk and randomness $r$, and outputs ciphertext $c$
+  \item $\Dec_\sk(c)$ decrypts ciphertext $c$ with \sk and outputs message $m$
+\end{itemize}
+\end{definition}
+
+
+\subsubsection{Public Key Encryption secure against Chosen-Plaintext Attacks}
+\ac{CPA} defines a security for \ac{PKE} schemes where the attacker is allowed to query encryption and decryption oracles.
+
+\begin{definition}[IND-CPA Security]\label{def:indcpa}
+An encryption scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CPA} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
+\[\Adv_{\Pi,\cA}^{\cpa}(\secpar)=\left|\Pr[\Exp^{\cpa}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+
+\noindent
+$\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
+\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk)$\\
+\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
+\hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
+\eod
+\end{definition}
+
+
+\paragraph{ElGamal Encryption}\label{sec:elgamalencryption}
+
+Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
+Note that we assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generator $g$ such that $g^m\in\GG$.
+The ElGamal public key is defined as $\pk=(q,\GG,g,h)$ with $h=g^z$ such that $\dk=z$ denotes the decryption key.
+Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
+
+
+\subsubsection{Public Key Encryption secure against Chosen-Ciphertext Attacks}
+\ac{CCA} defines a security for \ac{PKE} schemes where the attacker is allowed to query encryption and decryption oracles.
+It is therefore a stronger security requirement than \ac{CPA}.
+Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
+
+\begin{definition}[IND-CCA2 Security]\label{def:indcca2}
+An encryption scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
+\[\Adv_{\Pi,\cA}^{\ccatwo}(\secpar)=\left|\Pr[\Exp^{\ccatwo}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+
+\noindent
+$\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
+\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
+\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
+\hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
+\hspace*{2em}return $b=b'$\\
+Note that $\cA$ must not query the decryption oracle on $c$.
+\eod
+\end{definition}
+
+\paragraph{Labelled Public Key Encryption}
+We mainly use a variant of public key encryption, called labelled \ac{PKE} \cite{Shoup01,Canetti2005}.
+Labelled \ac{PKE} takes a public \emph{label $\ell$} as additional input to the encryption ($\Enc_\pk(m,\ell; r)$) and decryption algorithm ($\Dec_\sk(c,\ell)$).
+The attacker in the \ac{CCA}-security experiment is now also allowed to query the decryption oracle on $c$ as long as the label $\ell'$ handed to the oracle is different from $\ell\not=\ell$.
+
+
+\paragraph{Cramer-Shoup Encryption}\label{sec:csencryption}
 
 We use SPHFs on labelled \emph{Cramer-Shoup (CS)} encryptions throughout this work. %, i.e. $\cL=\CS$.
 Here we briefly recall its definition.
@@ -314,13 +359,6 @@ Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, messa
 We assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generators $g_1$ and $g_2$ such that $g_1^m\in\GG$.
 The CS public key is defined as $\pk=(p,\GG,g_{1},g_{2},c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\tau=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
 Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
-
-\subsubsection{ElGamal Encryption}\label{sec:elgamalencryption}
-
-Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
-Note that we assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generator $g$ such that $g^m\in\GG$.
-The ElGamal public key is defined as $\pk=(q,\GG,g,h)$ with $h=g^z$ such that $\dk=z$ denotes the decryption key.
-Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
 
 
 %----------------------- SPHF---------------------------
@@ -402,7 +440,7 @@ Return $b=b'$.
 \end{description}
 \end{definition}
 
-\subsubsection{SPHF on Cramer-Shoup Ciphertexts}
+\paragraph{SPHF on Cramer-Shoup Ciphertexts}
 Benhamouda et al. propose a new perfectly smooth SPHF for labelled Cramer-Shoup encryptions in \cite{Benhamouda2013}.
 The SPHF is defined as follows:
 \begin{itemize}
@@ -412,7 +450,7 @@ The SPHF is defined as follows:
   \item $\PHash(\hp, \Lpwd, C, r)$ computes $h=(\hp_1 \hp_2^\xi)^r$
 \end{itemize}
 
-\subsection{Trapdoor \SPHF (\TSPHF)}\label{sec:tsphf}
+\subsubsection{Trapdoor \SPHF (\TSPHF)}\label{sec:tsphf}
 To build efficient one-round UC-secure PAKE protocols Benhamouda et al. \cite{Benhamouda2013} introduce the notion of \TSPHF.
 We briefly recall their definition and additional security properties such as $(t,\varepsilon)$-soundness and computational smoothness in the light of PAKE protocols.
 \TSPHF adds three additional functions to the classical SPHF definition that allow computation of the hash value knowing only the projection key, ciphertext and trapdoor $\tau'$.\footnote{Note that $\tau'$ is a different trapdoor than the CRS trapdoor $\tau$.}
@@ -458,7 +496,7 @@ The $\cO_{\Hash}$ oracle returns $h\gets \Hash$ honestly computed on input ciphe
 \end{definition}
 
 
-\subsubsection{\TSPHF on Cramer-Shoup Ciphertexts}
+\paragraph{\TSPHF on Cramer-Shoup Ciphertexts}
 Benhamouda et al. propose a \TSPHF for labelled CS ciphertexts in \cite{Benhamouda2013} under the SXDH assumption.
 The \TSPHF is a straight-forward extension of the previously described \SPHF in labelled CS ciphertexts.
 Let $(q, \GG_1, \GG_2, \GG_T, e)$ denote a bilinear group and replace \GG from the previous \SPHF with $\GG_1$ and $g_1,g_2$ by $g_{1,1},g_{1,2}$, generators for $\GG_1$.
