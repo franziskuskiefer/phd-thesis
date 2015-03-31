@@ -280,6 +280,22 @@ However, when the randomness has to be transmitted from the server to the client
 \subsection{Threshold and Two-Server PAKE}
 Two-server PAKE protocols \cite{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers.
 They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
+By splitting the password a malicious or compromised server can only recover a password share that does not allow to recover the password.
+In contrast to \ac{PAKE} protocols two-server and threshold \ac{PAKE} protocols are less well studied.
+
+\subsubsection{Threshold PAKE}
+\citet{FordK00} first proposed to split the client's password among multiple servers to protect against server compromise.
+\citet{RaimondoG03} and \citet{MacKenzieSJ02} were among the firsts to propose t-out-of-n \ac{PAKE} protocols.
+The protocol from \citet{MacKenzieSJ02} requires a PKI in addition to the password and is therefore not password-only.
+
+\subsubsection{Two-Server PAKE}
+Two-server \ac{PAKE} can be seen as a special case of threshold PAKE for $t=n=2$ where $t$ out of $n$ servers, participating in the protocol and holding a password share, must be honest.
+Compared to  general threshold \ac{PAKE}, two-server \ac{PAKE} is deemed more practical requiring only two participating servers.
+In case of a server compromise, password change notifications can be sent to users.
+Threshold \ac{PAKE} protocols are not automatically two-server \ac{PAKE} protocols.
+The threshold \ac{PAKE} from \citet{RaimondoG03} for example requires $t<n/3$ such that it can not be modified to a two-server \ac{PAKE} protocol.
+The first real two-server PAKE protocol is due to \citet{BrainardJKS03}, which was proven secure by \citet{SzydloK05} in a modified version.
+The first two server PAKE with thorough security model based on the classical game-based BPR model is due to \citet{Katz2012a}.
 
 
 %********************************** %Other PAKE protocols  **************************************
@@ -354,10 +370,11 @@ In particular, they propose a method to perform distributed public key cryptogra
 \citet{BoyenCFP10} extend the notion to the pairing world.
 
 % *****************************************************************************
-% Section: How to Ease the Pain
+% Section: Enhanced User Login
 % *****************************************************************************
 
-\section{How to Ease the Pain}
+\section{Enhanced User Login}
+\mynote{briefly discuss 2FA, OAUTH, etc. as alternatives and enhancements of classical password-based login}
 While \acl{PAKE} protocols allow humans to negotiate session keys with servers, it does not get rid of the probably biggest problem: passwords.
 As previously discussed humans are not able to remember high-entropy secrets.
 But even remembering short passwords seems too complicated in many cases such that users re-use their passwords and choose them from lexicons to simplify the process of recalling.
@@ -369,20 +386,11 @@ The latter is done by using password managers in combination with auto completio
 
 
 % *****************************************************************************
-% Section: Motivation & Outline
+% Section: Outline
 % *****************************************************************************
-\section{Motivation and Outline}
+\section{Outline of this Thesis}
 
-This work consists of six chapters and an appendix.
-We gave a motivational overview and discussion on provable security, low-entropy cryptography and passwords in this introduction.
-While the introduction stays informal in most points, the subsequent Chapter \ref{ch:background} on background of cryptography completes the background on research in this area, necessary for the remainder of this work.
-Password-based cryptography in general, and password-based authentication in particular, is an exciting and important research field with a large body of research on the one hand yet many interesting unexplored areas for future work on the other hand.
-Before summarising the contribution in Chapter \ref{ch:opake} and \ref{ch:malservers} we give formal introduction to \acl{PAKE} security models and summarise results from Appendix \ref{paper:corrupt} on forward-secrecy and corruption in \ac{PAKE} models in Chapter \ref{ch:pake}.
-Chapter \ref{ch:opake} summarises the contribution in the field of \acl{PAKE}, \ie recalling the high-level intuitions from Appendix \ref{paper:opake} on oblivious \ac{PAKE}.
-Chapter \ref{ch:malservers} outlines contribution in the area of \ac{PAKE} in the light of malicious servers or server compromise.
-It compiles intuitions from Appendix \ref{paper:2pake} on \aclp{SPHF} and two-server \ac{PAKE} as well as an outlook on blind password policy checking, which work in progress.
-We conclude this work with an outlook on upcoming projects in Chapter \ref{ch:futurework}.
-
+\mynote{write outline}
 
 % *****************************************************************************
 % Summary

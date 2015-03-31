@@ -318,10 +318,10 @@ $\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
 
 
 \paragraph{ElGamal Encryption}\label{sec:elgamalencryption}
-
+ElGamal operates on a multiplicative group \GG of prime order $q$ with generator $g$.
+Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\dk=z\rin\ZZ_q$ and $x$ as secret key.
 Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
-Note that we assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generator $g$ such that $g^m\in\GG$.
-The ElGamal public key is defined as $\pk=(q,\GG,g,h)$ with $h=g^z$ such that $\dk=z$ denotes the decryption key.
+Note that we assume $m\in\ZZ_q$ such that $g^m\in\GG$.
 Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
 
 
@@ -336,7 +336,7 @@ An encryption scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for 
 
 \noindent
 $\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
-\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em}$(\pk,\sk)\ralgout\PKEGen(\secpar),~b\rin\bits$\\
 \hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
 \hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
 \hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
@@ -348,22 +348,23 @@ Note that $\cA$ must not query the decryption oracle on $c$.
 \paragraph{Labelled Public Key Encryption}
 We mainly use a variant of public key encryption, called labelled \ac{PKE} \cite{Shoup01,Canetti2005}.
 Labelled \ac{PKE} takes a public \emph{label $\ell$} as additional input to the encryption ($\Enc_\pk(m,\ell; r)$) and decryption algorithm ($\Dec_\sk(c,\ell)$).
-The attacker in the \ac{CCA}-security experiment is now also allowed to query the decryption oracle on $c$ as long as the label $\ell'$ handed to the oracle is different from $\ell\not=\ell$.
+The attacker in the \ac{CCA}-security experiment is now also allowed to query the decryption oracle on $c$ as long as the label $\ell'$ handed to the oracle is different from $\ell'\not=\ell$.
 
 
 \paragraph{Cramer-Shoup Encryption}\label{sec:csencryption}
 
-We use SPHFs on labelled \emph{Cramer-Shoup (CS)} encryptions throughout this work. %, i.e. $\cL=\CS$.
-Here we briefly recall its definition.
+We describe labelled\ac{CS} encryption here.
+Common \ac{CS} encryption simply omits the label $\ell$.
+\ac{CS} encryption operations on multiplicative group $\GG$ of prime order $q$ with generators $g_1$ and $g_2$.
+Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\dk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+We assume $m\in\ZZ_q$ such that $g_1^m\in\GG$.
 Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
-We assume $m\in\ZZ_q$ and $\GG$ is a cyclic group of prime order $q$ with generators $g_1$ and $g_2$ such that $g_1^m\in\GG$.
-The CS public key is defined as $\pk=(p,\GG,g_{1},g_{2},c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\tau=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
 Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
 
 
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
-We focus in this work on two-server PAKE and therefore describe SPHF and its variants only for our purpose, for general definitions see \cite{cryptoeprint:2013:034,KieferM14a}.
+We focus in this work on two-server PAKE and therefore describe SPHF and its variants only for our purpose, for general definitions see \cite{cryptoeprint:2013:034}.
 First, we recall definitions for classical SPHF tailored to the PAKE use-case and cyclic groups $\GG$ of prime-order $q$.
 Hence, we use languages of ciphertexts with the password as message and the randomness as witness.
 An SPHF language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd. 
