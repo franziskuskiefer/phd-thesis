@@ -120,17 +120,14 @@ Even though a confidential \ac{HTTPS} connection --- \ac{HTTP} over a \ac{TLS}-e
 (This includes sophisticated and government aided attacks.)
 
 \subsubsection{Enhanced User Login} \label{sec:enhanced-login}
-\mynote{briefly discuss 2FA, OAUTH, etc. as alternatives and enhancements of classical password-based login}
-While \acl{PAKE} protocols allow humans to negotiate session keys with servers, it does not get rid of the probably biggest problem: passwords.
-As previously discussed humans are hardly able to remember high-entropy secrets.
+As discussed previously humans are hardly able to remember high-entropy secrets.
 But even remembering short passwords seems complicated in many cases such that users re-use their passwords and choose them from lexicons to simplify the process of recalling.
 To simplify the user login process many technical solutions are in use of which some require passwords and others do not.
 This work is not primarily concerned with these technical aspects but as we reassemble them in some cases we give a brief overview on what is out there.
-Those mechanisms either avoid the process of logging onto a website at all, or automate it as far as possible.
+Those mechanisms either avoid the process of logging onto a website at all, automate it as far as possible, or enhance security by adding additional authentication factors to the password.
 The former is achieved by \ac{SSO} services such as Kerberos \cite{rfc4120} OpenID \cite{OpenID} or OAuth \cite{rfc6749}.
 The latter is done by using password managers in combination with auto completion implementations that store login information for websites and fill the forms automatically.
-
-Other enhancements to password-based logins exist such as multi-factor authentication \cite{FleischhackerMA14} where multiple authentication mechanisms are combined.
+Enhancements to password-based logins such as multi-factor authentication \cite{FleischhackerMA14} exist where multiple authentication mechanisms are combined.
 Popular implementations of this paradigm use the two factors \ac{OTP} and password \cite{Google2Factor,FB2Factor,Twitter2Factor,Github2Factor}.
 
 
@@ -183,7 +180,7 @@ The foundation of today's computational models were laid in the 1980's \cite{Gol
 The computational world consists of bit-string messages and cryptographic primitives performing computations on them.
 It is therefore based on complexity theory.
 In this world the attacker is modelled as a \ac{PPT} Turing machine \cite{Turing37} that must not have significant success probability.
-We give necessary formal definitions in Chapter \ref{ch:background}.
+We give necessary formal definitions in Chapter \ref{ch:prelims}.
 
 \paragraph{Reconciling the Two Worlds}
 Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in their communities.
@@ -201,7 +198,7 @@ Thereby, oracles define an interface for the adversary to interact with the prim
 The actual security definition and strength of the adversary therefore depends on the available oracle.
 
 Since simple reduction proofs from a protocol to a hard problem are rare, techniques have been developed to do this step by step.
-An example on game-based security proof using so called ``sequences of games'' is given in \cite{Shoup2004}.
+An example on game-based security proof using so called ``sequences of games'' is given by \citet{Shoup2004}.
 
 %********************************** %Simulation-based Security  **************************************
 \subsection{Simulation-Based Security}
@@ -249,7 +246,7 @@ While the second challenge has been solved using \ac{VPAKE} or can be achieved u
 % Section: Password Based Authentication and Key Exchange
 % *****************************************************************************
 
-\section{Cryptographic Password Authentication and Key Exchange}
+\section{Cryptographic Password Authentication \& Key Exchange}
 In this section we give a broad overview on password based authentication and key exchange protocols found in literature.
 We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialized protocol classes like threshold \ac{PAKE} or group \ac{PAKE}.
 
@@ -423,8 +420,27 @@ Using biometric factors is rarely seen in practice so far.
 % Section: Passwords and TLS
 % *****************************************************************************
 \section{Real World Architectures and Challenges}
+As discussed in the beginning of the introduction, the scenario where cryptographic password-based authentication protocols are most needed is user login on the Internet.
+However, due to the Internet's architecture the use of such protocols like \ac{PAKE} on the internet involves several challenges.
+To understand the challenges one first has to understand how \ac{HTTPS} and thus \ac{TLS} works.
 
-\mynote{discuss TLS-based architectures for passwords (discuss password challenges in this context), i.e. more technical as motivation for PACCE}
+\acl{TLS} is, in it's current version $1.2$ \cite{rfc5246,rfc6176,rfc4492}, the successor of \ac{SSL}, a suite of cryptographic protocols for secure and authenticated communication.
+It is standardised by the \ac{IETF} (\url{https://www.ietf.org/}) and, while called \emph{transport layer} security, is implemented on the presentation layer (it is initialised on the session layer).
+In order to secure network traffic however, it can be seen as the transport layer while all lower layers only transport the encrypted content.
+When accessing a website via \ac{HTTPS} a \ac{TLS} session is first established between the client and the server, which is then used to transport the content via \ac{HTTP}.
+Thus, when the user is presented with a website to log on, the secure channel has been established already such that executing a \ac{PAKE} protocol and exchanging the \ac{TLS} keys with this newly created key is rather impractical (and not supported by any common browser).
+The place to use \ac{PAKE} is actually \emph{before} the \ac{TLS} channels is set up, such that it can be used as key exchange in the \ac{TLS} handshake protocol.
+This approach has been followed in \cite{rfc5054}, which uses the Secure Remote Password (SRP) by \cite{Wu98} and is implement in major \ac{TLS} implementations such as OpenSSL (\url{https://www.openssl.org/}).
+The problem with such an approach however is that it requires the user to login before the actual website is sent, besides other problems, including the logout problem.
+See \citet{Parsovs14} for a discussion on problems of client authentication using certificates.
+Most problems are transferable to the case where the client uses a password for authentication instead of a client certificate.
+
+Looking at the current state of the Internet and the used tools and protocols it is simply not reasonable to use \ac{PAKE} as \ac{TLS} authentication.
+The challenge is therefore to deploy cryptographic password-based authentication on top of \ac{TLS}, \ie on the the application level, in order to secure user logins on the Internet.
+While this might sound straight-forward, one has to consider that executing for example \ac{PAKE} with mutual authentication via an \ac{HTTPS} channel does \emph{not} necessarily yield an authenticated and confidential channel between client and server.
+To achieve this the password-based authentication protocol has to be bound to the \ac{TLS} channel.
+This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on top of \ac{TLS}.
+
 
 % *****************************************************************************
 % Section: Outline
