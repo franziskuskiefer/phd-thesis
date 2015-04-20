@@ -94,7 +94,18 @@ The \ac{DLP} is the basis of all assumptions in groups.
 
 \begin{definition}[\acl{DLP}]\label{def:dlp}
 Let \GG denote a group of prime order $p$ with generator $g$.
-The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$.
+The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$, i.e. 
+
+\[
+  \Pr[\DLog_{\cA,\GG}(\secpar)=1] \leq \varepsilon(\secpar)
+\]
+
+\noindent
+$\Exp_{\cA,\GG}^{\DLog}(\secpar):$\\
+\hspace*{2em} obtain cyclic group $\GG$ of prime order $q$ with length $\secpar$ and generator $g$\\
+\hspace*{2em} choose $g\rin\GG$\\
+\hspace*{2em} $x \gets \cA(\GG, p, g, h)$\\
+\hspace*{2em} output $1$ iff $g^x=h$, otherwise $0$\\
 \eod
 \end{definition}
 
@@ -104,7 +115,12 @@ The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
 
 \begin{definition}[\acl{DDH}]\label{def:ddh}
 Let \GG denote a group of order $p$ with generator $g$.
-The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$.
+The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$, i.e. 
+
+\[
+  \left| \Pr[\cA(\GG, p, g, g^a, g^b, g^c)=1] - \Pr[\cA(\GG, p, g, g^a, g^b, g^{ab})=1] \right| \leq \varepsilon(\secpar).
+\]
+% for $a,b,c\rin\ZZ_p$.
 \eod
 \end{definition}
 
@@ -134,6 +150,8 @@ Let $N=pq$ denote an integer with prime factors $p$ and $q$ and $y\rin\ZZ^\ast_N
 The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ with $\gcd(e, \phi(N))=1$ and $ed=1\mod \phi(N)$ it is hard to compute $x$ such that $x^e = y \mod N$.
 \eod
 \end{definition}
+
+\mynote{finish this...}
 
 \begin{definition}[One-more RSA]\label{def:onemoreRSA}
 ...
@@ -203,27 +221,27 @@ It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
 The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
 If $H$ has seen $x$ before, it returns the previously chosen element $y$.
 
-\subsection{Notations}
-In addition to common notations (we do not recall here), we give here all notations used throughout this work.
-\mynote{see if anything of this is useful ...}
-\begin{itemize}
-	\item If $A$ is an algorithm, then $x\algout A(y)$ denotes running $A$ with input $y$ and storing the result in $x$.
-	\item If $A$ is a randomised algorithm, then $x\ralgout A(y;r)$ denotes running $A$ with input $y$ and randomness $r$, and storing the result in $x$.
-	\item If $U$ is a set, then $x\rin U$ denotes that $x$ is chosen uniformly at random form $U$.
-	\item A variable $y$ is assigned to $x$ by $x:=y$.
-	\item The boolean operations \emph{and} and \emph{or} are denoted by $\wedge$ and $\vee$.
-	\item Exclusive or (xor) is denoted by $\oplus$.
-	\item Set of binary strings of length $n$ $\bits^n$.
-	\item The length of a binary string $x$ is denoted by $|x|$, the bit-length of an integer $y$ is denoted by $\|y\|$.
-	\item $\bigo,\Theta,\Omega,\omega$
-	\item Since $\log_2$ is the most used logarithm we denote it by $\log$.
-	\item The security parameter is denoted $\secpar$.
-	\item Oracle access to $O(\cdot)$ for algorithm $A$ is denoted by $A^{O(\cdot)}$.
-	\item Public/private key-pairs are denoted by $(\pk,\sk)$
-	\item Negligible functions are denoted by $\varepsilon(\cdot)$.
-	\item \aclp{PRF} are denoted by \PRF.
-	\item \ZZ, \NN, \RR, $\NN_0$, $\NN_{\geq 0}$
-\end{itemize}
+% \subsection{Notations}
+% In addition to common notations (we do not recall here), we give here all notations used throughout this work.
+% \mynote{see if anything of this is useful ...}
+% \begin{itemize}
+% 	\item If $A$ is an algorithm, then $x\algout A(y)$ denotes running $A$ with input $y$ and storing the result in $x$.
+% 	\item If $A$ is a randomised algorithm, then $x\ralgout A(y;r)$ denotes running $A$ with input $y$ and randomness $r$, and storing the result in $x$.
+% 	\item If $U$ is a set, then $x\rin U$ denotes that $x$ is chosen uniformly at random form $U$.
+% 	\item A variable $y$ is assigned to $x$ by $x:=y$.
+% 	\item The boolean operations \emph{and} and \emph{or} are denoted by $\wedge$ and $\vee$.
+% 	\item Exclusive or (xor) is denoted by $\oplus$.
+% 	\item Set of binary strings of length $n$ $\bits^n$.
+% 	\item The length of a binary string $x$ is denoted by $|x|$, the bit-length of an integer $y$ is denoted by $\|y\|$.
+% 	\item $\bigo,\Theta,\Omega,\omega$
+% 	\item Since $\log_2$ is the most used logarithm we denote it by $\log$.
+% 	\item The security parameter is denoted $\secpar$.
+% 	\item Oracle access to $O(\cdot)$ for algorithm $A$ is denoted by $A^{O(\cdot)}$.
+% 	\item Public/private key-pairs are denoted by $(\pk,\sk)$
+% 	\item Negligible functions are denoted by $\varepsilon(\cdot)$.
+% 	\item \aclp{PRF} are denoted by \PRF.
+% 	\item \ZZ, \NN, \RR, $\NN_0$, $\NN_{\geq 0}$
+% \end{itemize}
 
 
 %********************************** %Building Blocks  **************************************
@@ -241,7 +259,7 @@ A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC
 
 \subsubsection{Pedersen commitments \cite{Pedersen91}}
 We will use perfectly hiding, computationally binding, homomorphic Pedersen commitments \cite{Pedersen91} defined as follows.
-Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,q,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group $G$ of prime order $q$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
+Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,p,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group $G$ of prime order $p$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
 Pedersen commitments are \emph{additively homomorph}, i.e. for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in0,\dots,m$ it holds that $\prod_{i=0}^{m}C_i=\Com(\sum_{i=0}^{m}x_i$; $\sum_{i=0}^{m}r_i)$.
 
 \paragraph{Trapdoor commitments}
@@ -266,13 +284,13 @@ A zero-knowledge proof of knowledge \ZKPoK is a zero-knowledge proof with the fo
 
 \subsubsection{Committed Zero-knowledge Proofs}
 We use the following committed $\Sigma$-protocol to ensure extractability (\ZKPoK) and simulatability when interacting with a malicious verifier~\cite{Damgard00,JareckiL00}.
-Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_q$ a collision-resistant hash function.
+Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_p$ a collision-resistant hash function.
 A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:
 \begin{itemize}
   \item The prover computes the first message $m_1\gets P_1(x,w,r)$, computes 
   \[M_1\gets\Com(H(x,m_1); r_1)=g^{H(x,m_1)}h^{r_1},\]
   and sends $M_1$ to the verifier.
-  \item The verifier chooses challenge $c\rin\ZZ_q$ and returns it to the prover.
+  \item The verifier chooses challenge $c\rin\ZZ_p$ and returns it to the prover.
   \item The prover computes the second message $m_2\gets P_2(x,w,r,c)$, computes 
   \[M_2\gets\Com(H(m_2); r_2)=g^{H(m_2)}h^{r_2},\]
    and sends $M_2$ to the verifier.
@@ -318,10 +336,10 @@ $\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
 
 
 \paragraph{ElGamal Encryption}\label{sec:elgamalencryption}
-ElGamal operates on a multiplicative group \GG of prime order $q$ with generator $g$.
-Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\dk=z\rin\ZZ_q$ and $x$ as secret key.
+ElGamal operates on a multiplicative group \GG of prime order $p$ with generator $g$.
+Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\dk=z\rin\ZZ_p$ and $x$ as secret key.
 Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
-Note that we assume $m\in\ZZ_q$ such that $g^m\in\GG$.
+Note that we assume $m\in\ZZ_p$ such that $g^m\in\GG$.
 Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
 
 
@@ -355,9 +373,9 @@ The attacker in the \ac{CCA}-security experiment is now also allowed to query th
 
 We describe labelled\ac{CS} encryption here.
 Common \ac{CS} encryption simply omits the label $\ell$.
-\ac{CS} encryption operations on multiplicative group $\GG$ of prime order $q$ with generators $g_1$ and $g_2$.
+\ac{CS} encryption operations on multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
 Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\dk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
-We assume $m\in\ZZ_q$ such that $g_1^m\in\GG$.
+We assume $m\in\ZZ_p$ such that $g_1^m\in\GG$.
 Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
 Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
 
@@ -365,7 +383,7 @@ Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
 We focus in this work on two-server PAKE and therefore describe SPHF and its variants only for our purpose, for general definitions see \cite{cryptoeprint:2013:034}.
-First, we recall definitions for classical SPHF tailored to the PAKE use-case and cyclic groups $\GG$ of prime-order $q$.
+First, we recall definitions for classical SPHF tailored to the PAKE use-case and cyclic groups $\GG$ of prime-order $p$.
 Hence, we use languages of ciphertexts with the password as message and the randomness as witness.
 An SPHF language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd. 
 The public parts of the language are given by the common reference string \crs containing the public key \pk of the used encryption scheme.

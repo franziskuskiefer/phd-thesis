@@ -1,18 +1,94 @@
-\chapter{Password-based Authentication in the Two-Party Setting}
+\chapter{Password-based Authentication in the Single-Server Setting}
 Using passwords for authentication is it's most common use case.
 As discussed in the introduction, this is still done with the inherently flawed approach of \ac{HTML}-over-\ac{TLS} despite the existence of secure \ac{PAKE} protocols.
 In this section we propose new mechanisms to register user accounts with secure password policy checks and give a new verifier-based \ac{PAKE} protocol to authenticate with these accounts.
 
-This chapter is based on work in \cite{KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
+This chapter proposes a new framework for verifier-based password authenticated key exchange in the two-party setting spanning including password registration and the actual authentication.
+This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
 
 %********************************** %Registering Passwords  **************************************
 \section{Registering Passwords}
 
+\subsection{Zero-knowledge Password Policy Checks}
 \mynote{ZKPPC from ESORICS'14 \cite{KieferM14b}}
-\mynote{BPR from ???(ISC'15/ePrint'15)  \cite{KieferM15a}}
-\mynote{BPR using SPC ???(ePrint/ESORICS'15) \cite{DongK15a}}
 
+\subsection{Blind Password Registration}
+\mynote{BPR from ???(PETS'15/ePrint'15)  \cite{KieferM15a}}
+
+\subsection{More efficient Blind Password Registration}
+\mynote{BPR using SPC ???(ePrint/ESORICS'15) \cite{DongK15a}}
+\mynote{performance trade-off discussion (registration VS authentication)}
 
 %********************************** %PAKE  **************************************
-\section{Password Authenticated Key Exchange}
+\section{Verifier-based Password Authenticated Key Exchange}
+\mynote{how to use the passwords registered before}
+
+\subsection{Building VPAKE from PAKE}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{1.0}{\begin{tikzpicture}
+\draw[] (-3.5,.5) rectangle (12.2,-2);
+
+\node[party,align=center] (client) at (.5,0) {{$C~ (\pwd)$}};
+\node[party,align=center,text width=10em] (server) at (9.5,0) {$S~ (C, \ver, r)$};
+
+\node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver\gets f(\pwd, r)$};
+
+\node[dummyState] (clientR) at (2.75,-0.6){};
+\node[dummyState] (serverR) at (7.5,-0.6){};
+\draw[pil] (serverR) -- node[above, align=center] {$r$} (clientR);
+
+\node[dummyState] (clientPAKE) at (2.75,-1.6){};
+\node[dummyState] (serverPAKE) at (7.5,-1.6){};
+\draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on \ver} (serverPAKE);
+
+\end{tikzpicture}}
+\caption{Generic VPAKE construction from PAKE}
+\label{fig:genericVPAKE}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{1.0}{\begin{tikzpicture}
+\draw[] (-3.5,.5) rectangle (12.2,-2);
+
+\node[party,align=center] (client) at (.5,0) {{$C~ (\pwdv)$}};
+\node[party,align=center,text width=10em] (server) at (9.5,0) {$S~ (C, \ver, r)$};
+
+\node[state, align=left] at (0.5,-0.5) [stateS, align=left]{$\forall \pwd_i\in\pwdv:~ \ver_i\gets f(\pwd_i, r)$};
+\node[stateS, align=left] at (11.25,-0.5) {draw fresh randomness $r'$};
+
+\node[state, align=left] at (0.5,-1.5) [stateS, align=left]{$\forall \pwd_i\in\pwdv:~ H_i\gets g(\ver_i, r')$};
+\node[stateS, align=left] at (11.25,-1.5) {$H\gets g(\ver, r')$};
+
+\node[dummyState] (clientR) at (2.75,-0.6){};
+\node[dummyState] (serverR) at (7.5,-0.6){};
+\draw[pil] (serverR) -- node[above, align=center] {$r, r'$} (clientR);
+
+\node[dummyState] (clientPAKE) at (2.75,-1.6){};
+\node[dummyState] (serverPAKE) at (7.5,-1.6){};
+\draw[pil,<->] (clientPAKE) -- node[above, align=center] {OPAKE on $(\{\bm H, \bar{\ver}\}, (H, \ver))$} (serverPAKE);
+
+\end{tikzpicture}}
+\caption{Generic Oblivious VPAKE construction from suitable PAKE}
+\label{fig:genericOVPAKE}
+\end{figure}
+
+\mynote{generic description of how build VPAKE from PAKE}
+\mynote{VPAKE security model}
+
+\subsection{VPAKE Protocols}
 \mynote{Verifier-based PAKE from ESORICS'14  \cite{KieferM14b}}
+\mynote{tSOKE \cite{ManulisSKD15a}}
+
+\subsection{Oblivious VPAKE}
+\mynote{OVPAKE for password trials \cite{Kiefer2012,Kiefer13a}}
+
+%********************************** %Implementation/Demo  **************************************
+\section{Implementation and Demo}
+\mynote{Online demo and description of implementation containing\\
+* optional registration (BPR style)\\
+* server config\\
+* authentication (tSOKE style)\\
+* optional OPAKE}

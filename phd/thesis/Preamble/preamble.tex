@@ -88,7 +88,52 @@
   \newtheorem{definition}{Definition}
 \usepackage{bibentry} % getting full reference
 \nobibliography* % reuse existing bibtex files
-  
+
+% TIKZ stuff
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,trees,matrix,chains,calc,backgrounds,decorations}
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    party/.style={
+           %rectangle,
+           %rounded corners,
+           %draw=black, very thick,
+           text width=16em,
+           minimum height=2em,
+           text centered},
+    state/.style={
+           inner sep=0,
+           minimum size=0,
+           text centered,
+           text width=10em},
+    stateSm/.style={
+           inner sep=0,
+           minimum size=0,
+           text centered,
+           text width=22.5em},
+    stateSmS/.style={
+           inner sep=0,
+           minimum size=0,
+           text centered,
+           text width=11.0em},
+    stateS/.style={
+           inner sep=0,
+           minimum size=0,
+           text centered,
+           text width=17em},
+    dummyState/.style={
+           inner sep=0,
+           minimum size=0},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,},
+	decorate sep/.style 2 args= {decorate,decoration={shape backgrounds,shape=circle,shape size=#1,shape sep=#2}}
+}
 
 % ******************************* Line Spacing *********************************
 
@@ -128,6 +173,15 @@
 % changes the default name `Bibliography` -> `References'
 \renewcommand{\bibname}{References}
 
+% enable backref for natbib
+\PassOptionsToPackage{backref=page}{hyperref}
+\usepackage{hypernat} 
+% \usepackage[backref=page]{hyperref}
+% \usepackage{etoolbox}
+% \makeatletter
+% \patchcmd{\BR@backref}{\newblock}{\newblock(page~}{}{}
+% \patchcmd{\BR@backref}{\par}{)\par}{}{}
+% \makeatother
 
 % *****************************************************************************
 % *************** Changing the Visual Style of Chapter Headings ***************
@@ -243,6 +297,7 @@
 \newcommand{\RR}{\ensuremath{\mathbb{R}}\xspace}
 \newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
 \newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
+\newcommand{\CC}{\ensuremath{\mathbb{C}}\xspace}
 
 % General notation
 \newcommand{\algout}{\ensuremath{\gets}\xspace}
@@ -257,7 +312,17 @@
 \newcommand{\sk}{\ensuremath{\mathtt{sk}}\xspace}
 \newcommand{\dk}{\ensuremath{\mathtt{dk}}\xspace}
 
+\newcommand{\share}{\ensuremath{\mathfrak{s}}\xspace}
+
+\newcommand{\vect}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}\xspace}
+\newcommand{\fC}{\ensuremath{\mathfrak{C}}\xspace}
+\newcommand{\fD}{\ensuremath{\mathfrak{D}}\xspace}
+
 \newcommand{\genG}[1][]{\ensuremath{\langle g_{#1} \rangle}\xspace}
+
+% Security defs
+\newcommand{\DLog}{\ensuremath{\mathtt{DLog}}\xspace}
+
 
 % Caligraphic Letters
 \newcommand{\cA}{\ensuremath{\mathcal{A}}\xspace}
@@ -276,6 +341,7 @@
 
 % Passwords
 \newcommand{\pwd}{\ensuremath{\mathtt{pwd}}\xspace}
+%FIXME: wrong font
 \newcommand{\pwdv}{\ensuremath{\mathtt{{\bf pwd}}}\xspace}
 
 % crs
@@ -359,6 +425,22 @@
 \newcommand{\VerHp}{\ensuremath{\mathtt{VerKp}}\xspace}
 \newcommand{\THash}{\ensuremath{\mathtt{THash}}\xspace}
 
+% registration
+\newcommand{\pmin}{\ensuremath{{n_\mathtt{min}}}\xspace}
+\newcommand{\pmax}{\ensuremath{{n_\mathtt{max}}}\xspace}
+
+\newcommand{\PoM}{\ensuremath{\mathsf{\bf PoM}}\xspace}
+\newcommand{\PoE}{\ensuremath{\mathsf{\bf PoE}}\xspace}
+\newcommand{\PoS}{\ensuremath{\mathsf{\bf PoS}}\xspace}
+\newcommand{\PoC}{\ensuremath{\mathsf{\bf PoC}}\xspace}
+
+\newcommand{\Comm}{\ensuremath{\mathtt{Co}}\xspace}
+\newcommand{\Ch}{\ensuremath{\mathtt{Ch}}\xspace}
+\newcommand{\Cc}{\ensuremath{\mathtt{Cc}}\xspace}
+\newcommand{\Cd}{\ensuremath{\mathtt{Cd}}\xspace}
+\newcommand{\Res}{\ensuremath{\mathtt{Rs}}\xspace}
+
+\newcommand{\ver}{\ensuremath{\mathtt{ver}}\xspace}
 
 % general abbrevs.
 \newcommand{\ie}{i.\,e.\xspace}
