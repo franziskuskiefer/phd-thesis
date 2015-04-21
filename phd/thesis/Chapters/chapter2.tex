@@ -56,7 +56,6 @@ Composite order groups $\ZZ^\ast_N$ for integer $N=pq$ that is a product of two 
 Note that $\ZZ^\ast_N=\{x\in{1,\dots,N-1}~|~\gcd(x,N)=1\}$ is always an abelian group under multiplication modulo integer $N>1$.
 The cardinality of $\ZZ^\ast_N$ is given by $\phi(p)=(p-1)(q-1)$.
 
-
 \subsection{Elliptic Curves}
 This work is only marginally concerned with elliptic curve cryptography.
 We therefore keep this section short and refer to \cite{HankersonMS03} for further introduction into elliptic curves in cryptography.
@@ -83,83 +82,10 @@ In cryptography we usually distinguish between three different types of pairings
 \end{itemize}
 
 \subsection{Computational Assumptions}
-In this section we recall computational assumption used in the remainder of this thesis.
+In this section we recall computational assumptions used in the remainder of this thesis.
 We distinguish between assumptions on cyclic groups and assumptions on composite order groups.
+When saying something is hard with respect to $\secpar$, this means that there exists no algorithm that can solve the problem in polynomial time in $\secpar$.
 
-\mynote{give games here with security parameter}
-
-\subsubsection{Cyclic Groups}
-In this section we recall some computational assumptions in the group context that are believed to be hard.
-The \ac{DLP} is the basis of all assumptions in groups.
-
-\begin{definition}[\acl{DLP}]\label{def:dlp}
-Let \GG denote a group of prime order $p$ with generator $g$.
-The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$, i.e. 
-
-\[
-  \Pr[\DLog_{\cA,\GG}(\secpar)=1] \leq \varepsilon(\secpar)
-\]
-
-\noindent
-$\Exp_{\cA,\GG}^{\DLog}(\secpar):$\\
-\hspace*{2em} obtain cyclic group $\GG$ of prime order $q$ with length $\secpar$ and generator $g$\\
-\hspace*{2em} choose $g\rin\GG$\\
-\hspace*{2em} $x \gets \cA(\GG, p, g, h)$\\
-\hspace*{2em} output $1$ iff $g^x=h$, otherwise $0$\\
-\eod
-\end{definition}
-
-\noindent
-Several \ac{DLP}-based assumptions have been proposed.
-The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
-
-\begin{definition}[\acl{DDH}]\label{def:ddh}
-Let \GG denote a group of order $p$ with generator $g$.
-The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$, i.e. 
-
-\[
-  \left| \Pr[\cA(\GG, p, g, g^a, g^b, g^c)=1] - \Pr[\cA(\GG, p, g, g^a, g^b, g^{ab})=1] \right| \leq \varepsilon(\secpar).
-\]
-% for $a,b,c\rin\ZZ_p$.
-\eod
-\end{definition}
-
-\begin{definition}[\acl{CDH}]\label{def:cdh}
-Let \GG denote a group of order $p$ with generator $g$.
-The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
-\eod
-\end{definition}
-
-\begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
-Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ with associated bilinear map $e$.
-The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
-\eod
-\end{definition}
-
-\subsubsection{Composite Order Groups}
-The basic problem underlying all hardness assumptions in composite order groups is the factorisation problem.
-
-\begin{definition}[Factoring is hard]\label{def:factoring}
-Let $N=pq$ denote an integer with prime factors $p$ and $q$.
-The factoring problem in $\ZZ^\ast_N$ states that given modulus $N$ it is hard to compute $p',q'$ such that $N=p'q'$.
-\eod
-\end{definition}
-
-\begin{definition}[RSA Assumption]\label{def:rsa}
-Let $N=pq$ denote an integer with prime factors $p$ and $q$ and $y\rin\ZZ^\ast_N$ a random element from $\ZZ^\ast_N$.
-The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ with $\gcd(e, \phi(N))=1$ and $ed=1\mod \phi(N)$ it is hard to compute $x$ such that $x^e = y \mod N$.
-\eod
-\end{definition}
-
-\mynote{finish this...}
-
-\begin{definition}[One-more RSA]\label{def:onemoreRSA}
-...
-\eod
-\end{definition}
-
-%********************************** %Definitions  **************************************
-\section{Definitions}
 Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
 As mentioned earlier, security models used in this work are from the computational world.
 In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on a security parameter.
@@ -171,17 +97,17 @@ A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exi
 \eod
 \end{definition}
 
-\begin{definition}[Asymptotic Notation]\label{def:asymptotic}
-Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
-\begin{itemize}
-	\item $f(n)=\cO(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\leq c\cdot g(n)$.
-	\item $f(n)=\Omega(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\geq c\cdot g(n)$.
-	\item $f(n)=\Theta(g(n)):$ Both $f(n)=\cO(g(n))$ and $f(n)=\Omega(g(n))$ hold.
-	\item $f(n)=o(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=0$
-	\item $f(n)=\omega(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=\infty$ 
-	\eod
-\end{itemize}
-\end{definition}
+% \begin{definition}[Asymptotic Notation]\label{def:asymptotic}
+% Let $f(n)$ and $g(n)$ denote functions from $\NN_0$ to $\RR_{\geq 0}$.
+% \begin{itemize}
+% 	\item $f(n)=\cO(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\leq c\cdot g(n)$.
+% 	\item $f(n)=\Omega(g(n)):$ There exist $c,N\in\NN_0$ such that for all $n>N$ it holds that $f(n)\geq c\cdot g(n)$.
+% 	\item $f(n)=\Theta(g(n)):$ Both $f(n)=\cO(g(n))$ and $f(n)=\Omega(g(n))$ hold.
+% 	\item $f(n)=o(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=0$
+% 	\item $f(n)=\omega(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=\infty$ 
+% 	\eod
+% \end{itemize}
+% \end{definition}
 
 \paragraph{Probabilistic Polynomial-Time}
 We often use the phrase \ac{PPT} to describe an efficient algorithm.
@@ -211,15 +137,83 @@ Note that the running time is always parametrised with the security parameter \s
 You can think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
 In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
 
-\paragraph{The Random Oracle Model}
-Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
-The other popular model is the so-called \emph{standard model} where no such function exists.
-While this function $H$ does not actually exist in the real world it is useful in many proves.
-It is usually instantiated with a cryptographic hash function.
-The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
-It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
-The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
-If $H$ has seen $x$ before, it returns the previously chosen element $y$.
+\subsubsection{Cyclic Groups}
+In this section we recall some computational assumptions in the group context that are believed to be hard.
+The \ac{DLP} is the basis of all assumptions in groups.
+
+\begin{definition}[\acl{DLP}]\label{def:dlp}
+Let \GG denote a group of prime order $p$ with generator $g$.
+The \ac{DLP} in \GG states that given a random element $h\rin\GG$ it is hard to compute $x$ such that $h=g^x$, i.e. 
+
+\[
+  \Pr[\DLog_{\cA,\GG}(\secpar)=1] \leq \varepsilon(\secpar)
+\]
+
+\noindent
+$\Exp_{\cA,\GG}^{\DLog}(\secpar):$\\
+\hspace*{2em} obtain cyclic group $\GG$ of prime order $p$ with length $\secpar$ and generator $g$\\
+\hspace*{2em} choose $h\rin\GG$\\
+\hspace*{2em} $x \gets \cA(\GG, p, g, h)$\\
+\hspace*{2em} output $1$ iff $g^x=h$, otherwise $0$\\
+\eod
+\end{definition}
+
+\noindent
+Several \ac{DLP}-based assumptions have been proposed.
+The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
+
+\begin{definition}[\acl{DDH}]\label{def:ddh}
+Let \GG denote a group of order $p$ of length $\secpar$ with generator $g$.
+The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard relative to $\secpar$ to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$, i.e. 
+
+\[
+  \left| \Pr[\cA(\GG, p, g, g^a, g^b, g^c)=1] - \Pr[\cA(\GG, p, g, g^a, g^b, g^{ab})=1] \right| \leq \varepsilon(\secpar).
+\]
+% for $a,b,c\rin\ZZ_p$.
+\eod
+\end{definition}
+
+\begin{definition}[\acl{CDH}]\label{def:cdh}
+Let \GG denote a group of order $p$ of length $\secpar$ with generator $g$.
+The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard relative to $\secpar$ to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
+\eod
+\end{definition}
+
+\begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
+Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ of length $\secpar$ with associated bilinear map $e$.
+The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard relative to $\secpar$, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
+\eod
+\end{definition}
+
+\subsubsection{Composite Order Groups}
+The basic problem underlying all hardness assumptions in composite order groups is the factorisation problem.
+
+\begin{definition}[Factoring Problem]\label{def:factoring}
+Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length $\secpar$ each.
+The factoring problem in $\ZZ^\ast_N$ states that given modulus $N$ it is hard with respect to $\secpar$ to compute $p',q'$ such that $N=p'q'$.
+\eod
+\end{definition}
+
+\noindent
+To define RSA-based assumptions we have to define the RSA algorithm first.
+Let $(N, e, d)\ralgout\KGen(\secpar)$ denote the RSA key-generation algorithm that generates $(N, e, d)$ such that $N=pq$ for two distinct primes $p$ and $q$ of size $\secpar$ each, $\gcd(e, \phi(N))=1$, and $ed=1\mod \phi(N)$.
+
+\begin{definition}[RSA Assumption]\label{def:rsa}
+Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length $\secpar$ each and $y\rin\ZZ^\ast_N$ a random element from $\ZZ^\ast_N$.
+The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ with $\gcd(e, \phi(N))=1$ and $ed=1\mod \phi(N)$ it is hard with respect to $\secpar$ to compute $x$ such that $x^e = y \mod N$.
+\eod
+\end{definition}
+
+\noindent
+Informally, the one-more RSA assumption indicates that the RSA problem is hard relative to $\secpar$ even if the adversary is given access to an RSA oracle.
+
+\begin{definition}[One-more RSA]\label{def:onemoreRSA}
+Let $(N, e, d)\ralgout\KGen(\lambda)$ denote the RSA key-generation algorithm, and $r_j\rin\ZZ^\ast_N$ be uniformly random integers in $\ZZ^\ast_N$ for $j\in[1,t+1]$.
+We say the one-more RSA problem is $(\lambda, t)$-hard if for every PPT adversary \cA we have
+\[ \Pr[\{x_i\}_{i\in[1,t+1]} \gets \cA^{(\cdot)^d \bmod N}(N, e, \lambda, r_1, \dots, r_{t+1})] \leq \varepsilon(\secpar), \]
+where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)^{^d \mod N}$ and $\varepsilon(\cdot)$ is a negligible function.
+\eod
+\end{definition}
 
 % \subsection{Notations}
 % In addition to common notations (we do not recall here), we give here all notations used throughout this work.
@@ -246,6 +240,17 @@ If $H$ has seen $x$ before, it returns the previously chosen element $y$.
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
+This section describes all building blocks used throughout this work to build the proposed protocols.
+But before starting with that we want to give a short description of the random oracle, which is an important though disputed, and standard model.
+Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
+The other popular model is the so-called \emph{standard model} where no such function exists.
+While this function $H$ does not actually exist in the real world it is useful in many proves.
+It is usually instantiated with a cryptographic hash function.
+The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
+It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
+The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
+If $H$ has seen $x$ before, it returns the previously chosen element $y$.
+While not including random oracles, the standard model often includes a \acl{CRS} that is made available to all parties and can be seen as common set-up parameters.
 
 \subsection{Commitments}
 Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
@@ -309,7 +314,7 @@ Public key encryption allows party $A$ holding a \emph{public key \pk} of some p
 It is formally defined as follows.
 
 \begin{definition}[Public Key Encryption]\label{def:pkencryption}
-A public key encryption scheme $\PKE=(\PKEGen, \Enc, \Dec)$ consists of the following three algorithms:
+A public key encryption scheme $\PKE=(\PKEGen$, $\Enc$, $\Dec)$ consists of the following three algorithms:
 \begin{itemize}
   \item $\PKEGen(\secpar)$ generates a secret/public key-pair $(\sk,\pk)$ on input of the security parameter \secpar
   \item $\Enc_\pk(m; r)$ encrypts message $m$ with \pk and randomness $r$, and outputs ciphertext $c$
