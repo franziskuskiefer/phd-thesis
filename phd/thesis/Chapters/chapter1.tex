@@ -132,24 +132,41 @@ Popular implementations of this paradigm use the two factors \ac{OTP} and passwo
 
 
 \subsection{On Password Security Research}
-\mynote{security research on:\\
-* password strength\\
-* password hashing\\
-* password storage\\
-* password-based encryption}
+Security research on passwords looking at topics such as how to measure password strength, how to securely hash and store passwords, or how to encrypt using a password, holds an excessive body of works.
+Since this thesis is primarily concerned with cryptographic treatment of passwords and therefore uses idealised assumptions we give only a brief introduction into these research fields and give links to our research.
+
+\paragraph{Password Strength}
+One of the most difficult topics in password research is the question of how to measure the strength of a password.
+While cryptography research usually assumes uniform or some other idealised distribution of passwords, this is clearly not the case in reality with humans choosing them.
+Measuring password strength is a rather non technical research are and focuses on user studies and analysis of password database leaks \cite{ShayKKLMBCC10,KomanduriSKMBCCE11,MazurekKVBCCKSU13} in order to come up with a good model to predict min-entropy of passwords.
+Entropy can capture many realistic password creation models and definitions of password entropy have been standardised by NIST \cite{nist800}.
+However, although min-entropy seems a reasonable measure for modelling dictionary attack resistance of we stress that min-entropy alone might not be sufficient to estimate the real password strength. 
+As shown in \cite{MazurekKVBCCKSU13}, password strength is a complex matter (due to a variety of real-world attacks) and can hardly be captured through a single metric like min-entropy.
+
+\paragraph{Password Hashing and Storage}
+In order to securely store passwords or use them for encryption hashing them in some form is essential to make brute-force attacks on them more costly.
+The current state of the art password hashing schemes are the \ac{PBKDF2} \cite{rfc2898}, bcrypt \cite{ProvosM99}, and scrypt \cite{rfcScrypt}.
+This very limited number of possible password hashing schemes should be resolved by the currently running password hashing competition (\url{https://password-hashing.net}).
+Other more technical means to avoid stealing stored passwords is to hide them in a huge amount of data that makes it impossible to steal without being detected (a recent new implementation is given by Taplink \url{https://taplink.co/technology/}).
+
 
 \subsection{Password based Cryptography}
+Cryptography research in the area of passwords focuses mainly only \ac{PAKE} protocols and recently \ac{PPSS}.
+\ac{PAKE} allows to exchange an authenticated session key between two parties holding a common password for authentication.
+In contrast to other authenticated key exchange protocols \ac{PAKE} has to consider dictionary attacks, \ie that an attacker is always able to run the protocol often enough with the server in order to eventually successfully authenticate.
+The recent development of \ac{PPSS} moves away from key exchange and tackles the problem of secure online storage that is secured with the users password.
+In order to achieve high security, data stored online should be encrypted with common mechanisms such as \ac{AES}.
+However, to access the data, users would have to store that key.
+The solution proposed by \ac{PPSS} allows to split the key in shares that are stored at different servers and can only be retrieved if the user successfully authenticates itself to the two servers with the correct password.
 
-\mynote{PAKE etc.}
 
-\subsubsection{Strong Cryptography from Low-Entropy Secrets}
+\paragraph{Strong Cryptography from Low-Entropy Secrets}
 Despite authentication and key exchange, passwords are used in other contexts such as general strong cryptography.
-Due to the low-entropy of passwords this oviously introduces additional challenges.
+Due to the low-entropy of passwords this obviously introduces additional challenges.
 \citet{AbdallaBCP09} show how to build strong cryptography from weak secrets.
 In particular, they propose a method to perform distributed public key cryptography when each party holds only a password, based on the \acl{DDH} assumption.
 \citet{BoyenCFP10} extend the notion to the pairing world.
 
-\mynote{discuss password based security research, practice and cryptography}
 
 % *****************************************************************************
 % Section: On Provable Security
@@ -443,18 +460,16 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 
 
 % *****************************************************************************
-% Section: Outline
+% Section: Outline & Summary
 % *****************************************************************************
-\section{Outline of this Thesis}
+\section{Outline of this Thesis \& Summary of Results}
+This thesis consists of five more chapters.
+It starts in Chapter \ref{ch:prelims} with prerequisites and building blocks used throughout this work.
+After defining the foundations, Chapter \ref{ch:vpake} describes the first major contribution of this thesis, a framework for password registration (Section \ref{sec:vpake-registration}) and password authenticated key-exchange (Section \ref{sec:vpake-pake}) in the verifier-based setting where the server stores only a verifier of the password.
+The description of the implementation and demonstration can be found in Section \ref{sec:vpake-registration}.
+Chapter \ref{ch:2pake} transfers the results from Chapter \ref{ch:vpake} to the two-server setting for the second contribution by proposing a framework for password registration and authentication in the two-server \ac{PAKE} setting.
+To this end we describe a secure registration process for two-server \ac{PAKE} protocols in Section \ref{sec:2pake-registration} and the first \ac{UC} secure two-server \ac{PAKE} protocol in Section \ref{sec:2pake-uc}.
 
-\mynote{write outline}
-
-% *****************************************************************************
-% Summary
-% *****************************************************************************
-\section{Summary of Results}
-
-\mynote{there'll be a lot to write....}
 
 
 % %********************************** %Related Work  **************************************

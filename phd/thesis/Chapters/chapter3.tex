@@ -1,4 +1,4 @@
-\chapter{Password-based Authentication in the Single-Server Setting}
+\chapter{Password-based Authentication in the Single-Server Setting} \label{ch:vpake}
 Using passwords for authentication is it's most common use case.
 As discussed in the introduction, this is still done with the inherently flawed approach of \ac{HTML}-over-\ac{TLS} despite the existence of secure \ac{PAKE} protocols.
 In this section we propose new mechanisms to register user accounts with secure password policy checks and give a new verifier-based \ac{PAKE} protocol to authenticate with these accounts.
@@ -7,7 +7,7 @@ This chapter proposes a new framework for verifier-based password authenticated 
 This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
 
 %********************************** %Registering Passwords  **************************************
-\section{Registering Passwords}
+\section{Registering Passwords} \label{sec:vpake-registration}
 
 \subsection{Zero-knowledge Password Policy Checks}
 \mynote{ZKPPC from ESORICS'14 \cite{KieferM14b}}
@@ -20,7 +20,7 @@ This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15
 \mynote{performance trade-off discussion (registration VS authentication)}
 
 %********************************** %PAKE  **************************************
-\section{Verifier-based Password Authenticated Key Exchange}
+\section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
 \mynote{how to use the passwords registered before}
 
 \subsection{Building VPAKE from PAKE}
@@ -86,7 +86,7 @@ This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15
 \mynote{OVPAKE for password trials \cite{Kiefer2012,Kiefer13a}}
 
 %********************************** %Implementation/Demo  **************************************
-\section{Implementation and Demo}
+\section{Implementation and Demo} \label{sec:vpake-demo}
 \mynote{Online demo and description of implementation containing\\
 * optional registration (BPR style)\\
 * server config\\
