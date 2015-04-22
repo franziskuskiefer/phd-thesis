@@ -1,3 +1,7 @@
+*.sym*
+*.syc*
+*.sub*
+*.suc*
 *.tdo*
 .DS_Store*
 *.aux*
