@@ -4,9 +4,11 @@
 
 \begin{longtable}[l]{p{80pt} |l}
 % \textbf{Symbol}	& \textbf{Description} \\
+\secpar & security parameter \\
 \NN, \ZZ  	 & set of natural number, set of integers \\
 $\ZZ_p$, $\ZZ_p^\ast$	 & set of integers modulo $p\in\NN$, multiplicative group of $\ZZ_p$ \\
 \GG		 & cyclic group with generator $g$ \\
+\FF & field \\
 $\in,\rin$ & choice/element of, random choice \\
 $a \algout f(b)$ & $a$ is output of function evaluation of $f$ on input $b$ \\
 $[1,n]$ & interval between $1$ and $n$ \\
@@ -15,4 +17,6 @@ $|x|$ & size of $x$ / absolute value of $x$ (context-dependent) \\
 $\oplus$ & XOR \\
 $\mod$ & modulo \\
 $\Pr[X]$ & probability of event $X$ \\
+$a\algout\cA^{X^y(\cdot)}(b)$ & attacker \cA with $y$-times access to oracle $X(\cdot)$ and input $b$ outputs $a$ ($y$ is optional) \\
+$\varepsilon(\cdot)$ & negligible function
 \end{longtable}

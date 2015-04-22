@@ -6,7 +6,7 @@
 
 In this chapter we recall known facts and assumptions as well as notations used throughout this work.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
-While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \cite{katz2008introduction}.
+While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \citet{katz2008introduction} or \citet{Goldreich2001}.
 
 
 %********************************** %Math  **************************************
@@ -215,9 +215,18 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 \eod
 \end{definition}
 
-\mynote{deinfe $\varepsilon$-closeness}
+\subsubsection{Further Definitions}
+Some further definitions used throughout this work.
 
-% \subsection{Notations}
+\begin{definition}[Computational Indistinguishability]
+Polynomial-time indistinguishability between two ensembles $X=\{X_n\}_{n\in\NN}$ and $Y=\{Y_n\}_{n\in\NN}$ is given if for every \ac{PPT} algorithm $D$, there exists a negligible function $\varepsilon(\cdot)$ such that
+\[
+  \left| \Pr[D(X) = 1] - \Pr[D(Y) = 1] \right| < \varepsilon(n).
+\]
+We use computational or polynomial-time indistinguishable interchangeably and write $X\stackrel{\varepsilon}{=}Y$.
+\eod
+\end{definition}
+
 % In addition to common notations (we do not recall here), we give here all notations used throughout this work.
 % \mynote{see if anything of this is useful ...}
 % \begin{itemize}
@@ -528,8 +537,6 @@ Perfect soundness states that the property holds for any $t$ and any $\varepsilo
 \paragraph{Computational Smoothness}
 As statistical smoothness is impossible for \ac{T-SPHF}, \citet{Benhamouda2013} introduce the notion computational smoothness, which is similar to the definition of pseudorandomness for \acp{SPHF}.
 
-\mynote{define how we write oracles and restrictions on the number of invocations (define earlier)}
-
 \begin{definition}[Computational Smoothness]
 An \ac{SPHF} is $(t,\varepsilon)$-smooth if for all adversaries $\cA$ running in time at most $t$
 \[ \Adv_{\Pi, \cA}^{\smooth{b}} = \left|\Pr[\Exp^{\smooth{1}}_{\SPHF,\cA}(\secpar)=1] - \Pr[\Exp^{\smooth{0}}_{\SPHF,\cA}(\secpar)=1]\right| \leq \varepsilon(\secpar).\]
@@ -537,13 +544,13 @@ An \ac{SPHF} is $(t,\varepsilon)$-smooth if for all adversaries $\cA$ running in
 \noindent
 $\Exp^{\smooth{b}}_{\SPHF,\cA}(\secpar):$ \\
 \hspace*{2em} generate $(\crs',\tau')\ralgout\TSetup(\crs)$\\
-\hspace*{2em} $b'\gets\cA^{\cO^1_{\PKGen}(\cdot), \cO^1_{\Hash_b}(\cdot)}(\secpar, \crs, \crs', \tau)$ \\
+\hspace*{2em} $b'\gets\cA^{\PKGen^1(\cdot), \Hash_b^1(\cdot)}(\secpar, \crs, \crs', \tau)$ \\
 % The adversary, given $\crs, \crs'$ and $\tau$, is then allowed to query $\cO_{\PKGen}(\cdot)$ and $\cO_{\Hash_b}(\cdot)$ once before returning a bit $b'$.
 \hspace*{2em} return $b=b'$\\
 
 \noindent
-On input \pwd the $\cO_{\PKGen}$ oracle draws a new hash key \hk for \ac{T-SPHF} on \Lpwd, computes the according projection key \hp using \PKGen, and returns it to the adversary.
-The $\cO_{\Hash}$ oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.\\
+On input \pwd the \PKGen oracle draws a new hash key \hk for \ac{T-SPHF} on \Lpwd, computes the according projection key \hp using \PKGen, and returns it to the adversary.
+The \Hash oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.\\
 \end{definition}
 
 
