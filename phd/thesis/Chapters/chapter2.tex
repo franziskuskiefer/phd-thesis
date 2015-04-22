@@ -215,6 +215,8 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 \eod
 \end{definition}
 
+\mynote{deinfe $\varepsilon$-closeness}
+
 % \subsection{Notations}
 % In addition to common notations (we do not recall here), we give here all notations used throughout this work.
 % \mynote{see if anything of this is useful ...}
@@ -387,20 +389,34 @@ Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \
 
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
-We focus in this work on two-server PAKE and therefore describe SPHF and its variants only for our purpose, for general definitions see \cite{cryptoeprint:2013:034}.
-First, we recall definitions for classical SPHF tailored to the PAKE use-case and cyclic groups $\GG$ of prime-order $p$.
-Hence, we use languages of ciphertexts with the password as message and the randomness as witness.
-An SPHF language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd. 
-The public parts of the language are given by the common reference string \crs containing the public key \pk of the used encryption scheme.
-By $\tau$ we denote the \crs trapdoor, the secret key to \pk.
-We denote $\cL$ the encryption scheme used to generate words in \Lpwd.
-Unless stated otherwise we assume that $\cL$ is a labelled CCA-secure encryption scheme.
+Smooth projective hashing allows to compute the hash value of an element from a set in two different ways:
+either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
+In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
+\aclp{SPHF} are due to \citet{Cramer2002} who used them to construct \ac{CCA}-secure public key encryption schemes and analyse mechanisms from \cite{Cramer1998}.
+While \acp{SPHF} are useful in many areas of cryptography we focus on describing them here in the context of \ac{PAKE}, which is where it will be used in this work.
+For a general treatment we refer to \cite{Cramer2002,cryptoeprint:2013:034}.
+The first use of \acp{SPHF} in the construction of a \ac{PAKE} protocol is due to Gennaro and Lindell \cite{Gennaro2003}, who introduced additional requirements to \ac{SPHF} such as pseudorandomness that was later extended by \citet{Katz2011}.
+The \ac{SPHF}-based approach taken by \citet{Gennaro2003} was further helpful in the ``explanation'' of the KOY protocol from \citet{KatzOY01}, where those functions were implicitly applied.
 
-% FIXME: \fk{remark for \GG}
+First, we recall definitions for classical \ac{SPHF} tailored to the \ac{PAKE} use-case and cyclic groups \GG of prime-order $p$.
+We use languages of ciphertexts with the password as message and the randomness as witness.
+An \ac{SPHF} language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd. 
+The public parts of the language are given by the \acl{CRS} \crs containing the public key \pk of the used encryption scheme.
+By $\tau$ we denote the \crs trapdoor, the secret key to \pk.
+We denote \cL the encryption scheme used to generate words in \Lpwd.
+
+The authors of \cite{Benhamouda2013} identify three different SPHF classes:
+word-independent key and adaptive smoothness (KV-SPHF, first proposed by \citet{Katz2011}),
+word-independent key and non-adaptive smoothness (CS-SPHF, first proposed by \citet{Cramer2002}),
+and word-dependent key (GL-SPHF, first proposed by \citet{Gennaro2003}).
+In this work we focus on the strongest notion behind KV-SPHF: \emph{word-independent key} with \emph{adaptive smoothness}.
+Unless stated otherwise all \acp{SPHF} in the following are KV-SPHFs where the projection key is independent of the ciphertext and \cL is a labelled CCA-secure encryption scheme.
+
+\mynote{have to properly define \Lpwd and \cC, we want ciphertext $C$ being part of it, not the entire triple $(\Label, C, \pwd)$!}
 
 \begin{definition}[Languages of Ciphertexts]\label{def:language}
 Let $L_\pwd \subseteq \{(\Label, C, \pwd^\ast)\}=\cC$ denote the language of labelled ciphertexts under consideration with ciphertext $(\Label,C)$ under \pk and password $\pwd^\ast\in\cD$.
-A ciphertext $C$ is in language $L_\pwd$ iff there exists randomness $r$ such that $C\gets\Enc^{\cL}_\pk(\ell,\pwd;r)$.
+A ciphertext $C$ is in language \Lpwd iff there exists randomness $r$ such that $C\gets\Enc^{\cL}_\pk(\ell,\pwd;r)$.
 \end{definition}
 
 \noindent
@@ -408,53 +424,56 @@ Smooth projective hashing for languages of ciphertexts is then defined as follow
 Note that we describe only KV-SPHF where the projection key does not depend on the word (ciphertext).
 
 \begin{definition}[KV-SPHF]\label{def:sphf}
-Let $\Lpwd$ denote a language of ciphertexts such that $C\in \Lpwd$ if there exists randomness $r$ proving so.
-A \emph{smooth projective hash function} for ciphertext language \Lpwd consists of the following four algorithms:
+Let \Lpwd denote a language of ciphertexts such that $C\in \Lpwd$ if there exists randomness $r$ proving so.
+A \emph{\acl{SPHF}} for ciphertext language \Lpwd consists of the following four algorithms:
 
 \begin{itemize}
-	\item $\HKGen(\Lpwd)$ generates a random hashing key \hk for language \Lpwd.
-	\item $\PKGen(\hk,\Lpwd)$ derives the projection key $\hp$ from hashing key \hk. 
+	\item $\HKGen(\Lpwd)$ generates a random hashing key $\hk\in\ZZ_p^n$ for language \Lpwd.
+	\item $\PKGen(\hk,\Lpwd)$ derives the projection key $\hp\in\GG^m$ from hashing key \hk. 
 	\item $\Hash(\hk,\Lpwd,C)$ computes hash value $h$ from hashing key \hk and ciphertext $C$.
 	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. 
 \end{itemize}
 \end{definition}
 
 \noindent
-A SPHF has to fulfil the following three properties:
+An \ac{SPHF} has to fulfil the following three properties:
 \begin{itemize}
 	\item \emph{Correctness}: If $C\in L$, with $r$ proving so, then $\Hash(\hk,\Lpwd,C)=\PHash(\hp,\Lpwd,C,r)$.
-	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni C\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
-	\item \emph{Pseudorandomness}: If $C\in\Lpwd$, the hash value $h$ is (computationally) indistinguishable from a random element. 
+	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni \cC\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
+	\item \emph{Pseudorandomness}: If $(\ell, C, \pwd^\ast)\in\Lpwd$, the hash value $h$ is (computationally) indistinguishable from a random element. 
 \end{itemize}
 
 \noindent
-In a nutshell, smoothness ensures that the hash value always looks random in $\GG$ when computed on an element not in the language, while pseudorandomness ensures that it looks random in $\GG$ when computed on an element in the language.
-Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness (first proposed in \cite{Katz2011}).
+In a nutshell, smoothness ensures that the hash value always looks random in \GG when computed on an element not in the language, while pseudorandomness ensures that it looks random in \GG when computed on an element in the language.
+Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness.
 The corresponding notion of adaptive smoothness with word-independent keys is defined as follows.
-For any function $f:\GG \mapsto \cC\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
+For any function $f:\GG^m \mapsto \cC\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
 \begin{align*}
 & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,f(\hp))\} \\
 \stackrel{\varepsilon}{=}~ & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}
 \end{align*}
 
 \noindent
-Gennaro and Lindell \cite{Gennaro2003} introduced pseudorandomness of SPHFs to show that \Hash and \PHash are the only way to compute the hash value even though the adversary knows some tuples $(\hp,C,\Hash(\hk,\allowbreak\Lpwd,C))$ for $C\in\Lpwd$.
-An SPHF is pseudorandom if the hash values produced by \Hash and \PHash are indistinguishable from random without the knowledge of the uniformly chosen hash key \hk or a witness $w$, i.e. for all $C\in\Lpwd$ the following distributions are computationally $\varepsilon$-close:
+\citet{Gennaro2003} introduced pseudorandomness of \acp{SPHF} to show that \Hash and \PHash are the only way to compute the hash value even though the adversary knows some tuples $(\hp,C,\Hash(\hk,\allowbreak\Lpwd,C))$ for $C\in\Lpwd$.
+An \ac{SPHF} is pseudorandom if the hash values produced by \Hash and \PHash are indistinguishable from random without the knowledge of the uniformly chosen hash key \hk or a witness $w$, i.e. for all $C\in\Lpwd$ the following distributions are computationally $\varepsilon$-close:
 \begin{align*}
 & \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,C)\} \\
 \stackrel{\varepsilon}{=}~ & \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}
 \end{align*}
 
 \noindent
-The formalisation from Katz and Vaikuntanathan \cite{Katz2011} define pseudorandomness to hold even if hashing keys and ciphertexts are re-used.
+The formalisation from \citet{Katz2011} defines pseudorandomness to hold even if hashing keys and ciphertexts are re-used.
 
 \begin{definition}[Pseudorandomness]\label{def:prplusc}
-An \SPHF $\Pi$ offers pseudorandomness if for all PPT algorithms $\cA$ and polynomials $l$ there exists a negligible function $\varepsilon(\cdot)$ such that
+An \ac{SPHF} $\Pi$ offers pseudorandomness if for all PPT algorithms $\cA$ and polynomials $l$ there exists a negligible function $\varepsilon(\cdot)$ such that
 \[\Adv_{\Pi,\cA}^{\Pr}=\left|\Pr[\Exp_{\Pi,\cA}^{\Pr}(\secpar)=1] - \frac12 \right|\leq \varepsilon(\secpar)\]
 
 \noindent
-$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ Choose $b\rin\bits$, call $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot),\Dec^\cL_\pi(\cdot)}(\secpar,\hp_1,\dots,\hp_l)$ with $\hp_i\gets\PKGen(\hk_i,\Lpwd,C)$ and $\hk_i\gets\HKGen(\Lpwd)$ for all $i\in 1,\dots,l$.
-Return $b=b'$.
+$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
+\hspace*{2em} choose $b\rin\bits$\\
+\hspace*{2em} $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot),\Dec^\cL_\pi(\cdot)}(\secpar,\hp_1,\dots,\hp_l)$ \\
+\hspace*{4em}~ with $\hp_i\gets\PKGen(\hk_i,\Lpwd,C)$ and $\hk_i\gets\HKGen(\Lpwd)$ for all $i\in 1,\dots,l$ \\
+\hspace*{2em} return $b=b'$.
 
 \begin{description}
 	\item[$\Omega^{\cL}_\pk(\ell,\pwd)$] returns elements $C\in \Laux$ with $C\gets\Enc^\cL_\pk(\Label,\allowbreak\pwd;r)$ using encryption algorithm \cL and label \Label.
@@ -465,8 +484,9 @@ Return $b=b'$.
 \end{definition}
 
 \paragraph{SPHF on Cramer-Shoup Ciphertexts}
-Benhamouda et al. propose a new perfectly smooth SPHF for labelled Cramer-Shoup encryptions in \cite{Benhamouda2013}.
-The SPHF is defined as follows:
+Several \acp{SPHF} on labelled Cramer-Shoup ciphertexts exist.
+This work is based on the the perfectly smooth \ac{SPHF} proposed by \citet{Benhamouda2013}.
+The \ac{SPHF} is defined as follows:
 \begin{itemize}
   \item $\HKGen(\Lpwd)$ return $\hk=(\eta_1,\eta_2,\theta,\mu,\nu)\rin\ZZ_q^{1\times 5}$
   \item $\PKGen(\hk, \Lpwd)$ returns $\hp=(\hp_1=g_1^{\eta_1} g_2^{\theta} h^\mu c^\nu, \hp_2=g_1^{\eta_2} d^{\nu})$
