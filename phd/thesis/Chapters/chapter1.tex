@@ -12,7 +12,7 @@
 
 % \section{Setting things into perspective}
 This work is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
-In contrast to conventional cryptographic algorithms and protocols, secrets used here have low-entropy here, such that an adversary is able to iterate through all possible secrets in reasonable time.
+In contrast to conventional cryptographic algorithms and protocols, secrets used here have low-entropy, such that an adversary is able to iterate through all possible secrets in reasonable time.
 This leads directly to the inherent threat to everything we are dealing with in this work: so-called dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}).
 So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
@@ -21,74 +21,84 @@ So why do we want to perform cryptography with passwords at all, when they compr
 \end{quote}
 
 \noindent
-We do not care about humans lack of speed and accuracy in performing cryptographic operations in this work.
-But their inability to remember high-quality cryptographic keys is a major problem.
-Even though there exist several standardised authentication tokens for humans, we heavily rely on passwords.
+While human's lack of speed and accuracy in performing cryptographic operations can be mitigated by using computers, human's inability to remember high-quality cryptographic keys is a major challenge.
+Even though there exist several standardised authentication tokens for humans, we nowadays heavily rely on passwords.
 In general we distinguish between three major categories of authentication data \cite{Burr11}:
 \begin{itemize}
 	\item Something you know (\eg password, \ac{PIN})
 	\item Something you have (\eg mobile phone, cryptographic key)
 	\item Something you are (\eg fingerprint)
 \end{itemize}
-But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as he does not write down his passwords).
-To perform cryptography with humans entering a secret, those have to be human-memorable.
-This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has not much entropy.
+But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as it is not written down).
+To perform cryptography with humans entering a secret/authentication token, those have to be therefore human-memorable.
+This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has little entropy.
+
+\subsubsection{Outline of this Chapter}
+This chapter gives a broad overview of password-based security mechanisms, security research, and cryptography research.
+Section \ref{sec:intro:pwd-security} gives necessary definitions in the context of passwords used in this thesis and gives an overview of different ways of looking at passwords.
+Section \ref{sec:intro:provable-security} describes general concepts and models used in the field provable security, this thesis is placed in.
+Sections \ref{sec:intro:registration} and \ref{sec:intro:pake} give an overview and related work of password-based cryptography research.
+The chapter is concluded with Section \ref{sec:intro:real-world} describing real world challenges and architectures in the password context and the outline of this thesis in Section \ref{sec:intro:outline}.
 
 % *****************************************************************************
 % Password Based Cryptography
 % *****************************************************************************
 
-\section{Password Based Security}
+\section{Password Based Security} \label{sec:intro:pwd-security}
 Using passwords as means of authentication in a computer system allows users to log into the system without the need for any additional devices or tools.
-This huge advantage over other ways of authenticating, i.e. with something you have or are, is responsible for passwords being the most popular authentication mechanism and is likely to stay such despite increasing efforts to changes this (cf. Section \ref{sec:enhanced-login}).
+This huge advantage over other ways of authenticating, \ie with something you have or are, is probably responsible for passwords being the most popular authentication mechanism and is likely to stay such despite increasing efforts to changes this (cf. Section \ref{sec:enhanced-login}).
 The most common place where passwords are used as user authentication mechanism is the Internet where personal content is protected with a username and password.
 Only when providing a valid identifier (username, often e-mail address) and the according password that the server stored for this identifier the client is allowed to access data associated with this account.
-The password and identifier are usually chosen by the client when registering the new account.
+The password and identifier are usually chosen by the client when registering a new account.
 When people forget their passwords or want to change it, websites offer the possibility to change the password for an account after providing the old password or other means of authentication (often done by sending a one-time link to the registered e-mail address).
+This and other practical challenges such as password resets bring additional security risks that are out of scope of this thesis.
 
-While passwords are also used in other contexts such as device logins, we focus on the online remote setting in this thesis.
-We look in particular at the previously described scenario of registering user accounts that use password authentication for login purposes.
+While passwords are used in other contexts such as device logins as well, we focus on the online remote setting in this thesis.
+We look in particular at the previously described scenario of registering user accounts and their use fot authentication and login purposes.
 The used setting therefore contains a \emph{client} (controlled by the human user) that interacts with a remote \emph{server} controlling the client's account.
 
 Password based protocols are usually classified as symmetric because both parties hold the same secret (password).
+Other variants exist where the server uses only a \emph{password verifier}, which can be classified as asymmetric.
 In contrast to other cryptographic mechanisms where \emph{keys} are chosen from a \emph{key space}, \emph{passwords} are chosen from a \emph{dictionary}.
-Note that dictionaries in our case denote sets of characters rather than \emph{real} lexicon like dictionaries.
+(A dictionary is defined as an efficiently traversable set.)
+Note that dictionaries in our case denote sets of characters, \ie passwords, rather than \emph{real} lexicon like dictionaries containing a certain set of words.
 When talking about those we use the term \emph{lexicon}.
-Even though password is the umbrella term, we distinguish between several types of passwords, we discuss in the following.
+Even though password is the umbrella term, we distinguish between several types of passwords, discussed in the following.
 
 \paragraph{Password}
-The term \emph{password} usually refers to character strings chosen from a dictionary consisting of alpha-numeric characters \texttt{a-z}, \texttt{A-Z}, \texttt{0-9} and special characters like \texttt{\$,\%,@} and so on.
+The term \emph{password} refers to character strings chosen from a dictionary consisting of alpha-numeric characters \texttt{a-z}, \texttt{A-Z}, \texttt{0-9} and special characters like \texttt{\$,\%,@} and so on.
 While \acs{UTF-8} based passwords or passwords based on other character encodings are possible we focus on \acs{ASCII} based passwords in this thesis for convenience.
-Despite the fact that many (online) services have password policies in place, humans tend to choose easily memorable and therefore mainly easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
-To encourage users to use stronger passwords, password-strength meters are used by many services.
+Despite the fact that many (online) services have password policies in place, humans tend to choose easily memorable and therefore often easy to guess passwords that can be found in a lexicon \cite{Florencio2007,Gaw2006}.
+To encourage users to use stronger passwords, password-strength meters are used by many services, which display some measure of password strength entered by the client.
 A recent study \cite{Ur2012} on password-strength meters shows that this could have a significant impact on user's password-strength.
 We define several other forms of user authentication that are similar to passwords in the following.
-Note however that those terms are usually not used in cryptographic research and this thesis sticks with this definition of passwords as well.
+Note however that those terms are usually not used in cryptography research (but security research).
 
 \paragraph{Graphical Passwords}
-Graphical passwords where first proposed by \citet{Blonder96} with Microsoft Window's picture passwords \cite{picturepwd1,picturepwd2} being the most well known implementation.
+Graphical passwords where first proposed by \citet{Blonder96} with Microsoft Window's picture passwords \cite{picturepwd1,picturepwd2} being the best known implementation of it.
 Instead of relying on entropy in a character password, graphical passwords require the user to recognise certain images or features in an image.
 The security usually stems from the ability of humans to reliably recognise pictures and small features inside pictures whereas algorithms struggle to do so.
+\mynote{relation to CAPTCHA with ref}
 
 \paragraph{Passphrase}
 Passphrases are very similar to passwords in the sense that they are character strings.
-But instead of using relatively short words with characters from a big character set in order to reach security, passphrases are longer and generate their strength from length over a rather small character set.
+But instead of using relatively short words with characters from a big character set in order to reach security (enough entropy), passphrases are longer and generate their strength (entropy) from length over a rather small character set.
 
 \paragraph{\acl{PIN}}
-\acp{PIN} are rather short passwords, chosen from the numeric dictionary containing numbers \texttt{0-9}.
+\acp{PIN} are rather short passwords, chosen only from the numeric dictionary containing numbers \texttt{0-9}.
 They are mainly used to secure access to the actual authentication token like credit card or other smart cards.
 Since the card is a second authentication factor (\emph{something you have}), a short \ac{PIN} is sufficient to reach reasonable security.
-The smaller dictionary containing only numbers is most presumable due to practical restrictions on the input device, used to enter the \ac{PIN}.
+The smaller dictionary containing only numbers is most presumable due to practical restrictions on the input device, used to enter the \ac{PIN} and the fact that they are easier to memorise.
 
-\paragraph{\acl{OTP}}
+\paragraph{One-time Password}
 While most passwords are meant to be memorised by humans, \acp{OTP} are used only once and therefore don not have to be memorised.
 They are mainly chosen from the numeric dictionary \texttt{0-9}.
 \acp{OTP} have become more popular recently as a second factor, in addition to the ``regular'' password, in two-factor authentication, \eg Google \cite{Google2Factor}, Facebook \cite{FB2Factor}, Twitter \cite{Twitter2Factor} and GitHub \cite{Github2Factor}.
-The most popular standards for \ac{OTP} that are implemented in the Google Authenticator App \cite{GAuthenticator} for example, are the \acs{HMAC} based algorithm specified in RFC 4226 \cite{rfc4226} and the time based algorithm specified in RFC 6238 \cite{rfc6238}.
+The most popular standards for \ac{OTP} that are for example implemented in the Google Authenticator App \cite{GAuthenticator}, are the \acs{HMAC} based algorithm specified in RFC 4226 \cite{rfc4226} and the time based algorithm specified in RFC 6238 \cite{rfc6238}.
 
-\paragraph{\acl{TAN}}
+\paragraph{Transaction authentication numbers}
 \acp{TAN} are special \acp{OTP} mainly used to authorise single financial transactions in online banking applications.
-These, mainly short passwords, are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
+These mainly short passwords are usually drawn from the numeric dictionary containing numbers \texttt{0-9}.
 They can be seen as transaction bound \acp{OTP}.
 
 % *****************************************************************************
@@ -96,84 +106,93 @@ They can be seen as transaction bound \acp{OTP}.
 % *****************************************************************************
 
 \subsection{The inherent Threat of Dictionary Attacks}\label{sec:introdictionaryattacks}
-As mentioned already, most cryptographic mechanisms use high-en-tropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular secret space in reasonable time.
+As mentioned already, most cryptographic mechanisms use high-entropy secrets such that it is impossible for anyone (any algorithm) to traverse all possible secrets from the particular key space in reasonable time.
 Password based schemes in contrast assume low-entropy secrets that are drawn from a polynomial sized dictionary.
-Therefore, it is feasible for a program to walk through the entire dictionary and just try every possible secret (password).
+Therefore, it is feasible for an algorithm to walk through the entire dictionary and just try every possible secret (password).
 This kind of attack, \emph{dictionary attack}, is inherent to any password based algorithm and is therefore one of the main challenges in password-based cryptography compared to mechanisms on high-entropy secrets.
 
-Due to poorly chosen passwords it is often sufficient to perform a lexicon attack that traverses only a relatively small dictionary containing for example words of the English language instead of a brute force dictionary attack that iterates the entire dictionary.
+We differentiate between offline and online dictionary attacks.
+Offline dictionary attacks allow an attacker to try elements from the dictionary in question against offline available data, while online dictionary attacks require the attacker to perform online queries to another party/oracle to verify whether an element from the dictionary is the right password or not.
 
 \paragraph{Poorly Chosen Passwords}
 While dictionary attacks are unavoidable, poorly chosen passwords worsen the situation.
-By choosing passwords that are available in lexicons or easy to derive from other parameters like the public e-mail address, the search space for brute-force attacks gets significantly smaller.
-Password cracking programs like \emph{John the Ripper} \cite{JohnTheRipper} gather lexicons of different languages in password lists \cite{JohnTheRipperWordlist}.
+Due to poorly chosen passwords it is often sufficient to perform a lexicon attack that traverses only a relatively small dictionary containing for example words of the English language instead of a brute force dictionary attack that iterates the entire dictionary.
+By choosing passwords that are available in lexicons or easy to derive from other parameters like the public e-mail address, the search space for dictionary attacks gets significantly smaller.
+Password cracking tools like \emph{John the Ripper} \cite{JohnTheRipper} or \emph{HashCat} \cite{hashcat} gather lexicons of different languages in password lists \cite{JohnTheRipperWordlist} to speed up attacks.
 Not only language lexicons can be used for brute-force attacks on passwords, but password lists of often used passwords that got somehow leaked.
-Using for example a list with the most used passwords (\eg \cite{XatoPwds}), brute-force attacks on online accounts may be performed very efficiently.
+Using for example a list with the most used passwords (\eg \cite{XatoPwds,XatoPwds2,skullSecurity}), dictionary attacks on online accounts may be performed very efficiently.
+Other common attack vectors on poorly chosen passwords is by exploiting common password composition rules such as \verb+<word><numbers>+.
 
 % *****************************************************************************
 % The Real World
 % *****************************************************************************
 
-\subsection{Passwords in The Real World}
-Systems currently deployed on the Internet use the approach of \emph{password-over-HTML} --- sending the password over an encrypted channel (TLS) to the server for verification or registration --- which is risky due to the threat of disclosing user credentials to malicious parties via a plethora of attacks, \eg phishing attacks or \ac{MitM} attacks.
+\subsection{Passwords in The Wild}
+Systems currently deployed on the Internet use the approach of \emph{password-over-HTML} --- sending the password over an encrypted channel (\ac{TLS}) to the server for verification or registration --- which is risky due to the threat of disclosing user credentials to malicious parties via a plethora of attacks such as phishing attacks or \ac{MitM} attacks.
 Even though a confidential \ac{HTTPS} connection --- \ac{HTTP} over a \ac{TLS}-encrypted connection --- is often used to transport sensitive data such as passwords, the server authentication of the underlying \ac{TLS} protocol depends on the user actually validating the server's certificate, the accessed \ac{URL}, and trust in a properly working \ac{PKI}.
 (This includes sophisticated and government aided attacks.)
+Password-based mechanisms on the web are (except for some exceptions such as \cite{FirefoxSync}) missing cryptographic treatment of the password for authentication purposes all together.
+Instead their security relies on the security of the secure channel used to secure transportation (\ac{TLS}).
 
 \subsubsection{Enhanced User Login} \label{sec:enhanced-login}
 As discussed previously humans are hardly able to remember high-entropy secrets.
-But even remembering short passwords seems complicated in many cases such that users re-use their passwords and choose them from lexicons to simplify the process of recalling.
+But even remembering passwords seems complicated in many cases such that users re-use their passwords and choose them from lexicons to simplify the process of recalling \cite{Gaw2006,Florencio2007}.
 To simplify the user login process many technical solutions are in use of which some require passwords and others do not.
 This work is not primarily concerned with these technical aspects but as we reassemble them in some cases we give a brief overview on what is out there.
-Those mechanisms either avoid the process of logging onto a website at all, automate it as far as possible, or enhance security by adding additional authentication factors to the password.
+Those mechanisms either avoid the process of logging onto a website at all or automate it as far as possible.
 The former is achieved by \ac{SSO} services such as Kerberos \cite{rfc4120} OpenID \cite{OpenID} or OAuth \cite{rfc6749}.
 The latter is done by using password managers in combination with auto completion implementations that store login information for websites and fill the forms automatically.
+Other mechanisms try to enhance security by adding additional authentication factors to the password.
 Enhancements to password-based logins such as multi-factor authentication \cite{FleischhackerMA14} exist where multiple authentication mechanisms are combined.
 Popular implementations of this paradigm use the two factors \ac{OTP} and password \cite{Google2Factor,FB2Factor,Twitter2Factor,Github2Factor}.
 
 
 \subsection{On Password Security Research}
 Security research on passwords looking at topics such as how to measure password strength, how to securely hash and store passwords, or how to encrypt using a password, holds an excessive body of works.
-Since this thesis is primarily concerned with cryptographic treatment of passwords and therefore uses idealised assumptions we give only a brief introduction into these research fields and give links to our research.
+Since this thesis is primarily concerned with cryptographic treatment of passwords and therefore uses idealised assumptions we give only a brief introduction into these research fields and highlight links to research in this thesis.
 
 \paragraph{Password Strength}
 One of the most difficult topics in password research is the question of how to measure the strength of a password.
 While cryptography research usually assumes uniform or some other idealised distribution of passwords, this is clearly not the case in reality with humans choosing them.
-Measuring password strength is a rather non technical research are and focuses on user studies and analysis of password database leaks \cite{ShayKKLMBCC10,KomanduriSKMBCCE11,MazurekKVBCCKSU13} in order to come up with a good model to predict min-entropy of passwords.
-Entropy can capture many realistic password creation models and definitions of password entropy have been standardised by NIST \cite{nist800}.
-However, although min-entropy seems a reasonable measure for modelling dictionary attack resistance of we stress that min-entropy alone might not be sufficient to estimate the real password strength. 
+Measuring password strength is rather non technical and focuses on user studies and analysis of password database leaks \cite{ShayKKLMBCC10,KomanduriSKMBCCE11,MazurekKVBCCKSU13} in order to come up with a good model to predict min-entropy of passwords.
+Min-entropy can capture many realistic password creation models.
+Definitions of password entropy have been standardised by NIST \cite{nist800}.
+However, although min-entropy seems a reasonable measure for modelling dictionary attack resistance of passwords we stress that min-entropy alone might not be sufficient to estimate the real password strength. 
 As shown in \cite{MazurekKVBCCKSU13}, password strength is a complex matter (due to a variety of real-world attacks) and can hardly be captured through a single metric like min-entropy.
 
 \paragraph{Password Hashing and Storage}
-In order to securely store passwords or use them for encryption hashing them in some form is essential to make brute-force attacks on them more costly.
+In order to securely store passwords or use them for encryption hashing them in some form is essential to make attacks on them more costly.
 The current state of the art password hashing schemes are the \ac{PBKDF2} \cite{rfc2898}, bcrypt \cite{ProvosM99}, and scrypt \cite{rfcScrypt}.
 This very limited number of possible password hashing schemes should be resolved by the currently running password hashing competition (\url{https://password-hashing.net}).
-Other more technical means to avoid stealing stored passwords is to hide them in a huge amount of data that makes it impossible to steal without being detected (a recent new implementation is given by Taplink \url{https://taplink.co/technology/}).
-
+Other more technical means to avoid stealing stored passwords is to hide them in a huge amount of data that makes it impossible to steal without being detected (a recent implementation is given by Taplink \url{https://taplink.co/technology/}).
+\mynote{check password hashing competition for final version when done (Q2 2015)}
 
 \subsection{Password based Cryptography}
-Cryptography research in the area of passwords focuses mainly only \ac{PAKE} protocols and recently \ac{PPSS}.
+Cryptography research in the area of passwords focuses mainly on \ac{PAKE} protocols and recently \ac{PPSS}.
 \ac{PAKE} allows to exchange an authenticated session key between two parties holding a common password for authentication.
-In contrast to other authenticated key exchange protocols \ac{PAKE} has to consider dictionary attacks, \ie that an attacker is always able to run the protocol often enough with the server in order to eventually successfully authenticate.
-The recent development of \ac{PPSS} moves away from key exchange and tackles the problem of secure online storage that is secured with the users password.
-In order to achieve high security, data stored online should be encrypted with common mechanisms such as \ac{AES}.
-However, to access the data, users would have to store that key.
+In contrast to other authenticated key exchange protocols \ac{PAKE} has to consider online dictionary attacks, \ie that an attacker is always able to run the protocol often enough with the server in order to eventually successfully authenticate.
+The recent development of \ac{PPSS} moves away from key exchange and tackles the problem of encrypted online storage that is secured with the user's password.
+In order to achieve high security, data stored on servers should be encrypted with common encryption mechanisms such as \ac{AES} \cite{FIPS-197}.
+However, to access the data, users would have to store the key used in \ac{AES} to encrypt the remote storage.
 The solution proposed by \ac{PPSS} allows to split the key in shares that are stored at different servers and can only be retrieved if the user successfully authenticates itself to the two servers with the correct password.
-
-\mynote{comprehensible overview of references can be found at \url{https://franziskuskiefer.github.io/CryptoPapers/passwords.html}}
+\ac{PPSS} therefore allows to achieve secure remote storage with only a password for authentication, where security is achieved by sharing the password and key among multiple servers.
+By not trusting a single server, password and key shares can get leaked or stolen without compromising security.
+A comprehensible overview of password-based cryptography research can be found at \citet{KieferXX}.
 
 \paragraph{Strong Cryptography from Low-Entropy Secrets}
 Despite authentication and key exchange, passwords are used in other contexts such as general strong cryptography.
-Due to the low-entropy of passwords this obviously introduces additional challenges.
+Due to the low-entropy of passwords this obviously introduces new interesting challenges.
 \citet{AbdallaBCP09} show how to build strong cryptography from weak secrets.
-In particular, they propose a method to perform distributed public key cryptography when each party holds only a password, based on the \acl{DDH} assumption.
+In particular, they propose a method to perform distributed public key cryptography when each party holds only a low entropy password, based on the \ac{DDH} assumption.
 \citet{BoyenCFP10} extend the notion to the pairing world.
 
+\mynote{other usages?}
 
 % *****************************************************************************
 % Section: On Provable Security
 % *****************************************************************************
 
-\section{On Provable Security}
+\section{On Provable Security}\label{sec:intro:provable-security}
 We briefly discuss general security models used in the field of provable security as well as other means of establishing confidence in the security of an algorithm.
 More specialised methods used in password-based cryptography are analysed later.
 
@@ -239,7 +258,7 @@ A protocol is secure in \ac{UC} when it realizes a given ideal functionality \UC
 % Section: Password Registration
 % *****************************************************************************
 
-\section{Cryptographic Password Registration}
+\section{Cryptographic Password Registration}\label{sec:intro:registration}
 Another important part that is often overlooked in cryptographic research is the handling of password registration.
 While registration of symmetric keys is not an interesting cryptographic problem since security there has to be guaranteed by other means, password registration is more involved.
 This is due to two different reasons;
@@ -266,7 +285,7 @@ While the second challenge has been solved using \ac{VPAKE} or can be achieved u
 % Section: Password Based Authentication and Key Exchange
 % *****************************************************************************
 
-\section{Cryptographic Password Authentication \& Key Exchange}
+\section{Cryptographic Password Authentication \& Key Exchange}\label{sec:intro:pake}
 In this section we give a broad overview on password based authentication and key exchange protocols found in literature.
 We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialized protocol classes like threshold \ac{PAKE} or group \ac{PAKE}.
 
@@ -439,7 +458,7 @@ Using biometric factors is rarely seen in practice so far.
 % *****************************************************************************
 % Section: Passwords and TLS
 % *****************************************************************************
-\section{Real World Architectures and Challenges}
+\section{Real World Architectures and Challenges}\label{sec:intro:real-world}
 As discussed in the beginning of the introduction, the scenario where cryptographic password-based authentication protocols are most needed is user login on the Internet.
 However, due to the Internet's architecture the use of such protocols like \ac{PAKE} on the internet involves several challenges.
 To understand the challenges one first has to understand how \ac{HTTPS} and thus \ac{TLS} works.
@@ -465,7 +484,7 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 % *****************************************************************************
 % Section: Outline & Summary
 % *****************************************************************************
-\section{Outline of this Thesis \& Summary of Results}
+\section{Outline of this Thesis \& Summary of Results}\label{sec:intro:outline}
 This thesis consists of five more chapters.
 It starts in Chapter \ref{ch:prelims} with prerequisites and building blocks used throughout this work.
 After defining the foundations, Chapter \ref{ch:vpake} describes the first major contribution of this thesis, a framework for password registration (Section \ref{sec:vpake-registration}) and password authenticated key-exchange (Section \ref{sec:vpake-pake}) in the verifier-based setting where the server stores only a verifier of the password.
