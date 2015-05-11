@@ -193,46 +193,47 @@ In particular, they propose a method to perform distributed public key cryptogra
 % *****************************************************************************
 
 \section{On Provable Security}\label{sec:intro:provable-security}
-We briefly discuss general security models used in the field of provable security as well as other means of establishing confidence in the security of an algorithm.
+We briefly discuss general security models used in the field of provable security, this thesis is placed in, as well as other means of establishing confidence in the security of an algorithm.
 More specialised methods used in password-based cryptography are analysed later.
 
 To prove a cryptographic primitive secure, reductionist arguments are used.
 Thereby, the attempt is made to reduce the security of the algorithm/protocol under consideration to a problem that is believed to be hard.\footnote{Note that this work is not concerned with the question whether specific problems are actually hard. We consider only well investigated problems, which the cryptography community beliefs to be hard.}
-Thus, given a (tight) reduction from the primitive to an underlying problem, one could be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
+Thus, given a (tight) reduction from the primitive to an underlying problem, one can be confident that the primitive is secure as long as the underlying problem is actually hard to solve.
 For an insightful and sceptical discussion on this kind of security verification we refer to the ``Another Look'' series by \citet{AnotherLook}.
 
 Cryptographic primitives can only be proven secure considering the abilities of a certain adversary.
 Therefore, before being able to proof anything about a cryptographic primitive it has to be modelled considering an appropriate (hostile) environment.
-It always has to be kept in mind that the resulting proof is only valid within the used model.
+It always has to be kept in mind that the resulting proof is only valid within the used model and thus not necessarily in every scenario, \ie the real world.
 Before further discussion we give a brief introduction to another approach to analyse security: \emph{The Formal World}.
 A formal view on modelling security goes back to work throughout the 1980's \cite{DeMillo82,Dolev83,Millen87,Meadows91,Kemmerer1988,Burrows90}.
 While they explore different approaches of formal modelling, the so called Dolev-Yao model \cite{Dolev83} may be the best known one.
 In the formal world, everything is modelled by formal expressions rather than bit strings.
 The adversary controls the entire communication channel between participating parties and can replay, modify or drop messages.
-While the formal world is relatively simple, it allows only all-or-nothing  and no probability or computational statements.
+While this formal world is relatively simple, it allows only all-or-nothing  and no probability or computational statements.
 
 \paragraph{The Computational World}
-In this work at hand however we deal with a somewhat more realistic approach of modelling, the computational modelling.
-The foundation of today's computational models were laid in the 1980's \cite{Goldwasser82,Goldwasser84,Yao82,Blum82}.
+In this thesis we deal with a somewhat more realistic approach of modelling, the computational modelling.
+The foundation of today's computational models were laid in the 1980's by Goldwasser and others \cite{Goldwasser82,Goldwasser84,Yao82,Blum82}.
 The computational world consists of bit-string messages and cryptographic primitives performing computations on them.
 It is therefore based on complexity theory.
 In this world the attacker is modelled as a \ac{PPT} Turing machine \cite{Turing37} that must not have significant success probability.
 We give necessary formal definitions in Chapter \ref{ch:prelims}.
 
 \paragraph{Reconciling the Two Worlds}
-Even though efforts have been made to reconcile the two completely different approaches \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in their communities.
-For more discussion on these two worlds we refer the interested reader to \cite{cortier2011survey}.
+Even though efforts have been made to reconcile the two completely different approaches of formal and computational models \cite{Abadi2002,Herzog2005}, there remain big differences in the theory as well as in their communities.
+For more discussion on these two worlds we refer the interested reader to \citet{cortier2011survey}.
 
 %********************************** %Game-based Security  **************************************
 \subsection{Game-Based Security}
+In this and the following section we give a short introduction in the two general directions of computational security proofs, game-based and simulation-based security.
 Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.
-During this game (or experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
+During this game (\aka experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
 Eventually, the adversary outputs his answer to the challenger who decides whether the adversary wins the game or not.
 
 Oracles are black-box functions simulating parts of the protocols behaviour, the adversary can query.
 On (possibly empty) input they return the result of their computation to the caller.
 Thereby, oracles define an interface for the adversary to interact with the primitive.
-The actual security definition and strength of the adversary therefore depends on the available oracle.
+The actual security definition and strength of the adversary therefore strongly depends on the available oracle.
 
 Since simple reduction proofs from a protocol to a hard problem are rare, techniques have been developed to do this step by step.
 An example on game-based security proof using so called ``sequences of games'' is given by \citet{Shoup2004}.
@@ -244,15 +245,15 @@ In contrast to the previously described game-based approach simulation-based sec
 The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm/protocol, and the real world with the actual algorithm/protocol.
 Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is secure.
 
-\mynote{add formal stuff from \cite{Goldreich2004} (not sure where though)}
-
-\paragraph{\acl{UC}}
+\paragraph{Universal Composability}
 The \ac{UC} framework proposed by \citet{Canetti2001a} is a popular general purpose simulation-based security model.
-It overcomes an inherent shortcoming of most security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure.
-Most security models only allow to derive statements about the algorithm in a shielded environment.
+It overcomes an inherent shortcoming of most game-based security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure, which is stronger than the general simulation-based approach from \citet{Goldreich87}.
+Most game-based security models only allow to derive statements about the algorithm in a shielded environment or are limited otherwise.
 As soon as the algorithm is used with other primitives, and thus sharing \ac{IO} channels and data, the security can not be guaranteed anymore.
 The \ac{UC} framework introduces another adversary \UCZ, the environment, that generates all inputs for all parties, and reads their outputs.
-A protocol is secure in \ac{UC} when it realizes a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with \UCS and the ideal functionality \UCF.
+A protocol is secure in \ac{UC} when it realises a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with \UCS and the ideal functionality \UCF.
+
+\mynote{exact difference between \citet{Goldreich87} and \citet{Canetti2001a}?}
 
 % *****************************************************************************
 % Section: Password Registration
