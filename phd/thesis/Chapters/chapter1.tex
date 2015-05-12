@@ -260,14 +260,28 @@ A protocol is secure in \ac{UC} when it realises a given ideal functionality \UC
 % *****************************************************************************
 
 \section{Cryptographic Password Registration}\label{sec:intro:registration}
-Another important part that is often overlooked in cryptographic research is the handling of password registration.
-While registration of symmetric keys is not an interesting cryptographic problem since security there has to be guaranteed by other means, password registration is more involved.
+\mynote{read this}
+Before using passwords for any kind of authentication protocol a password has to be registered at the server.
+While registration of symmetric keys is not a particularly interesting cryptographic problem since security there has to be guaranteed by other means, password registration is more involved.
 This is due to two different reasons;
 First, passwords are not necessarily symmetric secrets.
-In the verifier-based setting (cf. Section \ref{sec:intro:verifier-basedPAKE}) the server stores only a randomised function of the password and the randomness.
-Second, passwords are not chosen uniformly at random in practice and require additional attention.
-In particular, systems commonly impose password policies on passwords in order to ensure a certain entropy in the password.
-This should guarantee strong passwords that withstand dictionary and brute-force attacks.
+In the verifier-based setting (cf. Section \ref{sec:intro:verifier-basedPAKE}) the server stores only a randomised function of the password and the randomness in order to authenticate the user holding the correct password, which results in an asymmetric setting.
+Second, passwords are not chosen uniformly at random in practice but by humans and require additional attention.
+In particular, systems commonly impose restrictions on possible passwords such as password policies in order to ensure a certain min-entropy of password in the system.
+This should guarantee strong passwords that have reasonable security against dictionary attacks.
+
+When users select passwords for remote access to systems or services on their own, the password policy enforcement mechanism must be able to verify that selected passwords comply with the existing policy.
+This compliance check can be performed either on the client side or on the server side.
+For instance, when a commodity web browser is used to register for some web service the policy can be checked within the browser using scripts embedded into the registration website, or on the server side upon the initial transmission of the password (e.g. over a TLS channel).
+Both approaches, however, have security risks as discussed in the following.
+If policy enforcement is performed solely on the client side, the server must trust the client to obey the policy and execute the check correctly.
+This is not a threat if the compliance check is assumed to be in the interest of an honest user.
+Nonetheless, malicious users or users who are lazy to remember complicated passwords can easily circumvent such script-based verification and register passwords that are not compliant with the policy. The corresponding service provider might want to exclude this threat.
+In this case the compliance check must be performed on the server side.
+In order to perform policy check with available technologies the client's password must be transmitted to the server, possibly over a secure channel.
+This ultimately requires the client to trust the server to process and store the received password in a secure way.
+While many servers adopt the current state-of-the-art approach for storing passwords in a hashed form, e.g. using PBKDF2 \cite{rfc2898,nist800} or bcrypt \cite{ProvosM99}, with a random salt to protect against server compromise or re-use attacks, there have been many known cases, e.g. \cite{adobeBreach,rockyouBreach,msBreach,cupidBreach}, where passwords have been stored in clear and compromised subsequently.
+The ultimate goal, therefore, is to avoid trusting servers with secure processing and storage of user passwords.
 
 In order to offer better protection against compromised password databases servers are supposed to store only the randomised password hash and the random salt that was used.
 In later sessions the client authenticates itself with the password whereas the server uses stored password hash and salt to perform the check.
@@ -278,7 +292,7 @@ The ultimate goal, therefore, is to avoid trusting servers with secure processin
 This goal imposes two main challenges:
 (1) in the registration phase users must be able to choose passwords and prove their policy compliance to a remote server without actually transmitting their passwords, and 
 (2) after the registration phase users must be able to authenticate themselves to the server using their passwords without transmitting them.
-While the second challenge has been solved using \ac{VPAKE} or can be achieved using regular \ac{PAKE} as discussed in Section \ref{sec:intro:vpake-discusion}, the first challenge of registering passwords verifiers while maintaining the server's ability to check their policy compliance has not been solved yet.
+While the second challenge has been solved using \ac{VPAKE}, the first challenge of registering passwords verifiers while maintaining the server's ability to check their policy compliance has not been solved yet and is part of the contribution of this thesis (cf. Section \ref{sec:vpake-registration}).
 
 
 
@@ -286,37 +300,40 @@ While the second challenge has been solved using \ac{VPAKE} or can be achieved u
 % Section: Password Based Authentication and Key Exchange
 % *****************************************************************************
 
-\section{Cryptographic Password Authentication \& Key Exchange}\label{sec:intro:pake}
+\section{Cryptographic Password Authentication}\label{sec:intro:pake}
 In this section we give a broad overview on password based authentication and key exchange protocols found in literature.
-We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialized protocol classes like threshold \ac{PAKE} or group \ac{PAKE}.
+We start with the most popular protocol \emph{\ac{PAKE}} before investigating more specialised protocol classes like threshold and group \ac{PAKE}.
 
 %********************************** %PAKE  **************************************
 \subsection{Password Based Authenticated Key Exchange}
 The notion of \emph{\ac{PAKE}} was introduced by \citet{bellovin92} and corresponding security models were initially developed by \citet{Bellare2000}, \citet{Boyko2000}, and \citet{Goldreich01}.
-The first and maybe best known \ac{PAKE} protocols include SPEKE by \citet{Jablon96} and EKE by \citet{bellovin92,Bellare2000}.
-Until now, numerous subsequent work explored the notion of \acl{PAKE} in depth.
-\ac{PAKE} allows two parties, holding low-entropy keys, to negotiate a common session key.
+The first and maybe best known \ac{PAKE} protocols include SPEKE by \citet{Jablon96} and EKE by \citet{bellovin92}, proven secure by \citet{Bellare2000}.
+Until now, numerous subsequent work explored the notion of \ac{PAKE} in depth.
+\ac{PAKE} allows two parties, holding low-entropy keys, to negotiate a common authenticated session key.
 Despite the key exchange functionality it authenticates the two parties explicitly or implicitly.
-They aim to protect against offline dictionary attacks but require restriction on the number of failed password trials as all password based protocols.
+They aim to protect against offline dictionary attacks but require restriction on the number of failed password trials as all password based protocols in order to prevent security against online dictionary attacks.
 One of the most promising applications of \ac{PAKE} protocols is the online authentication of users.
-It is considered as a more secure alternative to the nowadays mainly deployed approach of transmitting the password over a secure channel (\ac{HTTPS}) and let the server perform a check against his stored credential.
-The standard model of \ac{PAKE} does not require any \ac{PKI}, which is necessary for the secure channel, and assumes that only a low-entropy secret, \ie a human memorable password, is shared between both parties.
-\footnote{Please note that this applies only for the authentication process \emph{not} for the registration process.
-There is no mechanism to store the password on the server without sending it there in a secure way.
-This is the key distribution problem, implicit to all symmetric key protocols.}
+It is considered as a more secure alternative to the nowadays mainly deployed approach of password-over-HTML, \ie transmitting the password over a secure channel (\ac{HTTPS}) and let the server perform a check against his stored credential.
+The standard model of \ac{PAKE} does not require any \ac{PKI}, which is necessary for the secure \ac{TLS} channel, and assumes that only a low-entropy secret, \ie a human memorable password, is shared between both parties.
+% \footnote{Please note that this applies only for the authentication process \emph{not} for the registration process.
+% There is no mechanism to store the password on the server without sending it there in a secure way.
+% This is the key distribution problem, implicit to all symmetric key protocols.}
 Thereby, \ac{PAKE} protocols solve the problem of potential password leakage, inherent to the approach based on secure channels.
 
 In general, all PAKE models (see~\citet{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
 While many PAKE constructions require a constant number of communication rounds (\citet{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}); recent frameworks by \citet{Katz2011} and \citet{Benhamouda2013} offer optimal one-round \ac{PAKE}.
+\mynote{update with up-to-date references}
 
-In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as \citet{Camenisch2010} and \citet{Blazy2012} that also lend themselves to the constructions of (somewhat less practical) \ac{PAKE} protocols.
-In the field of \acl{PAKE}, security models aim at \ac{AKE}-security \citet{Bellare1993} and \citet{Bellare1995} like ``common'' key exchange protocols that may be seen in one of the following general settings.
+In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as the ones proposed by \citet{Camenisch2010} and \citet{Blazy2012} that also lend themselves to the constructions of (somewhat less practical) \ac{PAKE} protocols.
+In the field of \acl{PAKE}, security models aim at \ac{AKE}-security introduced by \citet{Bellare1993} and \citet{Bellare1995}.
+Like key exchange protocols with high entropy secrets, \ac{PAKE} protocols can be modelled in one of the following general settings.
 
 \paragraph{Game-Based \ac{PAKE}-Security}
-The original game-based \ac{PAKE} models in \citet{Bellare2000} and \citet{Boyko2000} incorporate the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
-The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take actively part in executions and corrupt protocol participants.
-\citet{Abdalla2005} proposed a \ac{RoR} approach to model semantic security of PAKE protocols by allowing polynomially-many queries to a \Test oracle.
-They showed not only that their \ac{RoR} approach leads to stronger security but were also able to simplify the model.
+The original game-based \ac{PAKE} models in \citet{Bellare2000} and \citet{Boyko2000} specify the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
+(Semantic security states that no \ac{PPT} adversary exists that has non-negligible probability of winning the experiment, in this case the \ac{PAKE} experiment.)
+The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take actively part in executions and corrupt protocol participants to retrieve private information from a party.
+\citet{Abdalla2005} proposed the stronger notion of \ac{RoR} to model semantic security of PAKE protocols by allowing polynomially-many queries to the \Test oracle.
+They showed not only that their \ac{RoR} approach leads to stronger security but were also able to simplify the model by removing an oracle, \ie the reveal oracle.
 The models in~\citet{Bellare2000} and \citet{Abdalla2005} remain the most popular game-based PAKE models, adopted in the analysis of many protocols, including the random oracle-based protocols by \citet{Abdalla2006} and \citet{Abdalla2005b} and protocols requiring a \ac{CRS} (\citet{KatzOY01,Gennaro2003,Gennaro2008,Katz2009a}).
 
 %TODO move
@@ -324,35 +341,40 @@ The models in~\citet{Bellare2000} and \citet{Abdalla2005} remain the most popula
 %The adversary in~\cite{Abdalla2005} is thus left with access to the \Test oracle, the \Execute oracle that models passive attacks, and the \Send oracle accounting for active attacks.
 
 \paragraph{\acl{FtG}}
-The term \acl{FtG} goes back to \citet{Bellare97} \cite{Bellare97} whose definition of \ac{FtG}-security for symmetric encryption is based on \cite{Goldwasser84} \cite{Micali86}.
-In our research focus of password-based cryptography one of the first formal models for \ac{PAKE}, proposed by \citet{Bellare2000} in \cite{Bellare2000}, employs the \ac{FtG} approach.
-The security requirement there is that an adversary must not be able to decide whether a given bit-string is the real key computed by honest parties performing the protocol, or a random element from the key space.
-But the adversary has only one change to retrieve such a test key.
+The term \acl{FtG} goes back to \citet{Bellare97} whose definition of \ac{FtG}-security for symmetric encryption is based on work by \citet{Goldwasser84} and \citet{Micali86}.
+In this thesis we focus on password-based cryptography where one of the first formal models for \ac{PAKE}, proposed by \citet{Bellare2000}, employs the \ac{FtG} approach.
+The security requirement there is that an adversary must not be able to decide whether a given bit-string is the real key computed by honest parties performing the protocol, or a random element of the same length.
+The adversary has only one approach to retrieve such a test key.
 
 \paragraph{\acl{RoR}}
-The term \acl{RoR} has been introduced by \citet{Bellare97} in \cite{Bellare97} in a different context and a different meaning.
-The notion of \ac{RoR} in the context of \acl{AKE} protocols has been introduced by \citet{Abdalla2005} to strengthen and simplify the \ac{FtG} approach used in the original model from \cite{Bellare2000} towards the \ac{RoR} approach.
-In the \ac{AKE} context \ac{RoR} allows the adversary to query \emph{multiple} keys before deciding whether all of them have been computed by honest parties performing the protocol, or all of tem  have been randomly chosen from the key space.
+The term \acl{RoR} has been introduced by \citet{Bellare97} in a different context and a different meaning.
+The notion of \ac{RoR} in the context of \acl{AKE} protocols has been introduced by \citet{Abdalla2005} to strengthen and simplify the \ac{FtG} approach used in the original model from \citet{Bellare2000} towards the \ac{RoR} approach.
+In the \ac{AKE} context \ac{RoR} allows the adversary to query \emph{multiple} keys before deciding whether all of them have been computed by honest parties performing the protocol, or all of them  have been randomly chosen from the key space.
 
 \paragraph{Simulation-Based \ac{PAKE}-Security}
-Simultaneously with the first game-based models in \cite{Bellare2000,Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by \citet{Goldreich01}.
-Their work also comprises the first (and until now the only, but fairly inefficient) protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.\footnote{The work in \cite{Goldreich01} is concerned with the general possibility of such a protocol rather than building a practical one.}
-The protocol has been subsequently simplified at the cost of weakened security in~\cite{NguyenV04}.
-While the model from \cite{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has been proposed by \citet{Canetti2005} later.
-In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
+Simultaneously with the first game-based models by \citet{Bellare2000} and \citet{Boyko2000}, the first simulation-based \ac{PAKE} model has been proposed by \citet{Goldreich01}.
+Their work also comprises the first (and until now the only, but fairly inefficient) \ac{PAKE} protocol that is built from general secure multi-party computation techniques but does not require any setup assumptions nor random oracles.\footnote{The work by \citet{Goldreich01} is concerned with the general possibility of such a protocol rather than building a practical one.}
+The protocol has been subsequently simplified at the cost of weakened security by \citet{NguyenV04}.
+While the model from \citet{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has later been proposed by \citet{Canetti2005}.
+In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions \cite{Canetti2005}, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
 The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citet{Benhamouda2013}.
 
-\paragraph{The Problem of Server Compromise}
-A problem intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
+\mynote{update references here}
+
+
+%********************************** %VPAKE  **************************************
+\subsection{Verifier-based Password Authenticated Key Exchange}\label{sec:intro:verifier-basedPAKE}
+
+\paragraph{The Challenge of Server Compromise}
+A challenge intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
 Servers store passwords in databases to retrieve them when necessary.
-Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security problem.
+Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security risk.
 Different approaches have been proposed to mitigate the impact of server compromises.
 The server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
 \citet{Gentry2006} propose the first general technique, proven in the \ac{UC} framework, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
 Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
 
-%********************************** %VPAKE  **************************************
-\subsection{Verifier-based Password Authenticated Key Exchange}\label{sec:intro:verifier-basedPAKE}
+\paragraph{go on...}
 The problem of server compromise has been mentioned from the first PAKE protocols by \citet{BellovinM93} (augmented EKE) describing the threats arising from stolen password databases.
 \citet{BellovinM93} describe how password authenticated key-exchange can be performed while the server stores only a verifier of the actual password.
 While this might sound compelling, the research community never picked up on \ac{VPAKE} as we will call it here.
