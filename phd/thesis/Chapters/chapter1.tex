@@ -280,7 +280,7 @@ Nonetheless, malicious users or users who are lazy to remember complicated passw
 In this case the compliance check must be performed on the server side.
 In order to perform policy check with available technologies the client's password must be transmitted to the server, possibly over a secure channel.
 This ultimately requires the client to trust the server to process and store the received password in a secure way.
-While many servers adopt the current state-of-the-art approach for storing passwords in a hashed form, e.g. using PBKDF2 \cite{rfc2898,nist800} or bcrypt \cite{ProvosM99}, with a random salt to protect against server compromise or re-use attacks, there have been many known cases, e.g. \cite{adobeBreach,rockyouBreach,msBreach,cupidBreach}, where passwords have been stored in clear and compromised subsequently.
+While many servers adopt the current state-of-the-art approach for storing passwords in a hashed form, e.g. using PBKDF2 \cite{rfc2898,nist800} or bcrypt \cite{ProvosM99}, with a random salt\footnote{The randomness used in password hashing is commonly called \emph{salt}.} to protect against server compromise or re-use attacks, there have been many known cases, e.g. \cite{adobeBreach,rockyouBreach,msBreach,cupidBreach}, where passwords have been stored in clear and compromised subsequently.
 The ultimate goal, therefore, is to avoid trusting servers with secure processing and storage of user passwords.
 
 In order to offer better protection against compromised password databases servers are supposed to store only the randomised password hash and the random salt that was used.
@@ -365,46 +365,47 @@ The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-fra
 %********************************** %VPAKE  **************************************
 \subsection{Verifier-based Password Authenticated Key Exchange}\label{sec:intro:verifier-basedPAKE}
 
-\paragraph{The Challenge of Server Compromise}
 A challenge intrinsic to all \ac{PAKE} protocols is the issue of \emph{server compromise}.
+It has been mentioned from the first PAKE protocols by \citet{BellovinM93} (augmented EKE) describing the threats arising from stolen password databases.
 Servers store passwords in databases to retrieve them when necessary.
+\citet{BellovinM93} describe how password authenticated key-exchange can be performed while the server stores only a verifier of the actual password.
+The idea sketched by \citet{BellovinM93} resembles the concept of \ac{VPAKE}.
+While this might sound compelling, the research community never picked up on \ac{VPAKE} as we will call it here.
+The fact that passwords require protection on the server that stores them is unquestionable.
+In order to offer better protection against password databases compromise servers are supposed to store only the randomised password hash and the random salt that was used.
 Even though salted hashing of passwords is more or less standard, leakage of password databases is a big security risk.
 Different approaches have been proposed to mitigate the impact of server compromises.
 The server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
 \citet{Gentry2006} propose the first general technique, proven in the \ac{UC} framework, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
 Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
 
-\paragraph{go on...}
-The problem of server compromise has been mentioned from the first PAKE protocols by \citet{BellovinM93} (augmented EKE) describing the threats arising from stolen password databases.
-\citet{BellovinM93} describe how password authenticated key-exchange can be performed while the server stores only a verifier of the actual password.
-While this might sound compelling, the research community never picked up on \ac{VPAKE} as we will call it here.
-The fact that passwords require protection on the server that stores them is unquestionable.
-In order to offer better protection against password databases compromise servers are supposed to store only the randomised password hash and the random salt that was used.
-
 A large number of break-ins into server databases makes \ac{VPAKE} a particularly valuable concept for remote password-based authentication since in order to recover the actual client password the attacker must perform a costly dictionary attack on its password hash.
 Increasing number of successful password leaks~\cite{rockyouBreach,cupidBreach,adobeBreach} suggests however that many servers do not apply randomised password hashing at all. 
+\mynote{check password leak references}
 
 \subsubsection{On Rainbow Tables}
 The reason for protecting passwords on a server are rather simple.
 Computing a verifier from a password using only a one-way function allows an attacker to precompute a list of verifiers such that inverting the one-way function can be performed rather efficiently considering human password choices.
-Those lists can further be shared and re-used are commonly called \emph{rainbow tables}.
+Those lists that can further be shared and re-used are commonly called \emph{rainbow tables}.
 Note that actual rainbow tables usually build hash chains to reduce their size.
 We refrain from further description of rainbow table as they are out of scope of this thesis.
-Adding a small amount of true randomness to the input of the one-way function alleviates these attacks as rainbow tables for all possible random values would have to be created, which leads to a time/memory trade-off up to a point where storing rainbow tables becomes inefficient.
+Adding a small amount of true randomness to the input of the one-way function alleviates these attacks as rainbow tables for all possible random values would have to be created, which leads to a time/memory trade-off up to a point where storing those tables becomes inefficient.
 This additional randomness is commonly referred to as \emph{salt}.
 
 \subsubsection{Verifier-based PAKE --- Protocols and Models}
-In \ac{VPAKE} protocols the client authenticates itself with the password whereas the server uses stored password hash and salt to perform the check.
+In \ac{VPAKE} protocols the client authenticates itself with the password whereas the server uses a password hash and salt to perform the check.
+The body of research on \ac{VPAKE} is rather limited.
 This concept is also known as asymmetric \cite{Bellare2000} or augmented \ac{PAKE} \cite{BellovinM93}.
 As mentioned before, \citet{Gentry2006} propose a way of transforming \ac{PAKE} protocols into \ac{UC}-secure \ac{VPAKE} protocols.
 \citet{BenhamoudaP13} recently proposed the first game-based security model, based on the well known BPR model for \ac{PAKE} protocols.
 
 \subsubsection{Discussion}\label{sec:intro:vpake-discusion}
+\mynote{check this later depending on phrasing of Section \ref{ch:vpake}}
 One reason for the relatively limited interest in \acl{VPAKE} might be the somewhat artificial security benefits and models.
 Security models for \ac{PAKE} protocols consider security of a key-exchange protocol using a password as authentication mechanism.
-They however do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
+Often however, they do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
 \ac{VPAKE} security models try to capture whether the protocol is secure (in the sense of \acl{PAKE}) \emph{and} if the server securely handles and stores the passwords/verifiers.
-Since those security goals are significantly different and unrelated, it is difficult to find a meaningful security model for it.
+Since those security goals are significantly different and somewhat unrelated, it is difficult to find a meaningful security model for it.
 
 Another reason for low adoption rate of \ac{VPAKE} in the research community is its questionable benefit.
 While it is arguably that secure handling and storage of passwords is important, \ac{VPAKE} offers little benefit compared to \ac{PAKE}.
@@ -414,7 +415,7 @@ However, when the randomness has to be transmitted from the server to the client
 
 %********************************** %TPAKE and 2PAKE  **************************************
 \subsection{Threshold and Two-Server PAKE}
-Two-server PAKE protocols \cite{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers.
+Two-server PAKE protocols such as the one proposed by \citet{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers in a different way than \ac{VPAKE}.
 They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
 By splitting the password a malicious or compromised server can only recover a password share that does not allow to recover the password.
 In contrast to \ac{PAKE} protocols two-server and threshold \ac{PAKE} protocols are less well studied.
