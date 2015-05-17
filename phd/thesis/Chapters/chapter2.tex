@@ -4,17 +4,23 @@
 
 \chapter{Prerequisites and Building Blocks}\label{ch:prelims}
 
-In this chapter we recall known facts and assumptions as well as notations used throughout this work.
+In this chapter we recall known facts and assumptions as well as notations used throughout this thesis.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
 While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \citet{katz2008introduction} or \citet{Goldreich2001}.
 
-
-\mynote{add formal stuff from \citet{Goldreich2004} for simulation based proofs}
-\mynote{define \ac{CRS}}
-
 %********************************** %Math  **************************************
 \section{Mathematical Background}
-We will not give an entire mathematical introduction but recall the most important definitions needed in our context.
+This is not a complete mathematical introduction but recalls the most important definitions needed in our context.
+One very central definition when modelling computational security is the notion of computational indistinguishability.
+
+\begin{definition}[Computational Indistinguishability]
+Polynomial-time indistinguishability between two ensembles $X=\{X_n\}_{n\in\NN}$ and $Y=\{Y_n\}_{n\in\NN}$ is given if for every \ac{PPT} algorithm $D$, there exists a negligible function $\varepsilon(\cdot)$ such that
+\[
+  \left| \Pr[D(X) = 1] - \Pr[D(Y) = 1] \right| < \varepsilon(n).
+\]
+We use computational or polynomial-time indistinguishable interchangeably and write $X\stackrel{\varepsilon}{=}Y$.
+\eod
+\end{definition}
 
 \subsection{Groups}
 Groups are an important mathematical structure in cryptography.
@@ -22,7 +28,7 @@ In the following we give some useful definitions in the context of cyclic and co
 
 \begin{definition}[Groups]\label{def:groups}
 Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
-\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element and it is \emph{associative}:
+\GG is a group if it has \emph{closure}, a \emph{neutral} element, every element has an \emph{inverse} element, and it is \emph{associative}, \ie :
 \begin{itemize}
 	\item For all $g,h\in\GG$, $g\circ h \in\GG$
 	\item There exists an element $e\in\GG$, called \emph{identity}, such that for all $g\in\GG$, $e\circ g=g=g\circ e$.
@@ -37,6 +43,9 @@ The \emph{order} of a finite group \GG is denoted by $|\GG|$ and is defined as t
 An \emph{abelian} group additionally is commutative, \ie for all $g,h\in\GG$, $g\circ h=h\circ g$.
 In this work, and cryptography in general, we mainly use cyclic groups.
 
+\subsubsection{Cyclic Groups}
+Since many computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used in this context are cyclic.
+
 \begin{definition}[Cyclic Groups]\label{def:cyclicgroups}
 Let \GG denote a finite group of order $p$.
 \GG is \emph{cyclic} if there exists a \emph{generator} $g\in\GG$ such that $\{g^0,g^1,\dots,g^{p-1}\}=\GG$.
@@ -44,15 +53,11 @@ Let \GG denote a finite group of order $p$.
 \end{definition}
 
 \noindent
-Let $\phi(p)=|\ZZ^\ast_p|$ denote the cardinality of $\ZZ^\ast_p$.
-
-\subsubsection{Cyclic Groups}
-Since many computational assumptions on groups used in cryptography rely on the cyclic property of groups we have to ensure that all groups used in this context are cyclic.
 Therefore, we usually use groups of prime order $p$ since groups of prime order are cyclic.
 Another useful feature of prime order groups is that all elements of group \GG, except the identity, are generators of \GG.
 We write $\GG=\genG$ to denote a group \GG is generate by $g$.
 Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{x\in{1,\dots,p-1}~|~\gcd(x,p)=1\}$ is a cyclic group as well.
-In the case of cyclic groups where $p$ is prime all elements in $\ZZ^\ast_p$ are relatively prime to $p$ (and thus invertible modulo $p$) such that $\phi(p)=p-1$.
+In the case of cyclic groups where $p$ is prime all elements in $\ZZ^\ast_p$ are relatively prime to $p$ (and thus invertible modulo $p$) such that $\phi(p)=p-1$, where $\phi(p)=|\ZZ^\ast_p|$ denotes the cardinality of $\ZZ^\ast_p$.
 
 \subsubsection{Composite Order Groups}
 Composite order groups $\ZZ^\ast_N$ for integer $N=pq$ that is a product of two distinct primes $p$ and $q$ are another useful group for cryptography.
@@ -61,16 +66,16 @@ The cardinality of $\ZZ^\ast_N$ is given by $\phi(p)=(p-1)(q-1)$.
 
 \subsection{Elliptic Curves}
 This work is only marginally concerned with elliptic curve cryptography.
-We therefore keep this section short and refer to \cite{HankersonMS03} for further introduction into elliptic curves in cryptography.
+We therefore keep this section short and refer to \citet{HankersonMS03} for further introduction into elliptic curves in cryptography and more general definitions.
 
-An \emph{elliptic curve} $E$ over prime-field $\FF_p$ is given by 
+An \emph{elliptic curve} $E$ over prime-field $\ZZ_p$ is given by 
 \[
   y^2 = x^3 + ax + b \mod p,
 \]
-with $a,b\in\FF_p$ and $4a^3 + 27b^2 \not= 0 \mod p$.
-Points on curve $E$ are given by pairs $(x,y)\in\FF^2_p$ that fulfil those equations.
-The set containing all these points, plus the point at infinity $\infty$, are denoted $E(\FF_p)$.
-$E(\FF_p)$ with $\infty$ as identity and common arithmetic operations such as addition, subtraction, multiplication, and inversion forms an abelian group.
+with $a,b\in\ZZ_p$, $p>5$, and $4a^3 + 27b^2 \not= 0 \mod p$.
+Points on curve $E$ are given by pairs $(x,y)\in\ZZ^2_p$ that fulfil those equations.
+The set containing all these points, plus the point at infinity $\infty$, are denoted $E(\ZZ_p)$.
+$E(\ZZ_p)$ with $\infty$ as identity and common arithmetic operations such as addition, subtraction, multiplication, and inversion forms an abelian group.
 Note that we use the multiplicative notation for elliptic curves (even though it is an additive group).
 
 \subsection{Pairings}
@@ -87,11 +92,11 @@ In cryptography we usually distinguish between three different types of pairings
 \subsection{Computational Assumptions}
 In this section we recall computational assumptions used in the remainder of this thesis.
 We distinguish between assumptions on cyclic groups and assumptions on composite order groups.
-When saying something is hard with respect to $\secpar$, this means that there exists no algorithm that can solve the problem in polynomial time in $\secpar$.
+When saying something is hard with respect to the security parameter \secpar, this means that there exists no algorithm that can solve the problem in polynomial time in \secpar.
 
-Asymptotic notation allows us to describe the behaviour of a function when its arguments tend towards some limit.
+Asymptotic notation allows us to describe the behaviour of a function when its arguments converging towards some limit.
 As mentioned earlier, security models used in this work are from the computational world.
-In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on a security parameter.
+In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on security parameter \secpar.
 Security is therefore only given for \emph{reasonable} security parameters.
 To express this asymptotic notation is used.
 
@@ -114,12 +119,12 @@ A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exi
 
 \paragraph{Probabilistic Polynomial-Time}
 We often use the phrase \ac{PPT} to describe an efficient algorithm.
-The actual definition of \ac{PPT}, first defined in \cite{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
+The actual definition of \ac{PPT}, first defined by \citet{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
 
 \begin{definition}[\acl{PP}]\label{def:ppt}
-\ac{PP} denotes the class of decision problems solvable by a \ac{PTM} $A$ such that
+\ac{PP} denotes the class of decision problems solvable by a \ac{PTM} \cA such that
 \begin{itemize}
-	\item $A$ runs in polynomial-time,
+	\item \cA runs in polynomial-time,
 	\item at least $1/2$ of the computation paths accept when the answer is `yes', and
 	\item less than $1/2$ of the computation paths accept when the answer is `no'. \eod
 \end{itemize}
@@ -127,7 +132,7 @@ The actual definition of \ac{PPT}, first defined in \cite{gill1977}, is given fo
 
 \noindent
 The informal description for \aclp{PTM} is given in Definition \ref{def:ptm}.
-We refer the interested reader to works concerned with complexity theory like \cite{santos1969,WaterlooComplexity} for more on \ac{PTM} and a formal definition.
+We refer the interested reader to works concerned with complexity theory, \eg \cite{santos1969,WaterlooComplexity} for more on \ac{PTM} and a formal definition.
 
 \begin{definition}[\acl{PTM} \cite{gill1977}]\label{def:ptm}
 A \ac{PTM} is a Turing machine with distinguished states called coin-tossing states.
@@ -136,13 +141,13 @@ The computation of a \ac{PTM} is deterministic except that in coin-tossing state
 \end{definition}
 
 \noindent
-Note that the running time is always parametrised with the security parameter \secpar.
-You can think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
-In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar \cite{katz2008introduction}.
+Note that the running time is always parametrised with security parameter \secpar.
+One may think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
+In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar.
 
 \subsubsection{Cyclic Groups}
 In this section we recall some computational assumptions in the group context that are believed to be hard.
-The \ac{DLP} is the basis of all assumptions in groups.
+The \ac{DLP} is the basis of all assumptions in those groups.
 
 \begin{definition}[\acl{DLP}]\label{def:dlp}
 Let \GG denote a group of prime order $p$ with generator $g$.
@@ -182,6 +187,9 @@ The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is har
 \eod
 \end{definition}
 
+\noindent
+When using \ac{DLP}-based assumptions in pairing groups we have to be more careful as the \ac{DDH} assumption might not hold and additional treatment of the pairing setting is necessary.
+
 \begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
 Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ of length $\secpar$ with associated bilinear map $e$.
 The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard relative to $\secpar$, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
@@ -189,21 +197,21 @@ The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ i
 \end{definition}
 
 \subsubsection{Composite Order Groups}
-The basic problem underlying all hardness assumptions in composite order groups is the factorisation problem.
+The basic problem underlying all hardness assumptions in composite order groups is the factoring problem.
 
 \begin{definition}[Factoring Problem]\label{def:factoring}
-Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length $\secpar$ each.
-The factoring problem in $\ZZ^\ast_N$ states that given modulus $N$ it is hard with respect to $\secpar$ to compute $p',q'$ such that $N=p'q'$.
+Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length \secpar each.
+The factoring problem in $\ZZ^\ast_N$ states that given modulus $N$ it is hard relative to \secpar to compute $p',q'$ such that $N=p'q'$.
 \eod
 \end{definition}
 
 \noindent
-To define RSA-based assumptions we have to define the RSA algorithm first.
+To define RSA-based assumptions we have to define the RSA key generation algorithm first.
 Let $(N, e, d)\ralgout\KGen(\secpar)$ denote the RSA key-generation algorithm that generates $(N, e, d)$ such that $N=pq$ for two distinct primes $p$ and $q$ of size $\secpar$ each, $\gcd(e, \phi(N))=1$, and $ed=1\mod \phi(N)$.
 
 \begin{definition}[RSA Assumption]\label{def:rsa}
-Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length $\secpar$ each and $y\rin\ZZ^\ast_N$ a random element from $\ZZ^\ast_N$.
-The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ with $\gcd(e, \phi(N))=1$ and $ed=1\mod \phi(N)$ it is hard with respect to $\secpar$ to compute $x$ such that $x^e = y \mod N$.
+Let $N=pq$ denote an integer with prime factors $p$ and $q$ of length \secpar each and $y\rin\ZZ^\ast_N$ a random element from $\ZZ^\ast_N$.
+The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ defined as above it is hard with respect to \secpar to compute $x$ such that $x^e = y \mod N$.
 \eod
 \end{definition}
 
@@ -218,17 +226,6 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 \eod
 \end{definition}
 
-\subsubsection{Further Definitions}
-Some further definitions used throughout this work.
-
-\begin{definition}[Computational Indistinguishability]
-Polynomial-time indistinguishability between two ensembles $X=\{X_n\}_{n\in\NN}$ and $Y=\{Y_n\}_{n\in\NN}$ is given if for every \ac{PPT} algorithm $D$, there exists a negligible function $\varepsilon(\cdot)$ such that
-\[
-  \left| \Pr[D(X) = 1] - \Pr[D(Y) = 1] \right| < \varepsilon(n).
-\]
-We use computational or polynomial-time indistinguishable interchangeably and write $X\stackrel{\varepsilon}{=}Y$.
-\eod
-\end{definition}
 
 % In addition to common notations (we do not recall here), we give here all notations used throughout this work.
 % \mynote{see if anything of this is useful ...}
@@ -265,6 +262,11 @@ It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
 The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
 If $H$ has seen $x$ before, it returns the previously chosen element $y$.
 While not including random oracles, the standard model often includes a \acl{CRS} that is made available to all parties and can be seen as common set-up parameters.
+
+\subsection{Common Reference String}
+The \acl{CRS} model, proposed by \citet{CanettiF01}, is a generalisation of the common random string model.
+In the \ac{CRS} model all parties have access to a common reference string that was chosen according to some predefined distribution.
+This model is usually referred to as the standard model with \ac{CRS} as the assumption of the additional \ac{CRS} being available is rather weak.
 
 \subsection{Commitments}
 Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
@@ -578,3 +580,7 @@ The additional algorithms for \ac{T-SPHF} and changes to the hash functions are 
       \[e(\hp_2, \crs') \stackrel{?}{=} e(g_{1,1}, \chi_{1,2})\cdot e(d, \chi_4)\]
   \item $\THash(\hp, \Lpwd, C, \tau')$ computes $\left[ e(u_1, \chi_{1,1} \chi_{1,2}^{\xi})\cdot e(u_2, \chi_2)\cdot e(e/g_{1,1}^{\pwd}, \chi_3)\cdot e(v, \chi_4) \right]^{1/\tau'}$
 \end{itemize}
+
+
+\section{Security Models}
+\mynote{* PAKE\\ * VPAKE\\ * 2PAKE\\ * \citet{Goldreich2004} for simulation based proofs}
