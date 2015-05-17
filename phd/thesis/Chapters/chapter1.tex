@@ -416,105 +416,104 @@ However, when the randomness has to be transmitted from the server to the client
 %********************************** %TPAKE and 2PAKE  **************************************
 \subsection{Threshold and Two-Server PAKE}
 Two-server PAKE protocols such as the one proposed by \citet{Abdalla2005} and general threshold \ac{PAKE} protocols \cite{MacKenzieSJ02,RaimondoG03,Abdalla2005b} tackle the problem of server compromise and malicious servers in a different way than \ac{VPAKE}.
-They share the client's password amongst two (or possibly more) servers that then jointly authenticate the client.
+They share the client's password amongst two or more servers that then jointly authenticate the client.
 By splitting the password a malicious or compromised server can only recover a password share that does not allow to recover the password.
 In contrast to \ac{PAKE} protocols two-server and threshold \ac{PAKE} protocols are less well studied.
 
 \subsubsection{Threshold PAKE}
-\citet{FordK00} first proposed to split the client's password among multiple servers to protect against server compromise.
-\citet{RaimondoG03} and \citet{MacKenzieSJ02} were among the firsts to propose t-out-of-n \ac{PAKE} protocols.
-The protocol from \citet{MacKenzieSJ02} requires a PKI in addition to the password and is therefore not password-only.
+\citet{FordK00} first suggested to split the client's password among multiple servers to protect against server compromise.
+\citet{RaimondoG03} and \citet{MacKenzieSJ02} were the first to propose t-out-of-n threshold \ac{PAKE} protocols, where the protocol remains secure as long as $t$ out of $n$ servers, participating in the protocol and holding a password share, are honest.
+But not all of them, such as the protocol from \citet{MacKenzieSJ02} are password-only and require additional cryptography such as a PKI in addition to the password.
 
 \subsubsection{Two-Server PAKE}
-Two-server \ac{PAKE} can be seen as a special case of threshold PAKE for $t=n=2$ where $t$ out of $n$ servers, participating in the protocol and holding a password share, must be honest.
+Two-server \ac{PAKE} can be seen as a special case of threshold PAKE for $t=n=2$.
 Compared to  general threshold \ac{PAKE}, two-server \ac{PAKE} is deemed more practical requiring only two participating servers.
 In case of a server compromise, password change notifications can be sent to users.
-Threshold \ac{PAKE} protocols are not automatically two-server \ac{PAKE} protocols.
+Threshold \ac{PAKE} protocols are not necessarily two-server \ac{PAKE} protocols.
 The threshold \ac{PAKE} from \citet{RaimondoG03} for example requires $t<n/3$ such that it can not be modified to a two-server \ac{PAKE} protocol.
 The first real two-server PAKE protocol is due to \citet{BrainardJKS03}, which was proven secure by \citet{SzydloK05} in a modified version.
-The first two server PAKE with thorough security model based on the classical game-based BPR model is due to \citet{Katz2012a}.
+The first two server PAKE with thorough security model based on the popular game-based \ac{BPR-M} model \cite{Bellare2000} is due to \citet{Katz2012a}.
 
+\subsubsection{Tag-based Password Authentication}
+\mynote{describe tPAuth here}
 
 %********************************** %Other PAKE protocols  **************************************
 \subsection{Other Password Authenticated Protocols} \label{sec:other-pake}
-Besides the straight-forward case where a single client-sever pair uses a common password to authenticate each other and establish a secure channel, there exist several other scenarios we discuss in the following.
+Besides the client-server authentication and key-exchange case, there exist several other scenarios in the password-based authentication setting we discuss in the following.
 
 \paragraph{Three-Party Password Authenticated Key Exchange}
 The three-party setting (3\ac{PAKE}) considers two humans who want to securely communicate with each other.
-Since sharing passwords with everyone else is not practical, a trusted server (the third party) come into play.
-Thus, the users have to share only one password with the trusted sever, which assists then in the three-party protocol between the two users.
-The initial three-party security model is due to \citet{Abdalla2005}.
-Subsequent work \cite{CliffTB06,Yoneyama08,TsaiC13} propose new protocols and improved security models.
+Since sharing passwords with everyone else is not practical, a trusted server (the third party) comes into play.
+Thus, the users have to share only one password with the trusted sever, which assists in the three-party protocol between the two users.
+The first three-party security model is due to \citet{Abdalla2005}.
+Subsequent works \cite{CliffTB06,Yoneyama08,TsaiC13} propose further protocols and improved security models.
 
 \paragraph{Group Password Authenticated Key Exchange}
 Password authenticated group key exchange is another popular protocol, extending two-party \ac{PAKE} to the group setting.
-Authenticated group key exchange protocols allow a \emph{group} of parties, not only two, to negotioate a session key.
-One way to achieve group \ac{PAKE} is to use general group key exchange protocols and modify them for the password setting, \eg \cite{Bresson02,BrChPo05}.
+Authenticated group key exchange protocols allow a \emph{group} of parties to negotiate a session key.
+One way to achieve group \ac{PAKE} is to use general group key exchange protocols and modify them for the password setting, as proposed in \cite{Bresson02,BrChPo05}.
 %However, this usually yields rather inefficient protocols.
-Similar to the classical \ac{PAKE}, group \ac{PAKE} enjoys a large body of research papers \cite{Kim2004,Abdalla2006,Bohli2006,Dutta2006,AbdallaP06,AbdallaBVS07,AbdallaCCP09,AbdallaCGP11}.
-
-\paragraph{Password Protected Secret Sharing}
-The notion of \ac{PPSS} was introduced by \citet{Bagherzandi2011}.
-It allows to share a secret, \eg a symmetric key, among several servers, protected by a password. 
-A security definition in the \acl{UC} framwork was proposed a year later by \citet{Camenisch2012}.
-\ac{PPSS} has many interesing applications such as secure remote storage, an increasingly important use-case.
-A similar notion called \emph{hidden credential retrieval} using only one server has been introduced by \citet{Boyen09} to allow users with knowledge of a password to store high-entropy messages securely on a server.
-
-
-%TODO:
-%\paragraph{Security against Malicious Servers}
-%\fk[inline]{todo\\
-%* HPAKE\\
-%* SRP?\\
-%* Two-Server PAKE}
+Similar to \ac{PAKE}, group \ac{PAKE} enjoys a large body of research papers \cite{Kim2004,Abdalla2006,Bohli2006,Dutta2006,AbdallaP06,AbdallaBVS07,AbdallaCCP09,AbdallaCGP11}.
 
 \paragraph{Multi-Factor Authenticated Key Exchange}
-As mentioned before, using passwords is only one possible authentication mechanism (for humans).
+As mentioned before, using passwords is only one possible authentication mechanism for humans.
 Combining several authentication techniques leads to \emph{multi-factor} authentication protocols.
 The most commonly used reference for (multi-factor) authentication is the aforementioned \ac{NIST} standard \cite{Burr11} that defines four security levels for authentication.
 Starting from level three at least two authentication factors are necessary.
-Research in the area of multi-factor authentication \cite{PointchevalZ08,SUC10,LiuWM10,HaoC12} propose protocols and security models for two-party and three-party scenarios.
-Real world implementations include for example Google authenticator \cite{GAuthenticator}.
-However, implementations so far only combine traditional passwords with \aclp{OTP}.
+Research in the area of multi-factor authentication \cite{PointchevalZ08,SUC10,LiuWM10,HaoC12} proposes protocols and security models for two-party and three-party scenarios.
+Real world implementations include the popular Google authenticator \cite{GAuthenticator} amongst others.
+However, implementations usually combine only passwords with \acp{OTP}.
 Using biometric factors is rarely seen in practice so far.
+
+\paragraph{Password Protected Secret Sharing}
+The notion of \acl{PPSS} was recently introduced by \citet{Bagherzandi2011}.
+It allows to share a secret such as a symmetric key, among multiple servers, protected by a password. 
+A security model in the \ac{UC} framework was proposed later by \citet{Camenisch2012}.
+\ac{PPSS} has many interesing applications such as secure remote storage, an increasingly important use-case.
+A similar notion called \emph{hidden credential retrieval} using only a single server has been introduced by \citet{Boyen09} to allow users with knowledge of a password to store high-entropy messages securely on a server.
+\mynote{add updated references}
+
 
 
 % *****************************************************************************
 % Section: Passwords and TLS
 % *****************************************************************************
 \section{Real World Architectures and Challenges}\label{sec:intro:real-world}
-As discussed in the beginning of the introduction, the scenario where cryptographic password-based authentication protocols are most needed is user login on the Internet.
-However, due to the Internet's architecture the use of such protocols like \ac{PAKE} on the internet involves several challenges.
+As discussed in the beginning, the scenario where cryptographic password-based authentication protocols are most needed is user login on the Internet.
+However, due to the Internet's architecture the use of protocols like \ac{PAKE} on the internet involves several challenges.
 To understand the challenges one first has to understand how \ac{HTTPS} and thus \ac{TLS} works.
 
-\acl{TLS} is, in it's current version $1.2$ \cite{rfc5246,rfc6176,rfc4492}, the successor of \ac{SSL}, a suite of cryptographic protocols for secure and authenticated communication.
-It is standardised by the \ac{IETF} (\url{https://www.ietf.org/}) and, while called \emph{transport layer} security, is implemented on the presentation layer (it is initialised on the session layer).
+\ac{TLS} is, in it's current version $1.2$ \cite{rfc5246,rfc6176,rfc4492}, the successor of \ac{SSL} \cite{rfc6101}, a suite of cryptographic protocols for secure and authenticated communication.
+It is standardised by the \ac{IETF} (\url{https://www.ietf.org/}) and, while called \emph{transport layer} security, is implemented on the presentation layer and is initialised on the session layer.
 In order to secure network traffic however, it can be seen as the transport layer while all lower layers only transport the encrypted content.
-When accessing a website via \ac{HTTPS} a \ac{TLS} session is first established between the client and the server, which is then used to transport the content via \ac{HTTP}.
-Thus, when the user is presented with a website to log on, the secure channel has been established already such that executing a \ac{PAKE} protocol and exchanging the \ac{TLS} keys with this newly created key is rather impractical (and not supported by any common browser).
+When accessing a website via \ac{HTTPS} a \ac{TLS} session is first established between the client and the server (authenticated by the server's public key, usually wrapped in an X.509 certificate \cite{rfc5280}), which is then used to transport the content via \ac{HTTP}.
+Thus, when the user is presented with a website to log on, the secure channel has been established already such that executing a \ac{PAKE} protocol for authentication and exchanging the \ac{TLS} keys with this newly created key from the \ac{PAKE} protocol is rather impractical (and not supported by any common browser).
 The place to use \ac{PAKE} is actually \emph{before} the \ac{TLS} channels is set up, such that it can be used as key exchange in the \ac{TLS} handshake protocol.
-This approach has been followed in \cite{rfc5054}, which uses the Secure Remote Password (SRP) by \cite{Wu98} and is implement in major \ac{TLS} implementations such as OpenSSL (\url{https://www.openssl.org/}).
+This approach has been followed in \cite{rfc5054}, which uses the Secure Remote Password (SRP) protocol by \cite{Wu98} and is implement in major \ac{TLS} implementations such as OpenSSL (\url{https://www.openssl.org/}).
 The problem with such an approach however is that it requires the user to login before the actual website is sent, besides other problems, including the logout problem.
-See \citet{Parsovs14} for a discussion on problems of client authentication using certificates.
-Most problems are transferable to the case where the client uses a password for authentication instead of a client certificate.
+Most problems are transferable from the scenario where clients use X.509 certificates for authentication to the case where the client uses a password for authentication.
+See \citet{Parsovs14} for a discussion of these problems.
 
 Looking at the current state of the Internet and the used tools and protocols it is simply not reasonable to use \ac{PAKE} as \ac{TLS} authentication.
 The challenge is therefore to deploy cryptographic password-based authentication on top of \ac{TLS}, \ie on the the application level, in order to secure user logins on the Internet.
 While this might sound straight-forward, one has to consider that executing for example \ac{PAKE} with mutual authentication via an \ac{HTTPS} channel does \emph{not} necessarily yield an authenticated and confidential channel between client and server.
 To achieve this the password-based authentication protocol has to be bound to the \ac{TLS} channel.
-This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on top of \ac{TLS}.
+This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on top of \ac{TLS} and will be extended in this thesis.
 
 
 % *****************************************************************************
 % Section: Outline & Summary
 % *****************************************************************************
 \section{Outline of this Thesis \& Summary of Results}\label{sec:intro:outline}
-This thesis consists of five more chapters.
+This thesis consists of ??? more chapters.
+\mynote{Do this when actual content is there...}
 It starts in Chapter \ref{ch:prelims} with prerequisites and building blocks used throughout this work.
 After defining the foundations, Chapter \ref{ch:vpake} describes the first major contribution of this thesis, a framework for password registration (Section \ref{sec:vpake-registration}) and password authenticated key-exchange (Section \ref{sec:vpake-pake}) in the verifier-based setting where the server stores only a verifier of the password.
 The description of the implementation and demonstration can be found in Section \ref{sec:vpake-registration}.
 Chapter \ref{ch:2pake} transfers the results from Chapter \ref{ch:vpake} to the two-server setting for the second contribution by proposing a framework for password registration and authentication in the two-server \ac{PAKE} setting.
 To this end we describe a secure registration process for two-server \ac{PAKE} protocols in Section \ref{sec:2pake-registration} and the first \ac{UC} secure two-server \ac{PAKE} protocol in Section \ref{sec:2pake-uc}.
+Chapter \ref{ch:realworld} extends \cite{MSD13} and depicts solutions on how to bring cryptographic password authentication to the web on desktop and mobile browsers.
+Eventually, the thesis is concluded by chapter \ref{ch:conclusion} summarising results described in the thesis and giving an outlook to potential future work.
 
 
 
