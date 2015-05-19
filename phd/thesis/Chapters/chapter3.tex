@@ -6,11 +6,12 @@ In this section we propose new mechanisms to register user accounts with secure 
 This chapter proposes a new framework for verifier-based password authenticated key exchange in the two-party setting spanning including password registration and the actual authentication.
 This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
 
-%********************************** %Registering Passwords  **************************************
-\section{Registering Passwords} \label{sec:vpake-registration}
+\input{Chapters/passwords1.tex}
 
-\subsection{Zero-knowledge Password Policy Checks}
-\mynote{ZKPPC from ESORICS'14 \cite{KieferM14b}}
+%********************************** %Registering Passwords  **************************************
+
+% \mynote{ZKPPC from ESORICS'14 \cite{KieferM14b}}
+\input{Chapters/zkppc}
 
 \subsection{Blind Password Registration}
 \mynote{BPR from ???(PETS'15/ePrint'15)  \cite{KieferM15a}}
@@ -78,7 +79,7 @@ This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15
 \mynote{generic description of how build VPAKE from PAKE}
 \mynote{VPAKE security model}
 
-\subsection{VPAKE Protocols}
+\subsection{VPAKE Protocols} \label{sec:vpake}
 \mynote{Verifier-based PAKE from ESORICS'14  \cite{KieferM14b}}
 \mynote{tSOKE \cite{ManulisSKD15a}}
 

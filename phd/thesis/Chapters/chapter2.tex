@@ -251,99 +251,109 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
-This section describes all building blocks used throughout this work to build the proposed protocols.
-But before starting with that we want to give a short description of the random oracle, which is an important though disputed, and standard model.
-Many cryptographic proofs are only possible in the \emph{random oracle model} where a public randomly chosen black-box function $H$ is available.
-The other popular model is the so-called \emph{standard model} where no such function exists.
-While this function $H$ does not actually exist in the real world it is useful in many proves.
-It is usually instantiated with a cryptographic hash function.
+This section describes building blocks used throughout this work to build the proposed protocols.
+But before starting with that we want to give a short description of some general models used to specify security in.
+% the random oracle, which is an important though disputed, and standard model.
+The two most popular models are the \ac{ROM} and the standard model.
+In the \ac{ROM} a public randomly chosen black-box function $H$ is available to all parties, whereas no such function exists in the \emph{standard model}.
+While this function $H$ can not be instantiated in the real world it is useful (sometimes necessary) in many proofs.
+Implementations of protocols requiring a random oracle usually instantiate it with a cryptographic hash function.
 The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
-It is consistent, such that $y=H(x)$ for all $y\gets H(x)$.
-The output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
+It is consistent, such that $y=H(x)$ for all $y\gets H(x)$, and the output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
 If $H$ has seen $x$ before, it returns the previously chosen element $y$.
-While not including random oracles, the standard model often includes a \acl{CRS} that is made available to all parties and can be seen as common set-up parameters.
+While not including random oracles, the standard model often includes a \ac{CRS} that is made available to all parties and can be seen as common set-up parameters.
 
 \subsection{Common Reference String}
 The \acl{CRS} model, proposed by \citet{CanettiF01}, is a generalisation of the common random string model.
 In the \ac{CRS} model all parties have access to a common reference string that was chosen according to some predefined distribution.
 This model is usually referred to as the standard model with \ac{CRS} as the assumption of the additional \ac{CRS} being available is rather weak.
 
-\subsection{Commitments}
+\subsection{Hash Functions}
+
+\mynote{* Collision resistant\\ * any other?}
+
+\subsection{Commitments} \label{sec:commitments}
 Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
-A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC(\secpar)$ and $(C,d)\gets\Com(x;r)$ are computable in polynomial time, \emph{complete} if $\Com(d)=(C,d)$ for $(C,d)\gets\Com(x;r)$, and secure if it is
+A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC(\secpar)$ and $(C,d)\gets\Com(x;r)$ are computable in polynomial time ($d$ denotes the decommitment to $C$ and is usually omitted), \emph{complete} if $\Com(d)=(C,d)$ for $(C,d)\gets\Com(x;r)$, and secure if it is
 \begin{itemize}
-  \item Binding: For all PPT adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{bi}}(\cdot)$ such that for all $(x,x',r,r',C)\gets A$:
+  \item Binding: For all PPT adversaries \cA there exists a negligible function $\varepsilon_{\mathrm{bi}}(\cdot)$ such that for all $(x,x',r,r',C)\gets \cA(\secpar)$:
     $\Pr[x\not=x'\wedge (C,d)=\Com(x;r)\wedge (C,d')=\Com(x';r')] \leq \varepsilon_{\mathrm{bi}}(\secpar)$,
-  \item Hiding: For all PPT adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{hi}}(\cdot)$ such that for all $x_0,x_1$ with $|x_0|=|x_1|$ and $b\rin\bits, (C,d)\gets\Com(x_b;r)$ and $b'\gets A(C,x_1,x_2)$:
+  \item Hiding: For all PPT adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{hi}}(\cdot)$ such that for all $x_0,x_1$ with $|x_0|=|x_1|$, $b\rin\bits, (C,d)\gets\Com(x_b;r)$, and $b'\gets \cA(C,x_1,x_2)$:
     $\Pr[b=b'] \leq 1/2+\varepsilon_{\mathrm{hi}}(\secpar)$.
 \end{itemize}
 
-\subsubsection{Pedersen commitments \cite{Pedersen91}}
-We will use perfectly hiding, computationally binding, homomorphic Pedersen commitments \cite{Pedersen91} defined as follows.
-Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,p,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group $G$ of prime order $p$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
-Pedersen commitments are \emph{additively homomorph}, i.e. for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in0,\dots,m$ it holds that $\prod_{i=0}^{m}C_i=\Com(\sum_{i=0}^{m}x_i$; $\sum_{i=0}^{m}r_i)$.
+\noindent
+A commitment scheme is further homomorph if there exist functions $\circ$ and $\star$ such that for all commitments $(C_i,d_i)\gets\Com(x_i;r_i)$  for $i\in[1,n]$ that $C_1 \circ \cdots \circ C_n = \Com(x_1\star \cdots \star x_n, r_i\star \cdots \star r_n)$.
+
+\subsubsection{Pedersen commitments}
+\citet{Pedersen91} commitments are perfectly hiding, computationally binding, homomorphic commitments, defined as follows.
+Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,p,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group \GG of prime order $p$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
+Pedersen commitments are \emph{additively homomorph}, i.e. for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in 1,\dots,n$ it holds that $\prod_{i=1}^{n}C_i=\Com(\sum_{i=1}^{n}x_i$; $\sum_{i=1}^{n}r_i)$.
 
 \paragraph{Trapdoor commitments}
-In order to build zero-knowledge proofs of knowledge with malicious verifiers we require a trapdoor commitment scheme, which allows a party knowing the correct trapdoor to open a commitment to any value (equivocable commitment).
-Fortunately, Pedersen commitments are trapdoor commitments as they can be opened to any element using the discrete logarithm $\log_g h$ as a trapdoor.
+In some scenarios such as zero-knowledge proofs of knowledge with malicious verifiers we require trapdoor commitments, which allow a party knowing the correct trapdoor to open a commitment to any value (equivocable commitment).
+Pedersen commitments are trapdoor commitments as they can be opened to any element using the discrete logarithm $\log_g h$ as trapdoor.
 
 %----------------------------------- Zero Knowledge Proofs-----------------------
 \subsection{Zero Knowledge Proofs}
 A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so.
-An interactive protocol \ZKP for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
+An interactive protocol $\Pi$ for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
 \begin{itemize}
 	\item Completeness: If $x\in L$, $V$ accepts if $P$ holds a witness proving so.
-	\item Soundness: For every malicious prover $P^\ast(x)$ with $x\in L$ that the probability of making $V$ accept is negligible.
-	\item Zero-Knowledge: If $x\in L$, then there exists an efficient simulator \Sim that on input of $x$ is able to generate a view, indistinguishable from the view of a malicious verifier $V^\ast$.
+	\item Soundness: For every malicious prover $P^\ast(x)$ with $x\not\in L$ the probability of making $V$ accept is negligible.
+	\item Zero-Knowledge: If $x\in L$, then there exists an efficient simulator \Sim that on input of $x$ is able to generate a view, indistinguishable from the view of a (malicious) verifier $V^\ast$.
 \end{itemize}
 
 \paragraph{Zero-Knowledge Proof of Knowledge}
 A zero-knowledge proof of knowledge \ZKPoK is a zero-knowledge proof with the following special soundness definition:
 \begin{itemize}
-	\item Soundness: There exists an efficient knowledge extractor $\Ext$ that can extract a witness from any malicious prover $P^*(x)$ with $x\in L$ that has non-negligible probability of making $V$ accept.
+	\item Soundness: There exists an efficient knowledge extractor \Ext that can extract a witness from interaction with any (malicious) prover $P^\ast(x)$ with $x\in L$ that makes the verifier accept.
 \end{itemize}
 
+\paragraph{$\bm{\Sigma}$ Protocols}\hfill\\
+\mynote{briefly describe standard $\Sigma$ protocols}
+
 \subsubsection{Committed Zero-knowledge Proofs}
-We use the following committed $\Sigma$-protocol to ensure extractability (\ZKPoK) and simulatability when interacting with a malicious verifier~\cite{Damgard00,JareckiL00}.
+\citet{Damgard00} and \citet{JareckiL00} proposed the following committed $\Sigma$-protocol to ensure extractability (\ZKPoK) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
 Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_p$ a collision-resistant hash function.
 A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:
 \begin{itemize}
   \item The prover computes the first message $m_1\gets P_1(x,w,r)$, computes 
   \[M_1\gets\Com(H(x,m_1); r_1)=g^{H(x,m_1)}h^{r_1},\]
   and sends $M_1$ to the verifier.
-  \item The verifier chooses challenge $c\rin\ZZ_p$ and returns it to the prover.
+  \item The verifier chooses challenge $c\rin\bits^\secpar$ and returns it to the prover.
   \item The prover computes the second message $m_2\gets P_2(x,w,r,c)$, computes 
   \[M_2\gets\Com(H(m_2); r_2)=g^{H(m_2)}h^{r_2},\]
    and sends $M_2$ to the verifier.
-  \item Further, the prover sends the opens the commitments $M_1$ and $M_2$ sending $(x,m_1,m_2,r_1,r_2)$ to the verifier.
+  \item Further, the prover opens the commitments $M_1$ and $M_2$ by sending $(x,m_1,m_2,r_1,r_2)$ to the verifier.
   \item The verifier accepts iff both commitments are valid and if the verification of the $\Sigma$-protocol $(x,m_1,c,m_2)$ is successful.
 \end{itemize}
 
-\noindent
-Despite being zero-knowledge in the malicious verifier setting, this type of protocol has the advantage of concurrent zero-knowledge (since no rewinding is necessary \cite{Damgard00,JareckiL00}).
+% \noindent
+% Despite being zero-knowledge in the malicious verifier setting, this type of protocol has the advantage of concurrent zero-knowledge (since no rewinding is necessary \cite{Damgard00,JareckiL00}).
 
 
 %----------------------- PK Encryption schemes---------------------------
 \subsection{Public Key Encryption}
 
-Public key encryption allows party $A$ holding a \emph{public key \pk} of some party $B$ to encrypt a message $m$ in ciphertext $c$ such that only the party holding the according \emph{secret key \sk} ($B$ in this case) to decrypt the ciphertext $c$ to $m$.
+Public key encryption allows party $A$ holding a \emph{public key \pk} of some party $B$ to encrypt a message $m$ in ciphertext $c$ such that only the party holding the according \emph{secret key \sk} ($B$ usually) to decrypt the ciphertext $c$ to $m$.
 It is formally defined as follows.
 
 \begin{definition}[Public Key Encryption]\label{def:pkencryption}
 A public key encryption scheme $\PKE=(\PKEGen$, $\Enc$, $\Dec)$ consists of the following three algorithms:
 \begin{itemize}
   \item $\PKEGen(\secpar)$ generates a secret/public key-pair $(\sk,\pk)$ on input of the security parameter \secpar
-  \item $\Enc_\pk(m; r)$ encrypts message $m$ with \pk and randomness $r$, and outputs ciphertext $c$
-  \item $\Dec_\sk(c)$ decrypts ciphertext $c$ with \sk and outputs message $m$
+  \item $\Enc_\pk(m; r)$ encrypts message $m$ with public key \pk and randomness $r$, and outputs ciphertext $c$
+  \item $\Dec_\sk(c)$ decrypts ciphertext $c$ with secret key \sk and outputs message $m$
 \end{itemize}
 \end{definition}
 
 
 \subsubsection{Public Key Encryption secure against Chosen-Plaintext Attacks}
-\ac{CPA} defines a security for \ac{PKE} schemes where the attacker is allowed to query encryption and decryption oracles.
+\acp{CPA} define security for \ac{PKE} schemes where the attacker is allowed to query an encryption oracle.
 
 \begin{definition}[IND-CPA Security]\label{def:indcpa}
-An encryption scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CPA} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
+A \ac{PKE} scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CPA} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
 \[\Adv_{\Pi,\cA}^{\cpa}(\secpar)=\left|\Pr[\Exp^{\cpa}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
 
 \noindent
@@ -357,48 +367,46 @@ $\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
 
 
 \paragraph{ElGamal Encryption}\label{sec:elgamalencryption}
-ElGamal operates on a multiplicative group \GG of prime order $p$ with generator $g$.
-Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\dk=z\rin\ZZ_p$ and $x$ as secret key.
+\citet{Gamal84} encryption operates on a multiplicative group \GG of prime order $p$ with generator $g$.
+Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\sk=z\rin\ZZ_p$ and $x$ as secret key.
 Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
-Note that we assume $m\in\ZZ_p$ such that $g^m\in\GG$.
-Decryption is given by $g^m=\Dec_\dk^\EG(C)=e/u^z$.
+Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
+Decryption is given by $m=\Dec_\sk^\EG(C)=e/u^z$.
 
 
 \subsubsection{Public Key Encryption secure against Chosen-Ciphertext Attacks}
-\ac{CCA} defines a security for \ac{PKE} schemes where the attacker is allowed to query encryption and decryption oracles.
-It is therefore a stronger security requirement than \ac{CPA}.
+\acp{CCA} define security for \ac{PKE} schemes where the attacker is allowed to query encryption \emph{and} decryption oracles.
+It is therefore a stronger security notion than \ac{CPA}.
 Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
 
-\begin{definition}[IND-CCA2 Security]\label{def:indcca2}
-An encryption scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
-\[\Adv_{\Pi,\cA}^{\ccatwo}(\secpar)=\left|\Pr[\Exp^{\ccatwo}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+\begin{definition}[IND-CCA Security]\label{def:indcca2}
+A \ac{PKE} scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CCA2} secure if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that:
+\[\Adv_{\Pi,\cA}^{\cca}(\secpar)=\left|\Pr[\Exp^{\cca}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
 
 \noindent
-$\Exp^{\ccatwo}_{\Pi,\cA}(\secpar):$\\
+$\Exp^{\cca}_{\Pi,\cA}(\secpar):$\\
 \hspace*{2em}$(\pk,\sk)\ralgout\PKEGen(\secpar),~b\rin\bits$\\
 \hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
 \hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
 \hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
-\hspace*{2em}return $b=b'$\\
-Note that $\cA$ must not query the decryption oracle on $c$.
+\hspace*{2em}return $b=b'$ if \cA did not query $\Dec_\sk(c)$; $0$ otherwise
 \eod
 \end{definition}
 
 \paragraph{Labelled Public Key Encryption}
-We mainly use a variant of public key encryption, called labelled \ac{PKE} \cite{Shoup01,Canetti2005}.
-Labelled \ac{PKE} takes a public \emph{label $\ell$} as additional input to the encryption ($\Enc_\pk(m,\ell; r)$) and decryption algorithm ($\Dec_\sk(c,\ell)$).
-The attacker in the \ac{CCA}-security experiment is now also allowed to query the decryption oracle on $c$ as long as the label $\ell'$ handed to the oracle is different from $\ell'\not=\ell$.
+Labelled \ac{PKE} \cite{Shoup01,Canetti2005} is a variant of \ac{PKE} that takes a public \emph{label $\ell$} as additional input to the encryption ($\Enc_\pk(m,\ell; r)$) and decryption algorithm ($\Dec_\sk(c,\ell)$).
+The attacker in the \ac{CCA}-security experiment is now also allowed to query the decryption oracle on $c$ as long as the label $\ell'$ handed to the oracle is different from $\ell\not=\ell'$.
 
 
 \paragraph{Cramer-Shoup Encryption}\label{sec:csencryption}
 
-We describe labelled\ac{CS} encryption here.
+We describe labelled \ac{CS} encryption here.
 Common \ac{CS} encryption simply omits the label $\ell$.
 \ac{CS} encryption operations on multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
-Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\dk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
-We assume $m\in\ZZ_p$ such that $g_1^m\in\GG$.
+Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\sk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
 Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
-Decryption is defined as $g_1^m=\Dec_\dk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
+Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
 
 
 %----------------------- SPHF---------------------------
@@ -583,4 +591,67 @@ The additional algorithms for \ac{T-SPHF} and changes to the hash functions are 
 
 
 \section{Security Models}
-\mynote{* PAKE\\ * VPAKE\\ * 2PAKE\\ * \citet{Goldreich2004} for simulation based proofs}
+\mynote{* PAKE\\ * VPAKE\\ * 2PAKE}
+
+
+
+\subsection{Simulation in the Malicious Model}\label{app:simulation}
+We recall the basic setting of the malicious model from \cite{Goldreich2004}.
+Let $f:\bits^\ast \times \bits^\ast \rightarrow \bits^\ast \times \bits^\ast$ be a functionality such that $f(x,y)=(f_1(x, y), f_2(x,y))$ and $\Pi$ a two-party protocol to compute $f$.
+% $\Lambda$ denotes the empty string and
+In the ideal model every party gets an input and access to a trusted party.
+Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either aborts or sends some value with the length of their non-additional input to the trusted party.
+The trusted party answers to the first party with $f_1(x, y)$ after obtaining inputs $(x,y)$.
+If only one input is received, the trusted party replies with $\bot$ to both parties.
+The trusted party further answers the second party with $f_2(x,y)$ if it didn't stop before, $\bot$ otherwise.
+It may stop depending on its input and output if the first party is malicious.
+While an honest party always outputs the value received from the trusted party, malicious parties can output any polynomially computable function of all its inputs.
+The ideal and real model are formalised as follows.
+
+\begin{definition}[Ideal Model \texorpdfstring{\cite[Definition 7.2.4]{Goldreich2004}}{}]
+Let $B=(B_1, B_2)$ be a pair of PPT algorithms representing strategies in the ideal model.
+Such a pair is \emph{admissible} in the ideal malicious model if for at least one \emph{honest} $i\in\{1,2\}$, we have $B_i(u, z, r)=u$ and $B_i(u, z, r, v)=v$ for all possible $u,z,r$ and $v$.
+Furthermore, $|B_i(u, z, r)| = |u|$ must hold for both $i$'s.
+The joint execution of $f$ under $B$ in the ideal model on input pair $(x, y)$ and auxiliary input $z$, denoted $\IDEAL_{f, B(z)} (x, y)$, is defined by uniformly selecting a random tape $r$ for the adversary and letting 
+\[ \IDEAL_{f, B(z)} (x, y) := \Xi(x,y,z,r),\]
+with $\Xi(x,y,z,r)$ defined as follows.
+If party 1 is honest:
+\[ \Xi(x,y,z,r) := (f_1(x,B_2(y,z,r)), B_2(y,z,r,f_2(x,y'))); \]
+If party 2 is honest:
+\[
+ \Xi(x,y,z,r) := \left\{
+ \begin{array}{lllr}
+    (B_1(x, z, r, f_1(x',y), \bot)&, \bot&) &\text{if } B_1(x, z, r, f_1(x',y)) = \bot ;\\
+    (B_1(x,z,r,f_1(x',y))&, f_2(x',y)&) &\text{otherwise,}
+  \end{array}\right.
+\]
+% $(B_1(x, z, r, v), B_2(y, z, r, \Lambda))$
+with $x'=B_2(x,z,r)$.
+\end{definition}
+
+\begin{definition}[Real Model \texorpdfstring{\cite[Definition 7.2.5]{Goldreich2004}}{}]
+Let $A=(A_1, A_2)$ be a pair of PPT algorithms representing strategies in the real model.
+Such a pair is \emph{admissible} with respect to $\Pi$ if at least one $A_i$ coincides with the strategy specified in $\Pi$.
+The joint execution of $\Pi$ under $A$ in the real model, on input pair $(x, y)$ and auxiliary input $z$, denoted $\REAL_{\Pi, A(z)}(x, y)$, is defined as the output pair resulting from the interaction between $A_1(x, z)$ and $A_2(y, z)$.
+\end{definition}
+
+\noindent
+A protocol $\Pi$ is said to be secure if its execution in the real model emulates execution of the ideal model with trusted party for the according functionality.
+
+\begin{definition}[Security \texorpdfstring{\cite[Definition 7.2.6]{Goldreich2004}}{}]
+Protocol $\Pi$ is said to securely compute $f$ in the malicious model if for every PPT pair of algorithms $A=(A_1, A_2)$ that is admissible for the real model, there exists a PPT pair of algorithms $B=(B_1, B_2)$ that is admissible for the ideal model such that 
+\[ \{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi, A(z)}(x, y)\}_{x, y, z} \]
+where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
+\end{definition}
+
+\paragraph{The Hybrid Model}
+When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
+Security then follows from the composition theorem \cite{Canetti00}.
+In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, i.e. a call to the trusted party that computes $g$.
+The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
+Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, i.e. instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
+To prove security it is sufficient to show 
+$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\HYBRID_{\Pi, A(z)}^{g} (x, y)\}_{x, y, z}$,
+which implies
+$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
+as shown by Canetti \cite{Canetti00}.

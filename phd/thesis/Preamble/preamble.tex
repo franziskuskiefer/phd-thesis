@@ -86,6 +86,9 @@
 \usepackage{xspace}
 \usepackage{amsthm} % Definition is not defined
   \newtheorem{definition}{Definition}
+  \newtheorem{theorem}{Theorem}
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
 \usepackage{bibentry} % getting full reference
 \nobibliography* % reuse existing bibtex files
 
@@ -271,6 +274,8 @@
 %****************************************************************************************************
 % 9. Handy macros
 % ****************************************************************************************************
+\newcommand\textlcsc[1]{\textsc{\MakeLowercase{#1}}}
+
 \newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
 \newcommand{\Execute}{\ensuremath{\mathsf{Execute}}\xspace}
 \newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
@@ -286,6 +291,12 @@
 % Generel Model Variables
 \newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
 
+% Simulation based proofs
+\newcommand{\IDEAL}{\ensuremath{\textlcsc{IDEAL}}\xspace}
+\newcommand{\REAL}{\ensuremath{\textlcsc{REAL}}\xspace}
+\newcommand{\HYBRID}{\ensuremath{\textlcsc{HYBRID}}\xspace}
+\newcommand{\poly}{\ensuremath{\text{poly}}\xspace}
+
 % UC variables
 \newcommand{\UCZ}{\ensuremath{\mathcal{Z}}\xspace}
 \newcommand{\UCS}{\ensuremath{\mathcal{S}}\xspace}
@@ -299,6 +310,11 @@
 \newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
 \newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
 \newcommand{\CC}{\ensuremath{\mathbb{C}}\xspace}
+\newcommand{\SSS}{\ensuremath{\mathbb{S}}\xspace}
+
+\newcommand{\Zrp}{\ensuremath{\mathbb{Z}^\ast_p}}
+\newcommand{\Zrq}{\ensuremath{\mathbb{Z}^\ast_q}}
+\newcommand{\ZN}{\ensuremath{\mathbb{Z}_N}}
 
 % General notation
 \newcommand{\algout}{\ensuremath{\gets}\xspace}
@@ -321,6 +337,11 @@
 
 \newcommand{\genG}[1][]{\ensuremath{\langle g_{#1} \rangle}\xspace}
 
+\newcommand{\verify}{\ensuremath{\stackrel{?}{=}}\xspace}
+
+\newcommand{\true}{\ensuremath{\mathtt{true}}\xspace}
+\newcommand{\false}{\ensuremath{\mathtt{false}}\xspace}
+
 % Security defs
 \newcommand{\DLog}{\ensuremath{\mathtt{DLog}}\xspace}
 \newcommand{\DDH}{\ensuremath{\mathtt{DDH}}\xspace}
@@ -335,6 +356,7 @@
 \newcommand{\cC}{\ensuremath{\mathcal{C}}\xspace}
 \newcommand{\cD}{\ensuremath{\mathcal{D}}\xspace}
 \newcommand{\cF}{\ensuremath{\mathcal{F}}\xspace}
+\newcommand{\cH}{\ensuremath{\mathcal{H}}\xspace}
 \newcommand{\cI}{\ensuremath{\mathcal{I}}\xspace}
 \newcommand{\cK}{\ensuremath{\mathcal{K}}\xspace}
 \newcommand{\cL}{\ensuremath{\mathcal{L}}\xspace}
@@ -370,7 +392,7 @@
 \newcommand{\Sim}{\ensuremath{\mathsf{Sim}}\xspace}
 
 % Commitments
-\newcommand{\SetupC}{\ensuremath{\mathtt{CSetup}}\xspace}
+\newcommand{\SetupC}{\ensuremath{\mathtt{Setup_C}}\xspace}
 \newcommand{\Com}{\ensuremath{\mathtt{Com}}\xspace}
 \newcommand{\Open}{\ensuremath{\mathtt{Open}}\xspace}
 \newcommand{\Commitment}{\ensuremath{\mathtt{C}}\xspace}
@@ -401,10 +423,10 @@
 \newcommand{\EG}{\ensuremath{\mathrm{EG}}\xspace}
 \newcommand{\Label}{\ensuremath{\ell}\xspace}
 \newcommand{\PKE}{\ensuremath{\mathsf{PKE}}\xspace}
-\newcommand{\PKEGen}{\ensuremath{\mathsf{KGen_{PKE}}}\xspace}
+\newcommand{\PKEGen}{\ensuremath{\mathsf{KGen_{PK}}}\xspace}
 \newcommand{\Enc}{\ensuremath{\mathsf{Enc}}\xspace}
 \newcommand{\Dec}{\ensuremath{\mathsf{Dec}}\xspace}
-\newcommand{\ccatwo}{\ensuremath{\mathsf{IND-CCA2}}\xspace}
+\newcommand{\cca}{\ensuremath{\mathsf{IND-CCA}}\xspace}
 \newcommand{\cpa}{\ensuremath{\mathsf{IND-CPA}}\xspace}
 
 % SPHF
@@ -446,6 +468,26 @@
 \newcommand{\Res}{\ensuremath{\mathtt{Rs}}\xspace}
 
 \newcommand{\ver}{\ensuremath{\mathtt{ver}}\xspace}
+
+\newcommand{\Finalise}{\ensuremath{\mathtt{Finalise}}\xspace}
+\newcommand{\ichrint}{\ensuremath{\texttt{CHRtoINT}_\texttt{i}}\xspace}
+\newcommand{\chrint}{\ensuremath{\texttt{CHRtoINT}}\xspace}
+\newcommand{\pwdint}{\ensuremath{\texttt{PWDtoINT}}\xspace}
+\newcommand{\ASCII}{\ensuremath{\mathtt{ASCII}}\xspace}
+
+\newcommand{\HashP}{\ensuremath{\mathtt{Hash_P}}\xspace}
+\newcommand{\PSetup}{\ensuremath{\mathtt{PSetup}}\xspace}
+\newcommand{\PHSalt}{\ensuremath{\mathtt{PHSalt}}\xspace}
+\newcommand{\PPHSalt}{\ensuremath{\mathtt{PPHSalt}}\xspace}
+\newcommand{\PPreHash}{\ensuremath{\mathtt{PPreHash}}\xspace}
+\newcommand{\PFullHash}{\ensuremath{\mathtt{PFullHash}}\xspace}
+\newcommand{\HashPO}{\ensuremath{\mathit{Hash_P}}\xspace}
+
+\newcommand{\param}{\ensuremath{\mathtt{par}}\xspace}
+\newcommand{\paramC}{\ensuremath{\mathtt{p_C}}\xspace}
+\newcommand{\paramP}{\ensuremath{\mathtt{p_P}}\xspace}
+
+\newcommand{\SMP}{\ensuremath{\mathsf{SMP}}}
 
 % general abbrevs.
 \newcommand{\ie}{i.\,e.\xspace}
