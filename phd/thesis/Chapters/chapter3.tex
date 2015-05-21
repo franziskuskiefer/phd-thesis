@@ -1,4 +1,4 @@
-\chapter{Password-based Authentication in the Single-Server Setting} \label{ch:vpake}
+\chapter[Password-based Authentication in the Single-Server Setting]{Password-based Authentication in the Single-\texorpdfstring{\\}{}Server Setting} \label{ch:vpake}
 Using passwords for authentication is it's most common use case.
 As discussed in the introduction, this is still done with the inherently flawed approach of \ac{HTML}-over-\ac{TLS} despite the existence of secure \ac{PAKE} protocols.
 In this section we propose new mechanisms to register user accounts with secure password policy checks and give a new verifier-based \ac{PAKE} protocol to authenticate with these accounts.
@@ -230,3 +230,6 @@ For example, if we use the UC-secure PAKE protocol from \citet{Benhamouda2013}, 
 
 \section{Extending the Framework -- Oblivious VPAKE}
 \mynote{OVPAKE for password trials \cite{Kiefer2012,Kiefer13a} (not implemented)}
+
+\section{Conclusion}
+\mynote{Conclusion on BPR and VPAKE framework}
