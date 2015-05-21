@@ -410,16 +410,18 @@ Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \
 
 %----------------------- OBI ---------------------------
 \subsection{Oblivious Bloom Intersection}\label{sec:obi}
-The Oblivious Bloom Intersection (OBI) protocol by Dong et al. \cite{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
+The Oblivious Bloom Intersection (OBI) protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
 Originally, the OBI protocol was designed for Private Set Intersection (PSI) such that at the end of the protocol, the client learns the intersection $\cC\cap \cS$ and the server learns nothing. 
-As observed in \cite{WenD14}, OBI can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
+As observed by \citet{WenD14}, OBI can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
 At the end of the protocol, for each element in the intersection the client also receives the corresponding data item from the server. 
-The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \cite[Algorithm 1]{WenD14}. 
+The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \citet[Algorithm 1]{WenD14}. 
 The garbled Bloom filter encodes both $\cS$ and $\cS_d$ in a way such that querying the key $s_i\in\cS$ against $G_\cS$ returns the data item $d_i$ and querying $s_j\not \in \cS$ returns a random string. Let the client hold a set $\cC$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\cC$. 
 The client and the server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
 As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that encodes the intersection $\cC\cap \cS$ and the data items associated with the elements in $\cC\cap \cS$. Then the client can query $G_{\cC\cap\cS}$ with each element $c_i\in\cC$. If $c_i$ is in the intersection then there must be  some $s_j\in \cS$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
 
-In this paper we use OBI so that the server can send a set of secret shares to the client based on the client's set $\cC$ without knowing anything about $\cC$. Although in general we can use any PSI with Data Transfer protocol (e.g. \cite{fre04}), we choose OBI here because of its efficiency. OBI is very efficient due to the fact that it relies mostly on hash operations. The performance can be further improved by the modifications proposed by Pinkas et al. \cite{Pinkas0Z14}. Note that although Pinkas et al. also proposed a new PSI protocol based on hashtable + oblivious transfer in \cite{Pinkas0Z14} that is more efficient than OBI, the new PSI protocol cannot be used in our case because it does not support data transfer.
+In this paper we use OBI so that the server can send a set of secret shares to the client based on the client's set $\cC$ without knowing anything about $\cC$. Although in general we can use any PSI with Data Transfer protocol (e.g. \citet{fre04}), we choose OBI here because of its efficiency. OBI is very efficient due to the fact that it relies mostly on hash operations. 
+The performance can be further improved by the modifications proposed by \citet{Pinkas0Z14}. 
+Note that although \citet{Pinkas0Z14} also proposed a new PSI protocol based on hashtable + oblivious transfer in \cite{Pinkas0Z14} that is more efficient than OBI, the new PSI protocol cannot be used in our case because it does not support data transfer.
 
 \begin{algorithm}[htb]
 \caption{GBFIntesection $(G, B, m, \lambda)$}
@@ -753,7 +755,7 @@ where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
 
 \paragraph{The Hybrid Model}
 When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
-Security then follows from the composition theorem \cite{Canetti00}.
+Security then follows from the composition theorem from \citet{Canetti00}.
 In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, i.e. a call to the trusted party that computes $g$.
 The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
 Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, i.e. instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
@@ -761,4 +763,4 @@ To prove security it is sufficient to show
 $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\HYBRID_{\Pi, A(z)}^{g} (x, y)\}_{x, y, z}$,
 which implies
 $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
-as shown by Canetti \cite{Canetti00}.
+as shown by \citet{Canetti00}.

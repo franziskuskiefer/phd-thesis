@@ -43,25 +43,27 @@ Note that we do not count exponentiations with exponents smaller than $5$.
 % \end{itemize}
 The client in our BPR protocol has to perform $4n+2\sum_i |\omega_i| + 113$ exponentiations.
 The server must perform $5n + 2\sum_i |\omega_i| + 16$ exponentiations if $g^{\pi_i}$ is pre-computed and re-used.
-In contrast, the generic approach for ZKPPC from \cite{KieferM14} requires $3n+3\sum_i (|\omega^\ast_i|-1)+7$ exponentiations on the client side and $3\sum_i |\omega^\ast_i|+8$ on the server side.
-Note that $\omega^\ast_i$ in \cite{KieferM14} depends on the maximum password length and thus contains all characters from $\omega_i$ \emph{plus} all characters from $\omega_i$ shifted by $j = 1,\ldots, \pmax$ positions.
-Therefore, the costs of the protocol from \cite{KieferM14} are given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. The protocol from \cite{KieferM14} is thus much less efficient than our BPR protocol: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
+In contrast, the generic approach for \ac{ZKPPC} requires $3n+3\sum_i (|\omega^\ast_i|-1)+7$ exponentiations on the client side and $3\sum_i |\omega^\ast_i|+8$ on the server side.
+Note that $\omega^\ast_i$ in the \ac{ZKPPC} context depends on the maximum password length and thus contains all characters from $\omega_i$ \emph{plus} all characters from $\omega_i$ shifted by $j = 1,\ldots, \pmax$ positions.
+Therefore, the cost of the protocol \ac{ZKPPC}-based \ac{BPR} protocol is given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. 
+The \ac{ZKPPC}-based \ac{BPR} protocol is thus much less efficient than the \ac{SPC}-based \ac{BPR} protocol: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
 
 \paragraph{Implementation}
-We implement an unoptimised prototype of the BPR protocol over the NIST P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
+We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
 To this end we set $b=10^5$ in order to achieve security guarantees for all reasonable password lengths and policies.
-We also implement the ZKPPC approach from \cite{KieferM14} in order to compare its performance with our BPR implementation.
-The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the theoretical findings from the previous paragraph. In particular, execution of the proposed BPR protocol with a password of length $10$ and policy $(dl, 5)$ needs $0.72$ seconds on the client and $0.67$ seconds on the server side while the ZKPPC execution requires $9.1$ seconds on the client and $8.9$ seconds on the server side with a maximum password length of $10$.
+We also implement the \ac{ZKPPC} approach in order to compare its performance with our BPR implementation.
+The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the theoretical findings from the previous paragraph. 
+In particular, execution of the direct \ac{BPR} protocol with a password of length $10$ and policy $(dl, 5)$ needs $0.72$ seconds on the client and $0.67$ seconds on the server side while the \ac{ZKPPC} execution requires $9.1$ seconds on the client and $8.9$ seconds on the server side with a maximum password length of $10$.
 Increasing the maximum password length to $20$ slows down the client to $22.7$ and the server to $22.2$ seconds.
-Our measurements show that our BPR protocol is \emph{at least} $10$ times faster than the ZKPPC-based registration approach from \cite{KieferM14}.
-With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed BPR protocol can be deemed practical.
+Our measurements show that our \ac{BPR} protocol is \emph{at least} $10$ times faster than the \ac{ZKPPC}-based registration approach.
+With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed \ac{BPR} protocol can be deemed practical.
 
 \section{Implementation and Evaluation}\label{sec:evaluation}
 We implemented a prototype of our password registration protocol and measured the performance. 
-To compare, we also implemented the password registration protocol (ZKPPC) proposed in \cite{KieferM14c}. 
+To compare, we also implemented the \ac{ZKPPC}-based password registration protocol. 
 Both implementations are in C and use OpenSSL 1.0.0\footnote{\url{https://www.openssl.org}} for the underlying cryptographic operations. 
 In the experiments, we set the security parameter to 80-bit. We used 1024-bit RSA keys and the \mbox{{SHA-}1} hash function in our protocol. 
-In the ZKPPC protocol we use the NIST P-192 elliptic curve. 
+In the \ac{ZKPPC} protocol we use the \ac{NIST} P-192 elliptic curve. 
 All experiments were run on a MacPro desktop with 2 Intel E5645 2.4GHz CPUs and 32 GB RAM.
 
 \begin{table}[!t]
@@ -74,7 +76,7 @@ All experiments were run on a MacPro desktop with 2 Intel E5645 2.4GHz CPUs and 
 \cline{2-11}
 &Total&Pol-ck&Total&Pol-ck&Total&Pol-ck&Total&Pol-ck&Total&Pol-ck\\
 \hline
-ZKPPC \cite{KieferM14c}&81,287&81,268&66,944&66,925&38,496&38,477&7,710&7,699&453,574&453,529 \\
+ZKPPC &81,287&81,268&66,944&66,925&38,496&38,477&7,710&7,699&453,574&453,529 \\
 \hline
 Our Protocol&140&4&243&8&454&17&223&7&275&8\\
 \hline
@@ -124,7 +126,10 @@ However, it is obvious that this modification trades off stronger security for e
 % However, having a closer look on the definition of min-entropy in Section \ref{sec:min-entropy} one can see that the difference between a dictionary $\cD_f$ and $\cD_{f,|\pwd|}$ is marginal.
 % To capture the difference between an attacker knowing the password length and one not knowing it a different definition of min-entropy may be useful.
 %
-Our BPR protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in~\cite{KieferM14}). In this case the proof \PoS becomes redundant and all steps related to it can be removed. This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. The resulting BPR protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the ZKPPC-based registration protocol from ~\cite{KieferM14}, which seems to offer comparable security guarantees.
+Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
+In this case the proof \PoS becomes redundant and all steps related to it can be removed. 
+This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
+The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which seems to offer comparable security guarantees.
 % By changing the success probability in the dictionary attack resistance definition as discussed in Section \ref{sec:bpr-model} such a notion can be established.
 % But this gives the attacker significantly more information and therefore speeds-up the password retrieval process. %, such that we do not further discuss this option.
 % \fk{$l=|\pwd|$ is leaked. If we could prove representation of $C=g^{\sum_{i=0}^{l-1}95^i c_i}h^r$, we could hide that. We should look into this as it would be another good improvement compared to the ESORICS protocol}
@@ -147,9 +152,11 @@ To see the second, recall that each $u_i=H_2(c_i)\cdot r_i^e$ where $r_i=f_k(i)$
 The key $k$ is derived from the password string $k\gets H_1(\pwd)$. 
 We must also stress that recomputing the password hash involves public key operations and thus is relatively slow.
 However, this is an advantage rather than a shortcoming. 
-The increased work, necessary to compute verifier \ver, can effectively increase work load for dictionary attack. It is also possible to use a standard key derivation function such as PBKDF2 \cite{rfc2898} as $H_1$ so that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack even more difficult.
+The increased work, necessary to compute verifier \ver, can effectively increase work load for dictionary attack. 
+It is also possible to use a standard key derivation function such as PBKDF2 \cite{rfc2898} as $H_1$ so that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack even more difficult.
 
-Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. Often we can piggyback the messages in the PAKE protocol to avoid increasing communication round. For example, if we use the UC-secure PAKE protocol from Benhamouda et al. \cite{BenhamoudaBCPV13}, the RSA public key $(e,N)$ can be piggybacked on the server's message sent in the PAKE protocol. Thus we do not increase the round complexity and the protocol remains a one-round protocol.
+Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. Often we can piggyback the messages in the PAKE protocol to avoid increasing communication round. 
+For example, if we use the UC-secure PAKE protocol from \citet{Benhamouda2013}, the RSA public key $(e,N)$ can be piggybacked on the server's message sent in the PAKE protocol. Thus we do not increase the round complexity and the protocol remains a one-round protocol.
 
 
 \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}

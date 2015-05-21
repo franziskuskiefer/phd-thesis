@@ -140,21 +140,21 @@ In this section we describe other use-cases of the primitive.
 % Note that not all applications necessarily require a partitioned server set \cS.
 % The proposed SPC protocol however works just as well on an un-partitioned server set \cS by viewing every element in \cS as a separate set.
 
-\noindent\textbf{\textit{Policy checks for Access Control}}
+\paragraph{Policy checks for Access Control}
 In a role-based access control scenario \cite{FerraioloK09} a user has to have a certain role in order to access a resource.
 In complex organisational structures it may be necessary to have a certain \emph{combination} of roles in order to access a resource rather than just a single role.
 SPC can be used in this case to verify whether a client has necessary roles that allow it to access the resource.
 The server set \cS in this case contains secrets associated with each role $S_i$ and the user's set \cC contains the client's secrets $c_i$.
 Access should be granted if and only if the SPC protocol is successful, i.e. the user can convince the server that he has all necessary roles.
 
-\noindent\textbf{\textit{Policies for Friendship Analysis}}
+\paragraph{Policies for Friendship Analysis}
 One popular application of set based protocols is friendship analysis.
 This test should determine whether two parties become friends or not depending on the number of mutual friends.
 SPC can be used in this scenario as a very efficient alternative while increasing privacy.
 Using SPC further allows to build subsets in friend sets, such as colleagues, family etc., which in turn makes the friendship-test more ``accurate'' while leaking as little information about the friendship relations as possible.
 
-\noindent\textbf{\textit{Genome Testing}}
-Baldi et al. \cite{BaldiBCGT11} propose protocols to perform privacy preserving genome testing, such as paternity tests. 
+\paragraph{Genome Testing}
+\citet{BaldiBCGT11} propose protocols to perform privacy preserving genome testing, such as paternity tests. 
 The tests can often be reduced to check a set of SNPs (Single Nucleotide Polymorphism) that are present in a patient's genome against some predefined sets of SNPs. Although it is not exactly policy checking, our SPC protocol can be used in this setting too. 
 %Despite the improved performance, our approach offers better privacy as no information about the size of the intersection is revealed, despite the fact that it is larger (or smaller) than the threshold.
 
@@ -165,7 +165,7 @@ Password-based authentication is the most common authentication mechanism for hu
 There are many reasons why it is so difficult to transition away from passwords, e.g., low-cost, user-experience and scalability. For those reasons, passwords are likely to remain as a major authentication method in the foreseeable future. 
 The current approach for remote registration of client passwords requires the client to send its password in plaintext to the server, which stores a value derived from the password (e.g., a hash value or a verifier) in a password database. 
 The problem with this approach is that the server sees the plaintext password and the client has no control over what the server will do with it. 
-At first glance, revealing the password to the server seems to be harmless, but a closer look shows the opposite. Research shows that people tend to reuse the same password across different websites \cite{FlorencioH07,GawF06,das14}. 
+At first glance, revealing the password to the server seems to be harmless, but a closer look shows the opposite. Research shows that people tend to reuse the same password across different websites \cite{Florencio2007,Gaw2006,das14}. 
 In this case, a compromised or malicious server can easily break into other accounts belonging to the same client after seeing the plaintext password. 
 Even if the server is honest, the client still has to worry about whether its password is protected properly by the server. 
 Ideally passwords should be stored in a secure form that is hard to invert such that an attacker gaining access to the password database still has difficulties to recover the passwords. 
@@ -271,7 +271,7 @@ We therefore refrain from using an over-complicated security definition and use 
 
 Note that the strength of the privacy definition is in terms of dictionary attack resistance. 
 This an inherent problem of password-based protocols. 
-All password-based protocols are susceptible to dictionary attacks if the server is considered as a potential adversary \cite{MenezesOV96}. 
+All password-based protocols are susceptible to dictionary attacks if the server is considered as a potential adversary. 
 The reason is simple: for authentication purpose, the server holds a verifier derived from the client's password. 
 An authentication protocol essentially takes the user's password as an input and compares it securely with the verifier. 
 A malicious server can always run the protocol locally with itself playing the client's role using passwords enumerated from a dictionary.  Since it is not realistic to assume any particular distribution of passwords, e.g. uniformly at random chosen passwords, the worst case security always depends on the hardness of dictionary attack and this is the strongest privacy notion possible. We will discuss what can be used to counter dictionary attack later in Section \ref{sec:pake}.

@@ -3,7 +3,7 @@
 Blind Password Registration (BPR) allows a user to register a password verifier at a VPAKE server and prove that it contains a password that complies with the server's policy without disclosing the password.
 A BPR protocol is thus executed between a client $C$ and a server $S$, both holding the server's password policy $f$.\footnote{The policy can be exchanged before the actual protocol with other general information about the registration.}
 After choosing a policy compliant password \pwd, $C$ engages in a protocol with $S$ to prove policy compliance of \pwd, i.e. $f(\pwd)=\true$, and sends a password verifier to the server, which can later be used in VPAKE protocols.
-VPAKE protocols that can be used with verifiers set-up with our protocol are discussed in \cite{KieferM14}.
+We discuss \ac{VPAKE} protocols that can be used with verifiers set-up with this \ac{BPR} protocol in Section \ref{sec:vpake}.
 Blind password registration is formally defined as follows.
 
 \begin{definition}[Blind Password Registration]\label{def:bpr}
@@ -106,7 +106,8 @@ Nonetheless, it is possible to change the balance between security and efficienc
 % \end{definition}
 
 \subsubsection{Disclosure of Significant Character Sets} %Leaking Character Positions
-Definition~\ref{def:dar} does \emph{not} leak the significant password character sets to the server and thus makes our BPR protocol superior to the previous proposal in \cite{KieferM14}, where positions and sets of password characters that are significant for the policy $f$ are disclosed. Note that such weaker notion of dictionary attack resistance can be modeled by using dictionaries $\cD_{f}^\ast$ and $\cD_{f,n}^\ast$ in Definition~\ref{def:dar} while assuming that position information of significant password characters is known. That is,
+Definition~\ref{def:dar} does \emph{not} leak the significant password character sets to the server and thus makes the \ac{SPC}-based \ac{BPR} protocol superior to the \ac{BPR} protocols proposed in Section \ref{sec:zkppc} and \ref{sec:bpr}, where positions and sets of password characters that are significant for the policy $f$ are disclosed. Note that such weaker notion of dictionary attack resistance can be modeled by using dictionaries $\cD_{f}^\ast$ and $\cD_{f,n}^\ast$ in Definition~\ref{def:dar} while assuming that position information of significant password characters is known. 
+That is,
 % Let $\beta_{R_i}=\min_{c\in R_i} \log_2(1/\Pr_{\DD_{R_i}}[c])$ denote the min-entropy of elements in the $i$-th part of the regular expression $R$ where
 let $\DD_{R_j}$ denote the probability distribution of characters in a password \pwd over set $R_j$, the $j$-th set in the regular expression $R$.
 Further, let $R_S$ be the set of significant character indices $i$.
@@ -125,13 +126,21 @@ The min-entropy of $\cD_{f}^\ast$ can be defined accordingly.
 % XXX: Note that additional assumptions such as secure erasures could allow a protocol, secure in this weakened model, to be secure in our model according to Definition \ref{def:dar}.
 
 \subsubsection{Hiding Password Lengths}\label{sec:strongerDAR}
-Definition~\ref{def:dar} allows BPR protocols to leak the length of the registered password to the server, as is also the case in \cite{KieferM14}. While this leakage can be tolerated for uniformly distributed passwords, it can be used to build smaller dictionaries for non-uniform password distributions. We can easily strengthen Definition~\ref{def:dar} to hide password lengths by replacing $\beta_{\cD_{f,n}}$ with $\beta_{\cD_f}$. However, in order to realize this stronger requirement BPR protocols would typically require extra computation and communication costs. We discuss in Section \ref{sec:discussion} how efficiency of our BPR protocol, which satisfies Definition~\ref{def:dar}, can be traded in to ensure password-length hiding.
+Definition~\ref{def:dar} allows \ac{BPR} protocols to leak the length of the registered password to the server, as is also the case for the previously given \ac{BPR} protocols. 
+While this leakage can be tolerated for uniformly distributed passwords, it can be used to build smaller dictionaries for non-uniform password distributions. 
+We can easily strengthen Definition~\ref{def:dar} to hide password lengths by replacing $\beta_{\cD_{f,n}}$ with $\beta_{\cD_f}$. 
+However, in order to realise this stronger requirement \ac{BPR} protocols would typically require extra computation and communication costs. 
+We discuss in Section \ref{sec:discussion} how efficiency of our \ac{BPR} protocol, which satisfies Definition~\ref{def:dar}, can be traded in to ensure password-length hiding.
 
 \subsubsection{A Note on Relation to ZKPPC}
-Our model defines a complete blind password registration procedure for VPAKE protocols, in contrast to \cite{KieferM14} that defined only zero-knowledge password policy checks (ZKPPC) and used them as a building block for VPAKE registration procedure, without modeling the latter. We observe that according to our security definitions of BPR protocols, ZKPPC proofs do not necessarily lead to secure BPR constructions. As mentioned in the previous paragraph the generic blind password registration procedure based on ZKPPC from \cite{KieferM14} leaks positions and sets of significant characters. While this is tolerable in \cite{KieferM14} where the actual time needed to retrieve the password from the verifier is not restricted, in our model this protocol would not satisfy dictionary attack resistance because an attacker would be able to retrieve passwords from verifiers significantly faster than required by Definition \ref{def:dar}.
+Our model defines a complete blind password registration procedure for \ac{VPAKE} protocols, in contrast to the protocol given in Section \ref{sec:zkppc} that defines only \acp{ZKPPC} and used them as a building block for \ac{VPAKE} registration procedure, without modeling the latter. 
+We observe that according to our security definitions of \ac{BPR} protocols, \ac{ZKPPC} proofs do not necessarily lead to secure \ac{BPR} constructions. 
+As mentioned in the previous paragraph the generic blind password registration procedure based on \ac{ZKPPC} leaks positions and sets of significant characters. 
+While this is tolerable in the \ac{ZKPPC}-based protocol where the actual time needed to retrieve the password from the verifier is not restricted, in our model this protocol would not satisfy dictionary attack resistance because an attacker would be able to retrieve passwords from verifiers significantly faster than required by Definition \ref{def:dar}.
 Furthermore, a zero-knowledge property in the context of password verifiers seems an unnecessarily strong requirement since offline dictionary attacks can always be performed on the server side.
-By dropping the zero-knowledge requirement and focusing on the entire registration process we thus obtain a more realistic security model and are able to construct more efficient BPR protocols.
-Note that Definition~\ref{def:dar} models the intrinsic VPAKE requirement that a server, holding a password hash and used random salt, must not be able to recover the password faster than by brute-forcing the dictionary. While this requirement also applies to ZKPPC-based BPR protocols it was not explicitly modeled in \cite{KieferM14}.
+By dropping the zero-knowledge requirement and focusing on the entire registration process we thus obtain a more realistic security model and are able to construct more efficient \ac{BPR} protocols.
+Note that Definition~\ref{def:dar} models the intrinsic \ac{VPAKE} requirement that a server, holding a password hash and used random salt, must not be able to recover the password faster than by brute-forcing the dictionary. 
+While this requirement also applies to \ac{ZKPPC}-based \ac{BPR} protocols it was not explicitly modeled.
 
 
 %===============================================================================
@@ -214,8 +223,8 @@ The product of $C^{b^i}_i$ used in the verification can be computed by the serve
 Finally, the client proves to the server that $\bm C'$ is a shuffle of $\bm C$ using an appropriate \emph{proof of shuffle} \PoS. 
 The purpose of this proof is to link the proof that $\pwd$ contains ASCII characters and fulfils policy $f$ (\PoM) with the password hash $(H_1, H_2)$ of $\pi$ (\PoE) without leaking positions and ASCII subsets of characters that are significant for $f$ (as discussed in Section \ref{sec:bpr-model}). 
 The server, after successful verification of all proofs, stores the client's password verifier $v_C = (H_1,H_2,s_H)$ in its protected password database and terminates the registration protocol. 
-For remote registration of the password verifier we assume that the BPR protocol is executed over a server-authenticated secure channel in order to protect transmission of $v_C$; otherwise an eavesdropping adversary would be able to recover the password by brute-forcing the dictionary. 
-For example, on the web our BPR protocol can be executed on top of the TLS channel established between the client and the server (cf. \cite{Manulis2014} for the technique on how to securely execute cryptographic password protocols on the application layer through the TLS channel).
+For remote registration of the password verifier we assume that the \ac{BPR} protocol is executed over a server-authenticated secure channel in order to protect transmission of $v_C$; otherwise an eavesdropping adversary would be able to recover the password by brute-forcing the dictionary. 
+For example, on the web our \ac{BPR} protocol can be executed on top of the TLS channel established between the client and the server (cf. \citet{Manulis2014} for the technique on how to securely execute cryptographic password protocols on the application layer through the TLS channel).
 
 
 \begin{figure*}[htp]
@@ -618,8 +627,8 @@ Considering claims for \PoM and \PoE and the soundness proof of \PoS the lemma f
 % 
 
 % \subsection{Proof of Lemma \ref{lem:dar}}\label{app:proof-dar}
-\textbf{Dictionary Attack Resistance}
-First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $s_P,s_H\rin\Zrq$ is secure, cf. \cite{KieferM14}.
+\paragraph{Dictionary Attack Resistance}
+First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $s_P,s_H\rin\Zrq$ is secure.
 We show in the following that a successful attacker $\cA$ on the dictionary attack resistance of the BPR protocol would be able to distinguish between identical distributions of real and simulated values.
 It is easy to see that \PoM and \PoE on its own are zero-knowledge proofs.
 The zero-knowledge property of \PoS can be found in Section \ref{app:pocs-proof} and \cite{FurukawaS01,Furukawa05}.
