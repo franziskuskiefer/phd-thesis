@@ -1,0 +1,72 @@
+% \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
+We now focus on suitable VPAKE protocols where the server $\bm{S}$ using $(id, H, r)$ stored from the ZKPPC-based registration protocol can authenticate the client $\bm{C}$ that uses only its $\pwd$. 
+Such protocols can be constructed with a general VPAKE framework introduced by Benhamouda and Pointcheval \cite{BenhamoudaP13}. 
+Their framework constructs one-round VPAKE protocols with $\bm{C}$ and $\bm{S}$ sending one message each, independently, using a generic password hashing scheme $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ with deterministic $\PPreHash$, labeled public key encryption scheme $\E = (\KGen,\allowbreak \Enc, \Dec)$, and secure SPHFs $(\HKGen,\allowbreak\PKGen,\allowbreak\Hash,\allowbreak\ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc^\ell(pk, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc^\ell(pk, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
+Their approach can directly be used for our generic scheme $\Pi$ with randomised $\PPreHash$ if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 
+This readily gives us a generic VPAKE protocol that is suitable for our general ZKPPC construction for ASCII-based passwords in Figure~\ref{fig:zkpconeserver} and those security follows from the analysis of the framework in \cite{BenhamoudaP13}.
+
+For the concrete VPAKE construction based on our scheme $\Pi$ from Section~\ref{sec:pwhashped} we can use labeled CS encryption scheme for $\E$ from Section~\ref{sec:prelims}. 
+The common input of $\bm{C}$ and $\bm{S}$ contains the CS public key $\pk=(p,g_1,g_2,h,c,d,H_k)$, where generators $g_1=g$ and $h$ must be the same as in the ZKPPC protocol from Section~\ref{sec:instantiation}. 
+Since $H=(H_1,H_2)$ we need to slightly update the language $L_H = \{(\ell, C) | \exists r : C = \Enc^\ell(pk, H_2; r)\}$ by using $H_2$ as an encrypted message. 
+We can still use the SPHF for CS ciphertexts from Section~\ref{sec:pwhashped} to handle this $L_H$. 
+Since the pre-hash salt $s_P$ is not transmitted in the registration phase, i.e. $\bm{S}$ stores $(id, H, s_H)$ where $H=(H_1, H_2)$ with $H_1=g_1^{s_P}$ and $H_2 = H_1^\pi h^{s_H}$, we replace $L_{s,H}$ with the following language $L_{s_H,H} = \{(\ell, C) | \exists \pi, \exists r : C = \Enc^\ell(pk, g_1^\pi; r)\ \wedge\ H_2 = H_1^\pi h^{s_H}\}$ and construct a suitable SPHF for $L_{s_H,H}$ as follows:
+\begin{itemize}
+	\item $\HKGen(L_{s_H,H})$ generates $\hk=(\eta_1,\eta_2,\theta,\mu,\nu)\rin\ZZ_p^{1\times 5}$.
+
+	\item $\PKGen(\hk,L_{s_H,H})$ derives $\hp=(\hpp{1},\hpp{2},\hpp{3})=(g_1^{\eta_1}g_2^{\theta}h^\mu c^\nu, g_1^{\eta_2}d^\nu, g_1^\mu H_1^{-\mu})$.
+
+	\item $\Hash(\hk,L_{s_H,H},C)$ outputs hash value $h=u_1^{\eta_1+\xi\eta_2}u_2^{\theta}[e/(H_2h^{-s_H})]^\mu v^\nu$.
+
+	\item $\ProjHash(\hp,L_{s_H,H},C,\pi,r)$ outputs hash value \[h=(\hpp{1}\hpp{2}^\xi)^r\hpp{3}^{\pi}=g_1^{\eta_1r}g_2^{\theta r}h^{\mu r} c^{\nu r}g_1^{\eta_2\xi r}d^{\nu\xi r}(g_1^\mu H_1^{-\mu})^{\pi}.\]
+\end{itemize}
+Note that projection key $\hp$ depends on $H_1\in G$, which can be seen as a parameter in the definition of $L_{s_H,H}$, but $\hp$ does not depend on $C$. The resulting VPAKE protocol can thus still proceed in one round. 
+The smoothness of our SPHF construction for $L_{s_H,H}$ can be proven as follows. 
+Let $\pi\gets\pwdint(\pwd)$, $H_2 = H_1^\pi h^{s_H}$, with $H_1=g_1^{s_P}$ for some unknown $s_P$, and $(\ell,C=(u_1,u_2,e,v))\not\in L_{s_H,H}$, i.e. $C\gets\Enc^\ell(pk,g_1^{\pi^\ast};r)$ for some $\pi^\ast\not=\pi$. 
+Assuming the second pre-image resistance of $\Pi$ it follows that $(u_1, u_1^\xi, u_2, e/(H_2h^{-s_H}), v) \not= (g_1^r, g_1^{r\xi}, g_2^r, g_1^{\pi-s_P\pi}h^r,$ $(cd^\xi)^r)$ with overwhelming probability for all $(r,r\xi)\in\ZZ_p^2$. 
+Since $(\hpp{1},\hpp{2},\hpp{3})$ are linearly independent the resulting hash value $h= u_1^{\eta_1} u_1^{\xi\eta_2} u_2^\theta [e/(H_2h^{-s_H})]^\mu v^\nu$ is uniformly distributed in $G$. 
+%Pseudorandomness of the correctly produced hash value $h$ follows from the pseudorandomness and the CCA2 security of the used Cramer-Shoup encryption scheme.
+
+\begin{figure}[tbp] %tbp
+\centering
+\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}, framed]
+\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm,
+		nodes={draw=none, anchor=center,text depth=1pt},
+		column 1/.style={nodes={minimum width=19em, align=left}},
+		column 2/.style={nodes={minimum width=8em}},
+		column 3/.style={nodes={minimum width=19em, align=left}}]{
+	\node[align=center](client){$\bm{C}(\pk, (id, \pi))$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); & & \node[align=center](server){$\bm{S}(\pk,(id, H=(H_1,H_2),s_H))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+	
+	\parbox{22em}{$\hk\gets\HKGen(L_{H})$; $\hp\gets\PKGen(\hk,L_{H})$;\\
+$r\rin\ZZ_p$; $\ell=(id,\bm{S},\hp)$;\\ $C\gets \Enc^\ell(\pk,g_1^\pi;r)$;} & & \parbox{22em}{$\hk'\gets\HKGen(L_{s_H,H})$; $\hp'\gets\PKGen(\hk',L_{s_H,H})$;\\  $r' \rin \ZZ_p$; $\ell'=(\bm{S},id,\hp')$;\\ $C'\gets\Enc^{\ell'}(\pk,H_2;r')$;}  \\[1em]
+		
+	\parbox{22em}{} & $\hp,\ C$ & \parbox{22em}{} \\
+	
+	\parbox{22em}{} & $\hp',C', H_1, s_H$ & \parbox{22em}{} \\
+
+	\parbox{22em}{$\ell'=(\bm{S},id,\hp')$; $H_2\gets H_1^\pi h^{s_H}$;\\
+$K_1\gets\Hash(\hk, L_H, C')$;\\
+$K_2\gets\ProjHash(\hp', L_{s_H,H}, C, \pi, r)$;\\
+$K \gets K_1 \cdot K_2$
+} & & \parbox{22em}{$\ell = (id,\bm{S},\hp)$;\\ $K_1 \gets \ProjHash(\hp, L_H, C', r')$;\\ $K_2 \gets \Hash(\hk', L_{s_H,H}, C)$;\\ $K\gets K_1 \cdot K_2$} \\
+
+& & \\
+};
+
+\draw[<-] (m-3-2.south east)--(m-3-2.south west);
+\draw[->] (m-4-2.south east)--(m-4-2.south west);
+\end{tikzpicture}
+\caption{A VPAKE Protocol for Blindly Registered ASCII-based Passwords}
+\label{fig:vpakeprotocol}
+\end{figure}
+
+
+Our concrete VPAKE construction is illustrated in Figure~\ref{fig:vpakeprotocol}. 
+We assume that $\bm{C}$ uses $\pi\gets\pwdint(\pwd)$ as its input and has already sent its login name $id$ to $\bm{S}$ who picked the corresponding tuple $(id,H,s_H)$ from its password database. 
+Note that $\bm{C}$ can also act as initiator and send its $id$ as part of its message, in which case $\bm{S}$ must act as a responder. 
+Which SPHF algorithms $\HKGen$, $\PKGen$, $\Hash$, $\ProjHash$ are used by $\bm{C}$ and $\bm{S}$ is visible from the input language, either $L_H$ or $L_{s_H,H}$. 
+By inspection one can see that if both $\bm{C}$ and $\bm{S}$ follow the protocol and $H$ used on the server side is a password hash of $\pi$ used on the client side then both parties compute the same (secret) group element $K=K_1\cdot K_2$. 
+Note that $\bm{C}$ derives $K_1$ using its own hashing key $\hk$ and received server's CS ciphertext $C'$ that encrypts $H_2$, whereas $\bm{S}$ derives $K_1$ using client's projection key $\hp$, its own $C'$ and $r'$. 
+Similarly, $\bm{S}$ derives $K_2$ using its own hashing key $\hk'$ and received client's CS ciphertext $C$ that encrypts $g_1^\pi$, whereas $\bm{C}$ derives $K_2$ using server's projection key $\hp'$, its own $C$ and $r$. Security of this VPAKE protocol follows from the security of the generic scheme.
+
+
+\mynote{tSOKE \cite{ManulisSKD15a}? is not contribution, make sure to make that clear}

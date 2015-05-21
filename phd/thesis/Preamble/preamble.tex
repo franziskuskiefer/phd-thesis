@@ -26,6 +26,10 @@
 % ************************* Algorithms and Pseudocode **************************
 
 %\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 
 % ********************Captions and Hyperreferencing / URL **********************
@@ -87,10 +91,14 @@
 \usepackage{amsthm} % Definition is not defined
   \newtheorem{definition}{Definition}
   \newtheorem{theorem}{Theorem}
+  \newtheorem{lemma}{Lemma}
+  \theoremstyle{remark}
+  \newtheorem{claim}{Claim}
 \newenvironment{remark}[1][Remark]{\begin{trivlist}
 \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
 \usepackage{bibentry} % getting full reference
 \nobibliography* % reuse existing bibtex files
+\usepackage[normalem]{ulem} 
 
 
 % TIKZ stuff
@@ -310,6 +318,7 @@
 \newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
 \newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
 \newcommand{\CC}{\ensuremath{\mathbb{C}}\xspace}
+\newcommand{\DD}{\ensuremath{\mathbb{D}}\xspace}
 \newcommand{\SSS}{\ensuremath{\mathbb{S}}\xspace}
 
 \newcommand{\Zrp}{\ensuremath{\mathbb{Z}^\ast_p}}
@@ -330,6 +339,7 @@
 \newcommand{\dk}{\ensuremath{\mathtt{dk}}\xspace}
 
 \newcommand{\share}{\ensuremath{\mathfrak{s}}\xspace}
+\newcommand{\secret}{\ensuremath{\mathfrak{s}}\xspace}
 
 \newcommand{\vect}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}\xspace}
 \newcommand{\fC}{\ensuremath{\mathfrak{C}}\xspace}
@@ -382,6 +392,10 @@
 \newcommand{\Adv}{\ensuremath{\mathsf{Adv}}\xspace}
 \newcommand{\AKESEC}{\ensuremath{\mathsf{AKE-SEC}}\xspace}
 
+\newcommand{\Succ}{\ensuremath{\mathsf{Succ}}\xspace}
+
+\renewcommand{\min}{\ensuremath{\mathtt{min}}\xspace}
+
 % Zero-knowledge models
 \newcommand{\PK}{\ensuremath{\mathsf{PoK}}\xspace}
 \newcommand{\ZKPoK}{\ensuremath{\mathsf{ZKPoK}}\xspace}
@@ -419,6 +433,7 @@
 \newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
 
 % Encryption
+\newcommand{\E}{\ensuremath{\mathtt{E}}\xspace}
 \newcommand{\CS}{\ensuremath{\mathrm{CS}}\xspace}
 \newcommand{\EG}{\ensuremath{\mathrm{EG}}\xspace}
 \newcommand{\Label}{\ensuremath{\ell}\xspace}
@@ -436,6 +451,7 @@
 
 \newcommand{\hk}{\ensuremath{\mathtt{k_h}}\xspace}
 \newcommand{\hp}{\ensuremath{\mathtt{k_p}}\xspace}
+\newcommand{\hpp}[1]{\ensuremath{\mathtt{hp_{#1}}}\xspace}
 
 \newcommand{\HKGen}{\ensuremath{\mathtt{KGen_H}}\xspace}
 \newcommand{\PKGen}{\ensuremath{\mathtt{KGen_P}}\xspace}
@@ -482,12 +498,21 @@
 \newcommand{\PPreHash}{\ensuremath{\mathtt{PPreHash}}\xspace}
 \newcommand{\PFullHash}{\ensuremath{\mathtt{PFullHash}}\xspace}
 \newcommand{\HashPO}{\ensuremath{\mathit{Hash_P}}\xspace}
+\newcommand{\ProjHash}{\ensuremath{\mathtt{ProjHash}}\xspace}
 
 \newcommand{\param}{\ensuremath{\mathtt{par}}\xspace}
 \newcommand{\paramC}{\ensuremath{\mathtt{p_C}}\xspace}
 \newcommand{\paramP}{\ensuremath{\mathtt{p_P}}\xspace}
 
 \newcommand{\SMP}{\ensuremath{\mathsf{SMP}}}
+
+% SPC
+\newcommand{\SPC}{\ensuremath{\mathtt{SPC}}\xspace}
+\newcommand{\OBI}{\ensuremath{\mathtt{OBI}}\xspace}
+
+\newcommand{\SIM}{\ensuremath{\mathtt{SIM}}\xspace}
+\newcommand{\view}{\ensuremath{\mathtt{view}}\xspace}
+
 
 % general abbrevs.
 \newcommand{\ie}{i.\,e.\xspace}

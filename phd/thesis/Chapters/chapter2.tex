@@ -408,6 +408,113 @@ Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message
 Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
 Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
 
+%----------------------- OBI ---------------------------
+\subsection{Oblivious Bloom Intersection}\label{sec:obi}
+The Oblivious Bloom Intersection (OBI) protocol by Dong et al. \cite{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
+Originally, the OBI protocol was designed for Private Set Intersection (PSI) such that at the end of the protocol, the client learns the intersection $\cC\cap \cS$ and the server learns nothing. 
+As observed in \cite{WenD14}, OBI can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
+At the end of the protocol, for each element in the intersection the client also receives the corresponding data item from the server. 
+The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \cite[Algorithm 1]{WenD14}. 
+The garbled Bloom filter encodes both $\cS$ and $\cS_d$ in a way such that querying the key $s_i\in\cS$ against $G_\cS$ returns the data item $d_i$ and querying $s_j\not \in \cS$ returns a random string. Let the client hold a set $\cC$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\cC$. 
+The client and the server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
+As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that encodes the intersection $\cC\cap \cS$ and the data items associated with the elements in $\cC\cap \cS$. Then the client can query $G_{\cC\cap\cS}$ with each element $c_i\in\cC$. If $c_i$ is in the intersection then there must be  some $s_j\in \cS$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
+
+In this paper we use OBI so that the server can send a set of secret shares to the client based on the client's set $\cC$ without knowing anything about $\cC$. Although in general we can use any PSI with Data Transfer protocol (e.g. \cite{fre04}), we choose OBI here because of its efficiency. OBI is very efficient due to the fact that it relies mostly on hash operations. The performance can be further improved by the modifications proposed by Pinkas et al. \cite{Pinkas0Z14}. Note that although Pinkas et al. also proposed a new PSI protocol based on hashtable + oblivious transfer in \cite{Pinkas0Z14} that is more efficient than OBI, the new PSI protocol cannot be used in our case because it does not support data transfer.
+
+\begin{algorithm}[htb]
+\caption{GBFIntesection $(G, B, m, \lambda)$}
+\label{alg:gbfintersection}
+\begin{algorithmic}[1]
+\REQUIRE Garbled bloom filter $G$, Bloom filter $B$, integer $m, \lambda$
+\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_X$
+\STATE GBF$_X = [m]$ \COMMENT{create empty array of size $m$}
+\FOR{$i=0$ \TO $m-1$}
+  \IF{$B[i] == 1$}
+    \STATE GBF$_X[i] = G[i]$
+  \ELSE
+    \STATE GBF$_X[i] \ralgout \{0,1\}^\lambda$
+  \ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[htb]
+\centering
+\scalebox{0.58}{
+\begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
+\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
+		nodes={draw=none, anchor=center,text depth=1pt},
+		column 1/.style={nodes={minimum width=23em, align=left}}, %,text width=15em
+		column 2/.style={nodes={minimum width=14em}},
+		column 3/.style={nodes={minimum width=18em, align=right, text width=18em}}]{
+	\node[align=center](client){$C~ (B_\cC)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$S$ $(G_\cS)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+	
+	\parbox{23em}{} \& %generate Bloom filter $B$ for $\cC$, generate GBF $G$ with Algorithm \ref{alg:gbf}
+	  neg. params $(n, m, k, H, E)$ \& \\
+	  
+	\parbox{23em}{} \& \&  \\ %	  on $(\cS, S_d, n, m, k, H, \lambda)$
+	
+	\parbox{23em}{generates  $r_i\ralgout\{0,1\}^\lambda$ for $i\in[0,m-1]$} \&
+	   $\{r_i\}_{i\in[0,m-1]}$ \&
+	   $\sk$ $\ralgout$ $\KGen_E(\lambda)$\\ 
+	   
+	\& \& $\forall i$ $\in$ $[0,m-1]$ $: c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
+	
+	\& \& share \sk into $(t_0, \dots, t_{m-1})$ using XOR\\
+	
+  \parbox{23em}{$\forall i\in[0,m-1]:$ if $B[i]=1$ get $c_i;$ else $t_i$} \& 
+  $B \rightarrow$ {\bf OT} $\leftarrow \{(c_i, t_i)\}_{i\in[0,m-1]}$ \& \\
+  
+  \parbox{23em}{Recover \sk from recovered $t_i$ XOR} \& \& \\
+  
+  \parbox{23em}{$\forall $ recovered $c_i: d_i\gets\Dec_\sk(c_i)$} \& \&  \\
+  
+  \parbox{23em}{$\forall $ recovered $d_i: d_i[0,\lambda-1] \stackrel{?}{=} r_i$; else return with $\bot$} \& \&  \\
+  
+  \parbox{23em}{Build $G'$ with Algorithm \ref{alg:gbfintersection} on $(\{d_i\}, B, m, \lambda)$} \& \&  \\
+  
+  \parbox{23em}{Return recovered $\{d_i\}$ from $G'$} \& \& \\
+};
+
+\draw[<->] (m-2-2.south west) -- (m-2-2.south east);
+\draw[->] (m-4-2.south west) -- (m-4-2.south east);
+\draw[<->] (m-7-2.south west) -- (m-7-2.south east);
+\end{tikzpicture}}
+\caption{Oblivious Bloom Intersection} % on $(n, m, k, H, E, \lambda)$
+\label{fig:obi}
+\end{figure}
+
+\begin{algorithm}[htb]
+\caption{GBF $(S, S_d , n, m, k, H, \lambda)$}
+\label{alg:gbf}
+\begin{algorithmic}[1]
+\REQUIRE A set $S$, a set of data $S_d$ with $|S|=|S_d|$, integers $n, m, k, \lambda$, set of hash functions $H=\{h_0, \dots, h_{k-1}\}$
+\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_S$ of \key
+\STATE GBF$_S = [m]$ \COMMENT{create empty array of size $m$}
+\FOR{$i=0$ \TO $|S|-1$}
+  \STATE emptySlot $= -1$; share $=S_d[i]$
+  \FOR{$j=0$ \TO $k-1$}
+    \STATE $\alpha=h_i(S[i])$
+    \IF{GBF$_S[\alpha] == \NULL$}
+      \IF{emptySlot $== -1$}
+        \STATE emptySlot $= \alpha$
+        \ELSE
+          \STATE GBF$_S[j] \gets_{\$} \{0,1\}^\lambda$
+          \STATE share $= share \oplus$GBF$_S[\alpha]$
+      \ENDIF
+      \ELSE
+        \STATE share $= share \oplus$GBF$_S[\alpha]$
+    \ENDIF
+  \ENDFOR
+  \STATE GBF$_S[\text{emptySlot}]=\text{share}$
+\ENDFOR
+\FOR{$i=0$ \TO $m-1$}
+  \IF{GBF$_S[i] == \NULL$}
+    \STATE GBF$_S[i] \gets_{\$} \{0,1\}^\lambda$
+  \ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
 
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
