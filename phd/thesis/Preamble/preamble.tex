@@ -216,6 +216,14 @@
 % use roman numbers for chapters and omit chapter numbering in sections to make it more readable
 \renewcommand{\thechapter}{\Roman{chapter}}
 \renewcommand*\thesection{\arabic{section}}
+% \renewcommand\thefigure{\arabic{figure}}
+% \renewcommand\thetable{\arabic{table}}
+
+% use document wide numbering for figures, tables, algorithms
+\usepackage{chngcntr}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+\counterwithout{table}{algorithm}
 
 
 % ******************************************************************************

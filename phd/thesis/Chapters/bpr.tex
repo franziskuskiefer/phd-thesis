@@ -1,4 +1,4 @@
-\section{Blind Password Registration}
+\section{Blind Password Registration} \label{sec:bpr}
 
 Blind Password Registration (BPR) allows a user to register a password verifier at a VPAKE server and prove that it contains a password that complies with the server's policy without disclosing the password.
 A BPR protocol is thus executed between a client $C$ and a server $S$, both holding the server's password policy $f$.\footnote{The policy can be exchanged before the actual protocol with other general information about the registration.}
@@ -231,7 +231,7 @@ For example, on the web our \ac{BPR} protocol can be executed on top of the TLS 
 \centering
 % \footnotesize
 % \centerfloat
-\scalebox{0.7}{
+\scalebox{0.8}{
 \begin{tikzpicture}[framed]
 \node[party] (client) at (1,0.5) {\uline{Client $(C,S,f)$}};
 

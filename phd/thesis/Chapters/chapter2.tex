@@ -269,8 +269,17 @@ In the \ac{CRS} model all parties have access to a common reference string that 
 This model is usually referred to as the standard model with \ac{CRS} as the assumption of the additional \ac{CRS} being available is rather weak.
 
 \subsection{Hash Functions}
+Hash functions, usually denoted $H$, take arbitrary long strings as input and output a compressed string of shorter length than the input.
+While originally used in data structures to store and retrieve data in constant time, they are an important cryptographic building block.
+A main goal of (cryptographic) hash functions is to yield as few collisions as possible.
+Informally speaking, a collision is a pair of distinct input elements $x$ and $x'$ to hash function $H$ such that $H(x)=H(x')$.
 
-\mynote{* Collision resistant\\ * any other?}
+In cryptography families of functions are used, indexed by a key $s$, such that a hash function is given by $H_s(x)=H(s, x)$.
+Note that the key is usually chosen in advance and omitted.
+A successful \ac{PPT} attacker on the collision resistance of a hash function family $H_s$ is able to produce two distinct elements $(x,x')$ (which may be subject to a certain length if $H_s$ requires so) such that $H_s(x)=H_s(x')$.
+$H$ is a \emph{collision resistant hash function} if any such attacker has negligible probability in succeeding.
+
+% \mynote{* Collision resistant\\ * any other?}
 
 \subsection{Commitments} \label{sec:commitments}
 Let $\Commitment=(\SetupC,\Com)$ denote a commitment scheme and $C\gets\Com(x;r)$ a commitment on $x$ using randomness $r$, with \SetupC generating parameters for \Commitment.
@@ -305,16 +314,26 @@ An interactive protocol $\Pi$ for a language $L$ between prover $P$ and verifier
 \end{itemize}
 
 \paragraph{Zero-Knowledge Proof of Knowledge}
-A zero-knowledge proof of knowledge \ZKPoK is a zero-knowledge proof with the following special soundness definition:
+A \ac{ZKPoK} is a zero-knowledge proof with the following special soundness definition:
 \begin{itemize}
-	\item Soundness: There exists an efficient knowledge extractor \Ext that can extract a witness from interaction with any (malicious) prover $P^\ast(x)$ with $x\in L$ that makes the verifier accept.
+	\item Special Soundness: For any $x$ and any pair of accepting conversations on input $x$, $(m_1, c, m_2)$, $(m_1, c', m'_2)$ with $c\not= c'$ there exists an efficient knowledge extractor \Ext that can extract a witness $w$ such that $(x,w)\in R$.
 \end{itemize}
 
 \paragraph{$\bm{\Sigma}$ Protocols}\hfill\\
-\mynote{briefly describe standard $\Sigma$ protocols}
+$\Sigma$-protocols describe a common structure of \ac{ZKPoK} protocols.
+\citet{Damgard10} gives a detailed description of $\Sigma$-protocols and their properties.
+The basic definition is given as follows.
+A \ac{ZKPoK} protocol $\Pi$ is said to be a $\Sigma$ protocol for relation $R$ if it has the following message structure:
+\begin{enumerate}
+  \item $P$ sends the first message (commitment) $m_1\gets P_1(x,w,r)$ for element $(x,w)\in R$ and randomness $r$.
+  \item $V$ sends random challenge $c\rin\bits^\secpar$ and returns it to prover $P$.
+  \item $P$ sends the seconds message (response) $m_2\gets P_2(x,w,r,c)$ back to verifier $V$.
+  \item $V$ accepts iff $(x,m_1,c,m_2)$ can be verified.
+\end{enumerate}
+
 
 \subsubsection{Committed Zero-knowledge Proofs}
-\citet{Damgard00} and \citet{JareckiL00} proposed the following committed $\Sigma$-protocol to ensure extractability (\ZKPoK) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
+\citet{Damgard00} and \citet{JareckiL00} proposed the following committed $\Sigma$-protocol to ensure extractability (\ac{ZKPoK}) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
 Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_p$ a collision-resistant hash function.
 A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:
 \begin{itemize}
@@ -517,6 +536,74 @@ Note that although \citet{Pinkas0Z14} also proposed a new PSI protocol based on 
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{Linear Secret Sharing}
+Given $\cS$ and $\Gamma_\cS$, an \ac{MSP} is defined as a tuple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\cS$ and $\Gamma_\cS$) and $\rho:\{1,...l\}\rightarrow \cS$ labels each row of $M$ with an element in $\cS$. 
+% We recall \cite[Algorithm 1]{LiuC10} to generate \ac{LSSS} matrix from a boolean formula in Algorithm \ref{alg:lsssM} for completeness.
+Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose at random $r_2,\ldots,r_n \in \mathbb{F}$ and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
+Then $M\mathbf{v}$ is a vector of $l$ shares of the secret. 
+The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \cS$. 
+For any set $C\in \Gamma_\cS$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
+The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, i.e. there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
+The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
+
+\mynote{make this correct and some into to \ac{LSSS}}
+
+
+% \begin{algorithm}
+% \caption{Converting Boolean Formula $F$ to LSSS Matrix $M$}
+% \label{alg:lsssM}
+% \begin{algorithmic}[1]
+% \REQUIRE Formatted boolean formula $F$
+% \ENSURE LSSS matrix $M$, representing $F$
+% \STATE $(M[1,1], L[1], m, d) = (1, F, 1, 1)$; $z = 1$
+% \WHILE{$z \not= 0$}
+%   \STATE $z = 1$; $i = 1$
+%   \WHILE{$i\leq m$ and $z = 0$}
+%     \IF{$L[i]$ is a threshold-tree-string}
+%       \STATE $z = i$
+%     \ENDIF 
+%     \STATE $i = i+1$
+%   \ENDWHILE
+%   \IF{$z \not= 0$}
+%     \STATE $F_z = L[z]$
+%     \STATE $m_2 =$ number of children of $F_z$; $d_2 =$ threshold value of $F_z$
+%     \STATE $L_{2}[i] =$ $i$th child of $F_z$ for all children
+%     \STATE $(M_1, L_1, m_1, d_1) = (M, L, m, d)$
+%     \FOR{$i = 1$ \TO $z-1$}
+%       \STATE $L[i] = L_{1}[i]$
+%       \FOR{$j = 1$ \TO $d_1$}
+%         \STATE $M[i,j] = M_{1}[i,j]$
+%       \ENDFOR
+%       \FOR{$j = d_1+1$ \TO $d_1+d_1-1$}
+%         \STATE $M_[i,j] = 0$
+%       \ENDFOR
+%     \ENDFOR
+%     \FOR{$i = z$ \TO $z + m_2 - 1$}
+%       \STATE $L[i] = L_{2}[i-z+1]$
+%       \FOR{$j = 1$ \TO $d_1$}
+%         \STATE $M[i,j] = M_{1}[z,j]$
+%       \ENDFOR
+%       \STATE $a = i - (z-1)$; $x = i - (z-1)$
+%       \FOR{$j = d_1 + 1$ \TO $d_1 + d_2 - 2$}
+%         \STATE $M[i,j] = x$
+%         \STATE $x = x \cdot a \mod p$
+%       \ENDFOR
+%     \ENDFOR
+%     \FOR{$i = z + m_2$ \TO $m_1 + m_2 -1$}
+%       \STATE $L[i] = L_{1}[i-m_2+1]$
+%       \FOR{$j = 1$ \TO $d_1$}
+%         \STATE $M[i,j] = M_{1}[i-m_2+1, j]$
+%       \ENDFOR
+%       \FOR{$j = d_1 + 1$ \TO $d_1 + d_2 - 1$}
+%         \STATE $M[i,j] = 0$
+%       \ENDFOR
+%     \ENDFOR
+%     \STATE $(m, d) = (m_1 + m_2 - 1, d_1 + d_2 - 1)$
+%   \ENDIF
+% \ENDWHILE
+% \end{algorithmic}
+% \end{algorithm}
 
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
