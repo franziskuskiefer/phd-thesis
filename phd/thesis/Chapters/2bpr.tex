@@ -1,0 +1,581 @@
+% \section{Two-Server Password Registration} \label{sec:2pake-registration}
+\section{Blind Password Registration} \label{sec:2pake-registration}
+Two-server Blind Password Registration (2BPR) allows a client to register password shares with two servers for later use in 2PAKE/2PASS protocols and prove that the shares can be combined to a password that complies with the mutual password policy of both servers, without disclosing the password.
+% The password shares can later be used in two-server PAKE protocols or two-server password protected secret sharing (cf. Section \ref{sec:application}).
+A 2BPR protocol is executed between client $\cC$ and two servers $S_0$ with password policy $f_0$ and $S_1$ with password policy $f_1$.
+$\cC$ interacts with $S_0$ and $S_1$ in order to distribute shares of a freshly chosen password string \pwd and prove its compliance with the mutual policy, i.e. $f_0(\pwd)=\true$ and $f_1(\pwd)=\true$.
+A 2BPR protocol between an honest client $\cC$ and two honest servers $S_0$ and $S_1$ is correct if $S_0$ and $S_1$ accept their password shares if and only if the client is able to prove the following statement for $f=f_0\cap f_1$:
+\begin{align}
+  (\pwd,\share_0,\share_1):~ \pwdint(\pwd)=\share_0+\share_1 ~ \wedge ~ f(\pwd)=\true.
+  \label{eq:zkppc-pok}
+\end{align}
+Note that the 2BPR protocol can be used to register new clients or to register new passwords for existing clients. The following definition formally captures the functionality of 2BPR protocols.
+
+\begin{definition}[Two-Server Blind Password Registration]\label{def:2bpr}
+A 2BPR protocol is executed between a client $\cC$ and two servers $S_0$ and $S_{1}$, holding a password policy $f_b$ each, such that the servers, when honest, eventually accept password shares $\share_b$ of a policy compliant, client chosen password \pwd iff $f(\pwd)=\true$ for $f=f_0\cap f_1$, $\pwdint(\pwd)=\share_b+\share_{1-b}$ and $b\in\{0,1\}$.
+\eod
+\end{definition}
+
+\noindent
+Definition~\ref{def:2bpr} requires that password shares $\share_0$ and $\share_1$ can be combined to the policy-compliant integer password $\pi$. The corresponding verification must therefore be part of the 2BPR protocol. 
+Otherwise, the client could register password shares $\share_0$ and $\share_1$ that can both be combined to a policy compliant password in the respective proofs with the servers, but combining $\share_0$ and $\share_1$ might result in a password that is \emph{not} policy compliant, i.e. $f(\share_0+\share')=\true$ and $f(\share_1+\share'')=\true$ but $f(\pi)\not=\true$.
+This further ensures that servers hold valid password shares, which is crucial for the security of 2PAKE/2PASS protocols that should be executed later with these password shares.
+We assume that the protocol is started by the server (possibly after getting a notice that a client wants to perform a password registration).
+This allows the server to send his policy to the client in the first step.
+We further assume that the two-servers communicate with each other in order to confirm correctness of the password shares.
+This requirement can be relaxed by requiring the client to forward messages (authenticated and confidential) between the two servers.
+For simplicity however we assume direct communication between the two servers in our model.
+
+
+\subsection{2BPR Model}\label{sec:securitymodel}
+Security of 2BPR protocols, given according to Equation \ref{eq:zkppc-pok}, has to guarantee that the client knows the sum $\pwdint(\pwd)$ of the password shares $\share_0$ and $\share_1$, and that \pwd fulfils both password policies $f_0$ and $f_1$ in case both servers accept the registration.
+We translate Eq. (\ref{eq:zkppc-pok}) into a game-based security model that captures the equation using two different security definitions.
+The first notion can be directly converted from Eq. (\ref{eq:zkppc-pok}) and captures \emph{Policy Compliance (PC)} of the password.
+In particular, if both servers are honest while accepting their password shares in the 2BPR protocol, the combination $\pi$ of the shares represents a password compliant with the mutual password policy $f=f_0\cap f_1$, i.e. $f(\share_b+\share_{1-b})=\true$.
+The second notion relates to the fact that servers should not learn anything about the password and therefore called \emph{Password Blindness (PB)}.
+Password blindness requires that a malicious server $S_b$ must not be able to learn anything else from the 2BPR execution about the client's password than the fact that it is policy compliant.
+
+We observe that the blindness property has to hold for all possible password policies and all compliant passwords. It should not be possible to mount an offline dictionary attack after observing 2BPR protocol executions or while gaining access to and controlling at most one of the two servers.
+
+\paragraph{Setup and Participants}
+Protocol participants $\cC,S_0,S_1$ with $\cC$ from the universe of clients and $S_1,S_2$ from the universe of servers have common inputs, necessary for the execution of the protocol. %, such as group parameters, the common reference string, the server's public keys and according policies $f_1,f_2$.
+Instances of protocol participants $\cC$ or $S$ are denoted $\cC_i$, $S_{0,i}$ or $S_{1,i}$.
+Protocol participants without specified role are denoted by $P$, and $S_b$ and $S_{1-b}$ for unspecified servers.
+A client can only register one password with one server pair, but can register passwords at an arbitrary number of server pairs.
+Client $\cC$ and servers $S_b$ are unique and used as identifier on the server, i.e. as \emph{username} to store alongside the password share.
+We say a client registers a client, server pair at a server, i.e. a client $\cC$ registers a password share for $(\cC, S_{1-b})$ at a server $S_b$ and a password share for $(\cC,S_{b})$ at server $S_{1-b}$.
+Further, a server only allows a single registration from a client, server pair such that any attempt to register a password with a server that already stores a password share for this client, server pair overwrites existing entries, i.e. resets the password.
+An entry $(\cC,S_{1-b},\share_b)$ is only stored on server $S_b$ if the 2BPR protocol is successful.
+
+\paragraph{Oracles}
+To interact with protocol participants, PPT adversary \cA has access to \Setup, \Send, \Execute and \Corrupt oracles.
+% We say a message $m$ is \emph{rogue} if it is either generated by the adversary or by an oracle and then modified by the adversary or by an oracle but for a different session.
+
+\begin{itemize}
+  \item $\Setup(\cC,S_0,S_1, \pwd')$ creates new instances of all participants and stores identifiers of the other parties to each participant.
+        To this end the client receives the server policies $f_0\cap f_1=f$ and either chooses a new policy compliant password $\pwd\in\cD_f$ if $\pwd'=\bot$ or uses $\pwd=\pwd'$.
+%         This oracle models the initial registration request by the client and returns the first server messages $m_0$ and $m_1$ with $m_b$ honestly generated if $m'_b=\bot$ or $m_b\gets m'_b$ otherwise for $b\in\bits$.
+
+  \item $\Execute(\cC,S_0,S_1)$ models a passive attack and executes a 2BPR protocol between new instances of $\cC$, $S_0$ and $S_1$. %, initiated with \Setup.
+%         If there exists an entry $(C,S_1,\share_0)$ at $S_0$ or $(C,S_2,\share_1)$ at $S_2$, the oracle aborts.
+        It returns the protocol transcript and the internal state of all corrupted parties.
+%         Note that communication between the protocol is confidential such that the adversary only learns ciphertexts unless he corrupted one of the participants.
+
+  \item $\Send_\cC(\cC_i,S_{b,j},m)$ sends message $m$, allegedly from client instance $\cC_i$, to server instance $S_{b,j}$ for $b\in\{0,1\}$.
+        If $\cC_i$ or $S_{b,j}$ does not exist, the oracle aborts. %or there exists an entry $(C,S_2,\share_1)$ at $S_1$ or $(C,S_1,\share_2)$ at $S_2$,
+        Note that any instance $\cC_i$ and $S_{b,j}$ was thus set up with \Setup and therefore has an according partner instance $S_{1-b,j}$.
+        If all participants exist, the oracle returns the server's answer $m'$ if there exists any.
+        Necessary inter server communication is performed in $\Send_\cC$ queries.
+        If $m=\bot$, server $S_{b,j}$ returns its first protocol message if it starts the protocol.
+        % if both servers are honest.
+%         If $S_{1-b}$ is corrupt, the oracle additionally returns message $m'_S$ from $S_{b,i}$ to $S_{1-b,i}$ if such a message is sent in the protocol.
+%         This oracle can model a passive attack if the message $m$ is not rogue, or an active attack if $m$ is rogue.
+
+  \item $\Send_S(S_{b,i},\cC_{j},m)$ sends message $m$, allegedly from server instance $S_{b,i}$ for $b\in\{0,1\}$, to client instance $\cC_{j}$.
+        If $S_{b,i}$ or $\cC_j$ does not exist, the oracle aborts.
+        Note that any instance $S_{b,i}$ and $\cC_j$ was thus set up with \Setup and therefore has an according partner instance $S_{1-b,i}$.
+        If all participants exist, the oracle returns the client's answer $m'$ if there exists any.
+        If $m=\bot$, server $S_{b,i}$ returns its first message if he starts the protocol.
+%         This oracle can model a passive attack if the message $m$ is not rogue, or an active attack if $m$ is rogue.
+
+  \item $\Send_{SS}(S_{b,i},S_{1-b,j},m)$ sends message $m$, from server instance $S_{b,i}$ for $b\in\{0,1\}$, to server instance $S_{1-b,j}$.
+        If $S_{b,i}$ or $S_{1-b,j}$ does not exist, the oracle aborts.
+        Note that any instance $S_{b,i}$ and $S_{1-b,j}$ was thus set up with \Setup.
+        If all participants exist, the oracle returns the server's answer $m'$ if there exists any.
+
+  \item $\Corrupt(S_{b})$ allows the adversary to corrupt a server $S_b$ and retrieve its internal state, i.e. stored messages and randomness, and the list of stored password shares $(\cC, S_{1-b}, \share_b)$. % if no instance of $S_b$ is active.
+      $S_b$ is marked \emph{corrupted}.
+%       Otherwise the oracle aborts.
+\end{itemize}
+
+\noindent
+Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client instance $\cC_i$ after a successful registration (client identities $\cC$ are unique but not secret and can therefore be used by the adversary).
+
+\paragraph{Policy compliance}
+PC is the first natural security property of 2BPR protocols, requiring that a password set up with a 2BPR protocol by a client is compliant with the policy of the servers $f(\pwd)=\true$.
+The attacker here plays the role of the client that tries to register a password \pwd that is \emph{not} policy compliant on two honest servers.
+
+% XXX: \fk{We should think about if it is sensible to allow password reset. In real the world the server would require the client to login before changing the password (authentication is done via e-mail usually if password is not known anymore). Therefore the adversary should be allowed to change passwords for triple $(C,S_0,S_1)$ that executed the protocol successfully already.}
+
+\begin{definition}[Policy Compliance]\label{def:pc}
+Policy compliance of a 2BPR protocol holds if for every PPT adversary $\cA$ with access to $\Setup$ and $\Send_\cC$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $\cA$ stopped that accepted $(\cC,S_{1-b},\share_b)$, $(\cC,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\false$ is negligible.
+\eod
+\end{definition}
+
+\paragraph{Password Blindness}
+The second security property requires that every password, chosen and set-up by an honest client must remain hidden from an adversary even if he corrupts one of the two used servers, gets its internal state and controls its actions.
+We model this with a distinguishing experiment where the attacker, after interacting with the oracles, outputs a challenge comprising two passwords $\pwd_0$ and $\pwd_1$, two clients $\cC_0$ and $\cC_1$, and a pair of servers $S_0$ and $S_1$.
+After randomly assigning the two passwords to the two clients, the adversary interacts with the oracles again and has to decide which client uses which password, i.e. guess the random bit $b$.
+The notion is formalised in the following definition.
+
+\begin{definition}[Password Blindness]\label{def:zk}
+The password blindness property of a 2BPR protocol $\Pi$ holds if for every PPT adversary $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that
+% for $t$ passwords set-up for $(\cC,S_0,S_1)$
+\[ \Adv_{\Pi, \cA}^{\mathrm{PB}}=\left|\Pr[\Exp_{\Pi, \cA}^{\mathrm{PB}}=1]-\frac{1}{2}\right|\leq\varepsilon(\secpar). \]
+
+\noindent
+$\Exp_{\Pi, \cA}^{\mathrm{PB}}:$ \\
+% In the first stage the adversary outputs a server pair and two passwords with two according clients
+\hspace*{2em} $(\cC_0, \cC_1, S_0,S_1,\pwd_0,\pwd_1)\gets\cA_1^{\Setup,\Send_S,\Send_{SS}, \Execute,\Corrupt}$ $(\secpar,\cD,\{\cC\},\{S\})$ \\
+\hspace*{2em} check $\pwd_0,\pwd_1\in\cD_{f_0\cap f_1}$, $|\pwd_0|=|\pwd_1|$, $\cC_0,\cC_1\in\{\cC\}$ and $S_0,S_1\in\{S\}$\\
+% If $\pwd_0,\pwd_1\in\cD_{f_0\cap f_1}$, $C_0,C_1\in\{C\}$ and $S_0,S_1\in\{S\}$, proceed, otherwise abort.
+% Choose random bit $b\rin\bits$ and call the adversary again
+% \hspace*{2em} $b\rin\bits$ \\
+\hspace*{2em} $ b'\gets\cA^{\Setup',\Send_S,\Send_{SS}, \Execute,\Corrupt}(\secpar,\cD,\{\cC\},\{S\})$\\
+\hspace*{2em} if $S_0$ or $S_1$ is uncorrupted, return $b=b'$; otherwise return $0$ \\
+
+\noindent
+% $\Setup'$ has the following changes to the \Setup oracle:
+$\Setup'$ (in contrast to \Setup) uses $\pwd_b$ for client $\cC_0$ and $\pwd_{1-b}$ for $\cC_1$ with $b\rin\bits$ instead of choosing a random password or using the provided one.
+% If $b=b'$ and at least one of the two servers $S_0$ and $S_1$ is uncorrupted, then return $1$. Otherwise return $0$.
+\eod
+\end{definition}
+
+% \noindent
+% Note that this definitions requires that \emph{all} passwords set-up with the 2BPR protocol remain secret as long as they are set-up using at least one honest server.
+% Even when the password is changed later by the client.
+% But it could be strengthened by requiring that both servers may be corrupted after the password changed from $\pwd_{C,S_0,S_1}$ to $\pwd'_{C,S_0,S_1}$.
+% However, this over-complicates the security definition while bringing only marginal advantage.
+% We therefore stick with the proposed security definition for ZK.
+% Further note that the adversary is \emph{never} allowed to corrupt both servers at the same time if he wants to win the experiment.
+
+
+% ==================================================================================
+% Two-Server BPR Protocol
+% ==================================================================================
+
+\subsection{An Efficient Two-Server BPR Protocol}\label{sec:framework}
+Before describing technical details, we give a high-level description of our 2BPR protocol.
+We assume that client $\cC$ selected two servers $S_0$ and $S_1$ to register with, and server authenticated channels between each of the two servers and the client as well as between the two servers have been established.
+Note that the connection between the two servers is necessary in order to verify the correctness of the password shares.
+% If a direct connection between the two servers is not possibleA weaker security notion where correctness is not necessary is possible.
+Server authenticated and confidential channels between each server and the client is a rather weak assumption that can be implemented with a TLS channel \cite{rfc5246,JagerKSS12,KrawczykPW13} but allows for an efficient implementation of the 2BPR protocol.
+This essentially prevents the attacker from querying the $\Send_S$ or $\Send_{SS}$ oracle without prior corruption of the according server and further provides an attacker only with encrypted transcripts unless he performs active attacks or corrupts a participating server.
+% We describe the protocols internal functionality in the following paragraph without explicit description of the encrypted channel.
+The protocol further relies on a common setup, given in a common reference string (CRS).
+The CRS contains all necessary parameters, i.e. $\crs=(g, h, q)$ with generators $g$ and $h$ for group of prime-order $q$ where $\log_g(h)$ is not known.
+At the beginning of the registration phase the client commits to the integer representation $\pi$ of the chosen password string \pwd and sends this commitment together with a password share $\share_b$ to the corresponding server $S_b$, $b\in\bits$, along with auxiliary information that is needed to perform the policy compliance proof.
+For the latter, the client needs to prove the knowledge of $\pi$ in the commitment such that $\pi = \share_0 + \share_1$ and that it fulfils both policies $f_1$ and $f_2$.
+Thus, servers $S_0$ and $S_1$ eventually register the new client, accept and store the client's password share, iff each $S_b$ holds $\share_b$ such that $\share_0+\share_1=\pi$ for $\pi\gets\pwdint(\pwd)$ and $f(\pwd)=\true$ for $f=f_0\cap f_1$.
+
+% \begin{remark}
+% Instead of relying on the random oracle model one could use common techniques to transform the zero-knowledge proofs into 4-move protocols that are secure against malicious verifiers.
+% However, this only works for the two $\Sigma$-proofs \PoM and \PoC.
+% The proof of shuffling \PoS is a zero-knowledge proof of knowledge, which renders common techniques that would make it secure against malicious verifiers unsuitable.
+% \end{remark}
+
+\subsubsection{Protocol Overview}
+% \setlength{\textfloatsep}{10pt}
+\setlength{\belowcaptionskip}{-2pt}
+\begin{figure}[!b]
+\centering
+\footnotesize
+\scalebox{0.8}{\begin{tikzpicture}%[framed]
+\draw[] (-3,1) rectangle (12.2,-13);
+\draw ($(-3,.7)!0.55!(12,.7)$) node[draw] {\textit{I -- Client Preparation}};
+
+\node[party,align=center] (client) at (.5,0) {\uline{$\cC~ (S_0,S_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
+
+\node[state, align=left] at (0,-.5) [stateS, align=left]{Encode $\pi\gets\pwdint(\pwd)$;};
+\node[state, align=left] at (0,-1.2) [stateS, align=left]{Compute password shares: $\share_{0}\rin\ZZ_q$,\\ \hspace*{1em} $\share_{1}=\pi-\share_{0}$};
+
+\node[state, align=left] at (0,-2.3) [stateS, align=left]{Commit to shares: \\\hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$\\ \hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$};
+
+% PHASE II
+
+% \draw[dashed] (-2.5, -3.2) -- (11.5, -3.2);
+\draw ($(-3,-3.5)!0.55!(12,-3.5)$) node[draw] {\textit{II -- Password Registration}};
+
+\node[party,align=center] (client2) at (.5,-4.2) {\uline{$\cC~ (S_0,S_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
+\node[party,align=center,text width=10em] (server) at (9.5,-4.2) {\uline{$S_b~ (\cC,S_{1-b}, f=f_0\cap f_1, \crs)$}};
+
+\node[state, align=left] at (0.0,-4.9) [stateS, align=left]{Commit to all characters in \pwd:\\\hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$};
+
+\node[state, align=left] at (0.0,-5.8) [stateS, align=left]{Shuffle $\bm C'$ s.t. each $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ with permutation $\phi$ over $[1,|\pwd|]$;};
+
+\node[state, align=left] at (0,-6.8) [stateS, align=left]{For each $c_i\in\pwd$ identify appropriate set $\omega_{\phi(i)}$ and build $\vect{\omega}$ from it;};
+\node[state, align=left] at (0,-7.6) [stateS, align=left]{Execute ZK proofs with the server};
+
+\node[state, align=left] at (9.75,-8.0) [stateSmS, align=left]{choose challenges};
+\node[state, align=left] at (9.75,-9) [stateSmS, align=left]{Proceed if \\\hfill $|\bm C|=|\bm C'| \geq \pmin$, $\PoM$,\\\hfill $\PoC$ and $\PoS$ all holds};
+
+\node[dummyState] (clientCom) at (2.75,-7.6){};
+\node[dummyState] (clientCh) at (2.75,-8.2){};
+\node[dummyState] (clientRes) at (2.75,-8.8){};
+\node[dummyState] (clientResF) at (2.75,-9.4){};
+
+\node[dummyState] (serverCom) at (7.5,-7.6){};
+\node[dummyState] (serverCh) at (7.5,-8.2){};
+\node[dummyState] (serverRes) at (7.5,-8.8){};
+\node[dummyState] (serverResF) at (7.5,-9.4){};
+
+\draw[pil] (clientCom) -- node[above, align=center] {$\Comm_{\PoM}, \Comm_{\PoC}, \Comm_{\PoS}, |\pwd|$} (serverCom);
+\draw[pil] (serverCh) -- node[above, align=center] {$\Ch_\PoC, \Ch_\PoM, \Ch_\PoS$} (clientCh);
+\draw[pil] (clientRes) -- node[above, align=center] {$\Res_{\PoM}, \Res_{\PoC}, \Res_{\PoS}$} (serverRes);
+
+% PHASE III
+
+% \draw[dashed] (-2.5, -10.2) -- (11.5, -10.2);
+\draw ($(-3,-10.5)!0.55!(12,-9.7)$) node[draw] {\textit{III -- Share Verification}};
+
+\node[party] (server2) at (.5,-10.7) {\uline{$S_0~ (\cC, S_{1}, f=f_0\cap f_1, \crs)$}};
+\node[state, align=left] at (0,-11.4) [stateS, align=left]{$\fD'_{1}=\fC_{1}g^{\share_{0}}$};
+\node[state, align=left] at (0,-12.2) [stateS, align=left]{If $\fD'_0=\fD_0$\\\hspace*{1em} store $(\cC,S_{1},\share_{0})$};
+\node[dummyState] (server11Ch) at (2.75,-11.4){};
+\node[dummyState] (server12Ch) at (2.75,-12.2){};
+
+\node[party,align=center] (server3) at (9.5,-10.7) {\uline{$S_{1}~ (\cC, S_0, f=f_0\cap f_1, \crs)$}};
+\node[state, align=left] at (9.75,-11.4) [stateSmS, align=left]{$\fD'_{0}=\fC_{0}g^{\share_{1}}$};
+\node[state, align=left] at (9.75,-12.2) [stateSmS, align=left]{If $\fD'_{1}=\fD_{1}$\\\hspace*{1em} store $(\cC,S_{0},\share_{1})$};
+
+\node[dummyState] (server21Ch) at (7.5,-11.4){};
+\node[dummyState] (server22Ch) at (7.5,-12.2){};
+
+\draw[pil] (server11Ch) -- node[above, align=center] {$\fD'_{1}$} (server21Ch);
+\draw[pil] (server22Ch) -- node[above, align=center] {$\fD'_{0}$} (server12Ch);
+
+\end{tikzpicture}}
+\caption[Two-Server BPR Protocol]{Two-Server BPR Protocol --- A High-Level Overview\\
+{\small $\vect{\omega}$ contains character sets of $c_{\phi(i)}$ ordered according to permutation $\phi$, used in \PoM}}
+%\linebreak \PoS proves correctness of shuffle according to $\phi$
+\label{fig:protocol-overview}
+\end{figure}
+In Figure \ref{fig:protocol-overview} we give an overview of the 2BPR protocol involving a client $\cC$ and two servers $S_b$, $b\in\bits$.
+The protocol proceeds in three phases.
+In the first phase \emph{(client preparation)} the client chooses $\pwd\in_R\cD_f$, encodes it to $\pi$, computes shares $\share_{0}$ and $\share_{1}$, and computes commitments $\fC_0, \fC_1, \fD_0, \fD_1$ to the shares and the password.
+In the second phase \emph{(password registration)} $\cC$ interacts with each server $S_b$, $b\in\bits$ over a server-authenticated and confidential channel. $\cC$ computes a commitment $C_i$ for each encoded character $\pi_i\gets\chrint(c_i)$, $c_i\in\pwd$, and a second commitment $C'_i$ as a re-randomised version of $C_i$.
+The set $\bm C'$ containing the re-randomised commitments $C'_i$, is then shuffled and used to prove through the Proof of Membership (\PoM) protocol that each character committed to in $C'_i\in\bm C'$ is a member of some character set $\omega_{\phi(i)}$, chosen according to policy $f$.
+Note that \PoM must be performed over the \emph{shuffled} set $\bm C'$ of commitments as the server would otherwise learn the type (i.e. lower/upper case, digit, or symbol) of each password character.
+To further prove that transmitted commitments ${\bm C}, \fC_b$, and $\fD_b$ are correct, namely that the product of commitments in $\bm C$ commits to the password \pwd, $\fC_b$ contains the correct share $\share_b$, and $\fD_b$ contains \pwd, client and server execute the Proof of Correctness (\PoC) protocol. 
+Finally, the client proves to each server that set $\bm C'$ is a shuffle of set $\bm C$ by executing the Proof of Shuffle (\PoS) protocol. 
+This proof is necessary to finally convince both servers that 
+(1) the characters committed to in $\bm C'$ are the same as the characters in the commitments in $\bm C$, which can be combined to password \pwd (as follows from the \PoC protocol) and 
+(2) each commitment $C_i$ is for a character $c_i\in\pwd$ from some set $\omega_{i}$, chosen according to policy $f$ (as follows from the \PoM protocol).  
+%, yet without revealing the set $\omega_{i}$
+For all three committed $\Sigma$-protocols (\PoM, \PoC, \PoS) we use variables as defined in Section \ref{sec:prelims}.
+If each server $S_b$, $b\in\bits$ successfully verifies all three committed $\Sigma$-protocols and the length of the committed password $\pwd$ is policy-conform, then both servers proceed with the last phase. In the third phase \emph{(share verification)} the two servers $S_0$ and $S_1$ interact with each other over a mutually-authenticated and confidential channel. Each $S_b$ computes its verification value $\fD'_{1-b}$ and sends it to $S_{1-b}$.
+Upon receiving $\fD'_{b}$, $S_b$ checks it against $\fD_b$ to verify that the client used the same password with both servers in the second phase, i.e. that $\share_b+\share_{1-b}=\pi$.
+If this verification is successful, $S_b$ stores the client's password share $(\cC,S_{1-b},\share_b)$ and considers $\cC$ as being registered.
+
+\subsubsection{Two-Server BPR Specification}\label{sec:protocol}
+In the following we give a detailed description of the 2BPR protocol.
+To this end we describe the three proofs \PoC, \PoM and \PoS detailing on their computations.
+We describe the interaction between client $\cC$ and server $S_b$ and therefore only consider one policy $f_b$.
+Note that \cC and each server $S_b$ perform the same protocol.
+If both servers accept, the password fulfils the policy $f=f_b\cap f_{1-b}$.
+
+We first describe the client's pre-computations such as password encoding and sharing before giving a detailed description of the proofs.
+The protocol operates on a group $G$ of prime-order $q$ with generator $g$.
+Further, let $h,f_i\rin G$ for $i\in[-4,m]$ denote random group elements such that their discrete logarithm with respect to $g$ is unknown.
+Public parameters of the protocol are defined as $(q,g,h,\bm f)$ with $\bm f = \{f_i\}$ where $m$ is at least $n=|\pwd|$.
+In practice $m$ can be chosen big enough, e.g., $100$, in order to process all reasonable passwords.
+% Let $n$ denote the password length $|\pwd|$.
+Note that we use the range $i\in[0,n-1]$ for characters $\pwd[i]$, but $[1,x]$ for most other ranges.
+
+\paragraph{Client Preparation}
+We assume that password policies $f_0$ and $f_1$ are known by the client.
+This can be achieved by distributing them beforehand with other set-up parameters.
+The client chooses a password $\pwd\rin\cD_f$ from the dictionary and encodes it $\pi\gets\pwdint(\pwd)$.
+The password is shared by choosing a random $\share_{b}\rin\ZZ_q$ and computing $\share_{1-b}=\pi-\share_{b}$.
+The client then commits to both password shares $\fC_b=g^{\share_{b}}h^{r_b}$ and $\fC_{1-b}=g^{\share_{1-b}}h^{r_{1-b}}$ with $r_b,r_{1-b}\rin\ZZ_q$ and computes commitments to the entire password $\pi$ with the same randomness, i.e. $\fD_b=\fC_b g^{\share_{1-b}}$ and $\fD_{1-b}=\fC_{1-b} g^{\share_{b}}$.
+For the following proofs the client further encodes every character $c_i\in\pwd$ as $\pi_i\gets\chrint(c_i)$.
+% The remainder of the protocol is performed separately between the client and each server $S_b$.
+
+\paragraph{Password Registration}
+The client iterates over all encoded characters $\pi_i$ to perform the following operations:
+commit to $\pi_i$ by computing $C_i=g^{\pi_i}h^{r_i}, C'_i=C_i h^{r_i'}$ for $r_i,r'_i\rin\Zrq$;
+% compute the shifted commitment $C^\ast_i=C_i^{b^i}$;
+choose a random permutation $\phi(i)$ over $[1,n]$ to shuffle $C'_i$;
+if $\pi_i$ is \emph{significant} for any $R_j\in R$, set $\omega_{\phi(i)}\gets R_j$, otherwise $\omega_{\phi(i)}\gets\Sigma$ (all ASCII characters).
+Let $l_i\in\NN$ denote the index in $\omega_{\phi(i)}$ such that $c_i=\omega_{\phi(i)}[l_i]$.
+Values $(C_i, C'_i,\omega_{\phi(i)}, \phi(i), l_i, \pi_i, r_i, r'_i)$ are used in the following zero-knowledge proofs.
+The client combines previously computed values $\bm C = \{C_{i}\}$.
+Shuffled commitments $C'_{\phi(i)}$ and sets $\omega_{\phi(i)}$ are combined according to the shuffled index $\phi(i)$, i.e. $\bm C' = \{C'_{\phi(i)}\}$ and $\vect{\omega} = \{\omega_{\phi(i)}\}$.
+Once these computations are finished $\cC$ and $S_b$ proceed with the protocol.
+In the following we describe the three proofs \PoM, \PoC and \PoS and define their messages.
+% With these values the client can start the computation of the three proofs \PoM, \PoC and \PoS.
+% Note that we do not mention standard checks such as checks for group membership in our description.
+
+
+\paragraph{Proof of Correctness (\PoC)}
+This proof links the password shares, sent to each server, to the proof of policy compliance and shows knowledge of the other password share.
+We define the proof of correctness for an encoded password $\pi$, which proves that share $\share_{b}$ can be combined with a second share $\share_{1-b}$ such that $\pi=\share_{b}+\share_{1-b}$ and that the received commitments to password characters $c_i$ can be combined to a commitment to that same password $\pi$.
+% To ensure correctness of password shares we further have to make sure that both servers received shares of the same password when they accept.
+% $S_0$ and $S_1$ exchange the commitments they received after adding their password share, i.e. $D_{1-b}=C_{1-b}g^{\pi_b}$ and $D_{b}=C_{b}g^{\pi_{1-b}}$.
+% First the client computes password shares as $\pi_b\rin\ZZ_q$ and $\pi_{1-b}=\pi-\pi_b\mod q$.
+\PoC is defined as a committed zero-knowledge proof between $\cC$ and $S_b$ for the statement
+\begin{align*}
+&\ZKP\{(\pi,r_{1-b},r_b,r_{Cb}): \fC_{1-b}g^{\share_{b}}=g^{\pi}h^{r_{1-b}}  \wedge  \prod_{i=0}^{n-1}C_i^{b^i}=g^{\pi}h^{r_{Cb}}  \wedge  \fD_{b}=g^{\pi}h^{r_{b}}\}. 
+\end{align*}
+% for newly generated $C_{1-b}=g^{\pi_{1-b}}h^{r_{1-b}}$ and $D_{b}=C_{b}g^{\pi_{1-b}}$ with fresh $C_{1-b}=g^{\pi_{1-b}}h^{r_{1-b}}$ from the server sub-protocol.
+$C_i=g^{\pi_i}h^{r_i}$ are character commitments from the set-up stage and $r_{Cb}=\sum_{i=0}^{n-1}b^i\cdot$ $r_i$ is the combined randomness from the character commitments $C_i$.
+$\fC_{1-b}=g^{\share_{1-b}}$ $h^{r_{1-b}}$, $\fD_{b}=\fC_{b}g^{\share_{1-b}}$, and $\fC_{b}=g^{\share_{b}}h^{r_{b}}$ are the share and password commitments from the client preparation phase.
+This incorporates the link of the password commitment to the product of the commitments to the single characters with the proof of knowledge of the combined password $\pi=\share_b+\share_{1-b}$.
+The messages for \PoC are computed as follows:
+
+\begin{enumerate}
+  \item %[$\Com_{\PoC}$:]
+    The client chooses random $k_{\pi}$, $k_{\rho b}$, $k_{\rho (1-b)}, k_{\rho C}\rin\ZZ_q$, computes $t_{C(1-b)}=g^{k_{\pi}}h^{k_{\rho (1-b)}}$, $t_{C}=g^{k_\pi}h^{k_{\rho C}}$ and $t_{Db}=g^{k_{\pi}}h^{k_{\rho b}}$.
+    The first message with $r_{\Com_{\PoC}}\rin\ZZ_q$ is then given by
+    \begin{align*}      
+    & \Com_{\PoC}=g^{H(\fC_{1-b}g^{\share_b}, \{C_i\}, \fD_b, t_{C(1-b)}, t_C, t_{Db})} h^{r_{\Com_{\PoC}}}.
+    \end{align*}
+
+  \item %[$\Ch_{\PoC,b}$:]
+    After receiving $\Com_{\PoC}$ from the client the server chooses a random challenge $\Ch_{\PoC,b}\rin\ZZ_q$ and sends it back to the client.
+
+  \item %[$\Res_{\PoC1}$:]
+    After receiving the challenge $\Ch_{\PoC, b}$, the client computes $s_{\pi}=k_{\pi}+\Ch_{\PoC,b}\pi$, $s_{\rho (1-b)}=k_{\rho{(1-b)}}+\Ch_{\PoC,b}r_{1-b}$, $s_{\rho C}=k_{\rho C} + \Ch_{\PoC,b} \sum_{i=0}^{n-1}b^i r_i$ and $s_{\rho b}=k_{\rho{b}}+\Ch_{\PoC,b}r_{b}$ before computing the next message with $r_{\Res_{\PoC}}\rin\ZZ_q$
+    \[\Res_{\PoC1}=g^{H(s_{\pi}, s_{\rho (1-b)}, s_{\rho C}, s_{\rho b})} h^{r_{\Res_{\PoC}}}.\]
+
+  \item %[$\Res_{\PoC2}:$]
+    Eventually the client sets the decommitment message
+    \begin{align*}
+    & \Res_{\PoC2}=(\share_b, \fC_{1-b}, \{C_i\}, \fD_b, t_{C(1-b)}, t_C, t_{Db}, s_{\pi}, s_{\rho (1-b)}, s_{\rho C}, s_{\rho b}, r_{\Com_{\PoC}}, r_{\Res_{\PoC}}).
+    \end{align*}
+\end{enumerate}
+% and sets $\Com_{\PoC}=(t_{C(1-b)}, t_C, t_{Db})$.
+% commits to the password share $\pi$ in $C_{1-b}=g^{\pi_{1-b}}h^{r_{1-b}}$ and $D_b=g^{\pi}h^{r_b}$,
+% and sets $\Res_{\PoC,b}=(s_{\pi}, s_{\rho (1-b)}, s_{\rho C}, s_{\rho b})$.
+
+\noindent
+$\Res_{\PoC1}$ and $\Res_{\PoC2}$ form together $\Res_{\PoC}$.
+The server verifies the proof by checking the following:
+\begin{itemize}[leftmargin=*]
+  \item $\Com_{\PoC} \verify g^{H(\fC_{1-b}g^{\share_b}, \{C_i\}, \fD_b, t_{C(1-b)}, t_C, t_{Db})}$ $h^{r_{\Com_{\PoC}}}$
+  \item $\Res_{\PoC1} \verify g^{H(s_{\pi}, s_{\rho (1-b)}, s_{\rho C}, s_{\rho b})} h^{r_{\Res_{\PoC}}}$
+  \item $g^{s_{\pi}}h^{s_{\rho (1-b)}} \verify t_{C(1-b)}(\fC_{1-b}g^{\share_b})^{\Ch_{\PoC,b}}$
+  \item $g^{s_{\pi}}h^{s_{\rho C}} \verify t_{C}(\prod_{i=0}^{n-1} C_i^{b^i})^{\Ch_{\PoC,b}}$
+  \item $g^{s_{\pi}}h^{s_{\rho b}} \verify t_{Db}\fD_{b}^{\Ch_{\PoC,b}}$
+\end{itemize}
+% and $g^{s'_{\pi}}h^{s_{\rho 2}} \verify t_{C1}(C_1g^{\share_2})^c$.
+
+\paragraph{Proof of Membership (\PoM)}
+% The proof of membership \PoM is implement according to \PoM in \cite{KieferM15a}.
+% We recall the proof here with adaptions to our notation.
+\PoM proves $c_{\phi(i)}\in\omega_{\phi(i)}$ for every character $c_{\phi(i)}\in\pwd$ running over the shuffled set of commitments $\bm C'$, i.e.
+\begin{equation*}
+\ZKP\{\{\pi_i,r_i\}_{i\in[0,n-1]} : ~ C'_{\phi(i)}=g^{\pi_{i}}h^{r_{i}} ~ \wedge ~ \pi_{\phi(i)}\in \omega_{\phi(i)}\}.
+\end{equation*}
+Note that the proof uses the shuffled commitments $C'_{\phi(i)}$ and not $C_i$ and recall that $c_{\phi(i)}$ belongs to the character set $\omega_{\phi(i)}$ (we sometimes write $\pi_i\in\omega_i$ for $\pi_i\gets\chrint(c_i)$).
+\begin{enumerate}
+  \item %[$\Comm_\PoM$:]
+    To prove that every $C'_{\phi(i)}$ commits to a value in the according set $\omega_{\phi(i)}$ the client computes the following values for the first move of the proof:
+    \begin{align*}
+    \text{--}~ & \forall \pi_j\in\omega_{\phi(i)} \wedge \pi_j\not=\pi_{\phi(i)} :~ s_j\rin\Zrq, c_j\rin\Zrq \text{ and } t_j=g^{\pi_j}h^{s_j}(C'_{\phi(i)}/g^{\pi_j})^{c_j} \\      
+    \text{--}~ & k_{\rho_i}\rin\Zrq;\quad t_{l_{\phi(i)}}=g^{\pi_i}h^{k_{\rho_i}}
+    \end{align*}
+%     \]
+    % j\in[1,|\omega_i|] \wedge i\not={l_i}
+%     \[
+%     \]
+    Values $(\bm t_{\phi(i)}, \bm s_{\phi(i)}, \bm c_{\phi(i)}, k_{\rho_i})$, with $\bm t_{\phi(i)}=\{t_j, t_{l_{\phi(i)}}\}$, $\bm s_{\phi(i)}=\{s_j\}$, and $\bm c_{\phi(i)}=\{c_j\}$ are stored for future use.
+    Note that $t_{l_{\phi(i)}}$ has to be added at the correct position $l_{\phi(i)}$ in $\bm t_{\phi(i)}$.
+    A commitment $\Comm_{\PoM}=g^{H(\vect{\omega}, \bm C', \bm t_{\phi(i)})} h^{r_{\Comm_\PoM}}$ with $r_{\Comm_\PoM}\rin\ZZ_q$ is computed as output with $\vect{\omega}=\{\omega_{\phi(i)}\}$.
+%     After computing the proof and commitment for every $C'_{\phi(i)}$ the client sets the message $\Comm_\PoM=\{\Comm_{\PoM, i}\}$.
+
+  \item %[$\Ch_\PoM$:]
+    The server stores received values, checks them for group membership, and chooses a random challenge $\Ch_\PoM=c\rin\Zrq$.
+
+  \item %[$\Res_{\PoM1}$:]
+    After receiving the challenge $c$ from the server, the client computes the following verification values for all commitments $C'_{\phi(i)}$ (note that $s_j$ and $c_j$ for all $j\not= l_{\phi(i)}$ are chosen already):
+    \begin{align*}      
+     & c_{l_{\phi(i)}}=c\oplus \bigoplus_{j=1,j\not=l_{\phi(i)}}^{|\omega_{\phi(i)}|} c_j;
+     && s_{l_{\phi(i)}}=k_{\rho_{\phi(i)}} - c_{l_{\phi(i)}}(r_{i}+r'_{\phi(i)}),
+    \end{align*}
+    where $i$ is the index of $C'_{\phi(i)}$ before shuffling.
+    The client then combines $\bm s = \{\bm s_{\phi(i)} \cup \{s_{l_{\phi(i)}}\}\}$ and $\bm c = \{\bm c_{\phi(i)} \cup \{c_{l_{\phi(i)}}\}\}$.
+    Note again that the set union has to consider the position of $l_{\phi(i)}$ to add the values at the correct position.
+    A commitment $\Res_{\PoM1}=g^{H(\bm s, \bm c)} h^{r_{\Res_\PoM}}$ with $r_{\Res_\PoM}\rin\ZZ_q$ is computed as output.
+    % and $\bm s_{\pi}=\{s_{\pi_i}\}$
+%     The response message $\Res_\PoM$ is then set to $\{\Res{_\PoM, i}\}$.
+
+  \item %[$\Res_{\PoM2}$:]
+    Eventually the client sets the decommitment message with $\bm t = \{\bm t_{\phi(i)} \}$, $\vect{\omega}=\{\omega_{\phi(i)}\}$, $\bm r_{\Comm_\PoM}=\{r_{\Comm_\PoM i}\}$, , $\bm r_{\Res_\PoM}=\{r_{\Res_\PoM i}\}$, and $\bm C'=\{C'_{\phi(i)}\}$ to
+    \[\Res_{\PoM2}=(\vect{\omega}, \bm C', \bm t, \bm s, \bm c, \bm r_{\Comm_\PoM}, \bm r_{\Res_\PoM}).\]
+\end{enumerate}
+
+\noindent
+$\Res_{\PoM1}$ and $\Res_{\PoM2}$ form together $\Res_{\PoM}$.
+To verify the proof, i.e. to verify that every commitment $C'_{\phi(i)}$ in $\bm C'$ commits to a character $c_i$ from either a subset of $\Sigma$ if significant or $\Sigma$ if not, the server verifies the following for every set $\omega_{\phi(i)} \in \vect{\omega}$ with $i\in[1,n]$ and $x=\phi(i)$:
+\begin{itemize}
+%   \item $\Comm_\PoM \verify g^{H(\vect{\omega}, \bm C', \bm t)} h^{r_{\Comm_\PoM}}$
+% 
+%   \item $\Res_\PoM \verify g^{H(\bm s, \bm c)} h^{r_{\Res_\PoM}}$
+
+  \item Let $c_j\in\bm c_i$ for $\bm c_i\in\bm c$ and verify
+        $c \verify \bigoplus_{j=1}^{|\omega_i|}c_j$
+
+  \item Let $\pi_j\in\omega_{\phi(i)}$, $\bm s_i \in \bm s$, $\bm t_i\in \bm t$, and $\bm c_i \in \bm c$, and verify
+        $\displaystyle \bm t_{i}[j] \verify g^{\pi_j}h^{\bm s_i[j]}(C'_i/g^{\pi_j})^{\bm c_i[j]}$
+        for all $j\in[1,|\omega_{\phi(i)}|]$
+\end{itemize}
+The server further verifies commitments $\Comm_\PoM \verify g^{H(\vect{\omega}, \bm C', \bm t)} h^{r_{\Comm_\PoM}}$ and $\Res_\PoM \verify g^{H(\bm s, \bm c)} h^{r_{\Res_\PoM}}$.
+The verification of the proof is successful iff all equations above are true \emph{and} \vect{\omega} contains all significant characters for $f_b$.
+
+\paragraph{Proof of Shuffle (\PoS)}
+The proof of correct shuffling \PoS is based on the proofs from \cite{FurukawaS01,Furukawa05}.
+In the following we specify the proof with adaptions in order to work with Pedersen commitments instead of ElGamal ciphertexts.
+% (We omit a security proof for this minor modification here and refer to the original work and full version for a proof that this \PoS is a zero-knowledge proof of knowledge.)
+Note that indices for commitments $C$ and $C'$ run from $1$ to $n$ and index ranges in the following change frequently.
+
+\begin{enumerate}
+  \item %[$\Comm_\PoS$:]
+    In the first move, the client (prover) builds a permutation matrix and commits to it.
+    First he chooses random $A'_j\rin\Zrq$ for $j\in[-4,n]$.
+    Let $A_{ij}$ denote a matrix with $i\in[-4,n]$ and $j\in[0,n]$, i.e. of size $(n+5)\times (n+1)$, such that a $n\times n$ sub-matrix of $A_{ij}$ is the permutation matrix (built from permutation $\phi$).
+    Further, let $\phi^{-1}$ be the inverse shuffling function.
+    This allows us to write the shuffle as $C'_{i}=\prod_{j=0}^{n}C_{j}^{A_{ji}}=C_{\kappa_i}h^{r'_{\kappa_i}}$ with $C_0=h$ and $\kappa_i=\phi^{-1}(i)$ for $i\in[1,n]$.
+    The matrix $A_{ij}$ is defined with $A_{w0}\rin\Zrq, A_{-1v}\rin\Zrq$ and $A_{0v}=r'_{\phi(v)}$ for $w\in[-4,n]$ and $v\in[1,n]$.
+    The remaining values in $A_{ij}$ are computed as follows for $v\in[1,n]$:
+    \begin{align*}      
+    & A_{-2v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv}; && A_{-3v}=\sum_{j=1}^{n} 3A_{j0} A_{jv}; && A_{-4v}=\sum_{j=1}^{n} 2A_{j0} A_{jv}
+    \end{align*}
+
+% \begin{figure}[!h]
+% % \begin{wrapfigure}[15]{r}{0.5\textwidth}
+% % \vspace*{-2em}
+% \centering
+% \begin{tikzpicture}
+%   \matrix [matrix of math nodes, text height=1em, minimum width=11em] (m) { %
+%     \hfill  & A_{-4,v}=\sum_{j=1}^{n} 2A_{j0} A_{jv} \\
+%     \hfill  & A_{-3,v}=\sum_{j=1}^{n} 3A_{j0} A_{jv} \\
+%     \hfill  & A_{-2,v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv} \\
+%     A_{w0}\rin\Zrq & A_{-1,v}\rin\Zrq \\
+%     \hfill  & A_{0,v}=r'_{\phi(v)} \\
+%     \hfill  & \hfill \\
+%     \hfill  & A_{ij} := \phi \\
+%     \hfill  & \hfill \\
+%   };
+%   \draw[] (m-1-1.north west) -- (m-1-2.north east) -- (m-8-2.south east) -- (m-8-1.south west) -- (m-1-1.north west);
+%   \draw[] (m-1-2.north west) -- (m-1-2.south west) -- (m-1-2.south east);
+%   \draw[] (m-2-2.north west) -- (m-2-2.south west) -- (m-2-2.south east);
+%   \draw[] (m-3-2.north west) -- (m-3-2.south west) -- (m-3-2.south east);
+%   \draw[] (m-4-2.north west) -- (m-4-2.south west) -- (m-4-2.south east);
+%   \draw[] (m-5-2.north west) -- (m-5-2.south west) -- (m-5-2.south east);
+%   \draw[] (m-6-2.north west) -- (m-8-2.south west);
+% \end{tikzpicture}
+% \caption{$A_{ij}$}\label{fig:matrix}
+% % \end{wrapfigure}
+% \end{figure}
+
+    \noindent
+    After generating $A_{ij}$ the client commits to it in $(C'_0, \tilde{f}, \bm f', w, \tilde{w})$ for $\bm f'=\{f'_v\}$ with $v\in[0,n]$:
+    \begin{align}
+    & f'_v=\prod_{j=-4}^{n} f_j^{A_{jv}};~ \tilde{f}=\prod_{j=-4}^{n} f_j^{A'_{j}}; && \tilde{w}=\sum_{j=1}^n A_{j0}^2 - A_{-40} \nonumber\\
+    & C'_0=g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}; && w=\sum_{j=1}^n A_{j0}^3-A_{-20}-A'_{-3} \label{eq:pos2}
+    \end{align}
+    %  \text{ for } v\in[0,n]
+
+    \noindent
+    Note that $C'_0=\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but Eq. \ref{eq:pos2} saves $n-1$ exponentiations.
+    The output is then created as
+    $\Comm_\PoS=g^{H(\{C_i\}, \{C'_{\phi(i)}\}, C'_0, \tilde{f}, \bm f', w, \tilde{w})} h^{r_{\Comm_\PoS}}$ with $r_{\Comm_\PoS}\rin\ZZ_q$.
+
+\item %[$\Ch_\PoS$:]
+    When receiving $\Comm_\PoS$ the server chooses $\bm c = \{c_v\}$ with $c_v\rin\Zrq$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
+
+\item %[$\Res_{\PoS1}$:]
+    After receiving challenges $\bm c$ from the server, the client computes the following verification values $(\bm s, \bm s')$ for $\bm s = \{s_v\}$ and $\bm s' = \{s'_v\}$ with $v\in[-4,n]$ and $c_0=1$:
+    \begin{align*}
+     & s_v = \sum_{j=0}^{n} A_{vj}c_j; && s'_v = A'_v + \sum_{j=1}^{n} A_{vj}c_j^2
+    \end{align*}
+
+    \noindent
+    The client sets $\Res_{\PoS1}=g^{H(\bm s, \bm s')} h^{r_{\Res_\PoS}}$ with $r_{\Res_\PoS}\rin\ZZ_q$.
+
+\item %[$\Res_{\PoS2}$:]
+    Eventually, the client sends the decommitment message to the server
+    \begin{align*}
+      & \Res_{\PoS2}=(C'_0, \tilde{f}, \bm f', w, \tilde{w}, \bm s, \bm s', r_{\Comm_\PoS}, r_{\Res_\PoS}).
+    \end{align*}
+    Note that $\{C_i\}$ and $\{C'_{\phi(i)}\}$ are omitted here as they are part of $\Res_{\PoC2}$, $\Res_{\PoM2}$ respectively, already.
+    If this proof is used stand-alone, those values have to be added to $\Res_{\PoS2}$.
+
+\end{enumerate}
+
+\noindent
+$\Res_{\PoS1}$ and $\Res_{\PoS2}$ form together $\Res_{\PoS}$.
+The server verifies now that the correctness of the commitments
+$\Comm_\PoS \verify g^{H(\{C_i\}, \{C'_{\phi(i)}\}, C'_0, \tilde{f}, \bm f', w, \tilde{w})} h^{r_{\Comm_\PoS}}$ and
+$\Res_{\PoS1} \verify g^{H(\bm s, \bm s')} h^{r_{\Res_\PoS}}$,
+and that the following equations hold for a randomly chosen $\alpha\rin\Zrq$ and $C_0=h$:
+\begin{align*}
+  & \prod_{v=-4}^{n} f_v^{s_v+\alpha s'_v}  \verify  f'_0\tilde{f}^\alpha \prod_{j=1}^n {f'_j}^{c_j+\alpha c_j^2};
+  &&  \prod_{v=0}^n C_v^{s_v}  \verify  \prod_{j=0}^n {C'_j}^{c_j} \\
+  & \sum_{j=1}^n (s_j^3 - c_j^3)  \verify  s_{-2} + s'_{-3} + w;
+  &&  \sum_{j=1}^n (s_j^2 - c_j^2)  \verify  s_{-4} + \tilde{w} 
+\end{align*}
+
+\noindent
+The server accepts the proof iff all those verifications succeed.
+This concludes the proof of correct shuffling.
+
+\subsubsection{Share verification}
+To verify that the client used the same password \pwd and shares $\share_0,\share_1$ with both servers $S_0$ and $S_1$, the servers compute the commitment $\fD'_b$ from the share commitment $\fC_b$ and their share $\share_{1-b}$, and exchange it.
+Comparing $\fD'_b$ with the value $\fD_b$ received from the client, the server verifies share correctness.
+This concludes the 2BPR protocol and each server $S_b$ stores $(\cC,S_{1-b},\share_b)$ if all checks were successful.
+
+\subsection{Security Analysis}
+We show that our 2BPR protocol is secure using our model from Section \ref{sec:securitymodel} and therefore offers policy compliance and password blindness.
+% Before discussing security of the 2BPR protocol we give three lemmata for the security of the three proofs \PoM, \PoC and \PoS.
+Proofs for the following lemmata and theorems can be found in Appendix \ref{app:proofs}.
+Proofs for lemmata are omited here due to space limitations.
+Note that \PoM and \PoC are standard zero-knowledge proofs and \PoS is a minor modification from the protocol in \cite{FurukawaS01,Furukawa05}.
+
+\begin{lemma}\label{lem:poc}
+  The \PoC protocol from Section \ref{sec:protocol} is a concurrent zero-knowledge proof if the discrete logarithm problem in the used group $G$ is hard and $H:\bits^\ast\mapsto\ZZ_q$ is a collision resistant hash function.
+\end{lemma}
+
+\begin{lemma}\label{lem:pom}
+  The \PoM protocol from Section \ref{sec:protocol} is a concurrent zero-knowledge proof if the discrete logarithm problem in the used group $G$ is hard and $H:\bits^\ast\mapsto\ZZ_q$ is a collision resistant hash function.
+\end{lemma}
+
+\begin{lemma}[\cite{FurukawaS01,Furukawa05}]\label{lem:pos}
+  The \PoS protocol from Section \ref{sec:protocol} is a concurrent zero-knowledge proof of knowledge of shuffling $\phi$ if the discrete logarithm problem in the used group $G$ is hard and $H:\bits^\ast\mapsto\ZZ_q$ is a collision resistant hash function.
+\end{lemma}
+
+% \noindent
+% Due to space limitations, the proof of Lemma \ref{lem:pos} is given in Appendix \ref{app:pos}.
+
+\begin{theorem}\label{theo:pc}
+  If $G$ is a DL-hard group of prime-order $q$ with generators $g$ and $h$, and $H$ a collision resistant hash function, the construction in Figure \ref{fig:protocol-overview} provides policy compliance according to Definition \ref{def:pc}.
+\end{theorem}
+
+% \noindent
+% Due to space limitations, the proof of Theorem \ref{theo:pc} is given in Appendix \ref{app:pc}.
+%
+\begin{theorem}\label{theo:zk}
+  If $G$ is a DL-hard group of prime-order $q$ with generators $g$ and $h$, and $H$ a collision resistant hash function, the construction in Figure \ref{fig:protocol-overview} provides password blindness according to Definition \ref{def:zk}.
+\end{theorem}
+
+% \noindent
+% Due to space limitations, the proof of Theorem \ref{theo:zk} is given in Appendix \ref{app:zk}.
+
+% =================================================================
+% Implementation & Performance
+% =================================================================
+\section{Implementation and Application}
+
+\subsubsection{Implementation}
+We implement an unoptimised prototype of the 2BPR protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
+% In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
+% Note however that the performance influence of $b$ is negligible.
+The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the claim that the proposed is practical.
+In particular, execution of the 2BPR protocol with a password of length $10$ and policies $(dl, 5)$ and $(ds, 7)$ needs $1.4$ seconds on the client and $0.68$ seconds on each server.
+With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a password of length $15$ and $6.34$ for a password of length $20$ the proposed 2BPR protocol is deemed practical.
+Also note that the client execution can be parallelised performing the proofs with $S_0$ and $S_1$ at the same time, which allows to significantly decrease the execution time.
+The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
+
+\subsubsection{Application to existing 2PAKE/2PASS protocols}
+Our 2BPR protocol can be used to register passwords for two-server protocols such as two-server password authenticated key exchange (2PAKE) and two-server password authenticated secret sharing (2PASS).
+2BPR can be used with two-server protocols that adopt additive password sharing in $\ZZ_q$ or multiplicative sharing in $G$.
+This includes 2PAKE protocols from \cite{Katz2005,Kiefer14}, which do not consider password registration such that our protocol can simply be used as part of the registration process.
+Integration of 2BPR into 2PASS on the other hand is more involved as password registration is part of the 2PASS protocol, i.e. the secret sharing phase.
+2PASS protocols in general can be divided in two stages: password and secret registration/sharing and secret reconstruction.
+While the approach from Bagherzandi et al. \cite{Bagherzandi2011}, as well as subsequent work using similar approaches \cite{PryvalovK14,CamenischLLN14,JareckiKK14}, does not actually share the password and could therefore use other means to verify policy compliance of a prospective password, the UC-secure 2PASS protocol from Camenisch, Lysyanskaya and Neven \cite{CamenischLN2012} uses multiplicative password sharing in $G$.
+To use our 2BPR protocol in conjunction with the setup protocol from \cite{CamenischLN2012} we redefine the encoded password to $g^{\pi}$ with $\pi\gets\pwdint(\pwd)$ such that shares are computed as $g^{\pi}=g^{\share_0}g^{\share_1}$.
+The first message (step 1) from the setup protocol in \cite{CamenischLN2012} can piggyback the first 2BPR protocol message.
+The subsequent three messages between the client and each server are performed between step 1 and step 2, while the inter-server communication can be piggybacked on step 2 and step 3.
+In addition to checking correctness of shares done in the setup of \cite{CamenischLN2012} the servers can now verify the 2BPR proofs and thus the password's policy compliance.
+This adds three flows to the setup protocol of \cite{CamenischLN2012} in order verify policy compliance of password shares.

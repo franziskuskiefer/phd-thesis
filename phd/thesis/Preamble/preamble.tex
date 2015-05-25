@@ -37,8 +37,9 @@
 % Captions: This makes captions of figures use a boldfaced small font.
 %\RequirePackage[small,bf]{caption}
 
-\RequirePackage[labelsep=space,tableposition=top]{caption}
+\RequirePackage[labelsep=space,tableposition=top,style=base,justification=centering]{caption}
 \renewcommand{\figurename}{Fig.} %to support older versions of captions.sty
+%[format=hang,justification=centering,singlelinecheck=off] ,labelfont=bf
 
 
 % *************************** Graphics and figures *****************************
@@ -239,8 +240,8 @@
 
 % ********************** TOC depth and numbering depth *************************
 
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 
 % ******************************* Nomenclature *********************************
@@ -295,12 +296,6 @@
 % 9. Handy macros
 % ****************************************************************************************************
 \newcommand\textlcsc[1]{\textsc{\MakeLowercase{#1}}}
-
-\newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
-\newcommand{\Execute}{\ensuremath{\mathsf{Execute}}\xspace}
-\newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
-\newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
-\newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
 
 % we have to get back the old marginpar for todonotes
 \let\marginpar\oldmarginpar
@@ -443,6 +438,13 @@
 \newcommand{\NS}{\ensuremath{\mathtt{NS}}\xspace}
 \newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
 \newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
+
+\newcommand{\Setup}{\ensuremath{\mathsf{Setup}}\xspace}
+\newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
+\newcommand{\Execute}{\ensuremath{\mathsf{Execute}}\xspace}
+\newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
+\newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
+\newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
 
 % Encryption
 \newcommand{\E}{\ensuremath{\mathtt{E}}\xspace}

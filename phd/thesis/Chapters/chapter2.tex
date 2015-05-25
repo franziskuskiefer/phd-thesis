@@ -138,6 +138,7 @@ We refer the interested reader to works concerned with complexity theory, \eg \c
 A \ac{PTM} is a Turing machine with distinguished states called coin-tossing states.
 For each coin-tossing state, the finite control unit specifies two possible next states.
 The computation of a \ac{PTM} is deterministic except that in coin-tossing states the machine tosses an unbiased coin to decide between the two possible next states.
+\eod
 \end{definition}
 
 \noindent
@@ -248,12 +249,10 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 % 	\item \ZZ, \NN, \RR, $\NN_0$, $\NN_{\geq 0}$
 % \end{itemize}
 
+%********************************** SECURITY MODELS **********************************
+\section{Security Models}
+% \mynote{* PAKE\\ * VPAKE\\ * 2PAKE}
 
-%********************************** %Building Blocks  **************************************
-\section{Building Blocks}
-This section describes building blocks used throughout this work to build the proposed protocols.
-But before starting with that we want to give a short description of some general models used to specify security in.
-% the random oracle, which is an important though disputed, and standard model.
 The two most popular models are the \ac{ROM} and the standard model.
 In the \ac{ROM} a public randomly chosen black-box function $H$ is available to all parties, whereas no such function exists in the \emph{standard model}.
 While this function $H$ can not be instantiated in the real world it is useful (sometimes necessary) in many proofs.
@@ -262,11 +261,88 @@ The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x
 It is consistent, such that $y=H(x)$ for all $y\gets H(x)$, and the output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
 If $H$ has seen $x$ before, it returns the previously chosen element $y$.
 While not including random oracles, the standard model often includes a \ac{CRS} that is made available to all parties and can be seen as common set-up parameters.
-
-\subsection{Common Reference String}
+% \subsection{Common Reference String}
 The \acl{CRS} model, proposed by \citet{CanettiF01}, is a generalisation of the common random string model.
 In the \ac{CRS} model all parties have access to a common reference string that was chosen according to some predefined distribution.
 This model is usually referred to as the standard model with \ac{CRS} as the assumption of the additional \ac{CRS} being available is rather weak.
+
+\subsection{Simulation-based Security}\label{app:simulation}
+We recall the basic setting of the malicious model from \cite{Goldreich2004}.
+Let $f:\bits^\ast \times \bits^\ast \rightarrow \bits^\ast \times \bits^\ast$ be a functionality such that $f(x,y)=(f_1(x, y), f_2(x,y))$ and $\Pi$ a two-party protocol to compute $f$.
+% $\Lambda$ denotes the empty string and
+In the ideal model every party gets an input and access to a trusted party.
+Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either aborts or sends some value with the length of their non-additional input to the trusted party.
+The trusted party answers to the first party with $f_1(x, y)$ after obtaining inputs $(x,y)$.
+If only one input is received, the trusted party replies with $\bot$ to both parties.
+The trusted party further answers the second party with $f_2(x,y)$ if it didn't stop before, $\bot$ otherwise.
+It may stop depending on its input and output if the first party is malicious.
+While an honest party always outputs the value received from the trusted party, malicious parties can output any polynomially computable function of all its inputs.
+The ideal and real model are formalised as follows.
+
+\begin{definition}[Ideal Model \texorpdfstring{\cite[Definition 7.2.4]{Goldreich2004}}{}]
+Let $B=(B_1, B_2)$ be a pair of PPT algorithms representing strategies in the ideal model.
+Such a pair is \emph{admissible} in the ideal malicious model if for at least one \emph{honest} $i\in\{1,2\}$, we have $B_i(u, z, r)=u$ and $B_i(u, z, r, v)=v$ for all possible $u,z,r$ and $v$.
+Furthermore, $|B_i(u, z, r)| = |u|$ must hold for both $i$'s.
+The joint execution of $f$ under $B$ in the ideal model on input pair $(x, y)$ and auxiliary input $z$, denoted $\IDEAL_{f, B(z)} (x, y)$, is defined by uniformly selecting a random tape $r$ for the adversary and letting 
+\[ \IDEAL_{f, B(z)} (x, y) := \Xi(x,y,z,r),\]
+with $\Xi(x,y,z,r)$ defined as follows.
+If party 1 is honest:
+\[ \Xi(x,y,z,r) := (f_1(x,B_2(y,z,r)), B_2(y,z,r,f_2(x,y'))); \]
+If party 2 is honest:
+\[
+ \Xi(x,y,z,r) := \left\{
+ \begin{array}{lllr}
+    (B_1(x, z, r, f_1(x',y), \bot)&, \bot&) &\text{if } B_1(x, z, r, f_1(x',y)) = \bot ;\\
+    (B_1(x,z,r,f_1(x',y))&, f_2(x',y)&) &\text{otherwise,}
+  \end{array}\right.
+\]
+% $(B_1(x, z, r, v), B_2(y, z, r, \Lambda))$
+with $x'=B_2(x,z,r)$.
+\eod
+\end{definition}
+
+\begin{definition}[Real Model \texorpdfstring{\cite[Definition 7.2.5]{Goldreich2004}}{}]
+Let $A=(A_1, A_2)$ be a pair of PPT algorithms representing strategies in the real model.
+Such a pair is \emph{admissible} with respect to $\Pi$ if at least one $A_i$ coincides with the strategy specified in $\Pi$.
+The joint execution of $\Pi$ under $A$ in the real model, on input pair $(x, y)$ and auxiliary input $z$, denoted $\REAL_{\Pi, A(z)}(x, y)$, is defined as the output pair resulting from the interaction between $A_1(x, z)$ and $A_2(y, z)$.
+\eod
+\end{definition}
+
+\noindent
+A protocol $\Pi$ is said to be secure if its execution in the real model emulates execution of the ideal model with trusted party for the according functionality.
+
+\begin{definition}[Security \texorpdfstring{\cite[Definition 7.2.6]{Goldreich2004}}{}]
+Protocol $\Pi$ is said to securely compute $f$ in the malicious model if for every PPT pair of algorithms $A=(A_1, A_2)$ that is admissible for the real model, there exists a PPT pair of algorithms $B=(B_1, B_2)$ that is admissible for the ideal model such that 
+\[ \{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi, A(z)}(x, y)\}_{x, y, z} \]
+where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
+\eod
+\end{definition}
+
+\paragraph{The Hybrid Model}
+When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
+Security then follows from the composition theorem from \citet{Canetti00}.
+In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, i.e. a call to the trusted party that computes $g$.
+The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
+Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, i.e. instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
+To prove security it is sufficient to show 
+$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\HYBRID_{\Pi, A(z)}^{g} (x, y)\}_{x, y, z}$,
+which implies
+$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
+as shown by \citet{Canetti00}.
+
+
+\subsection{Verifier-based PAKE Security}
+\mynote{BP VPAKE model}
+
+\subsection{Two-server PAKE Security}
+\mynote{Katz 2PAKE model}
+
+%********************************** %Building Blocks  **************************************
+\section{Building Blocks}
+This section describes building blocks used throughout this work to build the proposed protocols.
+% But before starting with that we want to give a short description of some general models used to specify security in.
+% the random oracle, which is an important though disputed, and standard model.
+
 
 \subsection{Hash Functions}
 Hash functions, usually denoted $H$, take arbitrary long strings as input and output a compressed string of shorter length than the input.
@@ -363,7 +439,7 @@ A public key encryption scheme $\PKE=(\PKEGen$, $\Enc$, $\Dec)$ consists of the 
 \begin{itemize}
   \item $\PKEGen(\secpar)$ generates a secret/public key-pair $(\sk,\pk)$ on input of the security parameter \secpar
   \item $\Enc_\pk(m; r)$ encrypts message $m$ with public key \pk and randomness $r$, and outputs ciphertext $c$
-  \item $\Dec_\sk(c)$ decrypts ciphertext $c$ with secret key \sk and outputs message $m$
+  \item $\Dec_\sk(c)$ decrypts ciphertext $c$ with secret key \sk and outputs message $m$ \eod
 \end{itemize}
 \end{definition}
 
@@ -387,10 +463,15 @@ $\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
 
 \paragraph{ElGamal Encryption}\label{sec:elgamalencryption}
 \citet{Gamal84} encryption operates on a multiplicative group \GG of prime order $p$ with generator $g$.
-Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\sk=z\rin\ZZ_p$ and $x$ as secret key.
-Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
 Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
-Decryption is given by $m=\Dec_\sk^\EG(C)=e/u^z$.
+\begin{itemize}
+  \item $\PKEGen^\EG(\secpar)$ outputs $(\pk, \sk)$ with public key $\pk=h=g^z$ and secret key $\sk=z\rin\ZZ_p$.
+  \item $\Enc^{\EG}_\pk(m;r)$ outputs $C=(u,e)$ with $u=g^r$ and $e=h^rg^m$.
+  \item $\Dec_\sk^\EG(C)$ outputs $m=e/u^z$.
+\end{itemize}
+% Key generation $\PKEGen(\secpar)$ outputs a public key $\pk=h=g^z$ for random $\sk=z\rin\ZZ_p$ and $x$ as secret key.
+% Let $C=(u,e)\algout\Enc^{\EG}_\pk(m;r)$ with $u=g^r$ and $e=h^rg^m$ denote an El-Gamal ciphertext.
+% Decryption is given by $m=\Dec_\sk^\EG(C)=e/u^z$.
 
 
 \subsubsection{Public Key Encryption secure against Chosen-Ciphertext Attacks}
@@ -418,29 +499,30 @@ The attacker in the \ac{CCA}-security experiment is now also allowed to query th
 
 
 \paragraph{Cramer-Shoup Encryption}\label{sec:csencryption}
-
-We describe labelled \ac{CS} encryption here.
-Common \ac{CS} encryption simply omits the label $\ell$.
-\ac{CS} encryption operations on multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
-Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\sk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+Labelled \ac{CS} encryption here operates on a multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
 Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
-Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
-Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
+Common \ac{CS} encryption simply omits label $\ell$.
+% Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\sk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+% Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
+% Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
+
+\begin{itemize}
+  \item $\PKEGen^\CS(\secpar)$ outputs $(\pk, \sk)$ with public key $\pk=(c,d,H_k)$ for $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\sk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
+  \item $\Enc^{\CS}_\pk(\ell,m;r)$ on input label $\ell$, message $m$, and randomness $r$ outputs $C=(\ell,\bm{u},e,v)$ with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$
+  \item $\Dec_\sk^\CS(\ell,C)$ outputs $m=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
+\end{itemize}
 
 %----------------------- OBI ---------------------------
 \subsection{Oblivious Bloom Intersection}\label{sec:obi}
-The Oblivious Bloom Intersection (OBI) protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
-Originally, the OBI protocol was designed for Private Set Intersection (PSI) such that at the end of the protocol, the client learns the intersection $\cC\cap \cS$ and the server learns nothing. 
-As observed by \citet{WenD14}, OBI can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
+Originally, the \ac{OBI} protocol was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\cC\cap \cS$ and the server learns nothing. 
+The \ac{OBI} protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
+As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
 At the end of the protocol, for each element in the intersection the client also receives the corresponding data item from the server. 
-The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \citet[Algorithm 1]{WenD14}. 
+The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. 
+The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \citet[Algorithm 1]{WenD14} (recalled in Algorithm \ref{alg:gbf}). 
 The garbled Bloom filter encodes both $\cS$ and $\cS_d$ in a way such that querying the key $s_i\in\cS$ against $G_\cS$ returns the data item $d_i$ and querying $s_j\not \in \cS$ returns a random string. Let the client hold a set $\cC$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\cC$. 
 The client and the server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
 As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that encodes the intersection $\cC\cap \cS$ and the data items associated with the elements in $\cC\cap \cS$. Then the client can query $G_{\cC\cap\cS}$ with each element $c_i\in\cC$. If $c_i$ is in the intersection then there must be  some $s_j\in \cS$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
-
-In this paper we use OBI so that the server can send a set of secret shares to the client based on the client's set $\cC$ without knowing anything about $\cC$. Although in general we can use any PSI with Data Transfer protocol (e.g. \citet{fre04}), we choose OBI here because of its efficiency. OBI is very efficient due to the fact that it relies mostly on hash operations. 
-The performance can be further improved by the modifications proposed by \citet{Pinkas0Z14}. 
-Note that although \citet{Pinkas0Z14} also proposed a new PSI protocol based on hashtable + oblivious transfer in \cite{Pinkas0Z14} that is more efficient than OBI, the new PSI protocol cannot be used in our case because it does not support data transfer.
 
 \begin{algorithm}[htb]
 \caption{GBFIntesection $(G, B, m, \lambda)$}
@@ -538,16 +620,16 @@ Note that although \citet{Pinkas0Z14} also proposed a new PSI protocol based on 
 \end{algorithm}
 
 \subsection{Linear Secret Sharing}
-Given $\cS$ and $\Gamma_\cS$, an \ac{MSP} is defined as a tuple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\cS$ and $\Gamma_\cS$) and $\rho:\{1,...l\}\rightarrow \cS$ labels each row of $M$ with an element in $\cS$. 
+Given set \cS and access structure $\Gamma_\cS$ over \cS, a \ac{MSP} is defined as a triple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\cS$ and $\Gamma_\cS$) and $\rho:\{1,...l\}\rightarrow \cS$ labels each row of $M$ with an element in $\cS$. 
 % We recall \cite[Algorithm 1]{LiuC10} to generate \ac{LSSS} matrix from a boolean formula in Algorithm \ref{alg:lsssM} for completeness.
-Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose at random $r_2,\ldots,r_n \in \mathbb{F}$ and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
+Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose $r_2,\ldots,r_n \in \mathbb{F}$ at random and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
 Then $M\mathbf{v}$ is a vector of $l$ shares of the secret. 
 The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \cS$. 
 For any set $C\in \Gamma_\cS$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
-The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, i.e. there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
+The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, \ie there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
 The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
 
-\mynote{make this correct and some into to \ac{LSSS}}
+\mynote{how to generate $M$}
 
 
 % \begin{algorithm}
@@ -607,7 +689,7 @@ The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the s
 
 %----------------------- SPHF---------------------------
 \subsection{Smooth Projective Hashing}
-Smooth projective hashing allows to compute the hash value of an element from a set in two different ways:
+Smooth projective hashing allows to compute a hash value of an element from a set in two different ways:
 either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
 In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
 \aclp{SPHF} are due to \citet{Cramer2002} who used them to construct \ac{CCA}-secure public key encryption schemes and analyse mechanisms from \cite{Cramer1998}.
@@ -623,7 +705,7 @@ The public parts of the language are given by the \acl{CRS} \crs containing the 
 By $\tau$ we denote the \crs trapdoor, the secret key to \pk.
 We denote \cL the encryption scheme used to generate words in \Lpwd.
 
-The authors of \cite{Benhamouda2013} identify three different SPHF classes:
+The authors of \cite{Benhamouda2013} identify three different \ac{SPHF} classes:
 word-independent key and adaptive smoothness (KV-SPHF, first proposed by \citet{Katz2011}),
 word-independent key and non-adaptive smoothness (CS-SPHF, first proposed by \citet{Cramer2002}),
 and word-dependent key (GL-SPHF, first proposed by \citet{Gennaro2003}).
@@ -635,6 +717,7 @@ Unless stated otherwise all \acp{SPHF} in the following are KV-SPHFs where the p
 \begin{definition}[Languages of Ciphertexts]\label{def:language}
 Let $L_\pwd \subseteq \{(\Label, C, \pwd^\ast)\}=\cC$ denote the language of labelled ciphertexts under consideration with ciphertext $(\Label,C)$ under \pk and password $\pwd^\ast\in\cD$.
 A ciphertext $C$ is in language \Lpwd iff there exists randomness $r$ such that $C\gets\Enc^{\cL}_\pk(\ell,\pwd;r)$.
+\eod
 \end{definition}
 
 \noindent
@@ -649,7 +732,7 @@ A \emph{\acl{SPHF}} for ciphertext language \Lpwd consists of the following four
 	\item $\HKGen(\Lpwd)$ generates a random hashing key $\hk\in\ZZ_p^n$ for language \Lpwd.
 	\item $\PKGen(\hk,\Lpwd)$ derives the projection key $\hp\in\GG^m$ from hashing key \hk. 
 	\item $\Hash(\hk,\Lpwd,C)$ computes hash value $h$ from hashing key \hk and ciphertext $C$.
-	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. 
+	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. \eod
 \end{itemize}
 \end{definition}
 
@@ -697,7 +780,7 @@ $\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
 	\item[$\Omega^{\cL}_\pk(\ell,\pwd)$] returns elements $C\in \Laux$ with $C\gets\Enc^\cL_\pk(\Label,\allowbreak\pwd;r)$ using encryption algorithm \cL and label \Label.
     	It additionally returns $\Hash(\hk_{i},\Lpwd,C)$ if $b=0$ or $h_{i}\rin\GG$ if $b=1$ for all $i\in 1,\dots, l$.
 	
-	\item[$\Dec^\cL_\pi(\Label,C)$] decrypts the ciphertext $C$ with label \Label if $(\Label,C)$ was not obtained from $\Omega^\cL_\pk$.
+	\item[$\Dec^\cL_\pi(\Label,C)$] decrypts the ciphertext $C$ with label \Label if $(\Label,C)$ was not obtained from $\Omega^\cL_\pk$. \eod
 \end{description}
 \end{definition}
 
@@ -731,6 +814,7 @@ A \acl{T-SPHF} for ciphertext language \Lpwd consists of the following seven alg
 
 \noindent
 We assume $\crs'$ is, like \crs, made available to all parties.
+\eod
 \end{definition}
 
 \paragraph{Correctness} Correctness of \acp{T-SPHF} extends correctness of \acp{SPHF} by the statement that for every valid ciphertext $C$, generated by \cL, and honestly generated keys \hk and \hp, it holds that $\VerHp(\hp, \Lpwd)=1$ and $\Hash(\hk, \Lpwd, C)=\THash(\hp, \Lpwd, C, \tau')$.
@@ -741,6 +825,7 @@ To capture soundness of \acp{T-SPHF} \citet{Benhamouda2013} introduce \emph{$(t,
 \begin{definition}[$(t,\varepsilon)$-soundness]
 Given \crs, $\crs'$ and $\tau$, no adversary running in time at most $t$ can produce a projection key \hp, a password \pwd, a word $C$, and valid witness $r$ such that \hp is valid, i.e. $\VerHp(\hp,\Lpwd)=1$, but $\THash(\hp,\Lpwd,C,\tau')\not=\PHash(\hp,\Lpwd,C,r)$ with probability at least $\varepsilon(\secpar)$.
 Perfect soundness states that the property holds for any $t$ and any $\varepsilon(\secpar)>0$.
+\eod
 \end{definition} 
 
 \paragraph{Computational Smoothness}
@@ -759,7 +844,8 @@ $\Exp^{\smooth{b}}_{\SPHF,\cA}(\secpar):$ \\
 
 \noindent
 On input \pwd the \PKGen oracle draws a new hash key \hk for \ac{T-SPHF} on \Lpwd, computes the according projection key \hp using \PKGen, and returns it to the adversary.
-The \Hash oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.\\
+The \Hash oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.
+\eod
 \end{definition}
 
 
@@ -784,70 +870,3 @@ The additional algorithms for \ac{T-SPHF} and changes to the hash functions are 
       \[e(\hp_2, \crs') \stackrel{?}{=} e(g_{1,1}, \chi_{1,2})\cdot e(d, \chi_4)\]
   \item $\THash(\hp, \Lpwd, C, \tau')$ computes $\left[ e(u_1, \chi_{1,1} \chi_{1,2}^{\xi})\cdot e(u_2, \chi_2)\cdot e(e/g_{1,1}^{\pwd}, \chi_3)\cdot e(v, \chi_4) \right]^{1/\tau'}$
 \end{itemize}
-
-
-\section{Security Models}
-\mynote{* PAKE\\ * VPAKE\\ * 2PAKE}
-
-
-
-\subsection{Simulation in the Malicious Model}\label{app:simulation}
-We recall the basic setting of the malicious model from \cite{Goldreich2004}.
-Let $f:\bits^\ast \times \bits^\ast \rightarrow \bits^\ast \times \bits^\ast$ be a functionality such that $f(x,y)=(f_1(x, y), f_2(x,y))$ and $\Pi$ a two-party protocol to compute $f$.
-% $\Lambda$ denotes the empty string and
-In the ideal model every party gets an input and access to a trusted party.
-Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either aborts or sends some value with the length of their non-additional input to the trusted party.
-The trusted party answers to the first party with $f_1(x, y)$ after obtaining inputs $(x,y)$.
-If only one input is received, the trusted party replies with $\bot$ to both parties.
-The trusted party further answers the second party with $f_2(x,y)$ if it didn't stop before, $\bot$ otherwise.
-It may stop depending on its input and output if the first party is malicious.
-While an honest party always outputs the value received from the trusted party, malicious parties can output any polynomially computable function of all its inputs.
-The ideal and real model are formalised as follows.
-
-\begin{definition}[Ideal Model \texorpdfstring{\cite[Definition 7.2.4]{Goldreich2004}}{}]
-Let $B=(B_1, B_2)$ be a pair of PPT algorithms representing strategies in the ideal model.
-Such a pair is \emph{admissible} in the ideal malicious model if for at least one \emph{honest} $i\in\{1,2\}$, we have $B_i(u, z, r)=u$ and $B_i(u, z, r, v)=v$ for all possible $u,z,r$ and $v$.
-Furthermore, $|B_i(u, z, r)| = |u|$ must hold for both $i$'s.
-The joint execution of $f$ under $B$ in the ideal model on input pair $(x, y)$ and auxiliary input $z$, denoted $\IDEAL_{f, B(z)} (x, y)$, is defined by uniformly selecting a random tape $r$ for the adversary and letting 
-\[ \IDEAL_{f, B(z)} (x, y) := \Xi(x,y,z,r),\]
-with $\Xi(x,y,z,r)$ defined as follows.
-If party 1 is honest:
-\[ \Xi(x,y,z,r) := (f_1(x,B_2(y,z,r)), B_2(y,z,r,f_2(x,y'))); \]
-If party 2 is honest:
-\[
- \Xi(x,y,z,r) := \left\{
- \begin{array}{lllr}
-    (B_1(x, z, r, f_1(x',y), \bot)&, \bot&) &\text{if } B_1(x, z, r, f_1(x',y)) = \bot ;\\
-    (B_1(x,z,r,f_1(x',y))&, f_2(x',y)&) &\text{otherwise,}
-  \end{array}\right.
-\]
-% $(B_1(x, z, r, v), B_2(y, z, r, \Lambda))$
-with $x'=B_2(x,z,r)$.
-\end{definition}
-
-\begin{definition}[Real Model \texorpdfstring{\cite[Definition 7.2.5]{Goldreich2004}}{}]
-Let $A=(A_1, A_2)$ be a pair of PPT algorithms representing strategies in the real model.
-Such a pair is \emph{admissible} with respect to $\Pi$ if at least one $A_i$ coincides with the strategy specified in $\Pi$.
-The joint execution of $\Pi$ under $A$ in the real model, on input pair $(x, y)$ and auxiliary input $z$, denoted $\REAL_{\Pi, A(z)}(x, y)$, is defined as the output pair resulting from the interaction between $A_1(x, z)$ and $A_2(y, z)$.
-\end{definition}
-
-\noindent
-A protocol $\Pi$ is said to be secure if its execution in the real model emulates execution of the ideal model with trusted party for the according functionality.
-
-\begin{definition}[Security \texorpdfstring{\cite[Definition 7.2.6]{Goldreich2004}}{}]
-Protocol $\Pi$ is said to securely compute $f$ in the malicious model if for every PPT pair of algorithms $A=(A_1, A_2)$ that is admissible for the real model, there exists a PPT pair of algorithms $B=(B_1, B_2)$ that is admissible for the ideal model such that 
-\[ \{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi, A(z)}(x, y)\}_{x, y, z} \]
-where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
-\end{definition}
-
-\paragraph{The Hybrid Model}
-When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
-Security then follows from the composition theorem from \citet{Canetti00}.
-In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, i.e. a call to the trusted party that computes $g$.
-The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
-Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, i.e. instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
-To prove security it is sufficient to show 
-$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\HYBRID_{\Pi, A(z)}^{g} (x, y)\}_{x, y, z}$,
-which implies
-$\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
-as shown by \citet{Canetti00}.

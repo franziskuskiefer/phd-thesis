@@ -1,3 +1,85 @@
+\section{Password Authenticated Key Exchange for BPR}\label{sec:pake}
+
+\mynote{how to use the passwords registered before}
+
+\subsection{PAKE for SPC-based BPR}
+In order to use a password registered with our protocol for authentication, we require an appropriate password-based authentication or authenticated key exchange (PAKE) protocol.
+%While verifier-based (aka augmented) key exchange has been proposed \cite{BellovinM93,BenhamoudaP13}, its benefit is marginal.
+In this section we show how to use the verifier $\ver$ in a common PAKE protocol. The approach we describe here is general and can be used with any PAKE protocol.
+
+% The general approach is as follows.
+At the beginning of the authentication process, for a given client identifier the server retrieves the corresponding verifier $\ver=(h, e, N)$ from the database and returns $(e,N)$ to the client.
+Using $(e,N)$ and the password \pwd, the client can recompute all $u_i$ values and thus $h'\gets H_3(u_{v+1}^e\cdot\prod_{i=1}^{v}u_i)$ as described earlier.
+Note that depending on the used PAKE protocol we have to ensure that $H_3$ maps into an algebraic structure, suitable for use with the PAKE protocol.
+Now client and server run any PAKE protocol on password hash $h$. The password hash $h$ retains information about individual characters as well as the order of characters in the password. The first is easy to see since $h$ is computed from the product of blinded characters in the password.  
+To see the second, recall that each $u_i=H_2(c_i)\cdot r_i^e$ where $r_i=f_k(i)$, which is a pseudorandom number generated under a key $k$. 
+The key $k$ is derived from the password string $k\gets H_1(\pwd)$. 
+We must also stress that recomputing the password hash involves public key operations and thus is relatively slow.
+However, this is an advantage rather than a shortcoming. 
+The increased work, necessary to compute verifier \ver, can effectively increase work load for dictionary attack. 
+It is also possible to use a standard key derivation function such as PBKDF2 \cite{rfc2898} as $H_1$ so that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack even more difficult.
+
+Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. Often we can piggyback the messages in the PAKE protocol to avoid increasing communication round. 
+For example, if we use the UC-secure PAKE protocol from \citet{Benhamouda2013}, the RSA public key $(e,N)$ can be piggybacked on the server's message sent in the PAKE protocol. Thus we do not increase the round complexity and the protocol remains a one-round protocol.
+
+% \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
+
+\subsection{Building VPAKE from PAKE}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{1.0}{\begin{tikzpicture}
+\draw[] (-5.5,.5) rectangle (10.2,-2);
+
+\node[party,align=center] (client) at (-0.5,0) {{$C~ (\pwd)$}};
+\node[party,align=center,text width=10em] (server) at (7.5,0) {$S~ (C, \ver, r)$};
+
+\node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver\gets f(\pwd, r)$};
+
+\node[dummyState] (clientR) at (0.75,-0.6){};
+\node[dummyState] (serverR) at (5.5,-0.6){};
+\draw[pil] (serverR) -- node[above, align=center] {$r$} (clientR);
+
+\node[dummyState] (clientPAKE) at (0.75,-1.6){};
+\node[dummyState] (serverPAKE) at (5.5,-1.6){};
+\draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on \ver} (serverPAKE);
+
+\end{tikzpicture}}
+\caption{Generic VPAKE construction from PAKE}
+\label{fig:genericVPAKE}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{1.0}{\begin{tikzpicture}
+\draw[] (-5.5,.5) rectangle (10.2,-2.5);
+
+\node[party,align=center] (client) at (-0.5,0) {{$C~ (\pwdv)$}};
+\node[party,align=center,text width=10em] (server) at (7.5,0) {$S~ (C, \ver, r)$};
+
+\node[state, align=left] at (0.5,-0.5) [stateS, align=left]{$\forall \pwd_i\in\pwdv:~ \ver_i\gets f(\pwd_i, r)$};
+\node[stateS, align=left] at (11.5,-0.5) {draw randomness $r'$};
+
+\node[state, align=left] at (0.5,-1.9) [stateS, align=left]{$\forall \pwd_i\in\pwdv:~ H_i\gets g(\ver_i, r')$};
+\node[stateS, align=left] at (11.5,-1.9) {$H\gets g(\ver, r')$};
+
+\node[dummyState] (clientR) at (0.75,-0.6){};
+\node[dummyState] (serverR) at (5.5,-0.6){};
+\draw[pil] (serverR) -- node[above, align=center] {$r, r'$} (clientR);
+
+\node[dummyState] (clientPAKE) at (0.75,-2){};
+\node[dummyState] (serverPAKE) at (5.5,-2){};
+\draw[pil,<->] (clientPAKE) -- node[above, align=center] {OPAKE on\\ $(\{\bm H, \bar{\ver}\}, (H, \ver))$} (serverPAKE);
+
+\end{tikzpicture}}
+\caption{Generic Oblivious VPAKE construction from suitable PAKE}
+\label{fig:genericOVPAKE}
+\end{figure}
+
+\mynote{generic description of how build VPAKE from PAKE}
+\mynote{VPAKE security model}
+
+\subsection{VPAKE Protocols} \label{sec:vpake}
 % \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
 We now focus on suitable VPAKE protocols where the server $\bm{S}$ using $(id, H, r)$ stored from the ZKPPC-based registration protocol can authenticate the client $\bm{C}$ that uses only its $\pwd$. 
 Such protocols can be constructed with a general VPAKE framework introduced by Benhamouda and Pointcheval \cite{BenhamoudaP13}. 

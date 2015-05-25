@@ -1,4 +1,4 @@
-\chapter{Password-based Authentication in the Two-Server Setting} \label{ch:2pake}
+\chapter{Password Authentication Framework in the Two-Server Setting} \label{ch:2pake}
 
 While \ac{PAKE} solves one of the most pressing problems in user authentication, it is still vulnerable to offline dictionary attacks once the server is compromised.
 To alleviate the impact of password leaks on the server threshold \ac{PAKE} has been proposed.
@@ -7,10 +7,33 @@ This chapter proposes a complete framework to use two-server \ac{PAKE} for user 
 
 This chapter is based on work in \cite{KieferM14b,KieferM15b,KieferM15c}.
 
-%********************************** %2PAKE Registration  **************************************
-\section{Two-Server Password Registration} \label{sec:2pake-registration}
-\mynote{2BPR ???(ePrint/ESORICS'15) \cite{KieferM15c}}
+\paragraph{Motivation}
 
+Considering that ``password-cracking tools'' such as Hashcat \cite{hashcat} and John the Ripper \cite{JohnTheRipper} are very efficient, it is safe to assume that leaked password hashes are not safer than un-hashed ones when compromised by an attacker \cite{NarayananS05a,WeirAMG09,DellAmicoMR10,Bonneau12}.
+The notion of threshold and two-server password authenticated key-exchange \cite{FordK00,MacKenzieSJ02} has been proposed where the password is not stored on a single server but split between a number of servers such that leakage of a password database on a non-qualified subset does not reveal the password.
+The two-server setting is regarded as more practical (in comparison to a more general threshold setting) given that if one server is compromised a notification to change the password can be sent out to the clients.
+Two-server password authenticated key-exchange protocols (2PAKE) \cite{Brainard2003,SzydloK05,Katz2005} split the client's password $\pwd$ into two shares $\share_1$ and $\share_2$ such that each share is stored on a distinct server.
+During the authentication phase both servers collaborate in order to authenticate the client.
+Yet, no server alone is supposed to learn the plain password.
+A second, more recent development in two-server (and threshold) password protocols is password authenticated secret sharing (PASS) \cite{Bagherzandi2011,CamenischLN2012,JareckiKK14} where a client stores shares of a (high-entropy) secret key on a number of servers and uses a (low-entropy) password to authenticate the retrieval process.
+
+Registering password shares for 2PAKE/2PASS protocols however makes it impossible for the servers to verify their password policies upon registration unless the password is transferred to each of them in plain. 
+This however, would imply that the client trusts both servers to securely handle its password, which contradicts the purpose and trust relationships of multi-server protocols.
+The use of two-server password protocols in a remote authentication setting, therefore, requires a suitable password registration procedure in which none of the servers would receive information enabling it (or an attacker in control of the server) to deliberately or inadvertently recover the client's password.
+This registration procedure must further allow for policy compliance checks to be performed by the servers since secret sharing per se does not protect against ``weak'' passwords.
+A trivial approach of sending $\share_1$ and $\share_2$ to the corresponding servers over secure channels is not helpful here since it is not clear how the two servers can perform the required compliance check.
+To alleviate a similar problem in the verifier-based PAKE setting, Kiefer and Manulis~\cite{KieferM14c} introduced the concept of zero-knowledge password policy checks, where upon registration the client can prove to the server the compliance of its chosen password with respect to the server's policy without disclosing the actual password.
+In this work, we propose the concept of blind password registration for two-server password protocols and thus show how to realise secure registration of password shares in a way that protects against at most one malicious server (if both servers are malicious, the attacker obviously gets the password), yet allows both servers to check password compliance against their mutual password policy.
+Two-server Blind Password Registration (2BPR) is not vulnerable to offline dictionary attacks as long as one server remains honest.
+This is in contrast to the single-server setting where an attacker is always able to perform offline dictionary attacks on password verifiers after compromising a server. %password BPR protocol
+Our main contribution is the 2BPR security model and the corresponding protocol for secure registration of 2PAKE/2PASS passwords. We show how secure distribution of password shares can be combined with an appropriate policy-compliance proof for the chosen password in a way that does not reveal the password and can still be verified by both servers.
+Our 2BPR protocol can be used to enforce policies over the alphabet of all 94 printable ASCII characters, including typical requirements on password length and character types.
+
+\input{Chapters/passwords2}
+
+%********************************** %2PAKE Registration  **************************************
+% \mynote{2BPR ???(ePrint/ESORICS'15) \cite{KieferM15c}}
+\input{Chapters/2bpr}
 
 
 %********************************** %2PAKE  **************************************

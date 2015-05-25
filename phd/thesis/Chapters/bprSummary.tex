@@ -1,6 +1,37 @@
-\section{Performance \& Implementation} \label{sec:performance}
+\section{Blind Password Registration --- Discussion and Analysis} \label{sec:discussion}
+Our BPR protocol is proven secure in a strong security model, but does not hide the length of the password from the server. Arguably, this is a strong security requirement (cf. Section \ref{sec:bpr-model}) that may not be needed in many practical scenarios since password policies usually aim at offering some minimum password strength such that every password of the required minimum length or longer is considered to be secure.
+Having this in mind, it makes no difference whether the password length is known to an attacker or not since the password is assumed to be strong enough.
 
-\subsection{SPC based BPR}
+
+Nonetheless, one may argue that an attacker knowing the password length can perform a dictionary attack by only trying passwords of the given length and thus use the reduced search space to speed up the attack. An initial idea for hiding the password length in our BPR protocol could be to combine commitments for \emph{non-significant} password characters into a single commitment and use only \pmin commitments in the proof. This, however, would allow a malicious client to register passwords that do not comply with the policy unless the client can prove that the exponent of the combined commitment is of the form $\sum b^i\pi_j$, which is only possible when the length of the polynomial (and therefore the password length) is known.
+We show that our BPR protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
+In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for the policy $f$.
+All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
+This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. The remaining protocol steps remain unchanged.
+Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified BPR protocol using min-entropy
+$\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
+for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
+% \footnote{If a stepping systems is used due to efficiency reasons we have to use $\cD_{f,l1,l2}$, which contains passwords with length between $l1$ and $l2$.}
+However, it is obvious that this modification trades off stronger security for efficiency due to the use of $l$ for all shorter passwords.
+
+%for $n\leq 50$ for $50<n\leq 100$
+
+% However, having a closer look on the definition of min-entropy in Section \ref{sec:min-entropy} one can see that the difference between a dictionary $\cD_f$ and $\cD_{f,|\pwd|}$ is marginal.
+% To capture the difference between an attacker knowing the password length and one not knowing it a different definition of min-entropy may be useful.
+%
+Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
+In this case the proof \PoS becomes redundant and all steps related to it can be removed. 
+This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
+The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which seems to offer comparable security guarantees.
+% By changing the success probability in the dictionary attack resistance definition as discussed in Section \ref{sec:bpr-model} such a notion can be established.
+% But this gives the attacker significantly more information and therefore speeds-up the password retrieval process. %, such that we do not further discuss this option.
+% \fk{$l=|\pwd|$ is leaked. If we could prove representation of $C=g^{\sum_{i=0}^{l-1}95^i c_i}h^r$, we could hide that. We should look into this as it would be another good improvement compared to the ESORICS protocol}
+% \fk{discuss why hiding the password length is ``OK'' but also discuss impact on real world attacks and how length-hiding could be achieved in our protocol}
+
+
+\subsection{Performance \& Implementation} \label{sec:performance}
+
+\subsubsection{SPC based BPR}
 \mynote{performance trade-off discussion (registration VS authentication)}
 In the implementation of the \ac{BPR} protocol we can adopt several tricks aiming to improve its performance. First, we can pre-compute and reuse values $g^{\pi_i}$ on the client and server side.
 The computation of $b^i$ can be performed in a way that allows to re-use previously calculated values and the implementation of the proof can be optimised allowing the client to use $\pi$.
@@ -39,7 +70,7 @@ Increasing the maximum password length to $20$ slows down the client to $22.7$ a
 Our measurements show that our \ac{BPR} protocol is \emph{at least} $10$ times faster than the \ac{ZKPPC}-based registration approach.
 With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed \ac{BPR} protocol can be deemed practical.
 
-\subsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
+\subsubsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
 We implemented a prototype of our password registration protocol and measured the performance. 
 To compare, we also implemented the \ac{ZKPPC}-based password registration protocol. 
 Both implementations are in C and use OpenSSL 1.0.0\footnote{\url{https://www.openssl.org}} for the underlying cryptographic operations. 
@@ -85,33 +116,3 @@ The cost of the zero-knowledge proof protocol is $6\cdot n\cdot\sum_{i=1}^n\omeg
 We also show the running time for each step in our protocol (see Fig. \ref{fig::break}). As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing SPC is linear in the size of $\hat{\cS}$. The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$. A possible optimisation is to take this step offline. 
 Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 
 The keys and pre-computed values can be stored together. Later when a client sends a registration request, the server can retrieve them and run the protocol. If this step is taken offline, then the online computation cost is small, usually no more than 100 milliseconds in a typical setting. 
-
-\section{BPR -- A Discussion} \label{sec:discussion}
-Our BPR protocol is proven secure in a strong security model, but does not hide the length of the password from the server. Arguably, this is a strong security requirement (cf. Section \ref{sec:bpr-model}) that may not be needed in many practical scenarios since password policies usually aim at offering some minimum password strength such that every password of the required minimum length or longer is considered to be secure.
-Having this in mind, it makes no difference whether the password length is known to an attacker or not since the password is assumed to be strong enough.
-
-
-Nonetheless, one may argue that an attacker knowing the password length can perform a dictionary attack by only trying passwords of the given length and thus use the reduced search space to speed up the attack. An initial idea for hiding the password length in our BPR protocol could be to combine commitments for \emph{non-significant} password characters into a single commitment and use only \pmin commitments in the proof. This, however, would allow a malicious client to register passwords that do not comply with the policy unless the client can prove that the exponent of the combined commitment is of the form $\sum b^i\pi_j$, which is only possible when the length of the polynomial (and therefore the password length) is known.
-We show that our BPR protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
-In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for the policy $f$.
-All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
-This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. The remaining protocol steps remain unchanged.
-Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified BPR protocol using min-entropy
-$\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
-for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
-% \footnote{If a stepping systems is used due to efficiency reasons we have to use $\cD_{f,l1,l2}$, which contains passwords with length between $l1$ and $l2$.}
-However, it is obvious that this modification trades off stronger security for efficiency due to the use of $l$ for all shorter passwords.
-
-%for $n\leq 50$ for $50<n\leq 100$
-
-% However, having a closer look on the definition of min-entropy in Section \ref{sec:min-entropy} one can see that the difference between a dictionary $\cD_f$ and $\cD_{f,|\pwd|}$ is marginal.
-% To capture the difference between an attacker knowing the password length and one not knowing it a different definition of min-entropy may be useful.
-%
-Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
-In this case the proof \PoS becomes redundant and all steps related to it can be removed. 
-This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
-The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which seems to offer comparable security guarantees.
-% By changing the success probability in the dictionary attack resistance definition as discussed in Section \ref{sec:bpr-model} such a notion can be established.
-% But this gives the attacker significantly more information and therefore speeds-up the password retrieval process. %, such that we do not further discuss this option.
-% \fk{$l=|\pwd|$ is leaked. If we could prove representation of $C=g^{\sum_{i=0}^{l-1}95^i c_i}h^r$, we could hide that. We should look into this as it would be another good improvement compared to the ESORICS protocol}
-% \fk{discuss why hiding the password length is ``OK'' but also discuss impact on real world attacks and how length-hiding could be achieved in our protocol}

@@ -8,9 +8,10 @@ Blind password registration is formally defined as follows.
 
 \begin{definition}[Blind Password Registration]\label{def:bpr}
 A BPR protocol is executed between a client $C$ and a server $S$ with server's password policy $f$ as a common input. At the end of the protocol the server eventually outputs the password verifier $v_C$ for a policy compliant, client chosen password \pwd. %for a suitable VPAKE protocol without learning anything about the password in the verifier.
+\eod
 \end{definition}
 
-\subsection{Security of Blind Password Registration} \label{sec:bpr-model}
+\subsection{Blind Password Registration Model} \label{sec:bpr-model}
 We consider two security properties for BPR protocols to capture the requirement that the server \emph{learns nothing about the password in the verifier} and that the password verifier $v_C$ belongs to a \emph{policy compliant} password.
 % Recall that we assume semi-honest servers, where it interacts with the client as specified in the protocol.
 The first security notion regarding the server, called \emph{Dictionary Attack Resistance (DAR)}, considers a passive attack in which the adversary must not be able to retrieve the password from the password verifier faster than with a brute-force attack over the used dictionary.
@@ -64,6 +65,7 @@ The attacker here plays the role of the client and tries to register a password 
 \begin{definition}[Policy Compliance]\label{def:pc}
 Let \cA denote a PPT adversary with access to \Execute and \Send oracles.
 The probability that a server instance $S_i$ exists after \cA terminated that accepted $(C,v_C)$ with $v_C=\HashP(\pwd;r)$ and $f(\pwd)=\false$ is negligible in $\secpar$.
+\eod
 \end{definition}
 
 \paragraph{Dictionary Attack Resistance}
@@ -91,6 +93,7 @@ A BPR protocol using password hashing scheme \Hash is \emph{dictionary attack re
 \[\leq \frac{2^{-\beta_{\cD_{f,|\pwd|}}}\cdot t}{t_{\PPreHash}} + \varepsilon(\secpar),\]
 % \end{center} 
 with $t_\PPreHash$ being the running time of \PPreHash.
+\eod
 \end{definition}
 
 \noindent
@@ -525,7 +528,7 @@ The server accepts the \PoS proof if all verifications succeed.
 
 \end{enumerate}
 
-\subsection{Security Analysis}
+\subsubsection{Security Analysis}
 The security of our \ac{BPR} protocol is established by the following theorem using Lemma \ref{lem:pocs}.
 % and is proven in several steps using Lemmas~\ref{lem:pocs}, \ref{lem:pc}, and \ref{lem:dar}.
 

@@ -1,5 +1,12 @@
 \section{More efficient Blind Password Registration from Set-based Policy Checking}\label{sec:spc-bpr}
 
+\mynote{rewrite...}
+We use \ac{OBI} so that the server can send a set of secret shares to the client based on the client's set $\cC$ without knowing anything about $\cC$. 
+Although in general we can use any \ac{PSI} with data transfer protocol (e.g. \citet{fre04}), we choose \ac{OBI} here because of its efficiency. 
+\ac{OBI} is very efficient due to the fact that it relies mostly on hash operations. 
+The performance can be further improved by the modifications proposed by \citet{Pinkas0Z14}. 
+Note that although \citet{Pinkas0Z14} also proposed a new \ac{PSI} protocol based on hashtable + oblivious transfer in \cite{Pinkas0Z14} that is more efficient than \ac{OBI}, the new \ac{PSI} protocol cannot be used in our case because it does not support data transfer.
+
 \subsection{Secure Set-based Policy Checking (SPC)} \label{sec:spc}
 In this section we introduce a new protocol called secure set-based policy checking (SPC). In SPC, a server holds a public policy $P$ as defined in Section \ref{sec:preliminaries} and a client holds a private set \cC. The goal is to allow the server to check whether \cC satisfies $P$ without learning anything else about $\cC$. 
 
@@ -14,6 +21,7 @@ We call a set-based policy checking protocol secure iff it fulfils the following
   \item Soundness: A client $C$ holding \cC with $P(\cC)\not=\true$ has negligible probability in getting $S$ to accept the SPC execution.
 \end{enumerate}
 %We write $|C\cap S|_m^{t}$ for $t=(t_1, \cdots, t_m)$.
+\eod
 \end{definition}
 
 \noindent
@@ -76,7 +84,7 @@ At the end of the OBI protocol the client gets a set of shares $\{\secret_i|\rho
 In the last step, by proving knowledge of secret \secret, the client can convince the server that its set is compliant with policy~$P$.
 
 
-\subsection{SPC Security Analysis}
+\subsubsection{SPC Security Analysis}
 \begin{lemma}[Correctness]\label{lem:correct}
   Let $\cC$ and $\cS$ denote sets from some universe and $P=(\cS,\Gamma_\cS)$.
   Assuming the used OBI and LSSS algorithms are correct, then the SPC protocol from Fig. \ref{fig:spc} is correct, i.e. honest execution of the protocol with $P(\cC) = \true$ is accepted by the server with overwhelming probability.\end{lemma}
@@ -133,7 +141,7 @@ Now it follows directly that any attacker that is able to generate a message $m_
 \end{proof}
 
 
-\subsection{Other SPC Applications}\label{sec:generalisation}
+\subsubsection{SPC Applications}\label{sec:generalisation}
 SPC can be used in many different scenarios.
 In the previous section we gave a detailed example of using SPC for password-policy checking on password registration.
 In this section we describe other use-cases of the primitive.
@@ -257,7 +265,7 @@ This product is then used to generate the verifier \ver, i.e. $\ver\gets(H_3(r_{
 Note that we require $r_{v+1}^e$ as a multiplicand when computing $u^\ast$. 
 Without this, the server could learn the client's password length when $\cC\setminus\cC'=\emptyset$ because the client would have nothing to send in this case. 
 
-\subsection{Security Analysis} \label{sec:bpr:security}
+\subsubsection{Security Analysis} \label{sec:bpr:security}
 We now analyse the security of the password registration protocol. Note that in the password registration protocol, the two parties have different security requirements. For the server, privacy is not a concern since its input, the policy, is public. On the other hand, the server cares about the soundness of the protocol because an unsound protocol would allow a user to register an invalid password. For the client, privacy is the main concern while soundness is not. Since the policy is public, the client can check the policy by itself and can detect if the server cheats. 
 We therefore refrain from using an over-complicated security definition and use the following comprehensible security model that is simpler. Let $\ver\gets\phi(\pwd,r)$ denote a password verifier, computed from a password \pwd and some randomness $r$, and $\psi(\pwd)$ a function to generate set \cC from password \pwd.
 %Note that we retain from using an over-complicated security definition that would be necessary to capture the asymmetric properties of the protocol and use the following comprehensible security model.
