@@ -271,15 +271,16 @@ We recall the basic setting of the malicious model from \cite{Goldreich2004}.
 Let $f:\bits^\ast \times \bits^\ast \rightarrow \bits^\ast \times \bits^\ast$ be a functionality such that $f(x,y)=(f_1(x, y), f_2(x,y))$ and $\Pi$ a two-party protocol to compute $f$.
 % $\Lambda$ denotes the empty string and
 In the ideal model every party gets an input and access to a trusted party.
-Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either aborts or sends some value with the length of their non-additional input to the trusted party.
-The trusted party answers to the first party with $f_1(x, y)$ after obtaining inputs $(x,y)$.
+Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either abort or send some value with the length of their non-additional input to the trusted party.
+The trusted party answers to the first party with $f_1(x, y)$ after obtaining input $(x,y)$.
 If only one input is received, the trusted party replies with $\bot$ to both parties.
 The trusted party further answers the second party with $f_2(x,y)$ if it didn't stop before, $\bot$ otherwise.
 It may stop depending on its input and output if the first party is malicious.
 While an honest party always outputs the value received from the trusted party, malicious parties can output any polynomially computable function of all its inputs.
 The ideal and real model are formalised as follows.
 
-\begin{definition}[Ideal Model \texorpdfstring{\cite[Definition 7.2.4]{Goldreich2004}}{}]
+%\texorpdfstring{\cite[Definition 7.2.4]{Goldreich2004}}{}
+\begin{definition}[Ideal Model]
 Let $B=(B_1, B_2)$ be a pair of \ac{PPT} algorithms representing strategies in the ideal model.
 Such a pair is \emph{admissible} in the ideal malicious model if for at least one \emph{honest} $i\in\{1,2\}$, we have $B_i(u, z, r)=u$ and $B_i(u, z, r, v)=v$ for all possible $u,z,r$ and $v$.
 Furthermore, $|B_i(u, z, r)| = |u|$ must hold for both $i$'s.
@@ -301,7 +302,8 @@ with $x'=B_2(x,z,r)$.
 \eod
 \end{definition}
 
-\begin{definition}[Real Model \texorpdfstring{\cite[Definition 7.2.5]{Goldreich2004}}{}]
+%\texorpdfstring{\cite[Definition 7.2.5]{Goldreich2004}}{}
+\begin{definition}[Real Model]
 Let $A=(A_1, A_2)$ be a pair of \ac{PPT} algorithms representing strategies in the real model.
 Such a pair is \emph{admissible} with respect to $\Pi$ if at least one $A_i$ coincides with the strategy specified in $\Pi$.
 The joint execution of $\Pi$ under $A$ in the real model, on input pair $(x, y)$ and auxiliary input $z$, denoted $\REAL_{\Pi, A(z)}(x, y)$, is defined as the output pair resulting from the interaction between $A_1(x, z)$ and $A_2(y, z)$.
@@ -309,7 +311,7 @@ The joint execution of $\Pi$ under $A$ in the real model, on input pair $(x, y)$
 \end{definition}
 
 \noindent
-A protocol $\Pi$ is said to be secure if its execution in the real model emulates execution of the ideal model with trusted party for the according functionality.
+A protocol $\Pi$ is said to be secure if its execution in the real model emulates execution of the ideal model with a trusted party for the according functionality.
 
 \begin{definition}[Security \texorpdfstring{\cite[Definition 7.2.6]{Goldreich2004}}{}]
 Protocol $\Pi$ is said to securely compute $f$ in the malicious model if for every \ac{PPT} pair of algorithms $A=(A_1, A_2)$ that is admissible for the real model, there exists a \ac{PPT} pair of algorithms $B=(B_1, B_2)$ that is admissible for the ideal model such that 
@@ -321,15 +323,19 @@ where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
 \paragraph{The Hybrid Model}
 When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
 Security then follows from the composition theorem from \citet{Canetti00}.
-In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, i.e. a call to the trusted party that computes $g$.
+In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, \ie a call to the trusted party that computes $g$.
 The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
-Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, i.e. instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
+Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, \ie instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
 To prove security it is sufficient to show 
 $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\HYBRID_{\Pi, A(z)}^{g} (x, y)\}_{x, y, z}$,
 which implies
 $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
 as shown by \citet{Canetti00}.
 
+\mynote{some words on composition and \ac{UC}}
+
+\subsection{Universal Composability}
+\mynote{something?}
 
 \subsection{Verifier-based PAKE Security}
 \mynote{BP VPAKE model}
