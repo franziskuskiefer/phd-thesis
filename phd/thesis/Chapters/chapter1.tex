@@ -2,7 +2,7 @@
 %*********************************** First Chapter *****************************
 %*******************************************************************************
 
-\chapter{Introduction}  %Title of the First Chapter
+\chapter{Introduction}\label{ch:intro}  %Title of the First Chapter
 
 \ifpdf
     \graphicspath{{Chapters/Figs/Raster/}{Chapters/Figs/PDF/}{Chapters/Figs/}}
@@ -128,7 +128,7 @@ Other common attack vectors on poorly chosen passwords is by exploiting common p
 % *****************************************************************************
 
 \subsection{Passwords in The Wild}
-Systems currently deployed on the Internet use the approach of \emph{password-over-HTML} --- sending the password over an encrypted channel (\ac{TLS}) to the server for verification or registration --- which is risky due to the threat of disclosing user credentials to malicious parties via a plethora of attacks such as phishing attacks or \ac{MitM} attacks.
+Systems currently deployed on the Internet use the approach of \emph{password-over-\acs{HTML}} --- sending the password over an encrypted channel (\ac{TLS}) to the server for verification or registration --- which is risky due to the threat of disclosing user credentials to malicious parties via a plethora of attacks such as phishing attacks or \ac{MitM} attacks.
 Even though a confidential \ac{HTTPS} connection --- \ac{HTTP} over a \ac{TLS}-encrypted connection --- is often used to transport sensitive data such as passwords, the server authentication of the underlying \ac{TLS} protocol depends on the user actually validating the server's certificate, the accessed \ac{URL}, and trust in a properly working \ac{PKI}.
 (This includes sophisticated and government aided attacks.)
 Password-based mechanisms on the web are (except for some exceptions such as \cite{FirefoxSync}) missing cryptographic treatment of the password for authentication purposes all together.
@@ -314,7 +314,7 @@ Until now, numerous subsequent work explored the notion of \ac{PAKE} in depth.
 Despite the key exchange functionality it authenticates the two parties explicitly or implicitly.
 They aim to protect against offline dictionary attacks but require restriction on the number of failed password trials as all password-based protocols in order to prevent security against online dictionary attacks.
 One of the most promising applications of \ac{PAKE} protocols is the online authentication of users.
-It is considered as a more secure alternative to the nowadays mainly deployed approach of password-over-HTML, \ie transmitting the password over a secure channel (\ac{HTTPS}) and let the server perform a check against his stored credential.
+It is considered as a more secure alternative to the nowadays mainly deployed approach of password-over-\ac{HTML}, \ie transmitting the password over a secure channel (\ac{HTTPS}) and let the server perform a check against his stored credential.
 The standard model of \ac{PAKE} does not require any \ac{PKI}, which is necessary for the secure \ac{TLS} channel, and assumes that only a low-entropy secret, \ie a human memorable password, is shared between both parties.
 % \footnote{Please note that this applies only for the authentication process \emph{not} for the registration process.
 % There is no mechanism to store the password on the server without sending it there in a secure way.

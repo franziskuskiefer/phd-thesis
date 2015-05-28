@@ -168,7 +168,9 @@ The tests can often be reduced to check a set of SNPs (Single Nucleotide Polymor
 
 
 \subsection{SPC based Password Registration}\label{sec:protocol}
-
+\mynote{The connection between set-based policies from Section \ref{sec:preliminaries} and password policies is easy to see, since password policies are defined in terms of thresholds and subsets over an alphabet which is a set of characters.
+We can use the algorithm proposed by \citet{LiuC10} to translate such threshold access structures into MSPs efficiently. 
+It is also not difficult to see how SPC can be applied in the password policy checking setting, since a password can be seen as a set of characters. }
 Password-based authentication is the most common authentication mechanism for humans. Despite increasing attempts of replacing it\footnote{\url{https://fidoalliance.org/} amongst others}, something has yet to be proposed to fully replace password-based authentication. 
 There are many reasons why it is so difficult to transition away from passwords, e.g., low-cost, user-experience and scalability. For those reasons, passwords are likely to remain as a major authentication method in the foreseeable future. 
 The current approach for remote registration of client passwords requires the client to send its password in plaintext to the server, which stores a value derived from the password (e.g., a hash value or a verifier) in a password database. 

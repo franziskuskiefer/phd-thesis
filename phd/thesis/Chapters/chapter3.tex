@@ -1,22 +1,29 @@
 \chapter[Password Authentication Framework for the Single-Server Setting]{Password-based Authentication Framework for the Single-Server Setting} \label{ch:vpake}
-Using passwords for authentication is it's most common use case.
-As discussed in the introduction, this is still done with the inherently flawed approach of \ac{HTML}-over-\ac{TLS} despite the existence of secure \ac{PAKE} protocols.
-In this section we propose new mechanisms to register user accounts with secure password policy checks and give a new verifier-based \ac{PAKE} protocol to authenticate with these accounts.
 
-This chapter proposes a new framework for verifier-based password authenticated key exchange in the two-party setting spanning including password registration and the actual authentication.
-This chapter is based on work in \cite{Kiefer13a,Kiefer2012,KieferM14b,KieferM15a,DongK15a,ManulisSKD15a}.
+Using passwords for authentication is it's most common use case.
+As discussed in Chapter \ref{ch:intro}, this is still done with the inherently flawed approach of password-over-\ac{HTML} despite the existence of more secure alternatives, i.e. \ac{PAKE}.
+In this chapter we propose the first framework for cryptographic password authentication and handling.
+The framework includes a protocol for clients to register passwords in a secure way with server, and a protocol to use the stored authentication token for password-based authentication.
+
+\smallskip
+\noindent
+This chapter is based on work in \cite{Kiefer13a,KieferM15a,DongK15a}.
+
+\paragraph{Introduction}
+\hfill\\
+\mynote{give introduction to password registration framework}
 
 \paragraph{Outline}
-This chapter comprises 11 sections organised as follows.
+This chapter comprises 9 sections organised as follows.
 Section \ref{sec:passwords} gives definitions of passwords, dictionaries, and policies, used in this chapter and Section \ref{sec:strucphash} describes a novel password hashing algorithm.
-This allows to convert character strings to elements usable for cryptographic operations.
-Section \ref{sec:zkppc} introduces the notions of \ac{ZKPPC} and how to build password registration protocols from it.
-The resulting notion of \ac{BPR} is introduced in the subsequent Section \ref{sec:bpr} together with a refined security model and efficient protocol.
+Methods introduced in these first two sections allow us to convert character strings to elements usable for cryptographic operations.
+Section \ref{sec:zkppc} introduces the notion of \ac{ZKPPC} and how it can be used to build password registration protocols from it.
+The resulting notion of \ac{BPR} is formalised in the subsequent Section \ref{sec:bpr} giving a security model and an efficient protocol.
 Section \ref{sec:spc-bpr} introduces an alternative approach to \ac{BPR}.
-To compare the different \ac{BPR} approaches Section \ref{sec:performance} provides implementations for all three approaches and \ref{sec:discussion} gives a comparison of the protocols and security guarantees.
-This concludes the password registration step.
-To use passwords registered with the \ac{BPR} protocols described in Section \ref{sec:zkppc}-\ref{sec:spc-bpr}, Sections \ref{sec:pake} and \ref{sec:vpake-pake} discuss and propose appropriate \ac{PAKE} and \ac{VPAKE} protocols.
-The chapter is concluded with the description of an online demo for the proposed framework in Section \ref{sec:vpake-demo} and Section \ref{sec:vpake-conclusion} to summarise this chapter.
+To compare the different \ac{BPR} approaches Section \ref{sec:performance} provides implementations for all three approaches and gives a comparison of the protocols and security guarantees.
+This concludes the password registration step of the framework.
+To use passwords registered with the \ac{BPR} protocols described in Section \ref{sec:zkppc}-\ref{sec:spc-bpr}, Sections \ref{sec:pake} discusses and proposes appropriate \ac{PAKE} and \ac{VPAKE} protocols.
+The chapter is concluded by the description of an online demo for the proposed framework in Section \ref{sec:vpake-demo} and Section \ref{sec:vpake-conclusion} to summarise the results of this chapter.
 
 \input{Chapters/passwords1.tex}
 
