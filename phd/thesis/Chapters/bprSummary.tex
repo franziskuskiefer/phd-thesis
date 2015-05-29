@@ -7,7 +7,8 @@ Nonetheless, one may argue that an attacker knowing the password length can perf
 We show that our BPR protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
 In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for the policy $f$.
 All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
-This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. The remaining protocol steps remain unchanged.
+This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. 
+The remaining protocol steps remain unchanged.
 Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified BPR protocol using min-entropy
 $\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
 for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.

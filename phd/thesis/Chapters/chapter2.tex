@@ -255,11 +255,11 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 
 The two most popular models are the \ac{ROM} and the standard model.
 In the \ac{ROM} a public randomly chosen black-box function $H$ is available to all parties, whereas no such function exists in the \emph{standard model}.
-While this function $H$ can not be instantiated in the real world it is useful (sometimes necessary) in many proofs.
+While this function \RO can not be instantiated in the real world it is useful (sometimes necessary) in many proofs.
 Implementations of protocols requiring a random oracle usually instantiate it with a cryptographic hash function.
-The function $H$ is queried on an input $x$ and returns the ``hash value'' of $x$.
-It is consistent, such that $y=H(x)$ for all $y\gets H(x)$, and the output $y$ of $H$ is uniformly at random such that one can think of $H$ as drawing a random element $y$ each time it is queried on a new $x$.
-If $H$ has seen $x$ before, it returns the previously chosen element $y$.
+The function \RO is queried on an input $x$ and returns the ``hash value'' of $x$.
+It is consistent, such that $y=\RO(x)$ for all $y\gets \RO(x)$, and the output $y$ of \RO is uniformly at random such that one can think of \RO as drawing a random element $y$ each time it is queried on a new $x$.
+If \RO has seen $x$ before, it returns the previously chosen element $y$.
 While not including random oracles, the standard model often includes a \ac{CRS} that is made available to all parties and can be seen as common set-up parameters.
 % \subsection{Common Reference String}
 The \acl{CRS} model, proposed by \citet{CanettiF01}, is a generalisation of the common random string model.
