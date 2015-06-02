@@ -271,7 +271,7 @@ Let $n = |\pwd|$ and count indices $i\in[0,n-1]$ when dealing with password char
 The client chooses some password string $\pwd=(c_0,\ldots$, $c_{n-1})\rin\cD_f$ that is compliant with policy $f$, encodes it to $\pi\gets\pwdint(\pwd)$, and iterates over all password character positions $i\in[0,n-1]$ to perform the following computations:
 % \begin{proceedings}
 % encode the character as $\pi_i\gets\chrint(c_i)$;
-% commit to $\pi_i$ by computing Pedersen commitments $C_i=g^{\pi_i}h^{r_i}, C'_i=C_i h^{r'_i}$ for $r_i,r'_i\rin\Zrq$;
+% commit to $\pi_i$ by computing Pedersen commitments $C_i=g^{\pi_i}h^{r_i}, C'_i=C_i h^{r'_i}$ for $r_i,r'_i\rin\Zrp$;
 % % compute a shifted commitment $C^\ast_i=C_i^{b^i}$ using the shift base $b$;
 % choose a unique random index $k_{i} \rin[1,|\pwd|]$ to shuffle each $C'_i\gets C_{k_i}$;
 % if $\pi_i$ is \emph{significant} for any $R_j\in R$, set $\omega_{k_i}\gets R_j$, otherwise $\omega_{k_i}\gets\Sigma$ (recall $\Sigma=\{d,u,s,l\}$).
@@ -310,18 +310,20 @@ In the following we describe these three proofs and define their messages. Note 
 %
 % \end{proceedings}
 
-\subsubsection{Proof of Equivalence (\PoE)}
-This protocol proves that the password hash $H_2$ contains the same encoded password $\pi$ as the product of the shifted commitments $\prod_{i=0}^{n-1} C^{b^i}_i$ and that the client knows the discrete logarithm $\Server_P$ of $H_1$ to base $g$, in particular:
+\subsubsection{Proofs}
+
+\paragraph{Proof of Equivalence (\PoE)}
+This protocol proves that password hash $H_2$ contains the same encoded password $\pi$ as the product of the shifted commitments $\prod_{i=0}^{n-1} C^{b^i}_i$ and that the client knows the discrete logarithm $s_P$ of $H_1$ to base $g$, in particular:
 \[
-  \ZKPoK\{(\pi,\hat{r}) : ~ H_2/h^{s_H}=H_1^{\pi} \wedge \prod_{i=0}^{n-1} C_i^{b^i} = g^{\pi}h^{\hat{r}}\}.
+  \ZKPoK\{(\pi,s_P,\hat{r}) : ~ H_2/h^{s_H}=H_1^{\pi} \wedge H_1 = g^{s_P} \wedge \prod_{i=0}^{n-1} C_i^{b^i} = g^{\pi}h^{\hat{r}}\}.
 \]
 \begin{enumerate}
   \item The first client message $\Comm_\PoE$ is set to $(t_{s_P}, t_H, t_{C^\ast})$ for
     $t_{s_P}=g^{k_{s_P}};~ t_H=H_1^{k_{\pi}};~ t_{C^\ast}=g^{k_{\pi}}h^{k_{r^{\ast}}}$
     with 
-    $k_{s_P},k_{\pi},k_{r^\ast}\rin\Zrq$.
+    $k_{s_P},k_{\pi},k_{r^\ast}\rin\Zrp$.
     
-  \item The server stores received values and sets $\Ch_\PoE=c$. 
+  \item The server stores received values and sets $\Ch_\PoE=c\rin\bits^\secpar$. 
   
   \item After receiving challenge \Client from the server, the client computes the following verification values
     \[
@@ -329,11 +331,9 @@ This protocol proves that the password hash $H_2$ contains the same encoded pass
     \]
     and sets $\Res_\PoE=(s_{s_P}, s_\pi, s_{r^\ast})$ as response.
   
-  \item To verify the proof, i.e. the product of shifted commitments $C_i^{b_i}$ for $C_i\in\bm C$ contains the same password $\pi$ as the password hash $H_2$, the server verifies the following:
+  \item To verify the proof, \ie the product of shifted commitments $C_i^{b_i}$ for $C_i\in\bm C$ contains the same password $\pi$ as the password hash $H_2$, the server verifies the following:
     \[
-      t_{s_P}\stackrel{?}{=}g^{s_{s_P}}H_1^{c};~ t_H\stackrel{?}{=}H_1^{s_\pi}(H_2/h^{s_H})^c;
-    \]
-    \[
+      t_{s_P}\stackrel{?}{=}g^{s_{s_P}}H_1^{c};~ t_H\stackrel{?}{=}H_1^{s_\pi}(H_2/h^{s_H})^c;~
       t_{C^\ast}\stackrel{?}{=}g^{s_\pi}h^{s_{r^\ast}} \left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^c.
     \]
     The server accepts the proof iff those verifications succeed.
@@ -343,35 +343,36 @@ This protocol proves that the password hash $H_2$ contains the same encoded pass
 
 
 \subsubsection{Proof of Membership (\PoM)}
-This protocol proves that every password character $c_{k_i}\in\omega_{k_i}$ using the shuffled set of commitments $\bm C'$, i.e.
+This protocol proves that every password character $c_{k_i}\in\omega_{k_i}$ using the shuffled set of commitments $\bm C'$, \ie
 \[\ZKPoK\{(\{\pi_i,r_i\}_{i\in[0,n-1]}) : ~ C'_{{k_i}}=g^{\pi_{i}}h^{r_{i}} ~ \wedge ~ \pi_{i}\in \omega_{{k_i}}\},\]
-(we use $\pi_{i}\in \omega_{{k_i}}$ as a short form of $c_i\in\omega_{{k_i}}$ with $\pi_i\gets \chrint(c_i)$ here).
+(we use $\pi_{i}\in \omega_{{k_i}}$ as a short form of $c_i\in\omega_{{k_i}}$ with $\pi_i\gets \chrint(c_i)$).
 Note that $C'_{k_i}\in \bm C'$.
 
 \begin{enumerate}
   \item To prove that every $C'_{{k_i}}$ commits to a value in the corresponding set $\omega_{{k_i}}$ the client computes the following values for the first move of the proof:
-    \begin{align*}
-      \forall \pi_j\in\omega_{{k_i}} \wedge \pi_j\not=\pi_i :~& s_j\rin\Zrq, c_j\rin\Zrq \\
-      & t_j=g^{\pi_j}h^{s_j}(C'_{{k_i}}/g^{\pi_j})^{c_j}
-    \end{align*}
     \[
-      k_{\rho_i}\rin\Zrq;~ t_{l_{k_i}}=g^{\pi_i}h^{k_{\rho_i}}
+      \forall \pi_j\in\omega_{{k_i}} \wedge \pi_j\not=\pi_i :~ s_j\rin\Zrp,~ c_j\rin\Zrp,~ t_j=g^{\pi_j}h^{s_j}(C'_{{k_i}}/g^{\pi_j})^{c_j}
     \]
-    Values $(\bm t_{k_i}, \bm s_{k_i}, \bm c_{k_i}, k_{\rho_i})$, with $\bm t_{k_i}=\{t_j, t_{l_{k_i}}\}$, $\bm s_{k_i}=\{s_j\}$, and $\bm c_{k_i}=\{c_j\}$ are stored for future use.\footnote{Note that $t_{l_{k_i}}$ has to be added at the correct position ($l_{k_i}$) in $\bm t_{k_i}$.}
+    \[
+      k_{\rho_i}\rin\Zrp;~ t_{l_{k_i}}=g^{\pi_i}h^{k_{\rho_i}}
+    \]
+    Values $(\bm t_{k_i}, \bm s_{k_i}, \bm c_{k_i}, k_{\rho_i})$, with $\bm t_{k_i}= t_j \cup \{t_{l_{k_i}}\}$, $\bm s_{k_i}=\{s_j\}$, and $\bm c_{k_i}=\{c_j\}$ are stored for future use.
+    Note that $t_{l_{k_i}}$ has to be added at the correct position ($l_{k_i}$) in $\bm t_{k_i}$.
     After computing the proof for every $C'_{k_i}$ the client sets the message $\Comm_\PoM=\bm t = \{\bm t_{k_i}\}$.
     
-  \item The server stores received values, checks them for group membership, chooses a random challenge $c\rin\Zrq$ and sets $\Ch_\PoM=c$.
+  \item The server stores received values, checks them for group membership, chooses a random challenge $c\rin\bits^\secpar$ and sets $\Ch_\PoM=c$.
   
   \item After receiving the challenge \Client from the server, the client computes the following verification values for all commitments $C'_{{k_i}}$ (note that $\Server_j$ and $c_j$ for all $j\not= l_{k_i}$ are chosen already):
     \[
       c_{l_{k_i}}=c\oplus \bigoplus_{j=1,j\not=l_{k_i}}^{|\omega_{k_i}|} c_j;~ s_{l_{k_i}}=k_{\rho_{k_i}} - c_{l_{k_i}}(r_{i}+r'_{k_i}),
     \]
     where $i$ is the index of $C'_{k_i}$ before shuffling.
-    The client then combines $\bm s = \{\bm s_{k_i} \cup \{s_{l_{k_i}}\}\}$ and $\bm c = \{\bm c_{k_i} \cup \{c_{l_{k_i}}\}\}$.\footnote{Note again that the set union has to consider the position of $l_{k_i}$ to add the values at the correct position.}
+    The client then combines $\bm s = \bm s_{k_i} \cup \{s_{l_{k_i}}\}$ and $\bm c = \bm c_{k_i} \cup \{c_{l_{k_i}}\}$.
+    Note again that the set union has to consider the position of $l_{k_i}$ to add the values at the correct position.
     % and $\bm s_{\pi}=\{s_{\pi_i}\}$
     The response message $\Res_\PoM$ is then set to $(\bm s, \bm c)$.
   
-  \item To verify the proof, i.e. to verify that every commitment $C'_{k_i}$ in $\bm C'$ commits to a character $c_i$ from either a subset $R_j$ of $\Sigma$ if significant or $\Sigma$ if not, the server verifies the following for every set $\omega_{i} \in \vect{\omega}$ with $i\in[1,n]$: % and $x=k_i$:
+  \item To verify the proof, \ie to verify that every commitment $C'_{k_i}$ in $\bm C'$ commits to a character $c_i$ from either a subset $R_j$ of $\Sigma$ if significant or $\Sigma$ if not, the server verifies the following for every set $\omega_{i} \in \vect{\omega}$ with $i\in[0,n-1]$:
     \begin{itemize}
       \item~ Let $c_j\in\bm c_i$ for $\bm c_i\in\bm c$ and verify
             $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}c_j$
@@ -379,37 +380,33 @@ Note that $C'_{k_i}\in \bm C'$.
             $\displaystyle \bm t_{i}[j]\stackrel{?}{=}g^{\pi_j}h^{\bm s_i[j]}(C'_i/g^{\pi_j})^{\bm c_i[j]}$
             for all $j\in[1,|\omega_{i}|]$
     \end{itemize}
-    The verification of the proof is successful iff all equations above are true \emph{and} \vect{\omega} contains all significant characters for $f$.
+    The verification of the proof is successful iff all verifications above are successful \emph{and} \vect{\omega} contains all significant characters for $f$.
 \end{enumerate}
 
 \subsubsection{Proof of Shuffle (\PoS)}
 Let $\phi$ denote a function such that $\phi(i)=k_i$ shuffles the set $\bm C$ to $\bm C'$.
-We use the efficient proof for correct shuffling for ElGamal ciphertexts from \cite{Furukawa05}, which is an optimised version of \cite{FurukawaS01}, and adapt it to Pedersen commitments, which translates
+We use the efficient proof for correct shuffling for ElGamal ciphertexts from \citet{Furukawa05}, which is an optimised version of the protocol proposed by \citet{FurukawaS01}, and adapt it to Pedersen commitments, which translates
 \[
   \ZKPoK\{(\{k_i, r'_{k_i}\}_{i}) : ~ C'_{i}=C_{k_i}h^{r'_{k_i}}\}
+\text{ into }
+  \ZKPoK\{\hat{A}_{ji}:~ C'_i=h^{\hat{A}_{0i}}\cdot\prod_{v=1}^n C_v^{\hat{A}_{vi}}\}
 \]
-into
-\[
-  \ZKPoK\{A_{ji}:~ C'_i=h^{A_{0i}}\cdot\prod_{v=1}^n C_v^{A_{vi}}\}
-\]
-for permutation matrix $A_{ji}$.
+where the permutation matrix is a $n$-times-$n$ sub-matrix of $\hat{A}_{ji}$.
 % First, we describe the zero-knowledge proof of correct shuffling of Pedersen commitments $\bm C$ and $\bm C'$.
 % Then we describe some optimisations we can perform on it due to the fact that we know messages and randomness of $\bm C$ and $\bm C'$.
 % Note that indices for commitments run from $1$ to $n$ and index ranges in the following change frequently.
 
 \begin{enumerate}
   \item In the first move, the client (prover) builds a permutation matrix and commits to it.
-  First he chooses random $A'_j\rin\Zrq$ for $j\in[-4,n]$.
-Let $A_{ji}$ denote a matrix with $j\in[-4,n]$ and $i\in[0,n]$, i.e. of size $n+5\times n+1$, such that a $n\times n$ sub-matrix of $A_{ji}$ is the permutation matrix.
+  First he chooses random $A'_j\rin\Zrp$ for $j\in[-4,n]$.
+Let $A_{ji}$ denote a matrix with $j\in[-4,n]$ and $i\in[0,n]$, \ie of size $n+5\times n+1$, such that a $n\times n$ sub-matrix of $A_{ji}$ is the permutation matrix.
 Further, let $\phi$ denote the permutation function that, on input index $i$, returns the index $k_i$ of the according shuffled element and $\phi^{-1}$ its inverse.
 This allows us to write the shuffle as $C'_{i}=\prod_{j=0}^{n}C_{j}^{A_{ji}}=C_{\kappa_i}h^{r'_{\kappa_i}}$ with $C_0=h$ and $\kappa_i=\phi^{-1}(i)$ for $i\in[1,n]$.
-The matrix $A_{ji}$ is defined with $A_{w0}\rin\Zrq, A_{-1v}\rin\Zrq$ and $A_{0v}=r'_{\phi(v)}$ with $w\in[-4,n]$ and $v\in[1,n]$. %depicted in Figure \ref{fig:matrix}
+Matrix $A_{ji}$ is defined with $A_{w0}\rin\Zrp, A_{-1v}\rin\Zrp$ and $A_{0v}=r'_{\phi(v)}$ for $w\in[-4,n]$ and $v\in[1,n]$. %depicted in Figure \ref{fig:matrix}
 The remaining values in $A_{ji}$ are computed as follows for $v\in[1,n]$:
 % \begin{center}  
 \[ 
-  A_{-2v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv};~ A_{-3v}=\sum_{j=1}^{n} 3A_{j0} A_{jv};
-\]
-\[
+  A_{-2v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv};~ A_{-3v}=\sum_{j=1}^{n} 3A_{j0} A_{jv};~ 
   A_{-4v}=\sum_{j=1}^{n} 2A_{j0} A_{jv}
 \]
 % \end{center}
@@ -423,7 +420,7 @@ The remaining values in $A_{ji}$ are computed as follows for $v\in[1,n]$:
 %     \hfill  & A_{-4,v}=\sum_{j=1}^{n} 2A_{j0} A_{jv} \\
 %     \hfill  & A_{-3,v}=\sum_{j=1}^{n} 3A_{j0} A_{jv} \\
 %     \hfill  & A_{-2,v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv} \\
-%     A_{w0}\rin\Zrq & A_{-1,v}\rin\Zrq \\
+%     A_{w0}\rin\Zrp & A_{-1,v}\rin\Zrp \\
 %     \hfill  & A_{0,v}=r'_{k_v} \\
 %     \hfill  & \hfill \\
 %     \hfill  & A_{ji} := \phi \\
@@ -442,17 +439,19 @@ The remaining values in $A_{ji}$ are computed as follows for $v\in[1,n]$:
 % \end{figure}
 
 \noindent
-After generating $A_{ji}$ the client commits to it and sets his output $\Comm_\PoS=(C'_0, \tilde{f}, \bm f', w, \tilde{w})$ for $\bm f'=\{f'_v\}$ with $v\in[0,n]$.
-\[ f'_v=\prod_{j=-4}^{n} f_j^{A_{jv}};~ \tilde{f}=\prod_{j=-4}^{n} f_j^{A'_{j}} \] %  \text{ for } v\in[0,n]
-\[ C'_0=g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}\] 
+After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(C'_0, \tilde{f}, \bm f', w, \tilde{w})$ for $\bm f'=\{f'_v\}$ with $v\in[0,n]$.
+\[ 
+ f'_v=\prod_{j=-4}^{n} f_j^{A_{jv}};~ \tilde{f}=\prod_{j=-4}^{n} f_j^{A'_{j}}
+ C'_0=g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}
+\] 
 \[w=\sum_{j=1}^n A_{j0}^3-A_{-20}-A'_{-3};~ \tilde{w}=\sum_{j=1}^n A_{j0}^2 - A_{-40} \]
 
 \noindent
-Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but our way of computing it saves $n-1$ exponentiations.
+Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but computing $g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}$ saves $n-1$ exponentiations.
 
 %     \begin{itemize}
 %       \item Let $A_{0v}=r'_v$ for $v\in[1,n]$
-%       \item Choose random values $A_{w0},A_{-1v},A'_{w0}\rin \Zrq$ for $w\in[-4,n]$ and $v\in[1,n]$
+%       \item Choose random values $A_{w0},A_{-1v},A'_{w0}\rin \Zrp$ for $w\in[-4,n]$ and $v\in[1,n]$
 %       \item Define permutation matrix $A_{ji}$ according to $k_i$ and $k'_i$ such that $C'_{k'_i}=\prod_{j=0}^{n}C_{j}^{A_{jk_i}}=C_{\phi(k_i)}h^{r'_{k'_i}}$
 %     \end{itemize}
 %
@@ -472,14 +471,14 @@ Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^
 %       \item $\tilde{w}=\sum_{j=1}^n A_{j0}^2 - A_{40}$
 %     \end{itemize}
 
-\item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\Zrq$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
+\item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\bits^\secpar$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
 
 \item After receiving challenges $\bm c$ from the server, the client computes the following verification values and sets \allowbreak $\Res_\PoS=(\bm s, \bm s')$ for $\bm s = \{s_v\}$ and $\bm s' = \{s'_v\}$ with $v\in[-4,n]$.
 Let $c_0=1$.
 \[ s_v = \sum_{j=0}^{n} A_{vj}c_j;~ s'_v = A'_v + \sum_{j=1}^{n} A_{vj}c_j^2 \] % \text{ for } v\in[-4,n]
 
 
-\item Finally, the server checks the following equations for a randomly chosen $\alpha\rin\Zrq$ and $C_0=h$:
+\item Finally, the server checks the following equations for a randomly chosen $\alpha\rin\Zrp$ and $C_0=h$:
 
 \[  \prod_{v=-4}^{n} f_v^{s_v+\alpha s'_v} \stackrel{?}{=} f'_0\tilde{f}^\alpha \prod_{j=1}^n {f'_j}^{c_j+\alpha c_j^2};\hspace*{2em}
     \prod_{v=0}^n C_v^{s_v} \stackrel{?}{=} \prod_{j=0}^n {C'_j}^{c_j} \]
@@ -489,8 +488,9 @@ Let $c_0=1$.
 \noindent
 The server accepts the \ac{PoS} proof if all verifications succeed.
 %This concludes the proof of correctness of a shuffling.
-
 \end{enumerate}
+
+\mynote{check choice of challenge everywhere!}
 
 \subsubsection{Security Analysis}
 The security of our \ac{BPR} protocol is established by the following theorem using Lemma \ref{lem:pocs}.
@@ -517,7 +517,7 @@ For completeness we recall the proof here for our construction.
   We start with proving the \emph{zero-knowledge} property.
   To do so, we compute $C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{c_j\}, \{s_j\}$, and $\{s'_j\}$, such that they are indistinguishable from a view of an honest verifier, given $(q,g,h,\bm f, \bm C, \bm C')$:
   \[
-    f'_j, c_j, s_v, s'_v \rin \Zrq \text{ for } v\in[-4,n], j\in[1,n]
+    f'_j, c_j, s_v, s'_v \rin \Zrp \text{ for } v\in[-4,n], j\in[1,n]
   \]
   \[
     C'_0 = \frac{\prod_{j=0}^n C_j^{s_j}}{\prod_{j=1}^n {C'_j}^{c_j}};~~
@@ -595,7 +595,7 @@ Considering claims for \ac{PoM} and \ac{PoE} and the soundness proof of \ac{PoS}
 
 % \subsection{Proof of Lemma \ref{lem:dar}}\label{app:proof-dar}
 \paragraph{Dictionary Attack Resistance}
-First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $\Server_P,s_H\rin\Zrq$ is secure.
+First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $\Server_P,s_H\rin\Zrp$ is secure.
 We show in the following that a successful attacker $\cA$ on the dictionary attack resistance of the \ac{BPR} protocol would be able to distinguish between identical distributions of real and simulated values.
 It is easy to see that \ac{PoM} and \ac{PoE} on its own are zero-knowledge proofs.
 The zero-knowledge property of \ac{PoS} can be found in Section \ref{app:pocs-proof} and \cite{FurukawaS01,Furukawa05}.
@@ -603,7 +603,7 @@ The zero-knowledge property of \ac{PoS} can be found in Section \ref{app:pocs-pr
 We start by observing that breaking the dictionary attack resistance of the protocol implies that \cA is able to find a password \pwd from a \ac{BPR} transcript and the server's information, i.e. the password verifier $\ver_C=(H_1,H_2,s_H)$, using less than $2^{\beta_{\cD_{f,|\pwd|}}}$ exponentiations (pre-hash computations).
 This implies that there exists at least one index $i$ such that \ac{PoM} leaks the shuffled character $c_j\in\pwd$ for $j=\phi(i)$, or \ac{PoS} exposes the relationship between $C'_j$ and the according $C_i$ and therefore the set $R_j$ from which $c_i$ is chosen.
 Let $i$ denote the index of such a character.
-If \cA can identify index $i$, he can distinguish between $\cX_i=(t_i=g^{\pi_i}h^{k_{\rho_i}}, s_i=k_{\rho_i}-c_i(r_{\phi^{-1}(i)}+r'_i), c_i)$ and $\cX_0=(t_o=g^{\pi_o}h^{s_o}(C'_{\phi(i)}/g^{\pi_o})^{c_o}, s_o, c_o)$ with $c,s_o,c_o\rin\Zrq$ and $c_i=c\oplus \bigoplus c_o$ for $o\in[1,n], o\not=i$.
+If \cA can identify index $i$, he can distinguish between $\cX_i=(t_i=g^{\pi_i}h^{k_{\rho_i}}, s_i=k_{\rho_i}-c_i(r_{\phi^{-1}(i)}+r'_i), c_i)$ and $\cX_0=(t_o=g^{\pi_o}h^{s_o}(C'_{\phi(i)}/g^{\pi_o})^{c_o}, s_o, c_o)$ with $c,s_o,c_o\rin\Zrp$ and $c_i=c\oplus \bigoplus c_o$ for $o\in[1,n], o\not=i$.
 This however is impossible since $\cX_i$ and all $\cX_o$ are identically distributed.
 Similarly, we can argue that distinguishing between a real and a simulated proof of shuffle is impossible (cf. Section \ref{app:pocs-proof}).
 Considering that \ac{PoM} and \ac{PoS} do not offer any attack possibilities we see that if \cA is able to win the dictionary attack resistance game, we can distinguish between a real and a simulated \ac{PoE}.
@@ -622,8 +622,8 @@ Instead it is sufficient in our case that client \Client can not make the server
 Soundness of \ac{PoM} implies that if there exists a commitment $C'_{k_i}$ that commits to an encoded character $\pi_i$ \emph{not} in the respective set $\omega_{k_i}$, then
 \[ \bm t_i[j] \stackrel{?}{=} g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
 does not hold with overwhelming probability for given values.
-This holds under the assumption that the discrete logarithm problem is hard in $G$ and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\Zrq$.
-The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrq$.
+This holds under the assumption that the discrete logarithm problem is hard in $G$ and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\Zrp$.
+The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrp$.
 Note that this also holds for our case in which we use the same \Client in all $n$ proofs.
 Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in $G$, i.e. the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + c\log_h(C'_{k_i}g^{-\pi_j})$.
 Therefore, the claim follows since the client can not fool the server in accepting a set membership proof for a character $c_i\not\in\omega_{k_i}$ in \pwd and the server additionally verifies that sets $\omega_i$ are necessary and sufficient to fulfil policy $f$.
