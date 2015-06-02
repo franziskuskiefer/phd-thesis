@@ -447,29 +447,8 @@ After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(
 \[w=\sum_{j=1}^n A_{j0}^3-A_{-20}-A'_{-3};~ \tilde{w}=\sum_{j=1}^n A_{j0}^2 - A_{-40} \]
 
 \noindent
-Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but computing $g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}$ saves $n-1$ exponentiations.
+Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but computing $g^{\sum_{j=1}^{n} \pi_j A_{j0}}$ $h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}$ saves $n-1$ exponentiations.
 
-%     \begin{itemize}
-%       \item Let $A_{0v}=r'_v$ for $v\in[1,n]$
-%       \item Choose random values $A_{w0},A_{-1v},A'_{w0}\rin \Zrp$ for $w\in[-4,n]$ and $v\in[1,n]$
-%       \item Define permutation matrix $A_{ji}$ according to $k_i$ and $k'_i$ such that $C'_{k'_i}=\prod_{j=0}^{n}C_{j}^{A_{jk_i}}=C_{\phi(k_i)}h^{r'_{k'_i}}$
-%     \end{itemize}
-%
-% Compute the remaining values of $A_{ij}$ as follows:
-%     \begin{itemize}
-%       \item $A_{-2v}=\sum_{j=1}^{n} 3A_{j0}^2 A_{jv}$
-%       \item $A_{-3v}=\sum_{j=1}^{n} 3A_{j0} A_{jv}$ and
-%       \item $A_{-4v}=\sum_{j=1}^{n} 2A_{j0} A_{jv}$ for $v\in[1,n]$
-%     \end{itemize}
-
-% Compute verification values as follows:
-%     \begin{itemize}
-%       \item $f'_v=\prod_{j=-4}^{n} f_j^{A_{jv}}$ for $v\in[0,n]$
-%       \item $\tilde{f}=\prod_{j=-4}^{n} f_j^{A'_{j}}$
-%       \item $C'_0=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$
-%       \item $w=\sum_{j=1}^n A_{j0}^3-A_{-20}-A'_{-3}$
-%       \item $\tilde{w}=\sum_{j=1}^n A_{j0}^2 - A_{40}$
-%     \end{itemize}
 
 \item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\bits^\secpar$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
 
@@ -493,16 +472,16 @@ The server accepts the \ac{PoS} proof if all verifications succeed.
 \mynote{check choice of challenge everywhere!}
 
 \subsubsection{Security Analysis}
-The security of our \ac{BPR} protocol is established by the following theorem using Lemma \ref{lem:pocs}.
-% and is proven in several steps using Lemmas~\ref{lem:pocs}, \ref{lem:pc}, and \ref{lem:dar}.
+The security of our \ac{BPR} protocol is established by the following theorem. 
 
 \begin{theorem}[BPR Security]\label{theo:bpr}
-  The protocol from Section \ref{sec:construction} is \ac{BPR}-secure, i.e. policy compliant and dictionary attack resistant, if the discrete logarithm problem is hard in the used group $G$.
+  The protocol from Section \ref{sec:construction} is \ac{BPR}-secure, \ie. policy compliant and dictionary attack resistant, if the discrete logarithm problem is hard in the used group \GG.
 \end{theorem}
 
 \noindent
 To prove Theorem \ref{theo:bpr}, we start with the security of the adopted shuffling approach and prove that \ac{PoS} is a zero-knowledge proof of knowledge for the shuffle of $\bm C$ to $\bm C'$.
-The following Lemma~\ref{lem:pocs} is proven in \cite{Furukawa05} for ElGamal ciphertexts (we recall the proof with necessary changes for Pedersen commitments).
+The following Lemma~\ref{lem:pocs} is proven by \citet{Furukawa05} for ElGamal ciphertexts.
+We recall the proof here with necessary changes for Pedersen commitments in the following lemma.
 
 \begin{lemma}[\PoS is a ZKPoK] \label{lem:pocs}
   The \ac{PoS} protocol from Section \ref{sec:construction} is an honest verifier zero-knowledge proof of knowledge of the following statement if the discrete logarithm problem in the used group is hard,
@@ -511,11 +490,11 @@ The following Lemma~\ref{lem:pocs} is proven in \cite{Furukawa05} for ElGamal ci
 \end{lemma}
 
 \begin{proof}
-This proof follows immediately from the proof in \cite{Furukawa05}.
+This proof follows immediately from the proof by \citet{Furukawa05}.
 For completeness we recall the proof here for our construction.
-  We have to prove soundness and zero-knowledge of the \ac{PoS} protocol in order to prove Lemma \ref{lem:pocs}.
-  We start with proving the \emph{zero-knowledge} property.
-  To do so, we compute $C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{c_j\}, \{s_j\}$, and $\{s'_j\}$, such that they are indistinguishable from a view of an honest verifier, given $(q,g,h,\bm f, \bm C, \bm C')$:
+We have to prove soundness and zero-knowledge of the \ac{PoS} protocol in order to prove Lemma \ref{lem:pocs}.
+We start with proving the \emph{zero-knowledge} property.
+To do so, we compute $C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{c_j\}, \{s_j\}$, and $\{s'_j\}$, such that they are indistinguishable from a view of an honest verifier, given $(p,g,h,\bm f, \bm C, \bm C')$:
   \[
     f'_j, c_j, s_v, s'_v \rin \Zrp \text{ for } v\in[-4,n], j\in[1,n]
   \]
@@ -531,7 +510,7 @@ For completeness we recall the proof here for our construction.
 
 \noindent
 To prove \emph{soundness} of the \ac{PoS} scheme we show how to construct an extractor $E$ that extracts the matrix $A_{vj}$ and $A'_v$ for $v\in[-4,n], j\in[0,n]$.
-  Note that this includes extraction of the permutation matrix, i.e. $\phi$, and the re-randomisation values $r'_j$, but \emph{not} the content, i.e. the characters.
+  Note that this includes extraction of the permutation matrix, \ie $\phi$, and the re-randomisation values $r'_j$, but \emph{not} the content, \ie the characters.
   First, we see that there exists an extractor $E$ using $n+1$ linearly independent challenge sets $\bm c$ that is able to extract $A_{ji}$ from $\Server_v=\sum_{j=0}^n A_{vj}c_j$ that fulfils the equation $\prod_{v=-4}^n f_v^{s_v}=\prod_{j=0}^n {f'_j}^{c_j}$, and $A'_v$ from $\Server'_v=A'_v + \sum_{j=1}^n A_{vj}c_j^2$ that fulfils the equation $\prod_{v=-4}^n f_v^{s'_v}=\prod_{j=1}^n {f'_j}^{c^2_j}$ for $v\in[-4,n]$ and $j\in[0,n]$.
   In this case we also know that the prover either built $\Server_v$ and $\Server'_v$ correct, or is able to create (non-trivial) integers $\{\beta_v\}$ for $v\in[-4,n]$ as $\sum_{j=0}^n A_{vj}c_j - s_v$ or $\sum_{j=1}^n A_{vj}c^2_j - s'_v$ such that $\prod_{v=-4}^n f_v^{\beta_v} = 1$, which is impossible under the discrete logarithm assumption.
   Second, equations $\sum_{j=1}^n (s_j^3 - c_j^3)=s_{-2} + s'_{-3} + w$ and $\sum_{j=1}^n (s_j^2 - c_j^2)= s_{-4} + \tilde{w}$ ensure that the $n\times n$ sub-matrix used in $A_{ji}$ is indeed a permutation matrix, using the fact that every $n\times n$ permutation matrix $A_{ab}$ satisfies the following two equations:
@@ -558,9 +537,11 @@ This allows us to argue that every attacker winning the policy compliance experi
 \end{claim}
 
 \begin{proof}
-Soundness of \ac{PoE} holds if the probability that
-\[ t_H\stackrel{?}{=} H_1^{s_\pi}(H_2/h^{s_H})^c \text{ and } t_{C^\ast} \stackrel{?}{=} g^{s_\pi}h^{s_{r^\ast}}\left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^c \]
-holds for $H_2=H_1^{\pi}h^{s_H}$ and $\prod_{i=0}^{n-1} C^{b^i}_i=g^{\pi'}h^{\hat{r}}$ with $\pi\not=\pi'$ and $\hat{r}=\sum_{i=1}^n r_i$ is negligible.
+Soundness of \ac{PoE} holds if the probability is negligible that
+\[ 
+  t_H\verify H_1^{s_\pi}(H_2/h^{s_H})^c \text{ and } t_{C^\ast} \verify g^{s_\pi}h^{s_{r^\ast}}\left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^c 
+\]
+holds for $H_2=H_1^{\pi}h^{s_H}$ and $\prod_{i=0}^{n-1} C^{b^i}_i=g^{\pi'}h^{\hat{r}}$ with $\pi\not=\pi'$ and $\hat{r}=\sum_{i=1}^n b^i r_i$.
 To show that this holds we assume w.l.o.g. that $\Server_\pi$ and $\Server_{r^\ast}$ are chosen such that the second equation holds.
 In particular $\Server_\pi=x-c\pi'$ for an appropriate value of $x$.
 However, we see now that for the first equation to hold, the adversary would have to compute $t_H=g^{s_P s_\pi}(H_2h^{-s_H})^c$, which implies computing $y=\log_g(s_P x-s_P c\pi'+\beta c)$ for some $\beta$.
@@ -573,6 +554,24 @@ Note that the additional proof for knowledge of $\Server_P$ ensures that the cli
 %   &=h^{2x-2c\pi'+2\pi c + s'_Hc - s_Hc}=h^{2x-c(2(\pi-\pi') + s'_H - s_H)} \\
 %   0&=2(\pi-\pi') + s'_H - s_H
 % \end{align*}
+\end{proof}
+
+\begin{claim}[\PoM Soundness]
+  \ac{PoM} is sound, \ie for every client \Client using $\pwd\not\in\cD_f$ the probability that the server accepts \ac{PoM} is negligible.
+\end{claim}
+
+\begin{proof}
+Note that while \ac{PoM} is a proof of knowledge, we are not actually interested in the knowledge soundness as this comes implicitly under the discrete logarithm assumption.
+Instead it is sufficient in our case that client \Client can not make the server accept \ac{PoM} with a password $\pwd\not\in\cD_f$.
+Soundness of \ac{PoM} implies that if there exists a commitment $C'_{k_i}$ that commits to an encoded character $\pi_i$ \emph{not} in the respective set $\omega_{k_i}$, then
+\[ \bm t_i[j] \stackrel{?}{=} g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
+does not hold with overwhelming probability for given values.
+This holds under the assumption that the discrete logarithm problem is hard in \GG and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\bits^\secpar$.
+The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrp$.
+Note that this also holds for our case in which we use the same \Client in all $n$ proofs.
+Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in \GG, \ie the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + c\log_h(C'_{k_i}g^{-\pi_j})$.
+Therefore, the claim follows since the client can not fool the server in accepting a set membership proof for a character $c_i\not\in\omega_{k_i}$ in \pwd and the server additionally verifies that sets $\omega_i$ are necessary and sufficient to fulfil policy $f$.
+
 \end{proof}
 
 \noindent
@@ -590,54 +589,23 @@ To this end $\cB'$ simulates all \Execute oracles honestly.
 \Send queries are simulated honestly, except for one session, in which $\cB'$ stores the first part of \ac{PoS} in a random \Send query and responds with $n+1$ linearly independent challenges $\bm c$ for \ac{PoS} and a random challenge \Client for \ac{PoM} and \ac{PoE}.
 Gathering the $n+1$ messages in the second \Send query from \cA on that session, $\cB'$ can extract $r'_i$ and the permutation matrix.
 Building an attacker on the soundness of \ac{PoE} using a successful attacker \cA on the policy compliance experiment is similar to building \cB on \ac{PoM}.
-Considering claims for \ac{PoM} and \ac{PoE} and the soundness proof of \ac{PoS} the lemma follows.
-% 
+Considering claims for \ac{PoM} and \ac{PoE} and the soundness proof of \ac{PoS} \acl{PC} follows.
 
-% \subsection{Proof of Lemma \ref{lem:dar}}\label{app:proof-dar}
-\paragraph{Dictionary Attack Resistance}
+\smallskip\noindent
+\textbf{Dictionary Attack Resistance}
 First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $\Server_P,s_H\rin\Zrp$ is secure.
 We show in the following that a successful attacker $\cA$ on the dictionary attack resistance of the \ac{BPR} protocol would be able to distinguish between identical distributions of real and simulated values.
 It is easy to see that \ac{PoM} and \ac{PoE} on its own are zero-knowledge proofs.
-The zero-knowledge property of \ac{PoS} can be found in Section \ref{app:pocs-proof} and \cite{FurukawaS01,Furukawa05}.
+The zero-knowledge property of \ac{PoS} has been shown in Lemma \ref{lem:pocs}.
 
-We start by observing that breaking the dictionary attack resistance of the protocol implies that \cA is able to find a password \pwd from a \ac{BPR} transcript and the server's information, i.e. the password verifier $\ver_C=(H_1,H_2,s_H)$, using less than $2^{\beta_{\cD_{f,|\pwd|}}}$ exponentiations (pre-hash computations).
+We start by observing that breaking the dictionary attack resistance of the protocol implies that \cA is able to find a password \pwd from a \ac{BPR} transcript and the server's information, \ie the password verifier $\ver_C=(H_1,H_2,s_H)$, using less than $2^{\beta_{\cD_{f,|\pwd|}}}$ exponentiations (pre-hash computations).
 This implies that there exists at least one index $i$ such that \ac{PoM} leaks the shuffled character $c_j\in\pwd$ for $j=\phi(i)$, or \ac{PoS} exposes the relationship between $C'_j$ and the according $C_i$ and therefore the set $R_j$ from which $c_i$ is chosen.
 Let $i$ denote the index of such a character.
 If \cA can identify index $i$, he can distinguish between $\cX_i=(t_i=g^{\pi_i}h^{k_{\rho_i}}, s_i=k_{\rho_i}-c_i(r_{\phi^{-1}(i)}+r'_i), c_i)$ and $\cX_0=(t_o=g^{\pi_o}h^{s_o}(C'_{\phi(i)}/g^{\pi_o})^{c_o}, s_o, c_o)$ with $c,s_o,c_o\rin\Zrp$ and $c_i=c\oplus \bigoplus c_o$ for $o\in[1,n], o\not=i$.
 This however is impossible since $\cX_i$ and all $\cX_o$ are identically distributed.
-Similarly, we can argue that distinguishing between a real and a simulated proof of shuffle is impossible (cf. Section \ref{app:pocs-proof}).
+Similarly, we can argue that distinguishing between a real and a simulated proof of shuffle is impossible.
 Considering that \ac{PoM} and \ac{PoS} do not offer any attack possibilities we see that if \cA is able to win the dictionary attack resistance game, we can distinguish between a real and a simulated \ac{PoE}.
-However, this is impossible due to the zero-knowledge property of \ac{PoE}, i.e. values $t_{s_P}, t_H$ and $t_{C^\ast}$ are identically distributed in both cases.
+However, this is impossible due to the zero-knowledge property of \ac{PoE}, \ie values $t_{s_P}, t_H$ and $t_{C^\ast}$ are identically distributed in both cases.
 
 
 \end{proof}
-
-\begin{claim}[\PoM Soundness]
-  \ac{PoM} is sound, i.e. for every client \Client using $\pwd\not\in\cD_f$ the probability that the server accepts \ac{PoM} is negligible.
-\end{claim}
-
-\begin{proof}
-Note that while \ac{PoM} is a proof of knowledge, we are not actually interested in the knowledge soundness as this comes implicitly under the discrete logarithm assumption.
-Instead it is sufficient in our case that client \Client can not make the server accept \ac{PoM} with a password $\pwd\not\in\cD_f$.
-Soundness of \ac{PoM} implies that if there exists a commitment $C'_{k_i}$ that commits to an encoded character $\pi_i$ \emph{not} in the respective set $\omega_{k_i}$, then
-\[ \bm t_i[j] \stackrel{?}{=} g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
-does not hold with overwhelming probability for given values.
-This holds under the assumption that the discrete logarithm problem is hard in $G$ and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\Zrp$.
-The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrp$.
-Note that this also holds for our case in which we use the same \Client in all $n$ proofs.
-Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in $G$, i.e. the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + c\log_h(C'_{k_i}g^{-\pi_j})$.
-Therefore, the claim follows since the client can not fool the server in accepting a set membership proof for a character $c_i\not\in\omega_{k_i}$ in \pwd and the server additionally verifies that sets $\omega_i$ are necessary and sufficient to fulfil policy $f$.
-
-\end{proof}
-
-% \noindent
-% The proof of Theorem~\ref{theo:bpr} follows then from the following Lemmas \ref{lem:pc} and  \ref{lem:dar} (with corresponding proofs in Appendices \ref{app:proof-pc} and \ref{app:proof-dar}) that separately prove each of the two \ac{BPR} security requirements, namely policy compliance and dictionary attack resistance.
-% 
-% 
-% \begin{lemma} \label{lem:pc}
-%   The \ac{BPR} protocol from Section \ref{sec:protocol} offers policy compliance according to Definition \ref{def:pc} if the discrete logarithm problem is hard in the used group.
-% \end{lemma}
-% 
-% \begin{lemma} \label{lem:dar}
-%   The \ac{BPR} protocol from Section \ref{sec:protocol} offers dictionary attack resistance according to Definition \ref{def:dar} if the discrete logarithm problem is hard in the used group.
-% \end{lemma}
