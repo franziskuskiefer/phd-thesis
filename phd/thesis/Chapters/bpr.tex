@@ -606,6 +606,24 @@ This however is impossible since $\cX_i$ and all $\cX_o$ are identically distrib
 Similarly, we can argue that distinguishing between a real and a simulated proof of shuffle is impossible.
 Considering that \ac{PoM} and \ac{PoS} do not offer any attack possibilities we see that if \cA is able to win the dictionary attack resistance game, we can distinguish between a real and a simulated \ac{PoE}.
 However, this is impossible due to the zero-knowledge property of \ac{PoE}, \ie values $t_{s_P}, t_H$ and $t_{C^\ast}$ are identically distributed in both cases.
-
-
 \end{proof}
+
+\subsection{Discussion}
+The proposed \ac{BPR} protocol is proven secure in a strong security model, but does not hide the length of the password from the server.
+Arguably, this is a strong security requirement (cf. Section \ref{sec:bpr-model}) that may not be needed in every practical scenarios since password policies usually aim at offering some minimum password strength such that every password of the required minimum length or longer and all necessary character classes is considered to be secure.
+
+Nonetheless, one may argue that an attacker knowing the password length can perform a dictionary attack by only trying passwords of the given length and thus use the reduced search space to speed up the attack. An initial idea for hiding the password length in our \ac{BPR} protocol could be to combine commitments for \emph{non-significant} password characters into a single commitment and use only \pmin commitments in the proof. This, however, would allow a malicious client to register passwords that do not comply with the policy unless the client can prove that the exponent of the combined commitment is of the form $\sum b^i\pi_j$, which is only possible when the length of the polynomial (and therefore the password length) is known.
+We show that our \ac{BPR} protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
+In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for policy $f$.
+All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
+This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. 
+The remaining protocol steps remain unchanged.
+Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified \ac{BPR} protocol using min-entropy
+$\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
+for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
+However, it is obvious that this modification trades off stronger security for efficiency due to the use of $l$ for all shorter passwords.
+
+Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
+In this case the proof \ac{PoS} becomes redundant and all steps related to it can be removed. 
+This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
+The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which offer comparable security guarantees.

@@ -1,41 +1,35 @@
 \section{Blind Password Registration --- Discussion and Analysis} \label{sec:discussion}
-Our \ac{BPR} protocol is proven secure in a strong security model, but does not hide the length of the password from the server. Arguably, this is a strong security requirement (cf. Section \ref{sec:bpr-model}) that may not be needed in many practical scenarios since password policies usually aim at offering some minimum password strength such that every password of the required minimum length or longer is considered to be secure.
-Having this in mind, it makes no difference whether the password length is known to an attacker or not since the password is assumed to be strong enough.
 
+We proposed three password registration protocols with different security guarantees and performance.
+In this section we compare all three protocols considering security and performance.
 
-Nonetheless, one may argue that an attacker knowing the password length can perform a dictionary attack by only trying passwords of the given length and thus use the reduced search space to speed up the attack. An initial idea for hiding the password length in our \ac{BPR} protocol could be to combine commitments for \emph{non-significant} password characters into a single commitment and use only \pmin commitments in the proof. This, however, would allow a malicious client to register passwords that do not comply with the policy unless the client can prove that the exponent of the combined commitment is of the form $\sum b^i\pi_j$, which is only possible when the length of the polynomial (and therefore the password length) is known.
-We show that our \ac{BPR} protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
-In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for the policy $f$.
-All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
-This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. 
-The remaining protocol steps remain unchanged.
-Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified \ac{BPR} protocol using min-entropy
-$\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
-for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
-% \footnote{If a stepping systems is used due to efficiency reasons we have to use $\cD_{f,l1,l2}$, which contains passwords with length between $l1$ and $l2$.}
-However, it is obvious that this modification trades off stronger security for efficiency due to the use of $l$ for all shorter passwords.
+\subsection{Security} \label{sec:bpr-security-analysis}
+The \ac{ZKPPC}-based approach has no formal security model for the \ac{BPR} protocol.
+However, it is clear (as discussed before) that it does not fulfil the security model proposed for \ac{BPR} protocols in Section \ref{sec:bpr} but requires a weaker model.
+While the \ac{SPC}-based approach has a formal security model, it differs from the \ac{BPR} security model proposed in Section \ref{sec:bpr}.
+It thus remains to compare security guarantees given by the \ac{SPC}-based approach with guarantees from the \ac{BPR} protocol in Section \ref{sec:bpr}.
+We call these protocols BPR1 and BPR2 respectively in the following.
 
-%for $n\leq 50$ for $50<n\leq 100$
+First note that BPR2 seems not provable in the game-based security model BPR1 is proven in.
+This is due to the fact that the reduction to the one-more RSA problem does not work.
+The idea would be to say that the client is only able to register a non-compliant password if he is able to break one-more RSA, \ie by creating an
+element in $\hat{\cC}$ that he did not send to the server in any $u_i$. 
+The problem is that the challenger has to build $\hat{\cS}$ and therefore breaks the ability to actually generate that forgery. 
+Alternatively, using only the requested elements in $\hat{\cS}$ allows the client to create a forgery, but lets the protocol fail because the client uses elements in $\hat{\cC}$ that are not in $\hat{\cS}$.
 
-% However, having a closer look on the definition of min-entropy in Section \ref{sec:min-entropy} one can see that the difference between a dictionary $\cD_f$ and $\cD_{f,|\pwd|}$ is marginal.
-% To capture the difference between an attacker knowing the password length and one not knowing it a different definition of min-entropy may be useful.
-%
-Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
-In this case the proof \PoS becomes redundant and all steps related to it can be removed. 
-This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
-The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which seems to offer comparable security guarantees.
-% By changing the success probability in the dictionary attack resistance definition as discussed in Section \ref{sec:bpr-model} such a notion can be established.
-% But this gives the attacker significantly more information and therefore speeds-up the password retrieval process. %, such that we do not further discuss this option.
-% \fk{$l=|\pwd|$ is leaked. If we could prove representation of $C=g^{\sum_{i=0}^{l-1}95^i c_i}h^r$, we could hide that. We should look into this as it would be another good improvement compared to the ESORICS protocol}
-% \fk{discuss why hiding the password length is ``OK'' but also discuss impact on real world attacks and how length-hiding could be achieved in our protocol}
-
+Further, BPR2 has with the one-more RSA assumption and the random oracle model much stronger assumptions on the model than BPR1.
+This leads to the conclusion that BPR1 is the preferable protocol when strong security guarantees are required.
 
 \subsection{Performance \& Implementation} \label{sec:performance}
 
-\subsubsection{SPC based BPR}
+While the \ac{BPR} protocol from Section \ref{sec:bpr} has stronger security guarantees than the \ac{SPC}-based \ac{BPR} protocol, performance of the \ac{SPC}-based \ac{BPR} protocol is significantly better as discussed in the following.
 \mynote{performance trade-off discussion (registration VS authentication)}
-In the implementation of the \ac{BPR} protocol we can adopt several tricks aiming to improve its performance. First, we can pre-compute and reuse values $g^{\pi_i}$ on the client and server side.
-The computation of $b^i$ can be performed in a way that allows to re-use previously calculated values and the implementation of the proof can be optimised allowing the client to use $\pi$.
+
+\subsubsection{Zero-knowledge-based BPR Protocols}
+We first compare the two zero-knowledge-based \ac{BPR} protocols from Section \ref{sec:zkppc} and \ref{sec:bpr}.
+In the implementation of both protocols we can adopt several tricks aiming to improve its performance. 
+First, we can pre-compute and reuse values $g^{\pi_i}$ on the client and server side.
+Further, computation of $b^i$ can be performed in a way that allows to re-use previously calculated values and the implementation of the proof can be optimised allowing the client to use $\pi$.
 Considering this, we can estimate the performance of the \ac{BPR} protocol by counting the number of exponentiations as follows.
 Note that we do not count exponentiations with exponents smaller than $5$.
 % Client:
@@ -54,57 +48,62 @@ Note that we do not count exponentiations with exponents smaller than $5$.
 %   \item \PoE needs $n+8$
 %   \item \PoS needs $4n+8$
 % \end{itemize}
-The client in our \ac{BPR} protocol has to perform $4n+2\sum_i |\omega_i| + 113$ exponentiations.
+The client in the \ac{BPR} protocol has to perform $4n+2\sum_i |\omega_i| + 113$ exponentiations.
 The server must perform $5n + 2\sum_i |\omega_i| + 16$ exponentiations if $g^{\pi_i}$ is pre-computed and re-used.
 In contrast, the generic approach for \ac{ZKPPC} requires $3n+3\sum_i (|\omega^\ast_i|-1)+7$ exponentiations on the client side and $3\sum_i |\omega^\ast_i|+8$ on the server side.
 Note that $\omega^\ast_i$ in the \ac{ZKPPC} context depends on the maximum password length and thus contains all characters from $\omega_i$ \emph{plus} all characters from $\omega_i$ shifted by $j = 1,\ldots, \pmax$ positions.
-Therefore, the cost of the protocol \ac{ZKPPC}-based \ac{BPR} protocol is given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. 
-The \ac{ZKPPC}-based \ac{BPR} protocol is thus much less efficient than the \ac{SPC}-based \ac{BPR} protocol: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
+Therefore, the cost of a \ac{ZKPPC}-based password registration protocol is given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. 
+A \ac{ZKPPC}-based password registration protocol is thus much less efficient than the \ac{BPR} protocol from Section \ref{sec:bpr}: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
 
+\mynote{add estimation of SPC-based BPR}
+
+% \paragraph{Implementation}
+% We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
+% To this end we set $b=10^5$ in order to achieve security guarantees for all reasonable password lengths and policies.
+% We also implement the \ac{ZKPPC} approach in order to compare its performance with our \ac{BPR} implementation.
+% The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the theoretical findings from the previous paragraph. 
+% In particular, execution of the direct \ac{BPR} protocol with a password of length $10$ and policy $(dl, 5)$ needs $0.72$ seconds on the client and $0.67$ seconds on the server side while the \ac{ZKPPC} execution requires $9.1$ seconds on the client and $8.9$ seconds on the server side with a maximum password length of $10$.
+% Increasing the maximum password length to $20$ slows down the client to $22.7$ and the server to $22.2$ seconds.
+% Our measurements show that our \ac{BPR} protocol is \emph{at least} $10$ times faster than the \ac{ZKPPC}-based registration approach.
+% With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed \ac{BPR} protocol can be deemed practical.
+
+% \subsubsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
 \paragraph{Implementation}
-We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
-To this end we set $b=10^5$ in order to achieve security guarantees for all reasonable password lengths and policies.
-We also implement the \ac{ZKPPC} approach in order to compare its performance with our \ac{BPR} implementation.
-The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the theoretical findings from the previous paragraph. 
-In particular, execution of the direct \ac{BPR} protocol with a password of length $10$ and policy $(dl, 5)$ needs $0.72$ seconds on the client and $0.67$ seconds on the server side while the \ac{ZKPPC} execution requires $9.1$ seconds on the client and $8.9$ seconds on the server side with a maximum password length of $10$.
-Increasing the maximum password length to $20$ slows down the client to $22.7$ and the server to $22.2$ seconds.
-Our measurements show that our \ac{BPR} protocol is \emph{at least} $10$ times faster than the \ac{ZKPPC}-based registration approach.
-With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed \ac{BPR} protocol can be deemed practical.
-
-\subsubsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
-We implemented a prototype of our password registration protocol and measured the performance. 
-To compare, we also implemented the \ac{ZKPPC}-based password registration protocol. 
-Both implementations are in C and use OpenSSL 1.0.0\footnote{\url{https://www.openssl.org}} for the underlying cryptographic operations. 
-In the experiments, we set the security parameter to 80-bit. We used 1024-bit RSA keys and the \mbox{{SHA-}1} hash function in our protocol. 
-In the \ac{ZKPPC} protocol we use the \ac{NIST} P-192 elliptic curve. 
-All experiments were run on a MacPro desktop with 2 Intel E5645 2.4GHz CPUs and 32 GB RAM.
+We implemented a prototypes of all three password registration protocols and measured their real performance. 
+The implementations are in C and use OpenSSL 1.0.??\footnote{\url{https://www.openssl.org}} for underlying cryptographic operations. 
+In the experiments, we set the security parameter to 80-bit and use 1024-bit RSA keys and the \mbox{{SHA-}1} hash function in our protocol. 
+The two zero-knowledge-based protocols use the \ac{NIST} P-192 elliptic curve \cite{nistEC}.
+All experiments were run on a laptop with an Intel Core Duo P8600 at 2.40GHz with 8GB RAM.
 
 \begin{table}[!t]
 %\setlength\tabcolsep{5pt}
 \begin{center}
-\begin{footnotesize}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{}&\multicolumn{2}{ |c| }{$(P1,20)$}&\multicolumn{2}{ |c| }{$(P2,20)$}&\multicolumn{2}{ |c| }{$(P3,20)$}&\multicolumn{2}{ |c| }{$(P2,10)$}&\multicolumn{2}{ |c| }{$(P2,40)$}\\
-\cline{2-11}
+\scalebox{0.77}{
+\begin{tabular}{lcccccccccc}
+\toprule
+\multirow{2}{*}{}&\multicolumn{2}{ c }{$(P1,20)$}&\multicolumn{2}{ c }{$(P2,20)$}&\multicolumn{2}{ c }{$(P3,20)$}&\multicolumn{2}{ c }{$(P2,10)$}&\multicolumn{2}{ c }{$(P2,40)$}\\
+\cmidrule{2-11}
 &Total&Pol-ck&Total&Pol-ck&Total&Pol-ck&Total&Pol-ck&Total&Pol-ck\\
-\hline
-ZKPPC &81,287&81,268&66,944&66,925&38,496&38,477&7,710&7,699&453,574&453,529 \\
-\hline
-Our Protocol&140&4&243&8&454&17&223&7&275&8\\
-\hline
-Improvement&580$\times$&&275$\times$&&80$\times$&&35$\times$&&1649$\times$&\\
-\hline
-\end{tabular} 
-\end{footnotesize}
+\midrule
+ZKPPC (Section \ref{sec:zkppc}) &81,287&81,268&66,944&66,925&38,496&38,477&7,710&7,699&453,574&453,529 \\
+\midrule
+BPR (Section \ref{sec:bpr}) & ? & ? & ? & ? & ? & ? & ? & ? & ? & ?\\
+\midrule
+SPC (Section \ref{sec:spc-bpr}) &140&4&243&8&454&17&223&7&275&8\\
+% \hline
+% Improvement (ZKPPC - SPC)&580$\times$&&275$\times$&&80$\times$&&35$\times$&&1649$\times$&\\
+\bottomrule
+\end{tabular}}
 \caption{Protocol Performance (Running Time in Milliseconds)} \label{tab::perf}
 \end{center}
 \end{table} 
 
-The running time of the protocols are shown in Table \ref{tab::perf}. We measured the running time with different policies and password lengths. The passwords are printable ASCII strings. 
+The running time of the protocols are shown in Table \ref{tab::perf}. We measured the running time with different policies and password lengths. The passwords are printable \ac{ASCII} strings. 
 The alphabet is partitioned into 4 classes: digits, lower case, upper case and symbols. 
 We used three policies $P1, P2$ and $P3$ in the experiments, which require at least one, two and four characters in all character classes respectively. 
-In the first row of the table, the pairs indicate the policy and the password length that were used in the experiment, e.g. $(P1, 20)$ means policy $P1$ is used and the password was 20 characters long. 
+In the first row of the table, the pairs indicate the policy and the password length that were used in the experiment, \eg $(P1, 20)$ means policy $P1$ is used and the password was 20 characters long. 
+
+\mynote{rewrite below when BPR is implemented}
 The table shows the total running time as well as the time spent on checking the policies (Pol-ck) in the protocol. As we can see, the performance of our protocol is much better than the ZKPPC protocol. The main difference comes from policy checking time. Policy checking in ZKPPC is done by using a zero-knowledge proof of set membership protocol. 
 The cost of the zero-knowledge proof protocol is $6\cdot n\cdot\sum_{i=1}^n\omega_i$ exponentiations, where $n$ is the password length in the experiments, and $\omega_i$ is the size of character class to which the i$th$ character in the password belongs. In our protocol,  policy checking is done by using the \ac{SPC} protocol and the cost is mainly the \ac{OBI} protocol which is based on symmetric cryptography. The cost of the \ac{OBI} protocol is $4.32\cdot |\hat{S}|\cdot \lambda$ hash operations, where $\lambda$ is the security parameter. More concretely, in setting $(P1,20)$,  the zero-knowledge proof based policy checking requires around 200,000 exponentiations while our \ac{OBI} based \ac{SPC} requires only less than 33,000 hash operations.
 
