@@ -337,6 +337,112 @@ as shown by \citet{Canetti00}.
 \subsection{Universal Composability}
 \mynote{something?}
 
+To implement our 2PAKE functionality we require some commonly used functionality from the literature.
+First, since we work in the crs model we require the crs functionality from \cite{CanettiF01}, recalled in Figure \ref{fig:crsfunctionality}.
+We further need verified public keys on both servers.
+We use the ideal CA functionality \Fca from \cite{Canetti04} for this, recalled in Figure \ref{fig:cafunctionality}.
+Eventually, to establish unique query identifiers between the parties in a protocol run we use the \Finit functionality from \cite{BarakLR04}, recalled in Figure \ref{fig:initfunctionality}.
+
+\begin{figure}[h!]
+\begin{mdframed}[innertopmargin=10pt]
+\begin{center}
+{\bf Functionality \Fcrs}
+\end{center}
+\Fcrs is parametrised by a distribution $\cD$ and proceeds as follows:
+
+\begin{description}
+	
+	\item[NewValue:] Upon input $(\NV, \sid)$ choose a value $d\rin\cD$, send $d$ back to the activating party and store the value if this is the first invocation.
+	  In any other case return the value $d$ to the activating party.
+	
+\end{description}
+\end{mdframed}
+\caption{Ideal Functionality \Fcrs}
+\label{fig:crsfunctionality}
+\end{figure}
+
+
+\begin{figure}[h!]
+\begin{mdframed}[innertopmargin=10pt]
+\begin{center}
+{\bf Functionality \Fca}
+\end{center}
+
+\begin{description}
+	
+	\item[Registration:] Upon receiving the first message $(\Register, \sid, v)$ from party \cP, send $(\Registered, \sid, v)$ to the adversary; upon receiving \ok from the adversary, and if $\sid=\cP$ and this is the first request from \cP, then record the pair $(\cP,v)$.
+	
+	\item[Retrieve:] Upon receiving a message $(\Retrieve, \sid)$ from party $\cP'$, send $(\Retrieve, \sid, \cP')$ to the adversary, and wait for an \ok from the adversary.
+	            Then, if there is a recorded pair $(\sid, v)$ output $(\Retrieve, \sid, v)$ to $\cP'$.
+	            Otherwise output $(\Retrieve, \sid, \bot)$ to $\cP'$.
+	
+\end{description}
+\end{mdframed}
+\caption{Ideal Functionality \Fca}
+\label{fig:cafunctionality}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{mdframed}[innertopmargin=10pt]
+\begin{center}
+{\bf Functionality \Finit}
+\end{center}
+\Finit, with fixed session identifier $0$, runs in the universe with parties $\cU$ and adversary $\cS$.
+When called the first time, it sets $\Hist=\emptyset$.
+
+\begin{description}
+	
+	\item[Init:] Upon receiving $(\init, 0, \langle P_i, \cP, \cF \rangle)$ from $P_i$, where $\cP\subseteq\cU$, execute the following:
+	  \begin{enumerate}
+	    \item Send $(\init, 0, \langle P_i, \cP, \cF \rangle)$ to $\cS$.
+	    \item Upon receiving back $(\setId, 0, \langle \sid', P_i, \cP, \cF \rangle)$ from $\cS$, do the following:
+	      \begin{enumerate}
+	        \item If $\sid'\in \Hist$, choose an arbitrary $\sid\not\in \Hist$.
+	        \item If $\sid'\not\in \Hist$, set $\sid\gets\sid'$.
+	        \item Update $\Hist \gets \Hist \cup \{\sid\}$.
+	        \item Send $(\invoke, 0, \langle \sid, P_i, \cP, \cF \rangle)$ to $\cS$.
+	      \end{enumerate}
+	    \item Upon receiving a message $(\sendoutput, 0, \langle \sid, P_i, \cP, \cF \rangle)$ from $\cS$:
+	      \begin{enumerate}
+	        \item If $P_j\in\cP$ and it has not yet been sent to the \invoke message with $\langle \sid, P_i, \cP, \cF \rangle)$, send it $(\invoke, 0, \langle \sid, P_i, \cP, \cF \rangle)$.
+	      \end{enumerate}
+	  \end{enumerate}
+	
+\end{description}
+\end{mdframed}
+\caption{Ideal Functionality \Finit}
+\label{fig:initfunctionality}
+\end{figure}
+
+
+\begin{figure}[htb]
+\begin{mdframed}[innertopmargin=10pt]
+\begin{center}
+{\bf Functionality $\cF_{\mathrm{PAKE}}$}
+\end{center}
+The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter $\secpar$. It interacts with an adversary \SIM and a set of parties via the following queries:
+\begin{description}
+	\item[NewSession:] Upon input $(\NS, \sid, P_i, P_j, \pwd, \role)$ from $P_i$, check that $P_j$ is legit and send $(\NS, \sid, P_i, P_j, \role)$ to \SIM.
+	If this is the first NewSession query, or if this is the second NewSession query and there is a record $(\sid, P_j,P_i,\pwd')$, then record $(\sid, P_i, P_j, \pwd)$ and mark this record fresh.
+	
+	\item[TestPwd:] Upon input $(\TP, \sid, P_i, \pwd')$ from \SIM, check that a fresh record $(\sid, P_i, P_j, \pwd)$ exists, then do:
+	If $\pwd=\pwd'$, mark the record as \compromised and reply to \SIM with ``correct guess''. If $\pwd\not=\pwd'$, mark the record \interrupted and reply with ``wrong guess''.
+	
+	\item[NewKey:] Upon input $(\NK, \sid, P_i, \sk)$ from \SIM, check that a record $(\sid, P_i, P_j, \pwd)$ exists, $|\sk|=\secpar$ and this is the first NewKey query for $P_i$, then:
+	\begin{itemize}
+		\item If the record is \compromised, or either $P_i$ or $P_j$ is corrupted, then output $(\sid,\sk)$ to $P_i$.
+		\item If the record is fresh, and there is a record $(\sid, P_j, P_i, \pwd')$ with $\pwd'=\pwd$, and a key $\sk'$ was sent to $P_j$ and $(\sid, P_j,P_i,\pwd)$ was fresh at the time, then output $(\sid,\sk')$ to $P_i$.
+		\item In any other case, pick a new random key $\sk'$ of length $\secpar$ and send $(\sid,\sk')$ to $P_i$.
+	\end{itemize}
+	Either way, mark the record $(\sid,P_i,P_j,\pwd)$ as completed.
+	
+\end{description}
+\end{mdframed}
+\caption{Ideal Functionality \FPAKE}
+\label{fig:pakef}
+\end{figure}
+
+
 \subsection{Verifier-based PAKE Security}
 \mynote{BP VPAKE model}
 

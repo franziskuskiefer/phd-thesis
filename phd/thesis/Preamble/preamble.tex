@@ -30,6 +30,7 @@
 \usepackage{algorithmic}
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
+\usepackage{mdframed}
 
 
 % ********************Captions and Hyperreferencing / URL **********************
@@ -100,6 +101,7 @@
 \usepackage{bibentry} % getting full reference
 \nobibliography* % reuse existing bibtex files
 \usepackage[normalem]{ulem} 
+% \usepackage{enumerate}
 
 
 % TIKZ stuff
@@ -344,6 +346,11 @@
 \newcommand{\pk}{\ensuremath{\mathtt{pk}}\xspace}
 \newcommand{\sk}{\ensuremath{\mathtt{sk}}\xspace}
 \newcommand{\dk}{\ensuremath{\mathtt{dk}}\xspace}
+\newcommand{\vk}{\ensuremath{\mathtt{vk}}\xspace}
+
+
+\newcommand{\Gen}{\ensuremath{\mathtt{Gen}}\xspace}
+\newcommand{\Sign}{\ensuremath{\mathtt{Sign}}\xspace}
 
 \newcommand{\share}{\ensuremath{\mathfrak{s}}\xspace}
 \newcommand{\secret}{\ensuremath{\mathfrak{s}}\xspace}
@@ -385,7 +392,10 @@
 \newcommand{\cL}{\ensuremath{\mathcal{L}}\xspace}
 \newcommand{\cM}{\ensuremath{\mathcal{M}}\xspace}
 \newcommand{\cO}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\cP}{\ensuremath{\mathcal{P}}\xspace}
 \newcommand{\cS}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\cT}{\ensuremath{\mathcal{T}}\xspace}
+\newcommand{\cU}{\ensuremath{\mathcal{U}}\xspace}
 \newcommand{\cX}{\ensuremath{\mathcal{X}}\xspace}
 \newcommand{\cZ}{\ensuremath{\mathcal{Z}}\xspace}
 
@@ -405,9 +415,14 @@
 \newcommand{\Adv}{\ensuremath{\mathsf{Adv}}\xspace}
 \newcommand{\AKESEC}{\ensuremath{\mathsf{AKE-SEC}}\xspace}
 
+
+\newcommand{\AKE}{\ensuremath{\mathsf{AKE}}\xspace}
+
 \newcommand{\Succ}{\ensuremath{\mathsf{Succ}}\xspace}
 
 \renewcommand{\min}{\ensuremath{\mathtt{min}}\xspace}
+
+\newcommand{\game}[1]{\ensuremath{\hfill\\\noindent\bm{\text{\bf Game}_{#1}:}}\xspace}
 
 % Zero-knowledge models
 \newcommand{\PK}{\ensuremath{\mathsf{PoK}}\xspace}
@@ -451,6 +466,66 @@
 \newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
 \newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
 \newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
+
+% UC 2PAKE
+\newcommand{\FTWOPAKE}{\ensuremath{\cF_{\mathrm{2PAKE}}}\xspace}
+\newcommand{\FTWOPAKEM}{\ensuremath{\widehat{\cF}_{\mathrm{2PAKE}}}\xspace}
+\newcommand{\Fca}{\ensuremath{\cF_{\mathrm{ca}}}\xspace}
+\newcommand{\Finit}{\ensuremath{\cF_{\mathrm{init}}}\xspace}
+\newcommand{\Fcrs}{\ensuremath{\cF_{\mathrm{crs}}}\xspace}
+
+\newcommand{\NH}{\ensuremath{\mathtt{NH}}\xspace}
+\newcommand{\FA}{\ensuremath{\mathtt{FA}}\xspace}
+\newcommand{\NW}{\ensuremath{\mathtt{NW}}\xspace}
+\newcommand{\NV}{\ensuremath{\mathtt{NV}}\xspace}
+\newcommand{\NPH}{\ensuremath{\mathtt{NPH}}\xspace}
+
+\newcommand{\Register}{\ensuremath{\mathtt{Register}}\xspace}
+\newcommand{\Registered}{\ensuremath{\mathtt{Registered}}\xspace}
+\newcommand{\Retrieve}{\ensuremath{\mathtt{Retrieve}}\xspace}
+
+\newcommand{\ok}{\ensuremath{\mathtt{ok}}\xspace}
+
+\newcommand{\init}{\ensuremath{\mathtt{init}}\xspace}
+\newcommand{\Hist}{\ensuremath{\mathtt{Hist}}\xspace}
+\newcommand{\setId}{\ensuremath{\mathtt{setId}}\xspace}
+\newcommand{\invoke}{\ensuremath{\mathtt{invoke}}\xspace}
+\newcommand{\sendoutput}{\ensuremath{\mathtt{sendoutput}}\xspace}
+
+\newcommand{\DSPHF}{\ensuremath{\text{D-SPHF}}\xspace}
+\newcommand{\TDSPHF}{\ensuremath{\text{TD-SPHF}}\xspace}
+
+\newcommand{\qid}{\ensuremath{\mathtt{qid}}\xspace}
+
+\newcommand{\CA}{\ensuremath{\mathrm{CA}}\xspace}
+
+\newcommand{\fa}{\ensuremath{\mathfrak{a}}\xspace}
+\newcommand{\fb}{\ensuremath{\mathfrak{b}}\xspace}
+\newcommand{\fc}{\ensuremath{\mathfrak{c}}\xspace}
+\newcommand{\fd}{\ensuremath{\mathfrak{d}}\xspace}
+
+\newcommand{\KEXinit}{\ensuremath{\mathtt{KEXinit}}\xspace}
+\newcommand{\KEX}{\ensuremath{\mathtt{KEX}}\xspace}
+\newcommand{\KEXhijack}{\ensuremath{\mathtt{KEXhijack}}\xspace}
+\newcommand{\KEXnotify}{\ensuremath{\mathtt{KEXnotify}}\xspace}
+\newcommand{\KEXthrottle}{\ensuremath{\mathtt{KEXthrottle}}\xspace}
+\newcommand{\TestPwd}{\ensuremath{\mathtt{TestPwd}}\xspace}
+\newcommand{\hijacked}{\ensuremath{\mathtt{hijacked}}\xspace}
+
+\newcommand{\compromised}{\ensuremath{\mathtt{compromised}}\xspace}
+\newcommand{\interrupted}{\ensuremath{\mathtt{interrupted}}\xspace}
+\newcommand{\success}{\ensuremath{\mathtt{success}}\xspace}
+\newcommand{\failed}{\ensuremath{\mathtt{failed}}\xspace}
+\newcommand{\completed}{\ensuremath{\mathtt{completed}}\xspace}
+
+\newcommand{\FPAKE}{\ensuremath{\cF_{\mathrm{PAKE}}}\xspace}
+\newcommand{\FDSPHF}{\ensuremath{\cF_\DSPHF}\xspace}
+
+\newcounter{game}
+\newcounter{oldgame}
+\renewcommand{\G}[1]{\ensuremath{\mathcal{G}_{#1}}\xspace}
+\newcommand{\Gh}{\ensuremath{\setcounter{oldgame}{\thegame}\refstepcounter{game}\hfill\\\noindent\bm{\mathcal{G}_{\thegame}:}}\xspace}
+\newcommand{\ResetGameCounters}{\setcounter{game}{0}\setcounter{oldgame}{0}}
 
 % Encryption
 \newcommand{\E}{\ensuremath{\mathtt{E}}\xspace}

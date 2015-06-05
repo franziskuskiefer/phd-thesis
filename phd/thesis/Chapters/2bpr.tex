@@ -516,11 +516,11 @@ To verify that the client used the same password \pwd and shares $\share_0,\shar
 Comparing $\fD'_b$ with the value $\fD_b$ received from the client, the server verifies share correctness.
 This concludes the 2BPR protocol and each server $S_b$ stores $(\cC,S_{1-b},\share_b)$ if all checks were successful.
 
-\subsection{Security Analysis}
+\subsubsection{Security Analysis}
 We show that our 2BPR protocol is secure using our model from Section \ref{sec:securitymodel} and therefore offers policy compliance and password blindness.
 % Before discussing security of the 2BPR protocol we give three lemmata for the security of the three proofs \PoM, \PoC and \PoS.
-Proofs for the following lemmata and theorems can be found in Appendix \ref{app:proofs}.
-Proofs for lemmata are omited here due to space limitations.
+% Proofs for the following lemmata and theorems can be found in Appendix \ref{app:proofs}.
+Proofs for lemmata are omitted here due to space limitations.
 Note that \PoM and \PoC are standard zero-knowledge proofs and \PoS is a minor modification from the protocol in \cite{FurukawaS01,Furukawa05}.
 
 \begin{lemma}\label{lem:poc}
@@ -552,12 +552,187 @@ Note that \PoM and \PoC are standard zero-knowledge proofs and \PoS is a minor m
 % \noindent
 % Due to space limitations, the proof of Theorem \ref{theo:zk} is given in Appendix \ref{app:zk}.
 
+The proof for Lemma \ref{lem:pom} follows the same line of argument as the proof for \PoC and is therefore omitted here.
+Regarding combination of \PoC and \PoM it is worth noting that they do not use common values and can be therefore regarded as independent.
+Further, both proofs do not need rewinding as we do not build extractors.
+
+% =================================================================
+% PoC Correctness \PoC
+% =================================================================
+
+\begin{proof}[Proof of Lemma \ref{lem:poc}]
+First note that \PoC is actually a proof of knowledge.
+However, it is sufficient that it is a proof of correctness such that we only show that a malicious prover without knowledge of a valid witness has negligible probability of convincing a verifier of the correctness of his statement.
+\emph{Correctness} follows by inspection.
+\emph{Zero-knowledge} follows from the underlying $\Sigma$-protocol and the fact that we can build a simulator with knowledge of the commitment trapdoor without rewinding for any (malicious) verifier.
+In particular, simulator \SIM generates the common reference string \crs such that it knows $\tau$ for $h=g^\tau$, sends commitments $\Comm_\PoC=g^{\alpha}h^{\rho1}$ and $\Res_{\PoC1}=g^{\beta}h^{\rho2}$ with $\alpha,\beta,\rho1,\rho2\rin\ZZ_q$ to the verifier (server), retrieves the challenge $\Ch_\PoC=c$ from the verifier, and generates $\Res_{\PoC1}$ as follows: choose random values
+\begin{align*}  
+  & \share_b, s_\pi, s_{\rho(1-b)}, s_{\rho C}, s_{\rho b}\rin\ZZ_q;~ \fC_{1-b}, \fC_i, \fD_b\rin G~ \forall i\in[0,n-1]
+\end{align*}
+and compute \vspace*{-1em}
+\begin{align*}  
+ t_{C(1-b)}=g^{s_\pi}h^{s_{\rho(1-b)}}(\fC_{1-b}g^{\pi_b})^c;~ t_C=g^{s_\pi}h^{s_{\rho C}} (\prod_{i=0}^{n-1}b^i C_i)^c;~ t_{Db}=g^{s_\pi}h^{s_{\rho b}}\fD_b^c 
+\end{align*}\vspace*{-2em}
+\begin{align*}
+  r_1,r_2 \text{ s.t. } & \alpha+\tau\rho_1\equiv H(C_{1-b}g^{\pi_b}, \{C_i\}, D_b, t_{C(1-b)}, t_C, t_{Db}) + \tau r_1; \\
+  & \beta + \tau\rho_2 \equiv H(s_{\pi}, s_{\rho (1-b)}) + \tau r_2
+\end{align*}
+
+\noindent
+\emph{Soundness} follows from the collision resistance of $H$ and the soundness of the underlying $\Sigma$-proof.
+In particular, a prover without knowledge of the trapdoor $\tau$ has to compute values $(\share_b$, $\fC_{1-b}$, $\{C_i\}$, $\fD_b$, $t_{C(1-b)}$, $t_C$, $t_{Db}$, $s_{\pi}$, $s_{\rho (1-b)}$, $s_{\rho C}$, $s_{\rho b}$, $r_{\Com_{\PoC}}$, $r_{\Res_{\PoC}})$ that verify, which implies that he can either compute the discrete logarithm of $h$, i.e. find the trapdoor $\tau$, produces a collision in $H$, or breaks soundness of the $\Sigma$-proof, i.e. breaks the binding property of Pedersen commitments.
+In particular, to break the soundness of the underlying $\Sigma$ proof the attacker without knowledge of $(\pi,r_{1-b},r_b,r_{Cb})$ has to be able to generate values such that the \PoC zero-knowledge proof holds for given $\fC_{1-b}g^{\pi_b}$, $\bm C$ and $\fD_b$, which is equivalent to breaking the binding property of Pedersen commitments.
+\end{proof}
+
+% =================================================================
+% PoS Shuffle \PoS
+% =================================================================
+
+\begin{proof}[Proof of Shuffle]
+% This proof follows from the discussions in \cite{JareckiL00,Damgard00}.
+%proof in \cite{KieferM15a} and
+% For completeness we recall the proof here for our construction.
+We have to prove soundness and zero-knowledge of the \PoS protocol, completeness follows from inspection.
+We start with proving the \emph{zero-knowledge} property.
+Note again that the simulator works without rewinding here.
+The simulator first chooses $h=g^\tau$ in the \crs such that he knows the trapdoor $\tau$.
+To this end, we compute $\Comm_\PoS, \Res_{\PoS1}, \Res_{\PoS2}$ such that they are indistinguishable from a view of any verifier, given $(q,g,h,\bm f, \bm C, \bm C')$:
+% C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{c_j\}, \{s_j\}, and $\{s'_j\}$,
+\begin{align*}
+%   \[   
+    & f'_j, c_j, s_v, s'_v, \alpha,\beta,\rho1,\rho2 \rin \ZZ_q \text{ for } v\in[-4,n], j\in[1,n] \\
+%   \]
+%   \[
+   & \Comm_\PoS=g^{\alpha}h^{\rho1};~~ \Res_{\PoS1}=g^{\beta}h^{\rho2};~~
+    C'_0 = \frac{\prod_{j=0}^n C_j^{s_j}}{\prod_{j=1}^n {C'_j}^{c_j}};~~
+    f'_0 = \frac{\prod_{v=-4}^n f_v^{s_v}}{\prod_{j=1}^n {f'_j}^{c_j}} \\
+%   \]
+%   \[
+   & \tilde{f} = \frac{\prod_{v=-4}^n f_v^{s'_v}}{\prod_{j=1}^n {f'_j}^{c^2_j}};~~
+    w = \sum_{j=1}^n (s_j^3 - c_j^3) - s_{-2} - s'_{-3};~~
+    \tilde{w} = \sum_{j=1}^n (s_j^2 - c_j^2) - s_{-4} \\
+%   \]
+%   \[
+   & r_1,r_2 \text{ s.t. } \alpha+\tau\rho_1\equiv H(\bm C, \bm C', C'_0, \tilde{f}, \bm f', w, \tilde{w}) + \tau r_1;~ \beta + \tau\rho_2 \equiv H(\bm s, \bm s') + \tau r_2 \\
+%   \]
+\end{align*}
+
+\vspace*{-1em}
+\noindent
+Note that \PoS does not send messages $\bm C$ and $\bm C'$ in the last step as defined for committed zero-knowledge proofs.
+This is because they have been chosen in \PoM and \PoS already.
+Considering \PoS alone those two messages have to be chosen by the simulator and made part of $\Res_{\PoS2}$ as well.
+
+
+To prove \emph{soundness} of the \PoS scheme we show how to construct an extractor $E$ that extracts the matrix $A_{vj}$ and $A'_v$ for $v\in[-4,n], j\in[0,n]$.
+Note that this includes extraction of the permutation matrix, i.e. $\phi$, and the re-randomisation values $r'_j$, but \emph{not} the content, i.e. the characters.
+Further note that the committed execution of the proof does not change how we build the extractor except for the following observations.
+If the prover returns commitments $(\bm C, \bm C')\not=(\hat{\bm C}, \hat{\bm C'})$ after rewinding, we either have a collision in $H$ or can compute $\log_g(h)$.\footnote{While this case is not possible here because the commitments are sent in \PoS and \PoC respectively, this case has to be considered when executing the three proofs in parallel.}
+The same argument applies for the rest of the input to the hash function $(C'_0 \tilde{f}, \bm f', w \tilde{w})$, i.e. it either stays the same over all rewindings, or we can compute a collision in $H$ or the discrete logarithm of $h$.
+With this in mind we can specify the extractor as follows.
+First, we see that there exists an extractor $E$ using $n+1$ linearly independent challenge sets $\bm c$ that is able to extract $A_{ij}$ from $s_v=\sum_{j=0}^n A_{vj}c_j$ that fulfils the equation $\prod_{v=-4}^n f_v^{s_v}=\prod_{j=0}^n {f'_j}^{c_j}$, and $A'_v$ from $s'_v=A'_v + \sum_{j=1}^n A_{vj}c_j^2$ that fulfils the equation $\prod_{v=-4}^n f_v^{s'_v}=\prod_{j=1}^n {f'_j}^{c^2_j}$ for $v\in[-4,n]$ and $j\in[0,n]$.
+In this case we also know that the prover either built $s_v$ and $s'_v$ correct, or is able to create (non-trivial) integers $\{\beta_v\}$ for $v\in[-4,n]$ as $\sum_{j=0}^n A_{vj}c_j - s_v$ or $\sum_{j=1}^n A_{vj}c^2_j - s'_v$ such that $\prod_{v=-4}^n f_v^{\beta_v} = 1$, which is impossible under the discrete logarithm assumption.
+Second, equations $\sum_{j=1}^n (s_j^3 - c_j^3)=s_{-2} + s'_{-3} + w$ and $\sum_{j=1}^n (s_j^2 - c_j^2)= s_{-4} + \tilde{w}$ ensure that the $n\times n$ sub-matrix used in $A_{ij}$ is indeed a permutation matrix, using the fact that every $n\times n$ permutation matrix $A_{ab}$ satisfies the following two equations:
+\begin{align*}
+  & \sum_{j=1}^n A_{jc} A_{jd} A_{je} = 1 \text{ if } (c=d=e) \text{ otherwise } 0; \\  
+  & \sum_{j=1}^n A_{jc} A_{jd} = 1 \text{ if } (c=d) \text{ otherwise } 0.
+\end{align*}
+% \[
+% \]
+% \[
+% \]
+Eventually, $\prod_{v=0}^n C_v^{s_v}=\prod_{j=0}^n {C'_j}^{c_j}$ guarantees that, for well-formed $s_v$, the prover knows the used randomness to create the shuffled commitments $C'_j$ for $j\in[1,n]$.
+\end{proof}
+
+% =================================================================
+% Policy Compliance
+% =================================================================
+
+\begin{proof}[Proof of Theorem \ref{theo:pc}]
+To prove policy compliance we show how to build an adversary on the soundness properties of the three proofs \PoC, \PoM, and \PoS such that policy compliance follows directly from Lemmata \ref{lem:poc}, \ref{lem:pom}, \ref{lem:pos}.
+We first show how to build a successful attacker on the soundness of \PoC and \PoM using a successful attacker on the policy compliance.
+The PC-adversary has access to \Setup and $\Send_\cC$ oracles.
+
+\game{0} This game corresponds to the correct execution of the protocol.
+
+\game{1} In this game we change how $\Send_\cC(\cC_i, S_{b,j}, m)$ queries are answered.
+If message $m$ from the adversary is parsed as $(\Comm_\PoM,\Comm_\PoC,\Comm_\PoS)$, $\Comm_\PoM$ is used by the challenger as output to the \PoM verifier.
+This provides the challenger with challenge $\Ch_\PoM$ that is used as reply to the $\Send_\cC$ query (other challenges are generated at random).
+If message $m$ from the adversary is parsed as $(\Res_{\PoM1},\Res_{\PoC1},\Res_{\PoS1})$ or $(\Res_{\PoM2},\Res_{\PoC2},\Res_{\PoS2})$ and the first $\Send_\cC$ query from that session was forwarded to the verifier, $\Res_{\PoM1}$, $\Res_{\PoM2}$ respectively, is used as output to the \PoM verifier.
+
+It is easy to see that the challenger breaks soundness of \PoM if the adversary uses a password $\pwd\not\in\cD_f$ and \PoM verifies successfully.
+If this is the case we have the desired contradiction.
+It is therefore safe to assume for the following experiments that $\pwd\in\cD_f$.
+
+\game{2}
+In this game we change again how $\Send_\cC(\cC_i, S_{b,j}, m)$ queries are answered.
+If message $m$ from the adversary is parsed as $(\Comm_\PoM,\Comm_\PoC,\Comm_\PoS)$, $\Comm_\PoC$ is used by the challenger as output to the \PoC verifier.
+This provides the challenger with challenge $\Ch_\PoC$ that is used as reply to the $\Send_\cC$ query (other challenges are generated at random).
+If message $m$ from the adversary is parsed as $(\Res_{\PoM1},\Res_{\PoC1},\Res_{\PoS1})$ or $(\Res_{\PoM2},\Res_{\PoC2},\Res_{\PoS2})$ and the first $\Send_\cC$ query from that session was forwarded to the verifier, $\Res_{\PoC1}$, $\Res_{\PoC2}$ respectively, is used as output to the \PoC verifier.
+
+It is easy to see that the challenger breaks soundness of \PoC if $\share_0+\share_1\not=\pi$, i.e. the password share $\share_b$ can not be used with a second share $\share_{1-b}$ to rebuild the password $\pi$ committed to in $\bm C$, i.e. $\sum_i b^i\pi_i\not=\pi$.
+We further see that the second share $\share_{1-b}$ has to be stored on server $S_{1-b}$, i.e. the attacker has not performed the set-up with $S_b$ and $S_{1-b}$ with shares that do not combine to the same encoded password $\pi$.
+Otherwise we can break the binding property of Pedersen commitments.
+In particular, the attacker has to generate commitments $\fC_0, \fC_1, \fD_0$ and $\fD_{1}$ such that $\fC_0g^{\share_1}=\fD_0$ or $\fC_1g^{\share_0}=\fD_1$.
+We can therefore safely assume that the password share $\share_b$ received by server $S_b$ can be combined with the second share $\share_{1-b}$ of server $S_{1-b}$ to an encoded password $\pi$ with according character commitments $C_i$.
+
+
+\game{3}
+In this game we change how $\Send_\cC(\cC_i, S_{b,j}, m)$ queries are answered.
+If message $m$ from the adversary is parsed as $(\Comm_\PoM,\Comm_\PoC,\Comm_\PoS)$, $\Comm_\PoS$ is used by the challenger as output to the \PoS verifier.
+This provides the challenger with challenge $\Ch_\PoS$ that is used as reply to the $\Send_\cC$ query (other challenges are generated at random).
+If message $m$ from the adversary is parsed as $(\Res_{\PoM1},\Res_{\PoC1},\Res_{\PoS1})$ or $(\Res_{\PoM2},\Res_{\PoC2},\Res_{\PoS2})$ and the first $\Send_\cC$ query from that session was forwarded to the verifier, $\Res_{\PoS1}$, $\Res_{\PoS2}$ respectively, is used as output to the \PoS verifier.
+
+It is easy to see that if the attacker is rewindable, the challenger can act as a knowledge extractor for \PoS.
+In particular, we can extract shuffling function $\phi$ and re-randomiser $\{r'_i\}$ to break soundness of \PoS.
+It is therefore safe to assume that $\bm C'$ is a shuffle of $\bm C$.
+This concludes the proof of Theorem \ref{theo:pc} by observing that the password shares stored on both servers can be combined to a policy compliant password.
+\end{proof}
+
+
+% =================================================================
+% Blindness
+% =================================================================
+
+\begin{proof}[Proof of Theorem \ref{theo:zk}]
+We give a sequence of games that each changes the way an oracle is computed.
+In the last game all interaction of a server with a client is simulated and therefore password independent such that an attacker can only guess which client used which password.
+
+\game{0}
+This is the correct execution of the protocol.
+
+\game{1}
+The challenger computes the \crs such that it knows the trapdoor $\tau=\log_g(h)$.
+This does not change anything else.
+
+\game{2}
+The challenger changes the way \Execute oracles are answered if at least one of the participating servers is not corrupted.
+In case both servers are corrupted the attacker retrieves the password anyway and can not win the game.
+Instead of correctly executing the protocol all messages from zero-knowledge proofs are simulated and messages between the servers chosen accordingly.
+However, two correct password shares are stored on the two servers.
+This allows future corruption of the servers without noticing this change.
+Note that as long as the attacker did not corrupt any of the participating servers, \Execute does not provide any information to the attacker since the communication is encrypted between the client and each server as well as between the two servers.
+In this case the change from Game$_1$ to Game$_2$ is not noticeable.
+In case the attacker corrupted one of the participating servers, he is able to decrypt the messages and therefore gets the communication between the client and the corrupted server.
+While the attacker receives the protocol transcript now, he is not able to distinguish it from a correct execution unless we can build a distinguisher for one of the three zero-knowledge proofs.
+
+\game{3}
+In this game the challenger changes the way $\Send_{S}$ and $\Send_{SS}$ are answered if the second participating server is not corrupted.
+Recall that $\Send_S$ queries are only accepted by the client if $S$ has been corrupted before and provided the attacker with necessary keys.
+Instead of computing answers to $\Send_S$ correctly the challenger simulates the zero-knowledge proofs.
+We further change how $\Send_{SS}$ is answered by sending $\fD'_b=\fD_b$ instead of computing it correctly.
+To allow future corruption of the honest server without noticing this change we save an appropriate share.
+This change to the simulation is not noticeable by an attacker unless we can build a distinguisher against one of the three zero-knowledge proofs.
+In this last game all proofs are simulated such that an attacker can only guess which password is used by which client.
+\end{proof}
+
+
 % =================================================================
 % Implementation & Performance
 % =================================================================
 \section{Implementation and Application}
 
-\subsubsection{Implementation}
+\subsection{Implementation}
 We implement an unoptimised prototype of the 2BPR protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
 % In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
 % Note however that the performance influence of $b$ is negligible.
@@ -567,7 +742,7 @@ With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a 
 Also note that the client execution can be parallelised performing the proofs with $S_0$ and $S_1$ at the same time, which allows to significantly decrease the execution time.
 The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
 
-\subsubsection{Application to existing 2PAKE/2PASS protocols}
+\subsection{Application to existing 2PAKE/2PASS protocols}
 Our 2BPR protocol can be used to register passwords for two-server protocols such as two-server password authenticated key exchange (2PAKE) and two-server password authenticated secret sharing (2PASS).
 2BPR can be used with two-server protocols that adopt additive password sharing in $\ZZ_q$ or multiplicative sharing in $G$.
 This includes 2PAKE protocols from \cite{Katz2005,Kiefer14}, which do not consider password registration such that our protocol can simply be used as part of the registration process.
