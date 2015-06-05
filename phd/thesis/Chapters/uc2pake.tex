@@ -78,7 +78,7 @@ For a comprehensible overview of advantages using UC in the PAKE setting we refe
 %==============================================================================
 
 
-\section{Trapdoor D-SPHF}\label{sec:tdsphf}
+\subsection{Trapdoor D-SPHF}\label{sec:tdsphf}
 The 2PAKE protocol we propose in the following section makes use of trapdoor smooth projective hashing in order to allow efficient instantiation.
 Trapdoor SPHFs enable single round PAKE protocols because they achieve simulatability even in the case where the attacker guessed the correct password.
 To use \TSPHF in the two-server setting we extend the notion of trapdoor SPHFs (cf. Section \ref{sec:tsphf}) to the distributed setting of D-SPHFs (cf. Section \ref{sec:dsphf}).
@@ -131,7 +131,7 @@ with probability at least $\varepsilon(\secpar)$.
 The perfect soundness states that the property holds for any $t$ and any $\varepsilon(\secpar)>0$.
 \end{definition} 
 
-\subsection{Cramer-Shoup TD-SPHF}\label{sec:cs-tdsphf}
+\subsubsection{Cramer-Shoup TD-SPHF}\label{sec:cs-tdsphf}
 Extending the Cramer-Shoup \DSPHF (cf. Appendix \ref{app:dsphf}) to a \TDSPHF is straight-forward combining it with the Cramer-Shoup \TSPHF.
 This \TDSPHF is, like the Cramer-Shoup \TSPHF (cf. Appendix \ref{app:tsphf}), defined over groups with bilinear pairings (cf. Section \ref{sec:preliminaries}).
 Let $C=(\ell, u_1, u_2, e, v)$ denote a Carmer-Shoup ciphertext as defined in Section \ref{sec:csencryption}.
@@ -342,14 +342,14 @@ In Figure \ref{fig:cs-tdsphf} we refer to the messages as $\Comm_{2}=(t_{\overli
 %==============================================================================
 % 2-Server PAKE in UC
 %==============================================================================
-\section{UC-secure Two Server PAKE}\label{sec:2pake}
+\subsection{UC-secure Two Server PAKE}\label{sec:2pake}
 With \TDSPHF it is straight forward to build a 2PAKE protocol.
 We follow the general framework described in \cite{KieferM14a} to build 2PAKE protocols from distributed smooth projective hash functions.
 However, instead of aiming for key generation, where the client establishes a key with each of the two servers, we focus on a protocol that establishes a single key with one server, w.l.o.g. the first server.
 By running the protocol twice, keys can be exchanged between the client and the second sever.
 Note that UC security allows concurrent execution of the protocol such that round complexity is not increased by establishing two keys.
 
-\subsection{The Protocol}\label{sec:2pakeprotocol}
+\subsubsection{The Protocol}\label{sec:2pakeprotocol}
 % \fk{add figure}
 Building a 2PAKE protocol from the \TDSPHF defined in Figure \ref{fig:cs-tdsphf} is straight forward following \cite{KieferM14a}.
 Client $C$, Server $S_1$ and Server $S_2$ execute a \TDSPHF protocol as described in Section \ref{sec:tdsphf}.
@@ -398,7 +398,7 @@ If the protocol is not terminated prematurely and a session key is computed on $
 % % \draw[shorten <=-1cm,shorten >=-1cm,-latex] (m-5-2.south east)--(m-5-2.south west);
 % \end{tikzpicture}
 
-\subsection{UC Security Model for Two Server PAKE}\label{sec:2pakesecurity}
+\subsubsection{UC Security Model for Two Server PAKE}\label{sec:2pakesecurity}
 We describe the ideal functionality for 2PAKE in the following, which can be seen as an extension of the known ideal functionality for PAKE protocols from Canetti et al. \cite{Canetti2005}.
 The ideal functionality \FTWOPAKE is given in Figure \ref{fig:2pakef}.
 \FTWOPAKE is very similar to the original two-party PAKE functionality but requires some additional functionality.
@@ -492,7 +492,7 @@ To handle multiple, concurrent 2PAKE executions of one \sid, we use a query iden
 In the multi-session extension \FTWOPAKEM the \sid becomes \ssid and \sid is a globally unique identifier for the used universe, i.e. server public keys (\CA) and \crs.
 
 
-\subsection{Security}\label{sec:2pakeproof}
+\subsubsection{Security}\label{sec:2pakeproof}
 The following theorem formalises the security of the previously defined 2PAKE protocol.
 Note that we do not rely on any security of the \TDSPHF.
 Instead we reduce the security of our 2PAKE protocol directly to the underlying problem (SXDH).
@@ -503,7 +503,7 @@ Thereby we give an indirect security proof of the proposed \TDSPHF.
   The 2PAKE protocol from Section \ref{sec:2pakeprotocol} securely realises \FTWOPAKEM with static corruptions in the \Fcrs-\Fca-hybrid model if the DDH assumption holds in $\GG_1$ and $\GG_2$ and $H_k$ is a universal one-way hash function, i.e. Cramer-Shoup encryption is secure in $\GG_1$ and the DDH assumption holds in $\GG_2$.
 \end{theorem}
 
-\subsubsection{Sequence of Games}
+\paragraph{Sequence of Games}
 We start the proof of Theorem \ref{theo:uc2pake} by giving a sequence of games with \G{1} equal to the real-world execution with honest participants following the protocol description and the real-world adversary \cA that may have control over a set of participants, and \G{17} equal to the ideal-world execution where the protocol is replaced with the ideal functionality \FDSPHF acting on behalf of all honest protocol participants and the ideal-world adversary \SIM, detailed later.
 Let $\view_i$ denote the view of environment \cZ when interacting with game \G{i}.
 Note that \view is implicitly parametrised with \sid and the security parameter \secpar.
@@ -635,7 +635,7 @@ While this game is structurally different from \G{\theoldgame} its execution is 
 This combined with the following description of the ideal world adversary \SIM concludes the proof.
 
 
-\subsubsection{Simulator}
+\paragraph{Simulator}
 We now describe the simulator \SIM that is used in the last experiment and acts as an attacker in the ideal world against the ideal functionality \FTWOPAKE, interacting with the real world adversary \cA.
 It uses a real-world adversary \cA in a way that the environment \cZ cannot  distinguish whether it is interacting with \cA and honest protocol participants in the real world, or with \SIM and dummy protocol participants (simulated by \FTWOPAKE) in the ideal world.
 We describe \SIM for a single session $\sid=(C,S_1,S_2)$.
@@ -690,10 +690,10 @@ The simulator essentially has to ensure that the functionality chooses random, c
         
         
 
-\section{\FTWOPAKE Discussion}\label{app:relations}
+\subsection{\FTWOPAKE Discussion}\label{app:relations}
 In this section we discuss some additional points of the \FTWOPAKE functionality and investigate relations to other 2PAKE security models and UC models in the password setting.
 
-\subsection{\FTWOPAKE and the BPR 2PAKE Model}
+\subsubsection{\FTWOPAKE and the BPR 2PAKE Model}
 While other security models for 2PAKE protocols where proposed \cite{SzydloK05}, the BPR-like security model from \cite{KatzMTB05} is the most comprehensible and (in its two-party version) established model.
 We therefore discuss relation between the proposed 2PAKE UC-security using \FTWOPAKE and the BPR-like security model from \cite{KatzMTB05}.
 To compare security of a 2PAKE protocol $\Pi$ in a game-based and UC setting we have to ensure that it supports session ids (necessary in the UC framework).
@@ -706,7 +706,7 @@ Those password tests (\TestPwd in \FTWOPAKE and \Send in the game based model) g
 Note that while the attacker may have knowledge of a password share, this does not increase this probability.
 Security on the model from \cite{KatzMTB05} follows.
 
-\subsection{\FTWOPAKE and \FPAKE}
+\subsubsection{\FTWOPAKE and \FPAKE}
 While \FPAKE and \FTWOPAKE are very similar they contain some significant difference we want to point out here.
 First, the key-exchange is performed between all three participants, but only $C$ and, w.l.o.g., $S_1$ agree on a common session key.
 The \role is a technical necessity in \FPAKE for correct execution.
@@ -728,7 +728,7 @@ This is a rather technical difference to \FPAKE that uses only session identifie
 % 	  Note that this does not require the protocol to provide mutual authentication as the success of a protocol can be established by the servers using other means, e.g., subsequent traffic.
 
 
-\subsection{Corruptions}
+\subsubsection{Corruptions}
 The two-server extension of the BPR 2PAKE model used in \cite{KatzMTB05} does not consider corruptions at all.
 While parties can be malicious in the model (static corruption), the attacker is not allowed to query a corrupt oracle to retrieve passwords or internal state of participants.
 In our model the attacker is allowed to corrupt parties before execution.

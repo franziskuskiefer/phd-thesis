@@ -730,9 +730,9 @@ In this last game all proofs are simulated such that an attacker can only guess 
 % =================================================================
 % Implementation & Performance
 % =================================================================
-\section{Implementation and Application}
+\subsection{Implementation and Application}
 
-\subsection{Implementation}
+\subsubsection{Implementation}
 We implement an unoptimised prototype of the 2BPR protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
 % In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
 % Note however that the performance influence of $b$ is negligible.
@@ -742,7 +742,7 @@ With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a 
 Also note that the client execution can be parallelised performing the proofs with $S_0$ and $S_1$ at the same time, which allows to significantly decrease the execution time.
 The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
 
-\subsection{Application to existing 2PAKE/2PASS protocols}
+\subsubsection{Application to existing 2PAKE/2PASS protocols}
 Our 2BPR protocol can be used to register passwords for two-server protocols such as two-server password authenticated key exchange (2PAKE) and two-server password authenticated secret sharing (2PASS).
 2BPR can be used with two-server protocols that adopt additive password sharing in $\ZZ_q$ or multiplicative sharing in $G$.
 This includes 2PAKE protocols from \cite{Katz2005,Kiefer14}, which do not consider password registration such that our protocol can simply be used as part of the registration process.
