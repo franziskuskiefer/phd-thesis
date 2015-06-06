@@ -166,12 +166,12 @@ Thus, servers $S_0$ and $S_1$ eventually register the new client, accept and sto
 
 \subsubsection{Protocol Overview}
 % \setlength{\textfloatsep}{10pt}
-\setlength{\belowcaptionskip}{-2pt}
+% \setlength{\belowcaptionskip}{-2pt}
 \begin{figure}[!b]
 \centering
 \footnotesize
 \scalebox{0.8}{\begin{tikzpicture}%[framed]
-\draw[] (-3,1) rectangle (12.2,-13);
+\draw[] (-3.5,1) rectangle (12.3,-13);
 \draw ($(-3,.7)!0.55!(12,.7)$) node[draw] {\textit{I -- Client Preparation}};
 
 \node[party,align=center] (client) at (.5,0) {\uline{$\cC~ (S_0,S_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
@@ -187,7 +187,7 @@ Thus, servers $S_0$ and $S_1$ eventually register the new client, accept and sto
 \draw ($(-3,-3.5)!0.55!(12,-3.5)$) node[draw] {\textit{II -- Password Registration}};
 
 \node[party,align=center] (client2) at (.5,-4.2) {\uline{$\cC~ (S_0,S_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
-\node[party,align=center,text width=10em] (server) at (9.5,-4.2) {\uline{$S_b~ (\cC,S_{1-b}, f=f_0\cap f_1, \crs)$}};
+\node[party,align=center,text width=11em] (server) at (9.5,-4.2) {\uline{$S_b~ (\cC,S_{1-b}, f=f_0\cap f_1, \crs)$}};
 
 \node[state, align=left] at (0.0,-4.9) [stateS, align=left]{Commit to all characters in \pwd:\\\hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$};
 
@@ -511,7 +511,7 @@ and that the following equations hold for a randomly chosen $\alpha\rin\Zrq$ and
 The server accepts the proof iff all those verifications succeed.
 This concludes the proof of correct shuffling.
 
-\subsubsection{Share verification}
+\paragraph{Share verification}
 To verify that the client used the same password \pwd and shares $\share_0,\share_1$ with both servers $S_0$ and $S_1$, the servers compute the commitment $\fD'_b$ from the share commitment $\fC_b$ and their share $\share_{1-b}$, and exchange it.
 Comparing $\fD'_b$ with the value $\fD_b$ received from the client, the server verifies share correctness.
 This concludes the 2BPR protocol and each server $S_b$ stores $(\cC,S_{1-b},\share_b)$ if all checks were successful.
@@ -730,9 +730,9 @@ In this last game all proofs are simulated such that an attacker can only guess 
 % =================================================================
 % Implementation & Performance
 % =================================================================
-\subsection{Implementation and Application}
+\subsection{Implementation}
 
-\subsubsection{Implementation}
+% \subsubsection{Implementation}
 We implement an unoptimised prototype of the 2BPR protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
 % In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
 % Note however that the performance influence of $b$ is negligible.
@@ -741,16 +741,3 @@ In particular, execution of the 2BPR protocol with a password of length $10$ and
 With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a password of length $15$ and $6.34$ for a password of length $20$ the proposed 2BPR protocol is deemed practical.
 Also note that the client execution can be parallelised performing the proofs with $S_0$ and $S_1$ at the same time, which allows to significantly decrease the execution time.
 The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
-
-\subsubsection{Application to existing 2PAKE/2PASS protocols}
-Our 2BPR protocol can be used to register passwords for two-server protocols such as two-server password authenticated key exchange (2PAKE) and two-server password authenticated secret sharing (2PASS).
-2BPR can be used with two-server protocols that adopt additive password sharing in $\ZZ_q$ or multiplicative sharing in $G$.
-This includes 2PAKE protocols from \cite{Katz2005,Kiefer14}, which do not consider password registration such that our protocol can simply be used as part of the registration process.
-Integration of 2BPR into 2PASS on the other hand is more involved as password registration is part of the 2PASS protocol, i.e. the secret sharing phase.
-2PASS protocols in general can be divided in two stages: password and secret registration/sharing and secret reconstruction.
-While the approach from Bagherzandi et al. \cite{Bagherzandi2011}, as well as subsequent work using similar approaches \cite{PryvalovK14,CamenischLLN14,JareckiKK14}, does not actually share the password and could therefore use other means to verify policy compliance of a prospective password, the UC-secure 2PASS protocol from Camenisch, Lysyanskaya and Neven \cite{CamenischLN2012} uses multiplicative password sharing in $G$.
-To use our 2BPR protocol in conjunction with the setup protocol from \cite{CamenischLN2012} we redefine the encoded password to $g^{\pi}$ with $\pi\gets\pwdint(\pwd)$ such that shares are computed as $g^{\pi}=g^{\share_0}g^{\share_1}$.
-The first message (step 1) from the setup protocol in \cite{CamenischLN2012} can piggyback the first 2BPR protocol message.
-The subsequent three messages between the client and each server are performed between step 1 and step 2, while the inter-server communication can be piggybacked on step 2 and step 3.
-In addition to checking correctness of shares done in the setup of \cite{CamenischLN2012} the servers can now verify the 2BPR proofs and thus the password's policy compliance.
-This adds three flows to the setup protocol of \cite{CamenischLN2012} in order verify policy compliance of password shares.

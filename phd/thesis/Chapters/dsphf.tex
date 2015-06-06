@@ -23,7 +23,7 @@ However, they assume a ring structure such that the smooth projective hashing is
 
 
 %===============================================================================
-\subsection[Extended Smooth Projective Hash Functions (SPHFx)]{Extended Smooth Projective Hash Functions (\SPHFF)}\label{sec:sphff}
+\subsection{Extending Smooth Projective Hashing}\label{sec:sphff}
 %===============================================================================
 We introduce an extended notion of smooth projective hashing that allows us to distribute the computation of the hash value.
 The new notion of extended SPHF (\SPHFF) is defined in the following setting:
@@ -67,7 +67,7 @@ An extended smooth projective hash function for language $L_\aux$ with $\Gamma\i
 \noindent
 The correctness of the scheme can be easily verified by checking that $\Hash_x=\PHash_x$ and $\Hash_0=\PHash_0$.
 
-\subsubsection[Security of SPHFx]{Security of \SPHFF}
+\subsubsection{Security Analysis}
 We refine definitions of smoothness and pseudorandomness to account for the two different hash functions.
 Therefore, we add both hash values to the indistinguishable sets, as well as the vector of projection keys.
 We start with the smoothness of the described \SPHFF.
@@ -195,7 +195,7 @@ Changing $\Exp'_1$ to $\Exp'_2$ the smoothness of \SPHFF ensures that $\cA$ can 
 \qed
 \end{proof}
 
-\subsection[Distributed Computation of SPHFx]{Distributed Computation of \SPHFF}\label{sec:dsphf}
+\subsection{Distributed Smooth Projective Hashing}\label{sec:dsphf}
 Using \SPHFF is only reasonable in a distributed manner.
 We therefore consider $n=x+1$ entities participating in the distributed computation of the \SPHFF hash values $h_0,h_x$.
 Let $P_i$ for $i\in\{1,\dots,x\}$ denote parties, each knowing $\aux_i$ and computing the according ciphertext $C_i$ and projection key $\hp_i$.
@@ -268,7 +268,7 @@ Note that this is actually a stronger notion than smoothness as we require pseud
 This is usually not included in the smoothness definition, which is defined over the hash function.
 Further, Definition \ref{def:activesphff} is equivalent to Definition \ref{def:prplusc} when $\cA$ computes and forwards all messages honestly and does \emph{not} change any $\aux_i$.
 
-\subsection[Instantiation -- Distributed Cramer-Shoup SPHFx]{Instantiation -- Distributed Cramer-Shoup \SPHFF}\label{sec:dcssphf}
+\subsection{Instantiation -- Distributed Cramer-Shoup SPHF}\label{sec:dcssphf}
 We exemplify the \SPHFF definition on the previously introduced Cramer-Shoup encryption scheme (a second instantiation for ElGamal ciphertexts can be found in Appendix \ref{app:elgamalsphff}).
 The ciphertexts are created as $C_i=(u_{1,i},u_{2,i},e_{i},v_i)\gets\Enc^{\CS}_{\pk}(\ell_i,\aux'_i;r_i)$ for all $i=1,\dots,x$ with $\aux'_i=h(\aux')[i]$ and $C_0=(u_{1,0},u_{2,0},\allowbreak e_{0},v_0)\gets\Enc^{\CS}_{\pk}(\ell_0,\allowbreak \aux'_0;r_0)$, where $\ell_i$ consists of participating parties and the party's projection key.
 We define modified decryption as $\Dec'_\pi(C)=e\cdot u_1^{-z}$.
@@ -376,7 +376,7 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 \label{fig:dsphf}
 \end{figure}
 
-\subsubsection[Security of Distributed Cramer-Shoup SPHFx]{Security of Distributed Cramer-Shoup \SPHFF}
+\subsubsection{Security Analysis}
 We show now that the proposed distributed Cramer-Shoup \SPHFF is secure.
 The intuition behind the proof is that the pseudorandomness of $h_x$ can be reduced directly to the DDH problem in $\GG$ while pseudorandomness of $h_0$ value follows from the smoothness and pseudorandomness of the underlying \SPHFF scheme.
 
@@ -433,7 +433,7 @@ Therefore, he can not do better than guessing bit $b$.
 \qed
 \end{proof}
 
-\section[Two-Server PAKE from Distributed SPHFx]{Two-Server PAKE from Distributed \SPHFF}\label{sec:twoserverpake}
+\section{Two-Server PAKE from Distributed SPHF}\label{sec:twoserverpake}
 In this section we present a new two-server PAKE framework as an application of our distributed \SPHFF concept.
 Moreover, we show that the two-server PAKE protocol by Katz et al. \cite{Katz_MacKenzie_Taban_Gligor_2005} can be considered as a variant of our framework using a ``mix'' of distributed \SPHFF for Cramer-Shoup and El-Gamal ciphertexts.
 
@@ -460,7 +460,7 @@ You can think of the two-server protocol as the execution of two distributed \SP
 The only overlap between the two \SPHFF executions is the $\Hash_x$ computation.
 The reuse of $C_1,C_2$ in $\Hash_x$ functions is covered by the concurrent pseudorandomness.
 
-\subsubsection{2PAKE Framework}
+\subsubsection{Framework}
 The servers encrypt their password shares under a public key $\pk$ stored in the \crs using a CCA-secure labelled encryption scheme and distribute this ciphertext together with two appropriate projection keys for a secure distributed \SPHFF, $(\hp_{1,1},\hp_{1,2},C_1)$ and $(\hp_{2,1},\hp_{2,2},C_2)$.
 The client computes two independent encryptions of the password and generates two independent according projection keys $(\hp_{0,1},C_{0,1},\hp_{0,2},C_{0,2})$.
 The previously described \SPHFF allows us to send all $\hp_i,C_i$ in one round and therefore reach optimality for this step.
@@ -538,7 +538,7 @@ Note that this actually requires two \SPHFF executions.
 \label{fig:twopake}
 \end{figure}
 
-\subsubsection{Security}
+\subsubsection{Security Analysis}
 We use the well-known game based PAKE model first introduced by Bellare et al. \cite{Bellare2000} in it's two-server variant from \cite{Katz_MacKenzie_Taban_Gligor_2005}.
 For a formal description of the model we refer to \cite{Katz_MacKenzie_Taban_Gligor_2005}.
 The security of the two-server PAKE framework follows directly from the CCA-security of the used encryption scheme and the security of the distributed \SPHFF.
@@ -568,7 +568,7 @@ Using the same sequence of experiments but considering $C$ and $S_2$ instead of 
 \qed
 \end{proof}
 
-\subsection[2-Server KOY (2KOY)]{2-Server KOY (2KOY) \cite{Katz_MacKenzie_Taban_Gligor_2005}}\label{sec:twokoy}
+\subsubsection{The 2-Server KOY Protocol}\label{sec:twokoy}
 We can  now ``explain'' the use of SPHF in 2KOY from \cite{Katz_MacKenzie_Taban_Gligor_2005}; similar to \cite{Gennaro2003} that ``explained'' the original KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}.
 We define encryption schemes and distributed \SPHFF used in 2KOY, highlight changes to our framework and discuss implications of this on the security of 2KOY.
 
@@ -649,7 +649,7 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPH
 \label{fig:twokoy}
 \end{figure}
 
-\subsubsection{Security of 2KOY}
+\paragraph{Security Analysis}
 Security of the protocol in Figure \ref{fig:twokoy} against passive adversaries follows immediately from \cite[Theorem 1]{Katz_MacKenzie_Taban_Gligor_2005} as we do not change the protocol.
 However, the authors of \cite{Katz_MacKenzie_Taban_Gligor_2005} need additional mechanisms to prove their protocol secure against an active adversary.
 They add witness-indistinguishable $\Sigma$-protocols to the $\PHash_x^{D}$ and $\Hash_0^{D}$ protocols that prove correctness of their messages.

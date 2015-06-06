@@ -156,48 +156,6 @@ Definition~\ref{def:dar} models the intrinsic \ac{VPAKE} requirement that a serv
 
 \subsection{An Efficient BPR Protocol in the Standard Model} \label{sec:construction}
 
-\tikzset{
-    %Define standard arrow tip
-    >=stealth',
-    %Define style for boxes
-    party/.style={
-           %rectangle,
-           %rounded corners,
-           %draw=black, very thick,
-           text width=16em,
-           minimum height=2em,
-           text centered},
-    state/.style={
-           inner sep=0,
-           minimum size=0,
-           text centered,
-           text width=10em},
-    stateSm/.style={
-           inner sep=0,
-           minimum size=0,
-           text centered,
-           text width=22.5em},
-    stateSmS/.style={
-           inner sep=0,
-           minimum size=0,
-           text centered,
-           text width=11em},
-    stateS/.style={
-           inner sep=0,
-           minimum size=0,
-           text centered,
-           text width=28em},
-    dummyState/.style={
-           inner sep=0,
-           minimum size=0},
-    % Define arrow style
-    pil/.style={
-           ->,
-           thick,
-           shorten <=2pt,
-           shorten >=2pt,},
-	decorate sep/.style 2 args= {decorate,decoration={shape backgrounds,shape=circle,shape size=#1,shape sep=#2}}
-}
 % \setlength{\textfloatsep}{10pt}
 
 We first give a high-level overview of the proposed \ac{BPR} protocol according to Figure~\ref{fig:bpr-protocol-overview} and then proceed with the detailed specification of its steps. The client starts the registration procedure by choosing an ASCII-based password $\pwd\in_R\cD_f$ of length $n$, which is then mapped to an integer $\pi\gets\pwdint(\pwd)$.
