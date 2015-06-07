@@ -1,0 +1,56 @@
+<!-- TTP iFrame -->
+<div class="container">
+	<div class="iframe-container">
+		<iframe id="guestFrame" name="guestFrame" src={{{TTPSOURCE}}}></iframe>
+	</div>
+</div>
+
+
+<script>
+	var params = {{{params}}};
+
+	/* get parent URL */
+	function getURL() {
+		return (window.location != window.parent.location) ? document.referrer: document.location;
+	}
+
+	/* iframe -> window listener */
+	function listener(event){
+		if (event.origin !== params.TTP)
+			return; // TODO: error handling
+		
+		// TODO: only works if local storage available -> is there another solution?
+		localStorage.auth2 = event.data.auth2;
+		if (event.data.goto)
+			window.location.replace(event.data.goto.toString());
+		else {// some error occured
+			alert("sorry, something went wrong ...");
+			window.location.replace(params.errorURL);
+		}
+	}
+
+	if (window.addEventListener){
+		addEventListener("message", listener, false);
+	} else {
+		attachEvent("onmessage", listener);
+	}
+
+	/* window -> iframe communication */
+	$(document).ready(function() {
+		/* hack to force iframe reload after logout */
+		var iframe = document.getElementById("guestFrame");
+		iframe.src = iframe.src;
+		
+		/* send parameters to iframe when it finished loading */
+		$("#guestFrame")[0].onload = function() {
+			var iframe = $("#guestFrame")[0].contentWindow;
+			iframe.postMessage(
+				params,
+				params.TTP
+			)
+		};
+	});
+
+
+
+</script>

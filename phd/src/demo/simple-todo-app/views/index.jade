@@ -1,0 +1,68 @@
+html
+  head
+    title ToDo List
+    
+    meta(charset='utf-8')
+    // http://iconwanted.com/en/pixelledesigns/free-mobile-app-icons/list-bullets.html
+    link(rel='icon', type='image/png', href='public/images/list-bullets.png')
+    
+    // jQuery
+    script(src='js/jquery-2.0.3.min.js')
+    
+    // Bootstrap
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // Bootstrap
+    link(href='css/bootstrap.min.css', rel='stylesheet')
+    
+    // style
+    link(href='css/main.css', rel='stylesheet')
+    
+    // parameters for javascript
+    script.
+      var params=!{params};
+  body
+    .overlay
+    if !mobile && !user
+      div(id="POW-fe748ad9-37f9-4b56-80a8-5c73b73e3e88", style="display: none;")
+    // HTML CONTENT
+    .container
+      .div.main-div
+       .jumbotron
+         h1.text-center ToDo List
+         br
+         h3.text-center A demo for Passwords on the Web 
+         if user
+           h2.text-center welcome #{user}
+       // TODO List
+       if user
+         .row
+           .col-md-4.col-md-offset-4
+             div
+               ul#todos.list-group
+             .input-group
+               input#item-input.form-control(type='text', placeholder='Buy Milk')
+               span.input-group-btn
+                 button#item-add.btn.btn-default.btn-primary(type='submit') Add!
+       // Login
+       .popup
+         #loginPopup
+       .center
+         if !user
+           if mobile
+             button#mobileLogin.btn.btn-default(type='submit') Login
+           // else
+             // button#login.btn.btn-default(type='submit') Login
+         if user
+           button#logout.btn.btn-default(type='submit') Logout
+
+      // Disclaimer
+      .well
+       h3.text-center Disclaimer
+       .row
+         .col-md-8.col-md-offset-2
+          div.text-warning.text-center
+           | Even though we thoroughly tested the code, you may still experience issues as this is a demo and proof of concept implementation.
+          
+    // LOGIC
+    script(src='js/main.js')
+

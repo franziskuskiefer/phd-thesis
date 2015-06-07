@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/css/custom.css">
+</head>
+
+<body>
+
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="/">Admin</a></li>
+          <li class="active"><a href="/client">Client</a></li>
+          <li><a data-toggle="modal" data-target="#aboutModal">About</a></li>
+        </ul>
+        <h3 class="text-muted">Blind Password Registration</h3>
+      </div>
+
+      <div class="jumbotron">
+        <p class="lead">Congratulations {{user}}, you successfully registered.</p>
+      </div>
+
+   <div class="modal fade" id="aboutModal">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+		    <div class="modal-header">
+		      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		      <h4 class="modal-title">About</h4>
+		    </div>
+		    <div class="modal-body">
+		      <p>About stuff &hellip;</p>
+		    </div>
+		    <div class="modal-footer">
+		    </div>
+		  </div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+      <div class="footer">
+        <p>&copy; Franziskus Kiefer 2015</p>
+      </div>
+
+    </div> <!-- /container -->
+
+<script src="../static/js/jquery-2.1.1.min.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script src="../static/js/custom.js"></script>
+</body>
+
+</html>

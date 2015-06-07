@@ -1,0 +1,92 @@
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="./css/bootstrap-theme.min.css">-->
+<link rel="stylesheet" href="../static/css/custom.css">
+</head>
+
+<!-- onClick='rng_seed_time();' onKeyPress='rng_seed_time();'-->
+
+<body>
+
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/">Admin</a></li>
+          <li><a href="/client">Client Registration</a></li>
+          <li><a href="/client-app">Client App</a></li>
+          <li><a data-toggle="modal" data-target="#aboutModal">About</a></li>
+        </ul>
+        <h3 class="text-muted">Cryptographic Password Framework</h3>
+      </div>
+
+      <div class="jumbotron">
+<!--        <h2>Policy Compliant Password Setup</h2>-->
+        <p class="lead">This is the BPR admin website. Go ahead and define a password policy. When you're done click the button below to go to the client website.</p>
+      </div>
+
+	<div class="">
+		<h2>Password Policy</h2>
+		<form role="form" id="policyForm">
+		  <div class="form-group">
+			<label for="regex">Regular Expression</label>
+			<p>The regular expression specifies mandatory character sets and their number.
+				<ul>
+					<li>d = ASCII digits</li>
+					<li>u = ASCII upper case letters</li>
+					<li>l = ASCII lower case letters</li>
+					<li>s = ASCII symbols</li>
+				</ul>
+				The default policy requires one character of each subset and at least 10 characters in total.
+			</p>
+		  </div>
+		  <div class="row">
+		  <fieldset class="form-inline">
+			  <div class="form-group col-lg-6">
+					<label for="regex">Necessary characters</label>
+					<input type="text" class="form-control" id="regex" value="{{session['regex']}}" name="regex">
+			  </div>
+			  <div class="form-group col-lg-6">
+					<label for="minlengt">Minimum Password Length</label>
+					<input type="number" class="form-control" id="minlength" value="{{session['minlength']}}" name="minlength">
+			  </div>
+		  </fieldset>
+		  </div>
+		</form>
+	</div>
+
+		<div class="modal fade" id="aboutModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				  <div class="modal-header">
+				    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				    <h4 class="modal-title">About</h4>
+				  </div>
+				  <div class="modal-body">
+				    <p>About stuff &hellip;</p>
+				  </div>
+				  <div class="modal-footer">
+				  </div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+      <div class="footer">
+        <p>&copy; Franziskus Kiefer 2015</p>
+      </div>
+
+    </div> <!-- /container -->
+
+	<script src="../static/js/jquery-2.1.1.min.js"></script>
+	<script src="../static/js/bootstrap.min.js"></script>
+	<script src="../static/js/custom.js"></script>
+</body>
+
+</html>

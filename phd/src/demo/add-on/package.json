@@ -1,0 +1,13 @@
+{
+  "title": "BPR",
+  "name": "bpr",
+  "version": "0.0.1",
+  "description": "Blind password registration add-on",
+  "main": "index.js",
+  "author": "Franziskus Kiefer",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "MIT"
+}
