@@ -7,6 +7,28 @@
 
 function pwdHash() {
 
+	this.fixedHash = function(pw, gp, sH) {
+	
+		// initialise curve and h
+		var curve = getSECCurveByName("secp192r1");
+		var q = curve.getN();
+		var g = curve.getG();
+		var h = util.secp192r1H;
+		
+		// encode password pw to integer pi
+		var encoding = new pwdEncoding();
+		var pi = encoding.encodeString(pw);
+		
+		// H1 <- g^(sP*pi)
+		var H1 = gp.multiply(pi)
+		
+		// H2 <- H1 * h^sH
+		var H2 = h.multiply(sH);
+		H2 = H1.add(H2);
+
+		return H2;
+	}
+
 	// compute password hash on input of password pw (String or BigInteger)
 	// output is (H1, H2, sP, sH, g^sP)
 	this.hash = function(pw){
@@ -44,6 +66,10 @@ function pwdHash() {
 		
 		var H2 = h.multiply(sH);
 		H2 = H1.add(H2);
+
+dump("H1: "+util.point2Hashstring(gp)+"\n");
+dump("H2: "+util.point2Hashstring(H2)+"\n");
+dump("sH: "+sH+"\n");
 
 		return {'H1': gp, 'H2': H2, 'sP': sP, 'sH': sH}; // , 'gp': gp
 	};

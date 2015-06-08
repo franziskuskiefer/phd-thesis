@@ -8,7 +8,7 @@ from beaker.middleware import SessionMiddleware
 
 import bprServer.Util as Util
 import bprServer.bprServer as bprServer
-import bprServer.bprClient as bprClient
+import bprServer.tSokeServer as tSokeServer
 
 scheme = "http"
 domain = "localhost"
@@ -42,7 +42,7 @@ tSokePostURL = "/tSokeMessage"
 tSokeFinalURL = "/tSokeDone"
 
 def buildSiteParams(params, s):
-	return '{"f": ' + params + ', "postURL": "' + bprPostURL + '", "finalURL": "' + bprFinalURL + '", "regex": "' + s["regex"] + '", "minlength": "' + str(s["minlength"]) + '"}'
+  return '{"f": ' + params + ', "postURL": "' + bprPostURL + '", "finalURL": "' + bprFinalURL + '", "regex": "' + s["regex"] + '", "minlength": "' + str(s["minlength"]) + '"}'
 
 @route('/static/:path#.+#', name='static')
 def static(path):
@@ -86,7 +86,7 @@ def changePolicy():
     s.save()
 
 @post(bprPostURL)
-def bprPostURL():
+def bprPost():
 
     # save session (name, tss)
     s = request.environ.get('beaker.session')
@@ -136,9 +136,12 @@ def bprPostURL():
         print("done with BPR, store client and return to web app ...")
         
         # store client to mysql
+        saltJson = {}
+        saltJson["H1"] = s["v"]["H1"]
+        saltJson["sH"] = str(s["v"]["sH"])
         cnx = mysql.connector.connect(user='root', password='root', host='127.0.0.1', database='pow')
         cursor = cnx.cursor()
-        cursor.execute('insert into users (username, hash, salt) values ("'+s["name"]+'", "'+str(s["v"]["H2"])+'", "'+str(s["v"]["H1"])+','+s["v"]["sH"]+'")')
+        cursor.execute('insert into users (username, hash, salt) values ("'+s["name"]+'", "'+str(s["v"]["H2"])+'", "'+str(saltJson)+'")')
         cnx.commit()
         cnx.close()
         
@@ -169,21 +172,38 @@ def client():
        uuid=ADD_ON_WEBSITE_UUID,
        message="This is the BPR client website. Go ahead and register a new user using the BPR button in the toolbar.")
 
-@route('/client-app')
-def client():
-    s = request.environ.get('beaker.session')
-    return template("client-app.html", params={})
-
 @route('/'+registeredURL)
 def client():
     s = request.environ.get('beaker.session')
     return template("client.html", 
       message="Congratulations "+s.get('name')+", you successfully registered.",
-      uuid=ADD_ON_WEBSITE_UUID_APP,
+      uuid=ADD_ON_WEBSITE_UUID,
       params={})
 
+@route('/client-app')
+def client():
+    s = request.environ.get('beaker.session')
+    return template("client-app.html", 
+      params='{"postURL": "'+tSokePostURL+'", "finalURL": "'+tSokeFinalURL+'"}',
+      uuid=ADD_ON_WEBSITE_UUID_APP)
+
+# retrieve user from mysql db
+def retrieveUser(username):
+    cnx = mysql.connector.connect(user='root', password='root', host='127.0.0.1', database='pow')
+    cursor = cnx.cursor()
+    cursor.execute('select * from users where username="'+username+'"')
+    cnx.close()
+    
+    user = {}
+    for (username, hash, salt) in cursor:
+        user['username'] = username
+        user['hash'] = hash
+        user['salt'] = salt
+    
+    return user
+
 @post(tSokePostURL)
-def tSokePostURL():
+def tSokePost():
 
     # save session 
     s = request.environ.get('beaker.session')
@@ -192,8 +212,29 @@ def tSokePostURL():
     if request.json["M"] == "X":
         s['X'] = request.json["X"]
         s['name'] = request.json["name"]
-        print("X: "+str(s['X']))
-        print("name: "+s['name'])
+        
+        print("getting verifier for "+s['name'])
+        
+        user = retrieveUser(s['name'])
+        print(user)
+
+        a1, a2, Yast = tSokeServer.tSokeServer.compute(s['X'], params, user['hash'], s['name'])
+        s['a1'] = a1
+        s['a2'] = a2
+        
+        return {'Y': Yast, 'salt': user['salt']}
+        
+    if request.json["M"] == "a1":
+        print("got an authentication token, checking ...")
+        a1c = request.json["a1"]
+        if (a1c != s["a1"]):
+            print("tSoke authentication failed :(")
+        else:
+            print("tSoke authentication successful :)")
+        
+        return {'a2': s['a2']}
+    
+    
     
 ############################
 ## run it

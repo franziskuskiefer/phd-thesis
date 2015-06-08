@@ -3,6 +3,7 @@ importScripts('jsbn.js', 'jsbn2.js', 'prng4.js', 'rng.js', 'ec.js', 'sec.js', 'u
 var state;
 
 self.addEventListener("message", function(e) {
+dump("starting bprClientWorker ...\n");
 	var args = e.data.args;
 
 	// initial request -> compute COM

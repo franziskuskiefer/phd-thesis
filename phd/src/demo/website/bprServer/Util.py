@@ -119,16 +119,17 @@ class Params:
 #			print("inverting ("+str(group.coordinates(point)[1])+", "+str(int(pointY, 16))+")")
 			point = point ** -1
 		return point
+
+	@staticmethod
+	def point2HashString(point):
+		group = ECGroup(prime192v1)
+		fuu = str(hex(int(str(group.coordinates(point)[0])))[2:])+str(hex(int(str(group.coordinates(point)[1])))[2:])
+		return fuu
 	
 	@staticmethod
 	def serializePoint(point):
 		group = ECGroup(prime192v1)
 		fuu = "{'x': '"+str(hex(int(str(group.coordinates(point)[0])))[2:])+"', 'y': '"+str(hex(int(str(group.coordinates(point)[1])))[2:])+"'}"
-#		fuu2 = "{'x': '"+str(hex(int(str(group.coordinates(point)[0]))))+"', 'y': '"+str(hex(int(str(group.coordinates(point)[1]))))+"'}"
-#		result = {"x": str(group.coordinates(point)[0]), "y": str(group.coordinates(point)[1])}
-#		print(str(result))
-#		print(fuu)
-#		print(fuu2)
 		return fuu
 	
 	@staticmethod

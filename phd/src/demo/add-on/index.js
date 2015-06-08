@@ -9,6 +9,7 @@ var panels = require("sdk/panel");
 var {ChromeWorker} = require("chrome");
 var Request = require("sdk/request").Request;
 var urls = require("sdk/url");
+let { Cc, Ci } = require('chrome');
 
 var serverURL = '';
 var postURL = '';
@@ -22,6 +23,7 @@ var ADD_ON_WEBSITE_UUID_APP = "7b0a1359-9328-4a6c-a204-0d4a6649a0a2";
 var w;
 var COM, RES;
 var browser;
+var certHash;
 
 // UI elements
 
@@ -51,6 +53,15 @@ var button = ToggleButton({
 				disabled: true
 			});
 
+function checkTLS(browser, scheme){
+	if (scheme != "https:") return;
+	var ui = browser.securityUI;
+	if (ui)
+		var status = ui.QueryInterface(Ci.nsISSLStatusProvider).SSLStatus;
+	if (status)
+		certHash = status.serverCert.sha1Fingerprint.replace(new RegExp(":","gm"),"");
+}
+
 // handle tabs (enable/disable the button)
 tabs.on('ready', function(tab) {
   // get the XUL tab that corresponds to this high-level tab
@@ -61,10 +72,12 @@ tabs.on('ready', function(tab) {
 	serverURL = surl.protocol+"//"+surl.host;
 	if (surl.port)
 		serverURL += ":"+surl.port
-  if (browser.contentDocument && browser.contentDocument.body && browser.contentDocument.getElementById(ADD_ON_WEBSITE_UUID)) {
+	checkTLS(browser, tab.url.split('/')[0]);
+	console.log("certHash: "+certHash);
+  if (browser.contentDocument && browser.contentDocument.body && browser.contentDocument.getElementById(ADD_ON_WEBSITE_UUID) && certHash) {
  		enableForThisTab(registerPanel);
  		panel = registerPanel;
-  } else if (browser.contentDocument && browser.contentDocument.body && browser.contentDocument.getElementById(ADD_ON_WEBSITE_UUID_APP)) {
+  } else if (browser.contentDocument && browser.contentDocument.body && browser.contentDocument.getElementById(ADD_ON_WEBSITE_UUID_APP) && certHash) {
  		enableForThisTab(loginPanel);
  		panel = loginPanel;
   } else {
@@ -193,7 +206,7 @@ loginPanel.port.on("user-login", function (form) {
 	loginForm = form;
 
   var browser = tab_utils.getBrowserForTab(viewFor(tabs.activeTab));
-  w = new ChromeWorker(self.data.url('lib/tSokeClientWorker.js'))
+  w = new ChromeWorker(self.data.url('lib/tSokeClientWorker.js'));
  	params = browser.contentDocument.getElementById(ADD_ON_WEBSITE_UUID_APP).textContent.trim();
 	params = JSON.parse(params);
 	postURL = params.postURL;
@@ -202,7 +215,10 @@ loginPanel.port.on("user-login", function (form) {
 	w.onmessage = handleTSokeClient;
 	
 	console.log("starting tSokeClient worker ...");
-	w.postMessage({ "args": [0, params, form] });
+	console.log("params: "+JSON.stringify(params));
+	console.log("form: "+form);
+	var args = [0, params, form[0], form[1]];
+	w.postMessage({ "args": args });
 	
 	// hide password popup and show loading page
   panel.hide();
@@ -227,6 +243,8 @@ function handleTSokeClient(m) {
 		var mout = {"X": X};
 		mout.M = "X";
 		mout.name = loginForm[0];
+		console.log("Sending out "+JSON.stringify(mout));
+		console.log("Sending to "+serverURL+postURL);
 		
 		// send out X to server		
 		var Xrequest = Request({
@@ -236,16 +254,51 @@ function handleTSokeClient(m) {
 			onComplete: getServerMsg
 		});
 		Xrequest.post();
+	} else if (m.isTrusted && m.data.M == "1") {
+		var a1 = m.data.a1;
+		
+		if (a1 == "-1") { // XXX: error handling
+			console.log("Sorry, your there was an error in tSOKE!");
+			alertWindow.show();
+			return;
+		}
+		
+		var mout = {"a1": a1};
+		mout.M = "a1";
+		console.log("Sending out "+JSON.stringify(mout));
+		console.log("Sending to "+serverURL+postURL);
+		
+		// send out X to server		
+		var Xrequest = Request({
+			url: serverURL+postURL,
+			contentType: "application/json",
+			content: JSON.stringify(mout),
+			onComplete: finishTSoke
+		});
+		Xrequest.post();
+	} else if (m.isTrusted && m.data.done) {
+		var result = m.data.done;
+		if (result) {
+			console.log("done with tSoke, going to app ...");
+			loadingWindow.hide();
+			tabs.activeTab.url = finalURL;
+		} else {
+			// TODO: ERROR HANDLING
+		}
 	}
 	
 }
 
 
 // receive Y,H1,sH from tSokeServer and call tSokeClient to get auh1
-function getServerMsg(response)  {
+function getServerMsg(response) {
 	var result = response.json;
-	w.postMessage({ "args": [1, result] });
-//	console.log(result.CH);
+	w.postMessage({ "args": [1, result, certHash] });
+}
+
+function finishTSoke(response) {
+	var result = response.json;
+	w.postMessage({ "args": [2, result] });
 }
 
 

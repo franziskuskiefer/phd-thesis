@@ -75,11 +75,22 @@ util.base64Fuu = function(str) {
 }
 
 util.readHexPoint = function(x, y) {
+	// make both the same length (required by decodePointHex)!
+	if (x.length > y.length) {
+		y = new Array((x.length-y.length)+1).join("0") + y;
+	}
+	if (y.length > x.length) {
+		x = new Array((y.length-x.length)+1).join("0") + x;
+	}
 	return getSECCurveByName("secp192r1").getCurve().decodePointHex("04"+x+y);
 }
 
 util.point2string = function(p) {
 	return "("+p.getX().toBigInteger().toString(16)+", "+p.getY().toBigInteger().toString(16)+")";
+}
+
+util.point2Hashstring = function(p) {
+	return ""+p.getX().toBigInteger().toString(16)+p.getY().toBigInteger().toString(16);
 }
 
 util.point2json = function(p) {
