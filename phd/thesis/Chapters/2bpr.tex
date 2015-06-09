@@ -734,3 +734,18 @@ In particular, execution of the \ac{2BPR} protocol with a password of length $10
 With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a password of length $15$ and $6.34$ for a password of length $20$ the proposed \ac{2BPR} protocol is deemed practical.
 Also note that the client execution can be parallelised performing the proofs with $\Server_0$ and $\Server_1$ at the same time, which allows to significantly decrease the execution time.
 The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
+
+
+\subsection{Application to 2PAKE/PPSS protocols}
+The \ac{2BPR} protocol can be used to register passwords for two-server protocols such as \ac{2PAKE} and two-server \ac{PPSS}.
+\ac{2BPR} can be used with two-server protocols that adopt additive password sharing in $\ZZ_p$ or multiplicative sharing in \GG.
+This includes the \ac{2PAKE} protocols by \citet{Katz2012a}, which does not consider password registration such that our protocol can simply be used as part of the registration process.
+This equally applies to the \ac{2PAKE} protocols proposed in Sections \ref{sec:twoserverpake} and \ref{sec:uc2pake}.
+Integration of \ac{2BPR} into \ac{PPSS} on the other hand is more involved as password registration is part of the \ac{PPSS} protocol, \ie the secret sharing phase.
+Two-server \ac{PPSS} protocols in general can be divided in two stages: password and secret registration/sharing and secret reconstruction.
+While the approach from \citet{Bagherzandi2011}, as well as subsequent work using similar approaches \cite{PryvalovK14,CamenischLLN14,JareckiKK14}, does not actually share the password and could therefore use other means to verify policy compliance of a prospective password, the \ac{UC}-secure two-server \ac{PPSS} protocol from \citet{Camenisch2012} uses multiplicative password sharing in \GG.
+To use our \ac{2BPR} protocol in conjunction with the setup protocol from \citet{Camenisch2012} we redefine the encoded password to $g^{\pi}$ with $\pi\gets\pwdint(\pwd)$ such that shares are computed as $g^{\pi}=g^{\share_0}g^{\share_1}$.
+The first message (step 1) from the setup protocol in \cite{Camenisch2012} can piggyback the first \ac{2BPR} protocol message.
+The subsequent three messages between the client and each server are performed between step 1 and step 2, while the inter-server communication can be piggybacked on step 2 and step 3.
+In addition to checking correctness of shares done in the setup of \cite{Camenisch2012} the servers can now verify the \ac{2BPR} proofs and thus the password's policy compliance.
+This adds three flows to the setup protocol of \cite{Camenisch2012} in order verify policy compliance of password shares.
