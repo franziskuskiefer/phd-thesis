@@ -281,7 +281,7 @@ function handleTSokeClient(m) {
 		if (result) {
 			console.log("done with tSoke, going to app ...");
 			loadingWindow.hide();
-			tabs.activeTab.url = finalURL;
+			tabs.activeTab.url = serverURL+finalURL;
 		} else {
 			// TODO: ERROR HANDLING
 		}

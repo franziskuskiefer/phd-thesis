@@ -520,7 +520,7 @@ A \ac{ZKPoK} protocol $\Pi$ is said to be a $\Sigma$ protocol for relation $R$ i
 \end{enumerate}
 
 
-\subsubsection{Committed Zero-knowledge Proofs}
+\subsubsection{Committed Zero-knowledge Proofs} \label{sec:commited-sigma}
 \citet{Damgard00} and \citet{JareckiL00} proposed the following committed $\Sigma$-protocol to ensure extractability (\ac{ZKPoK}) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
 Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_p$ a collision-resistant hash function.
 A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:

@@ -234,7 +234,13 @@ def tSokePost():
         
         return {'a2': s['a2']}
     
-    
+
+@route(tSokeFinalURL)
+def loadApp():
+        
+    s = request.environ.get('beaker.session')
+    return template("client-app.html",
+        params = '')
     
 ############################
 ## run it

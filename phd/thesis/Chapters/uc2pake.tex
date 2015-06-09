@@ -9,7 +9,7 @@ As soon as a server, storing client passwords is compromised the attacker learns
 This allows the attacker to log into the client's account on the server and most likely also on others if the client re-used the password across multiple servers.
 Mechanisms have been proposed to solve the problem of server compromise.
 In particular verifier-based PAKE \cite{Gentry2006,rfc2945,BenhamoudaP13}, also known as augmented PAKE \cite{BellovinM93}, considers an asymmetric setting in which the server uses a function of the password (verifier) to verify a client holding the corresponding password.
-However, as long as only one server is used, PAKE protocols are prone to offline dictionary attacks on the server side, i.e. server attacks still leak password verifiers that allow to recover the password, which is rather efficiently with current methods \cite{hashcat,johntheripper}.
+However, as long as only one server is used, PAKE protocols are prone to offline dictionary attacks on the server side, i.e. server attacks still leak password verifiers that allow to recover the password, which is rather efficiently with current methods \cite{hashcat,JohnTheRipper}.
 
 Two-server PAKE (2PAKE) protocols solve this problem by splitting the password in two parts such that a malicious or compromised server can only recover a password share that does not allow to recover the password.
 In contrast to PAKE protocols 2PAKE protocols are less well studied.

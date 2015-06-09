@@ -2,6 +2,7 @@
 body {
   padding-top: 20px;
   padding-bottom: 20px;
+  height: 100%;
 }
 
 a:hover {
@@ -9,7 +10,7 @@ a:hover {
 }
 
 input {
-	autocomplete="off";
+	autocomplete:"off";
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
@@ -96,3 +97,20 @@ input {
 .data-div {
 	display:none;
 }
+
+iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.fill { 
+    min-height: 100%;
+    height: 100%;
+}
+
+html {
+	height: 100%;
+}
+
+
