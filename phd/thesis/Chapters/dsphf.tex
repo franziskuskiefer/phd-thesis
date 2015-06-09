@@ -1,7 +1,5 @@
 \section{Distributed Smooth Projective Hashing}
 
-\newcommand{\scaleFactor}{0.6}
-
 Smooth projective hashing allows to compute the hash value of an element from a set in two different ways:
 either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
 In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
@@ -314,7 +312,7 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 
 \begin{figure}
 \centering
-\begin{tikzpicture}[scale=0.65, every node/.style={scale=0.65}]
+\begin{tikzpicture}[scale=0.55, every node/.style={scale=0.55}]
 \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
 		nodes={draw=none, anchor=center,text depth=1pt},
 		column 2/.style={nodes={minimum width=4em}},
@@ -372,7 +370,7 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 \draw ([xshift=0pt,yshift=-5pt] m-11-3.south west) rectangle (m-11-5.north east);
 \coordinate[label=right:$\PHash_x^D$] (hx) at (m-11-5.mid east);
 \end{tikzpicture}
-\caption{Distributed Cramer-Shoup \SPHFF\\{\tiny Dashed lines denote broadcast messages.}}
+\caption{Distributed Cramer-Shoup \ac{SPHF}\\{\tiny Dashed lines denote broadcast messages.}}
 \label{fig:dsphf}
 \end{figure}
 
@@ -473,7 +471,7 @@ Note that this actually requires two \SPHFF executions.
 
 \begin{figure}[!t]
 \centering
-\begin{tikzpicture}[scale=\scaleFactor, every node/.style={scale=\scaleFactor}]
+\begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
 \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
 		nodes={draw=none, anchor=center,text depth=1pt},
 		column 2/.style={nodes={minimum width=10em}},
@@ -533,7 +531,7 @@ Note that this actually requires two \SPHFF executions.
 \draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=-4pt] m-11-4.south east);
 
 \end{tikzpicture}
-\caption{Two-Server PAKE framework using \SPHFF
+\caption{Two-Server PAKE framework using \ac{D-SPHF}
 \\{\tiny Dashed lines denote broadcast messages.}}
 \label{fig:twopake}
 \end{figure}
@@ -565,7 +563,6 @@ This step is covered by the CCA-security of the used encryption scheme.
 
 AKE-security of $\sk_1$ follows as all messages are password independent in $\Exp_3$ unless the adversary guesses the correct password.
 Using the same sequence of experiments but considering $C$ and $S_2$ instead of $C$ and $S_1$, AKE-security of $\sk_2$ follows.
-\qed
 \end{proof}
 
 \subsubsection{The 2-Server KOY Protocol}\label{sec:twokoy}
@@ -587,7 +584,7 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPH
 
 \begin{figure}[tbhp]
 \centering
-\begin{tikzpicture}[scale=0.65, every node/.style={scale=0.65}]
+\begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
 \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
 		nodes={draw=none, anchor=center,text depth=1pt},
 		column 2/.style={nodes={minimum width=8em}},
