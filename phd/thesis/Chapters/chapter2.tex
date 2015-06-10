@@ -4,6 +4,9 @@
 
 \chapter{Prerequisites and Building Blocks}\label{ch:prelims}
 
+\mynote{give all the functions like password hashing unique symbols to use}
+\mynote{make all \PSetup etc unique and uniform}
+
 In this chapter we recall known facts and assumptions as well as notations used throughout this thesis.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
 While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \citet{katz2008introduction} or \citet{Goldreich2001}.
@@ -332,16 +335,12 @@ which implies
 $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}, A(z)} (x, y)\}_{x, y, z}$
 as shown by \citet{Canetti00}.
 
-\mynote{some words on composition and \ac{UC}}
-
 \subsection{Universal Composability}
-\mynote{something?}
+We refrain from recalling the \ac{UC}-framework and refer to Chapter \ref{ch:intro} Section \ref{sec:uc-intro} for a brief overview and \citet{Canetti2001a} for a complete formal description.
+In the following we give definitions of common \ac{UC} functionalities used in this thesis.
 
-To implement our 2PAKE functionality we require some commonly used functionality from the literature.
-First, since we work in the crs model we require the crs functionality from \cite{CanettiF01}, recalled in Figure \ref{fig:crsfunctionality}.
-We further need verified public keys on both servers.
-We use the ideal CA functionality \Fca from \cite{Canetti04} for this, recalled in Figure \ref{fig:cafunctionality}.
-Eventually, to establish unique query identifiers between the parties in a protocol run we use the \Finit functionality from \cite{BarakLR04}, recalled in Figure \ref{fig:initfunctionality}.
+The \ac{CRS} functionality from \citet{CanettiF01} describes generation and distribution of the \ac{CRS}.
+It is recalled in Figure \ref{fig:crsfunctionality}.
 
 \begin{figure}[h!]
 \begin{mdframed}[innertopmargin=10pt]
@@ -361,6 +360,9 @@ Eventually, to establish unique query identifiers between the parties in a proto
 \label{fig:crsfunctionality}
 \end{figure}
 
+\noindent
+Working with \acp{PKI} we require the functionality of a \ac{CA}.
+The ideal \ac{CA} functionality \Fca was introduced by \citet{Canetti04}, recalled in Figure \ref{fig:cafunctionality}.
 
 \begin{figure}[h!]
 \begin{mdframed}[innertopmargin=10pt]
@@ -381,6 +383,9 @@ Eventually, to establish unique query identifiers between the parties in a proto
 \caption{Ideal Functionality \Fca}
 \label{fig:cafunctionality}
 \end{figure}
+
+\noindent
+To establish unique query identifiers between protocol participants we use the \Finit functionality from \citet{BarakLR04}, recalled in Figure \ref{fig:initfunctionality}.
 
 \begin{figure}[h!]
 \begin{mdframed}[innertopmargin=10pt]
@@ -414,6 +419,8 @@ When called the first time, it sets $\Hist=\emptyset$.
 \label{fig:initfunctionality}
 \end{figure}
 
+\noindent
+For reference we also recall the \ac{UC} functionality $\cF_{\mathrm{PAKE}}$ for \ac{PAKE} protocols in Figure \ref{fig:pakef}.
 
 \begin{figure}[htb]
 \begin{mdframed}[innertopmargin=10pt]
@@ -444,10 +451,101 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 
 
 \subsection{Verifier-based PAKE Security}
-\mynote{BP VPAKE model}
+
+We recall the related password model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
+We consider client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\PHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
+Passwords $\pwd_\Client$ and $\pwd_\Server$ are drawn from dictionary \cD with min-entropy $\beta$.
+Adversary \cA has access to the following oracles to interact with protocol participants:
+
+\begin{itemize}
+	\item $\Execute(\Client_i,\Server_j)$ returns the transcript of the protocol execution between two honest instances $\Client_i$ and $\Server_j$.
+		This models passive eavesdropping attacks.
+	
+	\item $\Send(P_i, P'_j, m)$ returns the result of $P'_j$ on input of message $m$ from alleged sender $P_i$.
+		Invoking $\Send$ with a specific message initiates a session between $P_i$ and $P'_j$.
+		This models active attacks.
+		
+	\item $\Corrupt(\Server)$ returns the server's secret $\ver=(H,s_H)$.
+		Clients with $\pwd_\Server$ are marked as corrupted.
+\end{itemize}
+
+\noindent
+Let $b$ denote a bit chosen prior to every execution of the experiment.
+Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on input of participant instance $P_i$, returns a session key \key chosen as follows:
+\begin{itemize}
+	\item If $P_i$ has not computed a session key or $P_i$ is a partnered and corrupted client instance, return $\bot$.
+	
+	\item If $P_i$ is partnered with compatible $P'_j$ and a $\Test$ query has been asked for $P'_j$ previously, then return the same session key as for $P'_j$.
+	
+	\item If $P_i$ has been queried before, output the same as for the previous query.
+	
+	\item Otherwise return the real session key of $P_i$ if $b=1$, and a random session key if $b=0$.
+\end{itemize}
+
+%\begin{wrapfigure}[5]{r}{0.5\textwidth}
+%	\vspace*{-2em}
+%	\centering
+%	\fbox{
+%	\begin{minipage}[t]{0.45\textwidth}
+%		$\Exp_{\Pi}(\secpar):$\\
+%		\hspace*{2em}$b\rin\bits$\\
+%		\hspace*{2em}$b'\gets \cA^{\Execute, \Send, \Corrupt, \Test}(\secpar)$\\
+%		\hspace*{2em}return $b=b'$
+%	\end{minipage}
+%	}
+%\end{wrapfigure}
+
+\noindent
+Two protocol participants are \emph{partnered} if they have matching transcripts, \ie the recorded transcript of one participant is a subset of the one recorded by the other party.
+% Two protocol participants $P,P'$ are compatible if w.l.o.g. $P\in\cC$ and $P'\in\cS$, and $\PHash(\paramP, \PPreHash(\paramP, \pwd_P, s_P), s_H) = H_{P'}$.
+% To define security we specify a real experiment $\Exp_\REAL$ and ideal experiment $\Exp_\IDEAL$.
+% The real world adversary in $\Exp_\REAL$ has access to the aforementioned oracles and interacts with real participants using passwords chosen according to the dictionary \cD.
+% The ideal world adversary in $\Exp_\IDEAL$ interacts with the aforementioned oracles that are modified as follows:
+% $\Execute$ and $\Send$ oracles operate with an invalid dummy passwords;
+% Non-trivial $\Test$ queries are always answered with a random session key.
+% Additionally, after the adversary returned his guess for bit $b$, an $\Extract$ function is queried for all participants $P_i$ that have been target of an active attack and have been queried in a non-trivial $\Test$ query.
+% The $\Extract$ function on input of a transcript $t$ returns salts $s_P$ and $s_H$ along with a hash value $H$ if $P_i$ is a client and a password \pwd if $P_i$ is a server.
+A \ac{VPAKE} protocol $\Pi$ is secure if for all \ac{PPT} adversaries \cA running in time $t$ there exists a negligible function $\varepsilon(\cdot)$ such that the advantage of \cA is upper-bounded by
+$2^{-\beta}q_s + \Adv_{\text{OW}}(\cB, \secpar) + \varepsilon(\secpar)$
+for some attacker \cB on the one-wayness of the used password hashing scheme running in time $r$, $q_s$ active sessions, and independently chosen passwords from \cD of min-entropy $\beta$.
+Password hashing and its security if defined in Chapter \ref{sec:vpake} Section \ref{sec:strucphash}.
 
 \subsection{Two-server PAKE Security}
-\mynote{Katz 2PAKE model}
+We briefly recall the \ac{2PAKE} security from \citet{Katz2012a}.
+This model assumes that a client negotiates a distinct session key with each server.
+It is assumed that adversary \cA corrupted servers before the execution of the experiment such that not more than one server in a protocol execution is corrupted.
+Server to server communication is assumed to be secured with common mechanisms while client to server communication can be fully controlled by the attacker.
+We consider clients \Client and servers \Server chosen from some fixed set of participants.
+Clients hold a uniformly at random chosen password $\pwd\rin\cD$ and each server $\Server_0$ and $\Server_1$ that the is registered with holds an according password share $\share_0$, respectively $\share_1$.
+Each participant instance $P_i$ holds a state with $\sid_P^i, \pid_P^i$, and $\sk_P^i$ to keep track of the sessions, partners, and the negotiated session key.
+Further $\term_P^i$ and $\acc_P^i$ keep track whether $P_i$ terminated, respectively accepted.
+The adversary is given access to the following oracles in order to communicate with protocol participants:
+
+\begin{itemize}
+  \item $\Send(\Client_i, \Server, m)$ for $\Client_i$ registered with \Server sends message $m$, supposedly from \Server, to $\Client_i$ and returns message $m'$ output by $\Client_i$, if any.
+    An empty message $m$ initiates the protocol.
+  
+  \item $\Send(\Server_i, \Client, m)$ for $\Client$ registered with $\Server_i$ sends message $m$, supposedly from \Client, to $\Server_i$ and returns message $m'$ output by $\Server_i$, if any.
+    If \Server is corrupted, the adversary receives the internal state of \Server; if the other associated server is corrupted as well, the attacker is given the internal state of that server as well.
+    
+  \item $\Execute(\Client_i, \Server_{0,j}, \Server_{1,j})$ for $\Client_i$ registered with $(\Server_{0,j},\Server_{1,j})$ executes the protocol and returns the transcript.
+    In addition, the adversary is given the internal state of any corrupted server.
+  
+  \item $\Reveal(P_i, P'_i)$ for partnered instances $P_i$ and $P'_i$ returns session key $\sk_{P_i,P'_i}$ of $P_i$.
+  
+  \item $\Test(P_i, P'_i)$ for partnered instances $P_i$ and $P'_i$ returns $\bot$ if $\sk_{P_i, P'_i}=\NULL$, and either $\sk_{P_i,P'_i}$ of $P_i$ if a randomly chosen bit $b=1$, or a random value if $b=0$.
+    
+\end{itemize}
+
+\noindent
+Partnering is defined based on matching transcripts as usual.
+The attacker, after interacting the oracles, outputs a bit $b'$.
+$\Succ$ for \cA is then defined as $b=b'$.
+A \ac{2PAKE} protocol $\Pi$ is called secure if the advantage of any \ac{PPT} adversary \cA there exists a negligible function $\varepsilon(\cdot)$ such that 
+\[
+  \Adv_{\cA,\Pi}(\secpar) = \left| \Pr[\Succ] - \frac12 \right| \leq \frac{q_s}{|\cD|} + \varepsilon(\secpar)
+\]
+for $q_s$ active sessions and dictionary \cD.
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
@@ -733,16 +831,13 @@ As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that 
 
 \subsection{Linear Secret Sharing}
 Given set \cS and access structure $\Gamma_\cS$ over \cS, a \ac{MSP} is defined as a triple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\cS$ and $\Gamma_\cS$) and $\rho:\{1,...l\}\rightarrow \cS$ labels each row of $M$ with an element in $\cS$. 
-% We recall \cite[Algorithm 1]{LiuC10} to generate \ac{LSSS} matrix from a boolean formula in Algorithm \ref{alg:lsssM} for completeness.
+(\ac{LSSS} matrix $M$ can be generated from a boolean formula for example using \citet[Algorithm 1]{LiuC10}.)
 Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose $r_2,\ldots,r_n \in \mathbb{F}$ at random and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
 Then $M\mathbf{v}$ is a vector of $l$ shares of the secret. 
 The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \cS$. 
 For any set $C\in \Gamma_\cS$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
 The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, \ie there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
 The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
-
-\mynote{how to generate $M$}
-
 
 % \begin{algorithm}
 % \caption{Converting Boolean Formula $F$ to LSSS Matrix $M$}

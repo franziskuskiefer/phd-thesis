@@ -78,7 +78,8 @@ Note however that those terms are usually not used in cryptography research (but
 Graphical passwords where first proposed by \citet{Blonder96} with Microsoft Window's picture passwords \cite{picturepwd1,picturepwd2} being the best known implementation of it.
 Instead of relying on entropy in a character password, graphical passwords require the user to recognise certain images or features in an image.
 The security usually stems from the ability of humans to reliably recognise pictures and small features inside pictures whereas algorithms struggle to do so.
-\mynote{relation to CAPTCHA with ref}
+This approach is somewhat related to using \acsp{CAPTCHA} to distinguish between humans and machines by asking a question hard for computers to solve, but easy for humans (hence the name \ac{CAPTCHA}, \acl{CAPTCHA}).
+The term \ac{CAPTCHA} was coined by \citet{AhnBHL03}.
 
 \paragraph{Passphrase}
 Passphrases are very similar to passwords in the sense that they are character strings.
@@ -186,8 +187,6 @@ Due to the low-entropy of passwords this obviously introduces new interesting ch
 In particular, they propose a method to perform distributed public key cryptography when each party holds only a low entropy password, based on the \ac{DDH} assumption.
 \citet{BoyenCFP10} extend the notion to the pairing world.
 
-\mynote{other usages?}
-
 % *****************************************************************************
 % Section: On Provable Security
 % *****************************************************************************
@@ -245,7 +244,7 @@ In contrast to the previously described game-based approach simulation-based sec
 The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm/protocol, and the real world with the actual algorithm/protocol.
 Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is secure.
 
-\paragraph{Universal Composability}
+\paragraph{Universal Composability} \label{sec:uc-intro}
 The \ac{UC} framework proposed by \citet{Canetti2001a} is a popular general purpose simulation-based security model.
 It overcomes an inherent shortcoming of most game-based security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure, which is stronger than the general simulation-based approach from \citet{Goldreich87}.
 Most game-based security models only allow to derive statements about the algorithm in a shielded environment or are limited otherwise.
@@ -253,15 +252,13 @@ As soon as the algorithm is used with other primitives, and thus sharing \ac{IO}
 The \ac{UC} framework introduces another adversary \UCZ, the environment, that generates all inputs for all parties, and reads their outputs.
 A protocol is secure in \ac{UC} when it realises a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with \UCS and the ideal functionality \UCF.
 
-\mynote{exact difference between \citet{Goldreich87} and \citet{Canetti2001a}?}
-\mynote{put this (extended) in Ch. 2?}
+\mynote{enhance and describe exact difference between \citet{Goldreich87} and \citet{Canetti2001a}?}
 
 % *****************************************************************************
 % Section: Password Registration
 % *****************************************************************************
 
 \section{Cryptographic Password Registration}\label{sec:intro:registration}
-\mynote{read this}
 Before using passwords for any kind of authentication protocol a password has to be registered at the server.
 While registration of symmetric keys is not a particularly interesting cryptographic problem since security there has to be guaranteed by other means, password registration is more involved.
 This is due to two different reasons;
@@ -271,30 +268,28 @@ Second, passwords are not chosen uniformly at random in practice but by humans a
 In particular, systems commonly impose restrictions on possible passwords such as password policies in order to ensure a certain min-entropy of password in the system.
 This should guarantee strong passwords that have reasonable security against dictionary attacks.
 
-When users select passwords for remote access to systems or services on their own, the password policy enforcement mechanism must be able to verify that selected passwords comply with the existing policy.
+When users select passwords for remote access to systems or services, the password policy enforcement mechanism must be able to verify that selected passwords comply with the existing policy.
 This compliance check can be performed either on the client side or on the server side.
-For instance, when a commodity web browser is used to register for some web service the policy can be checked within the browser using scripts embedded into the registration website, or on the server side upon the initial transmission of the password (e.g. over a TLS channel).
+For instance, when a commodity web browser is used to register for some web service the policy can be checked within the browser using scripts embedded into the registration website, or on the server side upon the initial transmission of the password (\eg over a \ac{TLS} channel).
 Both approaches, however, have security risks as discussed in the following.
 If policy enforcement is performed solely on the client side, the server must trust the client to obey the policy and execute the check correctly.
 This is not a threat if the compliance check is assumed to be in the interest of an honest user.
-Nonetheless, malicious users or users who are lazy to remember complicated passwords can easily circumvent such script-based verification and register passwords that are not compliant with the policy. The corresponding service provider might want to exclude this threat.
+Nonetheless, malicious users or users who are too lazy to remember complicated passwords can easily circumvent such script-based verification and register passwords that are not compliant with the policy. The corresponding service provider might want to exclude this threat.
 In this case the compliance check must be performed on the server side.
 In order to perform policy check with available technologies the client's password must be transmitted to the server, possibly over a secure channel.
 This ultimately requires the client to trust the server to process and store the received password in a secure way.
-While many servers adopt the current state-of-the-art approach for storing passwords in a hashed form, e.g. using PBKDF2 \cite{rfc2898,nist800} or bcrypt \cite{ProvosM99}, with a random salt\footnote{The randomness used in password hashing is commonly called \emph{salt}.} to protect against server compromise or re-use attacks, there have been many known cases, e.g. \cite{adobeBreach,rockyouBreach,msBreach,cupidBreach}, where passwords have been stored in clear and compromised subsequently.
+While many servers adopt the current state-of-the-art approach for storing passwords in a hashed form, \eg using PBKDF2 \cite{rfc2898,nist800} or bcrypt \cite{ProvosM99}, with a random salt\footnote{The randomness used in password hashing is commonly called \emph{salt}.} to protect against server compromise or re-use attacks, there have been many known cases, \eg \cite{rockyouBreach,msBreach,cupidBreach}, where passwords have been stored in clear and compromised subsequently.
 The ultimate goal, therefore, is to avoid trusting servers with secure processing and storage of user passwords.
-
-In order to offer better protection against compromised password databases servers are supposed to store only the randomised password hash and the random salt that was used.
-In later sessions the client authenticates itself with the password whereas the server uses stored password hash and salt to perform the check.
-This resembles the concept of \ac{VPAKE} (cf. Section \ref{sec:intro:verifier-basedPAKE}).
-As mentioned previously however, the increasing number of successful password leaks suggest that many servers fail to protect passwords, which nullifies the potential of \ac{VPAKE}.
-For this reason, remote password registration should ideally be performed without the need for the client to send its password to the server; in other words, without trusting the server to securely process and store client passwords.
-The ultimate goal, therefore, is to avoid trusting servers with secure processing and storage of user passwords.
+% In order to offer better protection against compromised password databases servers are supposed to store only the randomised password hash and the random salt that was used.
+% As mentioned previously however, the increasing number of successful password leaks suggest that many servers fail to protect passwords, which nullifies the potential of \ac{VPAKE}.
+% For this reason, remote password registration should ideally be performed without the need for the client to send its password to the server; in other words, without trusting the server to securely process and store client passwords.
+% The ultimate goal, therefore, is to avoid trusting servers with secure processing and storage of user passwords.
 This goal imposes two main challenges:
 (1) in the registration phase users must be able to choose passwords and prove their policy compliance to a remote server without actually transmitting their passwords, and 
 (2) after the registration phase users must be able to authenticate themselves to the server using their passwords without transmitting them.
-While the second challenge has been solved using \ac{VPAKE}, the first challenge of registering passwords verifiers while maintaining the server's ability to check their policy compliance has not been solved yet and is part of the contribution of this thesis (cf. Section \ref{sec:vpake-registration}).
-
+While the second challenge has been solved using \ac{VPAKE}, the first challenge of registering passwords verifiers while maintaining the server's ability to check their policy compliance has not been solved yet and is part of the contribution of this thesis (cf. Chapter \ref{ch:vpake} Section \ref{sec:bpr}).
+% When the server stores a password verifier instead of the actual password the client authenticates itself with the password whereas the server uses stored password hash and salt to perform the check.
+% This resembles the concept of \ac{VPAKE} (cf. Section \ref{sec:intro:verifier-basedPAKE}).
 
 
 % *****************************************************************************
@@ -321,9 +316,8 @@ The standard model of \ac{PAKE} does not require any \ac{PKI}, which is necessar
 % This is the key distribution problem, implicit to all symmetric key protocols.}
 Thereby, \ac{PAKE} protocols solve the problem of potential password leakage, inherent to the approach based on secure channels.
 
-In general, all PAKE models (see~\citet{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
-While many PAKE constructions require a constant number of communication rounds (\citet{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}); recent frameworks by \citet{Katz2011} and \citet{Benhamouda2013} offer optimal one-round \ac{PAKE}.
-\mynote{update with up-to-date references}
+In general, all \ac{PAKE} models (see~\citet{Pointcheval2012} for a recent overview) take into account unavoidable online dictionary attacks and aim to guarantee security against offline dictionary attacks.
+While many \ac{PAKE} constructions require a constant number of communication rounds (\citet{KatzOY01,Gennaro2003,Abdalla2005,Gennaro2008,Katz2009a,Katz2011}); recent frameworks by \citet{Katz2011} and \citet{Benhamouda2013} offer optimal one-round \ac{PAKE}.
 
 In addition to the aforementioned approaches that are tailored to the password-based setting there exist several more general authentication and key exchange frameworks such as the ones proposed by \citet{Camenisch2010} and \citet{Blazy2012} that also lend themselves to the constructions of (somewhat less practical) \ac{PAKE} protocols.
 In the field of \acl{PAKE}, security models aim at \ac{AKE}-security introduced by \citet{Bellare1993} and \citet{Bellare1995}.
@@ -358,9 +352,7 @@ Their work also comprises the first (and until now the only, but fairly ineffici
 The protocol has been subsequently simplified at the cost of weakened security by \citet{NguyenV04}.
 While the model from \citet{Goldreich01} is hardly used in the analysis of \ac{PAKE} protocols, a stronger simulation-based model in the framework of \acl{UC}~\cite{Canetti2001a} has later been proposed by \citet{Canetti2005}.
 In contrast to game-based \ac{PAKE} protocols, \ac{UC}-secure protocols require setup assumptions \cite{Canetti2005}, with \ac{CRS} being the most popular one~\cite{Katz2011}, albeit ideal ciphers / random oracles~\cite{Abdalla2008} and stronger hardware-based assumptions~\cite{cryptoeprint:2012:537} have also been used.
-The most recent and most efficient \ac{PAKE} protocol, secure in the \ac{UC}-framework, is due to \citet{Benhamouda2013}.
-
-\mynote{update references here}
+The most recent and most efficient \ac{PAKE} protocol are proven secure in the \ac{UC}-framework \cite{Benhamouda2013,AbdallaBBCP13,AbdallaBP14a,AbdallaBP15}.
 
 
 %********************************** %VPAKE  **************************************
@@ -379,10 +371,11 @@ Different approaches have been proposed to mitigate the impact of server comprom
 The server is not working with the password as input, but some other long-term secret related to the client's password \cite{Wu1998,Boyen2009a}.
 \citet{Gentry2006} propose the first general technique, proven in the \ac{UC} framework, to make arbitrary \ac{PAKE} protocols secure resilient to server compromise.
 Two-server \ac{PAKE} protocols are another possibility to tackle server compromise and malicious servers.
+As discussed earlier however, an increasing number of successful password leaks suggest that many servers do not apply randomised password hashing at all. 
 
-A large number of break-ins into server databases makes \ac{VPAKE} a particularly valuable concept for remote password-based authentication since in order to recover the actual client password the attacker must perform a costly dictionary attack on its password hash.
-Increasing number of successful password leaks~\cite{rockyouBreach,cupidBreach,adobeBreach} suggests however that many servers do not apply randomised password hashing at all. 
-\mynote{check password leak references}
+% A large number of break-ins into server databases makes \ac{VPAKE} a particularly valuable concept for remote password-based authentication since in order to recover the actual client password the attacker must perform a costly dictionary attack on its password hash.
+% Increasing number of successful password leaks~\cite{rockyouBreach,cupidBreach,adobeBreach} suggests however that many servers do not apply randomised password hashing at all. 
+% \mynote{check password leak references}
 
 \subsubsection{On Rainbow Tables}
 The reason for protecting passwords on a server are rather simple.
@@ -436,7 +429,9 @@ The first real two-server PAKE protocol is due to \citet{BrainardJKS03}, which w
 The first two server PAKE with thorough security model based on the popular game-based \ac{BPR-M} model \cite{Bellare2000} is due to \citet{Katz2012a}.
 
 \subsubsection{Tag-based Password Authentication}
-\mynote{describe tPAuth here}
+While \ac{PAKE} is the most popular password-based authentication protocol in cryptography research, it is often sufficient to perform authentication without key exchange.
+To this end \citet{Manulis2014} introduced \ac{tPAuth} that essentially strips a \ac{PAKE} protocol of its key exchange phase and performs mutual authentication instead.
+The additional tag allows to use \ac{tPAuth} protocols to be used in \ac{PACCE} protocols, which is useful when performing password-based authentication on top of an already confidential channel.
 
 %********************************** %Other PAKE protocols  **************************************
 \subsection{Other Password Authenticated Protocols} \label{sec:other-pake}
@@ -467,13 +462,11 @@ However, implementations usually combine only passwords with \acp{OTP}.
 Using biometric factors is rarely seen in practice so far.
 
 \paragraph{Password Protected Secret Sharing}
-The notion of \acl{PPSS} was recently introduced by \citet{Bagherzandi2011}.
+The notion of \acl{PPSS} was recently introduced by \citet{Bagherzandi2011} (improved by \citet{JareckiKK14}).
 It allows to share a secret such as a symmetric key, among multiple servers, protected by a password. 
-A security model in the \ac{UC} framework was proposed later by \citet{Camenisch2012}.
-\ac{PPSS} has many interesing applications such as secure remote storage, an increasingly important use-case.
+A security model in the \ac{UC} framework was proposed later by \citet{Camenisch2012} (enhanced to resist malicious servers \cite{CamenischLLN14} and transient corruptions \cite{CamenischEN15}).
+\ac{PPSS} has many interesting applications such as secure remote storage, an increasingly important use-case.
 A similar notion called \emph{hidden credential retrieval} using only a single server has been introduced by \citet{Boyen09} to allow users with knowledge of a password to store high-entropy messages securely on a server.
-\mynote{add updated references}
-
 
 
 % *****************************************************************************
@@ -507,7 +500,7 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 % *****************************************************************************
 \section{Outline of this Thesis \& Summary of Results}\label{sec:intro:outline}
 This thesis consists of ??? more chapters.
-\mynote{Do this when actual content is there...}
+\mynote{Do this when done...}
 It starts in Chapter \ref{ch:prelims} with prerequisites and building blocks used throughout this work.
 After defining the foundations, Chapter \ref{ch:vpake} describes the first major contribution of this thesis, a framework for password registration (Section \ref{sec:vpake-registration}) and password authenticated key-exchange (Section \ref{sec:vpake-pake}) in the verifier-based setting where the server stores only a verifier of the password.
 The description of the implementation and demonstration can be found in Section \ref{sec:vpake-registration}.

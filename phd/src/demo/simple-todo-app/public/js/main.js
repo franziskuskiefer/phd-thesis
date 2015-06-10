@@ -1,6 +1,7 @@
-/*var todoApi = "/todo/api";*/
-var todoApi = "/pow/demo/todo/api";
-var userApi = "/pow/demo/user/";
+var todoApi = "/todo/api";
+var userApi = "/user/";
+//var todoApi = "/pow/demo/todo/api";
+//var userApi = "/pow/demo/user/";
 
 // get todos
 function get() {
@@ -12,8 +13,9 @@ function get() {
             // empty list first
             $('#todos').empty();
             //data - response from server
-            data = data.todos;
-            if (data) { // if user not logged in we don't get anything
+		        if (data.todos)
+				        data = data.todos;
+            if (data && data.todos) { // if user not logged in we don't get anything
                 for (var i = 0; i < data.length; i++) {
                     var entry = data[i];
                     $("#todos").append("<li class='todoEntry list-group-item'>" + entry.text + "&nbsp;<span class='item-remove glyphicon glyphicon-remove'  id='" + entry.id + "'></span></li>");
@@ -121,4 +123,20 @@ window.onload = function () {
         });
         return false;
     });
+    
+    // listen on message from parent frame to login that user
+		if (window.addEventListener){
+			addEventListener("message", loginListener, false);
+		} else {
+			attachEvent("onmessage", loginListener);
+		}
 };
+
+
+function loginListener(event){
+  if (event.origin !== "https://localhost")
+    return
+
+	var msg = event.data.split(",");
+	alert("iframe got "+msg[0]+" ("+msg[1]+")");
+}

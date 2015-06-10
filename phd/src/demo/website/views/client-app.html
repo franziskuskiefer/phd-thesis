@@ -38,7 +38,22 @@
      <p class="lead">This is a demo app to authenticate with the registered username and password</p>
   	</div>
   %else:
-  	<iframe src="http://localhost:8200/" seamless></iframe>
+  	<iframe src="http://localhost:8200/" seamless id="app"></iframe>
+  	%if user != '':
+			<script>
+				var appFrame = document.getElementById("app").contentWindow;
+				document.getElementById("app").onload = function() {
+					loginUser();
+			  };
+			  
+				function loginUser() {
+					appFrame.postMessage(
+						"{{user}},{{key}}",
+					  "http://localhost:8200"
+					);
+				}
+			</script>
+		%end
   %end
 
    <div class="modal fade" id="aboutModal">

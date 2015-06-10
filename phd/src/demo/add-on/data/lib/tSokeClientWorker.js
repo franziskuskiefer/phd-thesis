@@ -28,8 +28,10 @@ dump("args: "+args+"\n");
 		state = m[1]
 		postMessage({"M": "1", "a1": m[0]});
 	} else if (args[0] == 2) { // last message -> check authentication token a2
+	dump("a2(C): "+state.a2+"\n");
+	dump("a2(S): "+args[1].a2+"\n");
 		if (args[1].a2 == state.a2)
-			postMessage({"done": 1})
+			postMessage({"done": 1, "secret": args[1].secret})
 		else
 			postMessage({"done": 0})
 	}

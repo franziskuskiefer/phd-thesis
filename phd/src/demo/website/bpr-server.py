@@ -10,6 +10,9 @@ import bprServer.Util as Util
 import bprServer.bprServer as bprServer
 import bprServer.tSokeServer as tSokeServer
 
+# XXX: move this
+from charm.toolbox.ecgroup import ZR
+
 scheme = "http"
 domain = "localhost"
 port = "8080"
@@ -229,10 +232,21 @@ def tSokePost():
         a1c = request.json["a1"]
         if (a1c != s["a1"]):
             print("tSoke authentication failed :(")
+            return {'a2': ''}
         else:
             print("tSoke authentication successful :)")
+            
+            # store random value to user for app authentication
+            secret = str(params[1].random(ZR))
+            cnx = mysql.connector.connect(user='root', password='root', host='127.0.0.1', database='pow')
+            cursor = cnx.cursor()
+            cursor.execute('insert into sessions (username, secret) values ("'+s["name"]+'", "'+secret+'")')
+            cnx.commit()
+            cnx.close()
+            
+            # return auth token
+            return {'a2': s['a2'], 'secret': secret}
         
-        return {'a2': s['a2']}
     
 
 @route(tSokeFinalURL)
@@ -240,7 +254,9 @@ def loadApp():
         
     s = request.environ.get('beaker.session')
     return template("client-app.html",
-        params = '')
+        params = '',
+        user = s.get('name', "Alice"),
+        key = "1234567890")
     
 ############################
 ## run it

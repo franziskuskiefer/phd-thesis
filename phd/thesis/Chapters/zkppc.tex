@@ -12,9 +12,6 @@ It thus includes the requirements on completeness and soundness.
 In addition, a \ac{ZKPPC} protocol is a \ac{PPC} protocol with zero-knowledge property to ensure that no information about $\pwd$ is leaked to \Server. 
 More formally, %If the client's prospective password is not policy conform, i.e. $f(\pwd)=\false$, the server rejects the setup process.
 
-\mynote{give all the functions like password hashing unique symbols to use}
-\mynote{make all \PSetup etc unique and uniform}
-
 \begin{definition}[ZKPPC]\label{def:pocopas}
 Let $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ be a secure password hashing scheme and $f$ be a password policy. A \ac{ZKPPC} protocol is a zero-knowledge proof of knowledge protocol between a prover \Client (client) and a verifier \Server (server), defined as
 \begin{center}$\ZKPoK\{(\pwd,r):~f(\pwd)=\true \wedge H=\HashP(\pwd,r)\}.$\end{center}

@@ -6,7 +6,8 @@ const url = require("url");
 const clientSessions = require("client-sessions");
 
 /* DEFAULT PATH */
-var DEFAULT_PATH = "/pow/demo/";
+//var DEFAULT_PATH = "/pow/demo/";
+var DEFAULT_PATH = "/";
 
 /* parse request bodies */
 app.use(express.bodyParser());
