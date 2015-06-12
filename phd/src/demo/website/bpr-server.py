@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from bottle import route, run, template, static_file, post, get, request, app, redirect
+from bottle import route, run, template, static_file, post, get, request, app, redirect, response
 import json
 import mysql.connector
 
@@ -43,6 +43,7 @@ bprPostURL = "/bprMessage"
 bprFinalURL = "/bprDone"
 tSokePostURL = "/tSokeMessage"
 tSokeFinalURL = "/tSokeDone"
+appURL = "/app"
 
 def buildSiteParams(params, s):
   return '{"f": ' + params + ', "postURL": "' + bprPostURL + '", "finalURL": "' + bprFinalURL + '", "regex": "' + s["regex"] + '", "minlength": "' + str(s["minlength"]) + '"}'
@@ -244,19 +245,36 @@ def tSokePost():
             cnx.commit()
             cnx.close()
             
+            s["key"] = secret
+            
             # return auth token
-            return {'a2': s['a2'], 'secret': secret}
-        
-    
+            return {'a2': s['a2']}
+
+
+@post(tSokeFinalURL)
+def tSokeDone():
+                
+    s = request.environ.get('beaker.session')
+    print("in tSokeDone")
+    print(request.json["done"])
+    print(s["name"])
+    print(s["key"])
+    # this is the final message, a secret
+    if request.json['done'] and s["name"] and s["key"]:
+          response.status = 303
+          response.set_header('Location', appURL)
+          return ""
+#        return redirect(appURL, code=302)
+
 
 @route(tSokeFinalURL)
-def loadApp():
+def demoApp():
         
     s = request.environ.get('beaker.session')
     return template("client-app.html",
         params = '',
         user = s.get('name', "Alice"),
-        key = "1234567890")
+        key = s.get('key', "1234567890"))
     
 ############################
 ## run it

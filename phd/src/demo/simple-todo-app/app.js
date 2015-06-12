@@ -102,10 +102,12 @@ function checkAuth(req, res, next) {
 /* ROUTING */
 
 function renderPage(req, res, device){
-	if (device.Android)
-		res.render('index.jade', {user: req.my_session.username, mobile: 1, params: JSON.stringify(mobileParams)});
-	else
-		res.render('index.jade', {user: req.my_session.username, mobile: 0, params: JSON.stringify(browserParams)});
+	var username = req.my_session.username;
+	console.log('hello "'+username+'"');
+//	if (device.Android)
+//		res.render('index.jade', {user: req.my_session.username, mobile: 1, params: JSON.stringify(mobileParams)});
+//	else
+		res.render('index.jade', {user: username, mobile: 0, params: JSON.stringify(browserParams)});
 };
 
 /* serve website */
@@ -182,6 +184,27 @@ app.delete('/todo/api', checkAuth, function(req, res){
 });
 
 /* LOGIN API */
+
+app.post('/user/loginDone', function(req, res){
+//	var parsedUrl = url.parse(req.url, true); // true to get query as object
+//	var queryAsObject = parsedUrl.query;
+	
+	if (req.my_session) {
+		console.log(req.body.username);
+		console.log(req.body.key);
+		db.getSessionKey(req.body.username, function(err, result) {
+			db.dropSessionKey(req.body.username);
+			if (result[0] && result[0].secret != null && result[0].secret == req.body.key) {
+				console.log("browser login done ... "+JSON.stringify(result));
+				req.my_session.username = result[0].username;
+				res.redirect(DEFAULT_PATH);
+			}
+		});
+	} else {
+		// TODO: error handling
+		res.redirect(DEFAULT_PATH);
+	}
+});
 
 app.get('/user/api', function(req, res){
 	var parsedUrl = url.parse(req.url, true); // true to get query as object

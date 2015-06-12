@@ -134,9 +134,22 @@ window.onload = function () {
 
 
 function loginListener(event){
-  if (event.origin !== "https://localhost")
-    return
+		if (event.origin !== "https://localhost")
+		  	return
 
-	var msg = event.data.split(",");
-	alert("iframe got "+msg[0]+" ("+msg[1]+")");
+		var msg = event.data.split(",");
+    $.ajax({
+        url: userApi + "loginDone",
+        type: "POST",
+        data: JSON.stringify({"username": msg[0], "key": msg[1]}),
+        processData: false,
+        contentType: 'application/json',
+        success: function (data, textStatus, jqXHR) {
+            console.log("logged in");
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("api error: " + textStatus);
+        }
+    });
+	return false;
 }

@@ -31,7 +31,7 @@ dump("args: "+args+"\n");
 	dump("a2(C): "+state.a2+"\n");
 	dump("a2(S): "+args[1].a2+"\n");
 		if (args[1].a2 == state.a2)
-			postMessage({"done": 1, "secret": args[1].secret})
+			postMessage({"done": 1})
 		else
 			postMessage({"done": 0})
 	}

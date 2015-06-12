@@ -39,6 +39,17 @@ dbObject.prototype = new function(){
 		this.connection.query("SELECT a1,a2,a3,username,success FROM sessions WHERE sessionID='"+sessionID+"'", function(err, result){callback(err, result);});
 	};
 	
+	this.getSessionKey = function(username, callback) {
+		this.connection.query("SELECT * FROM sessions WHERE username='"+username+"'", function(err, result){callback(err, result);});
+	};
+	
+	this.dropSessionKey = function(username) {
+		this.connection.query("DELETE FROM sessions WHERE username='"+username+"'", function(err, result){ 
+				if (err)
+					console.log("Error while deleting session! "+JSON.stringify(err));
+			});
+	};
+	
 	this.dropSession = function(sessionID) {
 		this.connection.query("DELETE FROM sessions WHERE sessionID='"+sessionID+"'", function(err, result){ 
 				if (err)

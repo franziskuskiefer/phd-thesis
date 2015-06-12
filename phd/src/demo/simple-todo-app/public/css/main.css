@@ -1,6 +1,6 @@
 body {
 	padding-top: 40px;
-	background-color: #eee;
+/*	background-color: #eee;*/
 /*	background-image: url('../images/100_1959e.JPG');*/
 /*    background-repeat: no-repeat;*/
 /*    background-position: 50% 50%; */
@@ -19,7 +19,7 @@ body {
 }
 
 .jumbotron {
-	background: rgba(238,238,238,0.50);
+	background: rgba(255,255,255,0.50);
 }
 
 .center {
