@@ -3,43 +3,41 @@
 Smooth projective hashing allows to compute the hash value of an element from a set in two different ways:
 either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
 In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
-These features make them a quite popular building block in many protocols such as CCA-secure public key encryption, blind signatures, password authenticated key exchange, oblivious transfer, zero-knowledge proofs, commitments and verifiable encryption.
+These features make them a popular building block in many protocols such as \ac{CCA}-secure public key encryption, blind signatures, password authenticated key exchange, oblivious transfer, zero-knowledge proofs, commitments and verifiable encryption.
 
-Smooth projective hash functions (SPHF) are due to Cramer and Shoup \cite{Cramer2002} who used them to construct CCA-secure public key encryption schemes and analyse mechanisms from \cite{Cramer_Shoup_1998}.
-The first use of SPHFs in the construction of a password authenticated key exchange (PAKE) protocol is due to Gennaro and Lindell \cite{Gennaro2003}, who introduced additional requirements to the SPHF such as pseudorandomness that was later extended in \cite{Katz2011}.
-The SPHF-based approach taken in \cite{Gennaro2003} was further helpful in the ``explanation'' of the KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}, where those functions were implicitly applied.
+% Smooth projective hash functions (SPHF) are due to Cramer and Shoup \cite{Cramer2002} who used them to construct \ac{CCA}-secure public key encryption schemes and analyse mechanisms from \cite{Cramer_Shoup_1998}.
+% The first use of SPHFs in the construction of a password authenticated key exchange (PAKE) protocol is due to Gennaro and Lindell \cite{Gennaro2003}, who introduced additional requirements to the SPHF such as pseudorandomness that was later extended in \cite{Katz2011}.
+% The SPHF-based approach taken in \cite{Gennaro2003} was further helpful in the ``explanation'' of the KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}, where those functions were implicitly applied.
+%
+% Abdalla et al. \cite{Abdalla2009} introduced conjunction and disjunction of languages for smooth projective hashing that were later used in the construction of blind signatures \cite{Blazy2012,cryptoeprint:2013:034}, oblivious signature-based envelopes \cite{Blazy2012}, and authenticated key exchange protocols for algebraic languages \cite{Hamouda2013}.
+% Blazy et al. \cite{Blazy2012} demonstrate more general use of smooth projective hashing in designing round-optimal privacy-preserving interactive protocols.
 
-Abdalla et al. \cite{Abdalla2009} introduced conjunction and disjunction of languages for smooth projective hashing that were later used in the construction of blind signatures \cite{Blazy2012,cryptoeprint:2013:034}, oblivious signature-based envelopes \cite{Blazy2012}, and authenticated key exchange protocols for algebraic languages \cite{Hamouda2013}.
-Blazy et al. \cite{Blazy2012} demonstrate more general use of smooth projective hashing in designing round-optimal privacy-preserving interactive protocols.
-
-We extend this line of work by %allowing more than two parties with distinct inputs to participate in the SPHF computation.
-considering divergent parametrised languages in one smooth projective hash function that allows multiple parties to jointly evaluate the result of the function. %a smooth projective hash function.
-We propose the notion of (distributed) extended smooth projective hashing that enables joint hash computation for special languages.
-Further, we propose a new two-server password authenticated key exchange framework using the new notion of distributed smooth projective hashing and show how it helps to explain the protocol from \cite{Katz_MacKenzie_Taban_Gligor_2005}.
-Actually, the authors of \cite{AbdallaP06} already built a group PAKE protocol using smooth projective hashing in a multi-party party protocol.
-However, they assume a ring structure such that the smooth projective hashing is only used between two parties.
+This section extends research on \aclp{SPHF} by considering divergent parameterised languages in a single smooth projective hash function that allows multiple parties to jointly evaluate the result of the function. 
+To this end we propose the notion of \ac{D-SPHF} that enables joint hash computation for special languages, which is then used to construct a new \ac{2PAKE} framework and show how it helps to explain the protocol from \citet{Katz2012a}.
+% Actually, the authors of \cite{AbdallaP06} already built a group PAKE protocol using smooth projective hashing in a multi-party party protocol.
+% However, they assume a ring structure such that the smooth projective hashing is only used between two parties.
 
 
 %===============================================================================
 \subsection{Extending Smooth Projective Hashing}\label{sec:sphff}
 %===============================================================================
-We introduce an extended notion of smooth projective hashing that allows us to distribute the computation of the hash value.
-The new notion of extended SPHF (\SPHFF) is defined in the following setting:
-The parameter \aux, a language is indexed with, allows us to easily describe languages that differ only in the secret part $\aux'$.
+We introduce an extended notion of smooth projective hashing allows us to distribute the computation of the hash value.
+The new notion of extended \ac{SPHF} is defined in the following setting:
 We consider a language $\Laux$ with words (ciphertexts) $C$ that are ordered sets of $n$ ciphertexts $(C_0,\dots,C_x)$.
-The secret variable information $\aux'$ is chosen from the additive group $(\PP,+)=(\ZZ_p^{+},+)$ with a function $h:\PP\mapsto\PP^x$.
+Parameter \aux, a language is indexed with, allows us to easily describe languages that differ only in the secret part $\aux'$.
+The secret variable information $\aux'$ is chosen from the additive group $(\PP,+)=(\ZZ_p^{+},+)$ with a (sharing) function $h:\PP\mapsto\PP^x$.
 Let $L^\cL_\aux$ denote the language of ciphertexts encrypting the secret part $\aux'$ from $\aux$ with the public key $\pk$ from $\aux$ using encryption scheme $\cL$.
 For all $C_i, i\in\{1,\dots,x\}$ it must hold that $C_i\in L^\cL_{\aux_i}$ where $\aux_i=(\pk,\aux'_i)$ with $\aux'_i=h(\aux')[i]$.
 For $C_0$ it must hold that $C_0\in L^\cL_{\aux}$.
 Furthermore, the ciphertexts must offer certain homomorphic properties such that there exists a modified decryption algorithm $\Dec'$ and a combining function $g$ such that $\Dec'_{\pi}(C_0)=\Dec'_{\pi}(g(C_1,\dots,C_x))$, where $\pi$ denotes the secret key for the corresponding public key $\pk$ from \crs.
 
-The idea of \SPHFF is to be able to use the SPHF functionality not only on a single ciphertext, but on a set of ciphertexts with specific properties.
-Due to the nature of the words considered in \SPHFF they produce two different hash values.
+The idea of extended \ac{SPHF} is to be able to use the \ac{SPHF} functionality not only on a single ciphertext, but on a set of ciphertexts with specific properties, \ie over encrypted shares of \aux.
+Due to the nature of the words considered in extended \ac{SPHF} they produce two different hash values.
 One can think of the two hash values as $h_0$ for $C_0$ and  $h_x$ for $C_1,\dots,C_x$.
 The hash value $h_0$ can be either computed with knowledge of the hash key $\hk_0$ or with the witnesses $w_1,\dots,w_x$ that $C_1,\dots,C_x$ are in $L^\cL_{\aux_i}$ each.
 The hash value $h_x$ can be computed with knowledge of the hash keys $\hk_1,\dots,\hk_x$ or with the witness $w_0$ that $C_0$ is in $L^\cL_{\aux}$.
 
-\begin{definition}[\SPHFF]\label{def:symgensphf}
+\begin{definition}[Extended SPHF]\label{def:symgensphf}
 Let $L_\aux$ denote a language such that $C=(C_0,C_1,\dots,\allowbreak C_x)\in L_\aux$ if there exists a witness $w=(w_0,w_1,\dots,w_x)$ proving so and there exist functions $h(\aux')=(\aux'_1,\dots,\aux'_x)$ and $g:\GG^l\mapsto\GG^{l'}$ as described above.
 An extended smooth projective hash function for language $L_\aux$ with $\Gamma\in\GG^{k\times n}$ consists of the following six algorithms:
 
@@ -49,16 +47,16 @@ An extended smooth projective hash function for language $L_\aux$ with $\Gamma\i
 	\item $\PKGen(\hk_i,\Laux)$ derives the projection key $\hp_i=\Gamma \odot \hk_i\in\GG^{1\times k}$ for $i\in\{0,\dots,x\}$.
 	
 	\item $\Hash_x(\hk_0,\Laux,C_1,\dots,C_x)$ outputs hash value
-	$h_x=\Theta^x_{\aux}(C_1,\dots,C_x)\odot\hk_0$. 
+	\[h_x=\Theta^x_{\aux}(C_1,\dots,C_x)\odot\hk_0.\]
 	
 	\item $\PHash_x(\hp_0,\Laux,C_1,\dots,C_x,w_1,\dots,w_x)$ returns hash value
-	$h_x=\prod^{x}_{i=1}(\lambda^i\odot \hp_0),$ where $\lambda^i=\Omega(w_i,C_i)$.
+	\[h_x=\prod^{x}_{i=1}(\lambda^i\odot \hp_0), \text{ where } \lambda^i=\Omega(w_i,C_i).\]
 	
 	\item $\Hash_0(\hk_1,\dots,\hk_x,\Laux,C_0)$ outputs hash value
-	$h_0=\prod^{x}_{i=1}(\Theta_{\aux}^0(C_0)\odot\hk_i)$ $=\Theta_{\aux}^0(C_0)\odot \sum^x_{i=1}\hk_i$.
+	\[h_0=\prod^{x}_{i=1}(\Theta_{\aux}^0(C_0)\odot\hk_i)=\Theta_{\aux}^0(C_0)\odot \sum^x_{i=1}\hk_i.\]
 	
 	\item $\PHash_0(\hp_1,\dots,\hp_x,\Laux,C_0,w_0)$ returns hash value
-	$h_0=\prod^{x}_{i=1}(\lambda^0\odot \hp_i)$, with $\lambda^0=\Omega(w_0,C_0)$.
+	\[h_0=\prod^{x}_{i=1}(\lambda^0\odot \hp_i), \text{ with } \lambda^0=\Omega(w_0,C_0).\] \eod
 \end{itemize}
 \end{definition}
 
@@ -68,8 +66,8 @@ The correctness of the scheme can be easily verified by checking that $\Hash_x=\
 \subsubsection{Security Analysis}
 We refine definitions of smoothness and pseudorandomness to account for the two different hash functions.
 Therefore, we add both hash values to the indistinguishable sets, as well as the vector of projection keys.
-We start with the smoothness of the described \SPHFF.
-The smoothness proven in Theorem \ref{theo:smoothnessc} follows directly from the proof given in \cite[Appendix D.3]{cryptoeprint:2013:034} and follows the same approach for smoothness proofs as in previous works on SPHF \cite{cryptoeprint:2013:034,Gennaro2003,Katz2011}.
+We start with smoothness of extended \ac{SPHF}.
+The smoothness proven in Theorem \ref{theo:smoothnessc} follows directly from the proof given in \cite[Appendix D.3]{cryptoeprint:2013:034} and follows the same approach for smoothness proofs as in previous works on \ac{SPHF} \cite{cryptoeprint:2013:034,Gennaro2003,Katz2011}.
 Recall that we are only concerned with \emph{adaptive smoothness}.
 Let $\overline{\hp}$ denote the vector of projection keys $\hp_i$ for $i=0,\dots,x$.
 For any functions $f,f'$ to $\cS\setminus\Laux$ the following distributions are statistically $\varepsilon$-close:
@@ -80,24 +78,23 @@ For any functions $f,f'$ to $\cS\setminus\Laux$ the following distributions are 
 & ~~\hp_i\algout\PKGen(\hk_i,\Laux)\}.
 \end{align*}
 
-\begin{theorem}[\SPHFF Smoothness]\label{theo:smoothnessc}
-The \SPHFF construction from Definition \ref{def:symgensphf} on cyclic groups is statistically smooth.
+\begin{theorem}[Extended SPHF Smoothness]\label{theo:smoothnessc}
+The extended \ac{SPHF} construction from Definition \ref{def:symgensphf} on cyclic groups is statistically smooth.
 \end{theorem}
 
 \begin{proof}
 We show that the logarithm of the projection keys $\overline{\hp}$ and the logarithm of the hash values $h_0$ and $h_x$ are defined by linearly independent equations and thus $h_0$ and $h_x$ are uniform in $\GG$, given $\overline{\hp}$.
-In addition to this general proof we give an extended proof of the \SPHFF smoothness instantiated with labelled Cramer-Shoup encryption for better understanding in Appendix \ref{app:smoothness}.
-To show that $(\overline{\hp},h_0,h_x)$ is uniformly distributed in $\GG^{k+2}$ for $C\not\in\Laux$, i.e. $\varepsilon$-close to $(\overline{\hp},g_0,g_x)$ for random $g_0,g_x\rin\GG$, we consider a word $C=(C_0,C_1,\dots,C_x)\not\in \Laux$ and a projection key $\hp_j=\Gamma \odot \hk_j$ such that one $C_j$ does not fulfill the property $C_j\in L_{\aux_j}$, i.e. $\exists j\in\{0,\dots,x\},\forall\lambda^j\in\ZZ_p^{1\times k}:~\Theta_{\aux_j}(C_j)\not=\bm{\lambda}^j\odot \Gamma$.
-From \cite[Appendix D.3]{cryptoeprint:2013:034} it follows directly that $\Theta_{\aux_j}(C_j)\odot\hk_j$ is a uniformly distributed element in $\GG$, and thus $\Theta^x_{\aux}(C_1,\dots,C_x)\odot\hk_0$ and $\prod^{x}_{i=1}(\Theta_{\aux}^0(C_0)\odot\hk_i)$ is uniformly in $\GG$.
+In addition to this general proof we give an extended proof of extended \ac{SPHF} smoothness instantiated with labelled Cramer-Shoup encryption for better understanding in Section \ref{sec:excssmoothness}.
+To show that $(\overline{\hp},h_0,h_x)$ is uniformly distributed in $\GG^{k+2}$ for $C\not\in\Laux$, \ie $\varepsilon$-close to $(\overline{\hp},g_0,g_x)$ for random $g_0,g_x\rin\GG$, we consider a word $C=(C_0,C_1,\dots,C_x)\not\in \Laux$ and a projection key $\hp_j=\Gamma \odot \hk_j$ such that one $C_j$ does not fulfil the property $C_j\in L_{\aux_j}$, \ie $\exists j\in\{0,\dots,x\},\forall\lambda^j\in\ZZ_p^{1\times k}:~\Theta_{\aux_j}(C_j)\not=\bm{\lambda}^j\odot \Gamma$.
+From \cite[Appendix D.3]{cryptoeprint:2013:034} it follows directly that $\Theta_{\aux_j}(C_j)\odot\hk_j$ is a uniformly distributed element in $\GG$, and thus $\Theta^x_{\aux}(C_1,\dots,C_x)\odot\hk_0$ and $\prod^{x}_{i=1}(\Theta_{\aux}^0(C_0)\odot\hk_i)$ are uniformly in $\GG$.
 The projection key $\overline{\hp}$ is uniformly at random in $\GG^{k}$ anyway, given the randomness of all $\hk_i$.
 Note that any violation of $\Dec'_{\pi}(C_0)=\Dec'_{\pi}(g(C_1,\dots,C_x))$ implies the existence of an index $j$ such that $C_j\not\in L_{\aux_j}$.
-\qed
 \end{proof}
 
 \noindent
-While smoothness is the foremost property of (extended) smooth projective hash functions, in some cases like password authenticated key exchange pseudorandomness of the produced hash values has to be guaranteed too.
+While smoothness is the foremost property of (extended) smooth projective hash functions, cases like \ac{PAKE} pseudorandomness of the produced hash values has to be guaranteed too.
 Let $\overline{\hp}$ denote the vector of projection keys $\hp_i$ for $i=0,\dots,x$.
-A \SPHFF is pseudorandom if its hash values are computationally indistinguishable from random without knowledge of the uniformly chosen hash keys $\overline{\hk}$ or the witnesses $\overline{w}$, i.e. for all $C=(C_0,\dots,C_x)\in\Laux$ the following distributions are computationally $\varepsilon$-close:
+An extended \ac{SPHF} is pseudorandom if its hash values are computationally indistinguishable from random without knowledge of the uniformly chosen hash keys $\overline{\hk}$ or the witnesses $\overline{w}$, \ie for all $C=(C_0,\dots,C_x)\in\Laux$ the following distributions are computationally $\varepsilon$-close:
 
 \begin{align*}
 & \{(\overline{\hp},C,h_0,h_x) ~|~ \forall i\in\{0,\dots,x\}:~ \hk_i\ralgout\HKGen(\Laux); \hp_i\algout\PKGen(\hk_i,\Laux); \\
@@ -107,45 +104,45 @@ A \SPHFF is pseudorandom if its hash values are computationally indistinguishabl
 \end{align*}
 
 \noindent
-To prove pseudorandomness of an \SPHFF we use modified experiments from \cite{Gennaro2003} given in Definition \ref{def:prplus}.
-The proof for the pseudorandomness of \SPHFF follows the line of argument from \cite{Gennaro2003}.
+To prove pseudorandomness of an extended \ac{SPHF} we use modified experiments from \cite{Gennaro2003} given in Definition \ref{def:prplus}.
 
-\begin{definition}[\SPHFF Pseudorandomness]\label{def:prplus}
-A \SPHFF $\Pi$ is pseudorandom if for all PPT algorithms $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that
+\begin{definition}[Extended SPHF Pseudorandomness]\label{def:prplus}
+An extended \ac{SPHF} $\Pi$ is pseudorandom if for all \ac{PPT} algorithms $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that
 \[\Adv_{\Pi,\cA}^{\Pr}=\left|\Pr[\Exp_{\Pi,\cA}^{\Pr}=1] - \frac12 \right|\leq \varepsilon(\secpar)\]
 
 \noindent
-$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ Choose $b\rin\bits$, call $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot)}(\secpar,\hp_0,\dots,\hp_x)$ with $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ for all $i\in 0,\dots,x$.
-Return $b=b'$.
+$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
+\hspace*{2em} $b\rin\bits$\\
+\hspace*{2em} $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ for all $i\in 0,\dots,x$\\
+\hspace*{2em} $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot)}(\secpar,\hp_0,\dots,\hp_x)$ \\
+\hspace*{2em} return $b=b'$
 
 \begin{description}
 	\item $\Omega^{\cL}_\pk(\ell,\aux)$ returns elements $C=(C_0,\dots,C_x)\in\Laux$ with $C_0\gets\Enc^\cL_\pk(\ell_0,\allowbreak\aux';r_0)$ and $C_i\gets\Enc^\cL_\pk\allowbreak(\ell_i,\aux'_i;r_i)$ for all $i\in1,\dots,x$ and $\pk\in\aux$ using encryption scheme \cL and according labels $\ell_i$.
-	It additionally returns $\Hash_0(\hk_1,\dots,\allowbreak\hk_x,\Laux,C_0),\Hash_x(\hk_0,\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_0,h_x$ $\rin\GG$ if $b=1$.
+	It additionally returns $\Hash_0(\hk_1,\dots,\allowbreak\hk_x,\Laux,C_0),\Hash_x(\hk_0,\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_0,h_x$ $\rin\GG$ if $b=1$. \eod
 \end{description}
 \end{definition}
 
 \noindent
-The following theorem shows pseudorandomness of hash values in \SPHFF.
-% \processifversion{fullversion}{For better understanding we give a more detailed proof in Appendix \ref{app:pseudorandomnesssphff} using the instantiation of Cramer-Shoup \SPHFF.}
+The following theorem shows pseudorandomness of hash values in extended \acp{SPHF}.
 
-\begin{theorem}[\SPHFF Pseudorandomness]\label{theo:prsphff}
-The \SPHFF construction from Definition \ref{def:symgensphf} on cyclic groups is pseudorandom if $\cL$ is a CCA-secure labelled encryption scheme.
+\begin{theorem}[Extended SPHF Pseudorandomness]\label{theo:prsphff}
+The extended \ac{SPHF} construction from Definition \ref{def:symgensphf} on cyclic groups is pseudorandom if $\cL$ is a \ac{CCA}-secure labelled encryption scheme.
 \end{theorem}
 
 \begin{proof}
-Pseudorandomness of \SPHFF follows immediately from its smoothness and the CCA-security of the used encryption scheme.
+Pseudorandomness of extended \ac{SPHF} follows immediately from its smoothness and the \ac{CCA}-security of the used encryption scheme.
 First we change $\Omega^\cL_\pk$ such that it returns the encryption of $0$ for a random $i\in0,\dots,x$.
-This change is not noticeable by the adversary due to the CCA-security of the encryption scheme.
-Assuming $0$ is not a valid message, i.e. $\aux'\not=0$ and $\aux_i\not=0$ for all $i\in1,\dots,x$, the pseudorandomness of \SPHFF follows from its smoothness.
-\qed
+This change is not noticeable by the adversary due to the \ac{CCA}-security of the encryption scheme.
+Assuming $0$ is not a valid message, \ie $\aux'\not=0$ and $\aux_i\not=0$ for all $i\in1,\dots,x$, the pseudorandomness of extended \ac{SPHF} follows from its smoothness.
 \end{proof}
 
 \noindent
-The authors of \cite{Katz2011} furthermore highlight that this definition of pseudorandomness is not enough when used in PAKE protocols if the hash values are not bound to a specific session by signatures or MACs.
+\citet{Katz2011} highlight that this definition of pseudorandomness is not enough when used in PAKE protocols if the hash values are not bound to a specific session by signatures or \acp{MAC}.
 Therefore, they prove pseudorandomness under re-use of hash keys and ciphertexts.
-Taking into account re-use of \SPHFF values such as ciphertexts and keys we formalise the notion of concurrent pseudorandomness for \SPHFF following the approach from \cite{Katz2011}.
+Taking into account re-use of \SPHFF values such as ciphertexts and keys we formalise the notion of concurrent pseudorandomness for extended \ac{SPHF} following the approach from \citet{Katz2011}.
 Let $\overline{\hp}$ denote the vector of projection keys $\hp_i$ for $i=0,\dots,x$.
-A \SPHFF is pseudorandom in concurrent execution if the hash values are computationally indistinguishable from random without knowledge of the uniformly chosen hash keys or the witnesses, i.e. for fixed $l=l(\secpar)$ the following distributions are computationally $\varepsilon$-close:
+An extended \ac{SPHF} is pseudorandom in concurrent execution if the hash values are computationally indistinguishable from random without knowledge of the uniformly chosen hash keys or the witnesses, \ie for fixed $l=l(\secpar)$ the following distributions are computationally $\varepsilon$-close:
 \begin{align*}
 & \{(\overline{\hp}_1,\dots,\overline{\hp}_l,C_1,\dots,C_l,h_{0,1},\dots, h_{0,l},h_{x,1},\dots, h_{x,l}) ~|~ \\
 &  \forall i\in\{0,\dots, x\}, j\in\{1,\dots,l\}: \hk_{i,j}\ralgout\HKGen(\Laux);~ \hp_{i,j}\algout\PKGen(\hk_i,\Laux); \\
@@ -161,57 +158,59 @@ We extend Definition \ref{def:prplus} to capture re-use of hash keys and ciphert
 The corresponding experiment in Definition \ref{def:prplusc}
 generates $l$ hash values to each ciphertext, one for each hash key.
 
-\begin{definition}[\SPHFF Concurrent Pseudorandomness]\label{def:prplusc}
-A \SPHFF $\Pi$ offers concurrent pseudorandomness if for all PPT algorithms $\cA$ and polynomials $l$ there exists a negligible function $\varepsilon(\cdot)$ such that
+\begin{definition}[Extended SPHF Concurrent Pseudorandomness]\label{def:prplusc}
+An extended \ac{SPHF} $\Pi$ offers concurrent pseudorandomness if for all \ac{PPT} algorithms $\cA$ and polynomials $l$ there exists a negligible function $\varepsilon(\cdot)$ such that
 \[\Adv_{\Pi,\cA}^{\Pr}=\left|\Pr[\Exp_{\Pi,\cA}^{\Pr}=1] - \frac12 \right|\leq \varepsilon(\secpar)\]
 
 \noindent
-$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ Choose $b\rin\bits$, call $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot)}(\secpar,\overline{\hp_1},\dots,\overline{\hp_l})$ with $\overline{\hp_j}=(\hp_0,\dots,\hp_x)$ where $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ for all $i\in 0,\dots,x$ and $j\in 1,\dots,l$.
-Return $b=b'$.
+$\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
+\hspace*{2em} $b\rin\bits$, $\overline{\hp_j}=(\hp_0,\dots,\hp_x)$ with \\
+\hspace*{2em} $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ for all $i\in 0,\dots,x$ and $j\in 1,\dots,l$ \\
+\hspace*{2em} $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot)}(\secpar,\overline{\hp_1},\dots,\overline{\hp_l})$ \\
+\hspace*{2em} return $b=b'$
 
 \begin{description}
 	\item[$\Omega^{\cL}_\pk(\ell,\aux)$] returns elements $C=(C_0,\dots,C_x)\in\Laux$ with $C_0\gets\Enc^\cL_\pk(\ell_0,\allowbreak\aux';r_0)$ and $C_i\gets\Enc^\cL_\pk\allowbreak(\ell_i,\aux_i;r_i)$ for all $i\in1,\dots,x$ and $\pk\in\aux$ using encryption algorithm \cL and according labels $\ell_i$.
-	It additionally returns $\Hash_{0,j}(\hk_{1,j},\dots,\hk_{x,j},\Laux,C_0),\Hash_{x,j}(\hk_{0,j},\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_{0,j},\allowbreak h_{x,j}\in\GG$ if $b=1$ for all $j\in 1,\dots, l$.
+	It additionally returns $\Hash_{0,j}(\hk_{1,j},\dots,\hk_{x,j},\Laux,C_0)$, $\Hash_{x,j}(\hk_{0,j},\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_{0,j},\allowbreak h_{x,j}\in\GG$ if $b=1$ for all $j\in 1,\dots, l$. \eod
 \end{description}
 \end{definition}
 
 \noindent
-Using Definition \ref{def:prplusc} we prove the concurrent pseudorandomness of our construction, following the argument from \cite[Lemma 1]{Katz2011}.
+The following theorem give concurrent pseudorandomness of the proposed construction for extended \acp{SPHF}.
 
-\begin{lemma}[\SPHFF Concurrent Pseudorandomness]\label{cor:pr}
-The \SPHFF construction from Definition \ref{def:symgensphf} on cyclic groups is pseudorandom on re-use of hash and ciphertext values if $\cL$ is a CCA-secure labelled encryption scheme.
+\begin{lemma}[Concurrent Pseudorandomness of Extended SPHF]\label{cor:pr}
+The extended \ac{SPHF} construction from Definition \ref{def:symgensphf} on cyclic groups is pseudorandom on re-use of hash and ciphertext values if $\cL$ is a \ac{CCA}-secure labelled encryption scheme.
 \end{lemma}
 
 \begin{proof}
 Using a hybrid argument it is enough to show that the adversary can not distinguish between experiment $\Exp_1$ where $\Omega$ returns random elements for the first $i$ hash values of the $j$-th query and all queries $<j$ and correct hashes for all subsequent queries and indices $>i$, and $\Exp_2$ where $\Omega$ returns random elements for the first $i+1$ hash values of the $j$-th query and all queries $<j$ and correct hashes for all subsequent queries and indices $>i+1$.
-Having this in mind the proof follows the same argument as the one for \SPHFF pseudorandomness.
+Having this in mind the proof follows the same argument as the one for extended \ac{SPHF} pseudorandomness.
 We briefly recall the argumentation there.
 We modify $\Exp_1$ to $\Exp'_1$ and $\Exp_2$ to $\Exp'_2$ such that $\Omega$ returns an encryption of $0$ instead of correct encryptions for $C_j$.
 Note that we assume $0$ is not a valid message such that $C_j\not\in\Laux$ in $\Exp'_1$.
-Due to CCA-security of \cL this step is not recognisable by the adversary.
-Changing $\Exp'_1$ to $\Exp'_2$ the smoothness of \SPHFF ensures that $\cA$ can not distinguish between the two experiments, which proves the lemma.
-\qed
+Due to \ac{CCA}-security of \cL this step is not observable by the adversary.
+Changing $\Exp'_1$ to $\Exp'_2$ the smoothness of extended \ac{SPHF} ensures that $\cA$ can not distinguish between the two experiments, which proves the lemma.
 \end{proof}
 
 \subsection{Distributed Smooth Projective Hashing}\label{sec:dsphf}
-Using \SPHFF is only reasonable in a distributed manner.
-We therefore consider $n=x+1$ entities participating in the distributed computation of the \SPHFF hash values $h_0,h_x$.
+Using extended \acp{SPHF} only makes sense in a distributed setting.
+We therefore consider $n=x+1$ entities participating in the distributed computation of extended \ac{SPHF} hash values $h_0,h_x$.
 Let $P_i$ for $i\in\{1,\dots,x\}$ denote parties, each knowing $\aux_i$ and computing the according ciphertext $C_i$ and projection key $\hp_i$.
 Furthermore, let $P_0$ denote the participant knowing $\aux$ and computing $C_0$ and $\hp_0$.
 We define protocols in this setting with the purpose that both $P_0$ and $P_1$ eventually compute $h_0$ and $h_x$.
 
-While $P_0$ can compute $\PHash_0$ and $\Hash_x$ after receiving all $C_i$ and $\hp_i$, computation of $\Hash_0$ and $\PHash_x$ can not be performed solely by the previously described algorithms in this setting, without disclosing the witness or the hashing key.
+While $P_0$ can compute $\PHash_0$ and $\Hash_x$ after receiving all $C_i$ and $\hp_i$, computation of $\Hash_0$ and $\PHash_x$ can not be performed solely by the previously described algorithms in this setting, without disclosing witnesses or the hashing keys.
 To compute $\PHash_x$ and $\Hash_0$, parties $P_1,\dots,P_x$ have to collaborate since they know only part of the input parameters.
-Distributed \SPHFF defines protocols that allow secure calculation of $h_0$ and $h_x$.
-Intuitively distributed \SPHFF reaches the same security properties as \SPHFF, namely smoothness and pseudorandomness in presence of a passive adversary, by additionally ensuring that no protocol participant alone is able to compute the hash values.
-Note that while we assume each $P_i$ for $i>0$ holds a key-pair and knows public keys of all other $P_i$ such that all communication between two $P_i$ is secured by the receivers public key, those keys are not authenticated, i.e. we do not assume a PKI.
+\ac{D-SPHF} defines protocols that allow secure calculation of $h_0$ and $h_x$.
+Intuitively \ac{D-SPHF} reaches the same security properties as extended \ac{SPHF}, namely smoothness and pseudorandomness in presence of a passive adversary, by additionally ensuring that no protocol participant alone is able to compute the hash values.
+Note that while we assume each $P_i$ for $i>0$ holds a key-pair and knows public keys of all other $P_i$ such that all communication between two $P_i$ is secured by the receivers public key, those keys are not authenticated, \ie we do not assume a \ac{PKI}, neither does $P_0$ require a key.
 
-A distributed \SPHFF protocol between $n$ participants $P_0,\dots,P_x$ computing $h_x$ and $h_0$ consists of three interactive protocols \Setup, $\PHash_x^D$ and $\Hash_0^D$.
-Let $\Pi$ denote the \SPHFF algorithm that is being distributed.
+A \ac{D-SPHF} protocol between $n$ participants $P_0,\dots,P_x$ computing $h_x$ and $h_0$ consists of three interactive protocols \Setup, $\PHash_x^D$ and $\Hash_0^D$.
+Let $\Pi$ denote the extended \ac{SPHF} algorithm that is being distributed.
 \begin{itemize}
-	\item $\Setup(\aux,P_0,\dots,P_x)$ initialises a new instance for each participant with $(\aux,P_0,P_1,\dots,P_x)$ for $P_0$ and $(\aux_i,P_i,P_0,\dots,P_x)$ for $P_i$, $i\in\{1,\dots,x\}$.
+	\item $\Setup(\aux,P_0,\dots,P_x)$ initialises a new instance for each participant with $(\aux$, $P_0$, $P_1$, $\dots$, $P_x)$ for $P_0$ and $(\aux_i,P_i,P_0,\dots,P_x)$ for $P_i$, $i\in\{1,\dots,x\}$.
 	Eventually, all participants compute and broadcast projection keys $\hp_i$ and encryptions $C_i\gets\Enc_{\pk}^{\cL}(\ell_i,\aux'_i;r_i)$ of their secret $\aux'_i$ using $\Pi.\HKGen$, $\Pi.\PKGen$ and the associated encryption scheme $\cL$.
-	Participants store incoming $\hp_i,C_i$ for later use.
+	Participants store incoming $(\hp_i,C_i)$ for later use.
 	After receiving $(\hp_1,C_1,\dots,\hp_x,C_x)$, $P_0$ computes $h_0\gets\Pi.\PHash_0(\hp_1,\dots,\hp_x,\Laux,C_0,r_0)$ and $h_x\gets\Pi.\Hash_x(\hk_0,\Laux$, $C_1$, $\dots,C_x)$.
 
 	\item $\PHash_x^D$ is executed between parties $P_1,\dots,P_x$.
@@ -222,56 +221,61 @@ Let $\Pi$ denote the \SPHFF algorithm that is being distributed.
 \end{itemize}
 
 \noindent
-A distributed \SPHFF is said to be correct if $\PHash_x^D=\PHash_x$ and $\Hash_0^D=\Hash_0$ assuming that all messages are honestly computed and transmitted.
-The security of the distributed \SPHFF in presence of a passive adversary follows immediately from smoothness and pseudorandomness of the \SPHFF algorithms.
+A \ac{D-SPHF} is said to be correct if $\PHash_x^D=\PHash_x$ and $\Hash_0^D=\Hash_0$ assuming that all messages are honestly computed and transmitted.
+The security of the \ac{D-SPHF} in presence of a passive adversary follows immediately from smoothness and pseudorandomness of the extended \ac{SPHF} algorithms.
 
 \begin{remark}
 Note that we focus on asymmetric distribution here such that only $P_1$ computes the hash values.
-Building symmetric distribution protocols where all parties $P_i$ compute the hash values from this is straightforward but requires a different security model.
+Building symmetric distribution protocols where all parties $P_i$ compute the same hash values from this is straightforward but requires a different security model.
 Likewise, it is possible to build asymmetric distribution protocols where \emph{all} $P_i$ compute \emph{different} hash values (we will see an example of that later).
 \end{remark}
 
 \subsection{Security against Active Adversaries}
 Smooth projective hashing has not been used in a distributed manner before such that it was not necessary to consider active adversaries.
 By introducing distributed computation of hash values the $\Hash_0^D$ and $\PHash_x^D$ protocols are exposed to active attacks.
-However, the adversary must still not be able to distinguish real hash values from random elements, i.e. smoothness and pseudorandomness must hold.
-Therefore we introduce a security model for distributed \SPHFF smoothness and pseudorandomness, capturing active attacks in a multi-user and multi-instance setting.
+However, the adversary must still not be able to distinguish real hash values from random elements, \ie smoothness and pseudorandomness must hold.
+Therefore we introduce a security model for \ac{D-SPHF} smoothness and pseudorandomness, capturing active attacks in a multi-user and multi-instance setting.
 Let $\{(P^j_0,P^k_1,\dots,P^l_x)\}_{P_0^j\in\cP_0,P^k_i\in\cP~i\in\{1,\dots,x\}}$ denote all tuples $(P^j_0,P^k_1,\dots,P^l_x)$ such that $P^j_0\in\cP_0$ knows \aux and $P^k_1,\dots,P^l_x\in\cP$ each know according $\aux_i$.
 We say $P_0$ is \emph{registered} with $(P_1,\dots,P_x)$.
-The additional indices $j,k,l$ denote the instance of the respective participant (assigned by oracles and modelled as counters to ensure their uniqueness).
+The additional indices $j,k,l$ denote the instance of the respective participant.
 
-\begin{definition}[\SPHFF Security]\label{def:activesphff}
-A distributed \SPHFF protocol $\Pi$ is secure (offers adaptive smoothness and concurrent pseudorandomness) if for all PPT adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that :
-\[\Adv_{\Pi,\cA}^{\SPHFF}(\secpar)=\left|\Pr[\Exp^{\SPHFF}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
+\mynote{unify $\Send(A, B m)$ for $A\rightarrow B$ or $B\rightarrow A$}
+
+\begin{definition}[D-SPHF Security]\label{def:activesphff}
+A \ac{D-SPHF} protocol $\Pi$ is secure (offers adaptive smoothness and concurrent pseudorandomness) if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that :
+\[\Adv_{\Pi,\cA}^{\DSPHF}(\secpar)=\left|\Pr[\Exp^{\DSPHF}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
 
 \noindent
-$\Exp^{\SPHFF}_{\Pi,\cA}(\secpar):$ Choose $b\rin\bits$, call $b'\gets\cA^{\Setup(\cdot),\Send(\cdot),\Test(\cdot)}(\secpar,\aux_2,\dots,\allowbreak \aux_x,\cL,\crs)$ and return $b=b'$.
+$\Exp^{\DSPHF}_{\Pi,\cA}(\secpar):$ \\
+\hspace*{2em} $b\rin\bits$ \\
+\hspace*{2em} $b'\gets\cA^{\Setup(\cdot),\Send(\cdot),\Test(\cdot)}(\secpar,\aux_2,\dots,\allowbreak \aux_x,\cL,\crs)$ \\
+\hspace*{2em} return $b=b'$
 
 \begin{itemize}
 	\item $\Setup(P_0,\dots,P_x)$ initialises new instances with $(\aux,P_1,\dots,P_x)$ for $P_0$ registered with $(P_1,\dots,P_x)$ and $(\aux_1,P_1,P_0,\dots,P_x)$ for $P_1$ and returns $((\hp_0,\allowbreak C_0),(\hp_1,C_1))$ with $C_i\gets\Enc_{\pk}^{\cL}(\ell,\aux'_i;r_i)$ and $\hk_i\gets\Pi.\HKGen(\Laux)$, $\hp_i\gets\Pi.\PKGen(\hk_i,\Laux)$
 		
 	\item $\Send(P_a,P_b,m)$ sends message $m$ with alleged originator $P_b$ to $P_a$ and returns $P_a$'s resulting message $m'$ if any.
 	
-	\item $\Test(P_i^j)$ for $i\in\bits$ returns two hash values $(h_0,h_x)$. If the global bit $b$ is $0$, the hash values are chosen uniformly at random from $\GG$, otherwise the hash values are computed according to protocol specification $\Pi$.
+	\item $\Test(P_i^j)$ for $i\in\bits$ returns two hash values $(h_0,h_x)$. If the global bit $b$ is $0$, the hash values are chosen uniformly at random from $\GG$, otherwise the hash values are computed according to protocol specification $\Pi$. \eod
 \end{itemize}
 \end{definition}
 
 \noindent
-Note that we assume without loss of generality that all participants $P_2,\dots,P_x$ are corrupted by the adversary, who knows their secrets.
+Note that we assume without loss of generality that all participants $P_2,\dots,P_x$ are corrupted by the adversary, who thus knows their secrets.
 Furthermore, note that $\cA$ can query the $\Test$ oracle only once.
 
-The active security notion for distributed computation of \SPHFF covers smoothness and pseudorandomess as defined before.
+The active security notion for \ac{D-SPHF} computation covers smoothness and pseudorandomess as defined before.
 The experiment is equivalent to the computational smoothness definition when $\cA$ computes and forwards all messages honestly but changes at least one $\aux_i$.
 Note that this is actually a stronger notion than smoothness as we require pseudorandomness of hash values output by the projection function on a word not in the language.
 This is usually not included in the smoothness definition, which is defined over the hash function.
 Further, Definition \ref{def:activesphff} is equivalent to Definition \ref{def:prplusc} when $\cA$ computes and forwards all messages honestly and does \emph{not} change any $\aux_i$.
 
-\subsection{Instantiation -- Distributed Cramer-Shoup SPHF}\label{sec:dcssphf}
-We exemplify the \SPHFF definition on the previously introduced Cramer-Shoup encryption scheme (a second instantiation for ElGamal ciphertexts can be found in Appendix \ref{app:elgamalsphff}).
+\subsection{Instantiation -- Cramer-Shoup D-SPHF}\label{sec:dcssphf}
+We exemplify the \ac{D-SPHF} definition on labelled Cramer-Shoup and ElGamal ciphertexts.
 The ciphertexts are created as $C_i=(u_{1,i},u_{2,i},e_{i},v_i)\gets\Enc^{\CS}_{\pk}(\ell_i,\aux'_i;r_i)$ for all $i=1,\dots,x$ with $\aux'_i=h(\aux')[i]$ and $C_0=(u_{1,0},u_{2,0},\allowbreak e_{0},v_0)\gets\Enc^{\CS}_{\pk}(\ell_0,\allowbreak \aux'_0;r_0)$, where $\ell_i$ consists of participating parties and the party's projection key.
 We define modified decryption as $\Dec'_\pi(C)=e\cdot u_1^{-z}$.
 The combining function $g$ uses the homomorphic property of $u_1$ and $e$ of the CS ciphertext such that $g(C_1,\dots,C_x)=(\prod^x_{i=1}u_{1,i},\prod^x_{i=1}e_i)$ and $\aux'=\sum_{i=1}^{x}\aux'_i$.
-The following variables define the Cramer-Shoup \SPHFF:
+The following variables then define Cramer-Shoup \ac{D-SPHF}:
 
 \begin{align*}
 & \Gamma=
@@ -285,11 +289,11 @@ The following variables define the Cramer-Shoup \SPHFF:
 \end{align*}
 
 \noindent
-Using them in the \SPHFF Definition \ref{def:symgensphf} yields the Cramer-Shoup \SPHFF.
-For a detailed description of the resulting \SPHFF see Appendix \ref{app:cssphff}.
-Instead of aiming for absolute generality we describe the distributed Cramer-Shoup \SPHFF for $x=2$ such that both participants $P_1$ and $P_2$ compute and broadcast $(\hp_i,C_i)$, while $P_0$ computes and broadcasts $(\hp_0,C_0)$.
-Let $\times$ denote element wise multiplication, e.g., for El-Gamal ciphertexts $C_1=(u_1,e_1), C_2=(u_2,e_2)$, $C_1\times C_2$ is defined as $(u_1u_2,e_1e_2)$.
-$\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:dsphf} depicts the entire \SPHFF execution):
+Using them in the extended \ac{SPHF} Definition \ref{def:symgensphf} yields the extended Cramer-Shoup \ac{SPHF}.
+% For a detailed description of the resulting \SPHFF see Appendix \ref{app:cssphff}.
+Instead of aiming for absolute generality we describe the Cramer-Shoup \ac{D-SPHF} for $x=2$ such that both participants $P_1$ and $P_2$ compute and broadcast $(\hp_i,C_i)$, while $P_0$ computes and broadcasts $(\hp_0,C_0)$, \ie for the \ac{2PAKE} setting.
+Let $\times$ denote element wise multiplication, \eg for El-Gamal ciphertexts $C_1=(u_1,e_1), C_2=(u_2,e_2)$, $C_1\times C_2$ is defined as $(u_1u_2,e_1e_2)$.
+$\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:dsphf} depicts the entire \ac{D-SPHF} execution):
 \begin{itemize}
 	\item $\PHash_x^D$ is executed between $P_1$ and $P_2$.
 	$P_2$ computes $h_{x,2}=\lambda\odot\hp_0=(\hp_0[1]\cdot \hp_0[2]^{\xi_2})^{r_2}$ and sends it to $P_1$.
@@ -297,7 +301,7 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 	Note that $P_1$ always performs checks that $\hp_0\in\GG$ and $\GG\ni h_2^x\not=0$.
 	
 	\item $\Hash_0^D$ is executed between $P_1$ and $P_2$ such that $P_1$ eventually holds $h_0$.
-	Let $P_i$ for $i\in\{1,2\}$ denote the participating party knowing $(\aux_i,\sk_i,\hk_i=(\eta_1,\eta_2,\theta,\mu,\nu),\pk_1,\pk_2,C_0=(u_1,u_2,e,v,\xi))$.
+	Let $P_i$ for $i\in\{1,2\}$ denote the participating party knowing $(\aux_i$, $\sk_i$, $\hk_i=(\eta_1$, $\eta_2$, $\theta$, $\mu$, $\nu)$, $\pk_1$, $\pk_2$, $C_0=(u_1$, $u_2$, $e$, $v$, $\xi))$.
 	\begin{itemize}
 		\item $P_1$ computes $m_0\gets\Enc_{\pk_1}^{\EG}(g_1^{-\mu};r)$ and $c'_1\gets\Enc_{\pk_1}^{\EG}(g_1^{\aux'_1};r')$, and sends $(m_0,c'_1)$ to $P_2$.
 	
@@ -370,22 +374,57 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 \draw ([xshift=0pt,yshift=-5pt] m-11-3.south west) rectangle (m-11-5.north east);
 \coordinate[label=right:$\PHash_x^D$] (hx) at (m-11-5.mid east);
 \end{tikzpicture}
-\caption{Distributed Cramer-Shoup \ac{SPHF}\\{\tiny Dashed lines denote broadcast messages.}}
+\caption{Cramer-Shoup \ac{D-SPHF}\\{\small Dashed lines denote broadcast messages.}}
 \label{fig:dsphf}
 \end{figure}
 
-\subsubsection{Security Analysis}
-We show now that the proposed distributed Cramer-Shoup \SPHFF is secure.
-The intuition behind the proof is that the pseudorandomness of $h_x$ can be reduced directly to the DDH problem in $\GG$ while pseudorandomness of $h_0$ value follows from the smoothness and pseudorandomness of the underlying \SPHFF scheme.
+\subsubsection{Smoothness of extended Cramer-Shoup SPHF}\label{sec:excssmoothness}
+We want to discuss the statistical smoothness of extended \ac{SPHF} from Theorem \ref{theo:smoothnessc} in this section.
+While the intuition and actual proof has been given in Section \ref{sec:sphff}, we want to formulate what actually happens there.
+Therefore, we use the instantiation of extended Cramer-Shoup \ac{SPHF} and limit $x=2$.
+Recall that we thus want to show that $(\hp_0,\hp_1,\hp_2,h_0,h_x)$ is uniformly distributed in $\GG^{k+2}$ for all $C\not\in\Laux$.
+Actually, we do not have to bother with the projection keys $\hp_0,\hp_1,\hp_2$, as they are uniformly at random in $\GG^{k}$ anyway, given the randomness of all $\hk_i$.
+What we want to show is that given $\hp_0,\hp_1,\hp_2$, the hash values $h_0$ and $h_x$ are uniformly distributed in $\GG$.
+More precisely, we show that for all $C=(C_0,C_1,C_2)\not\in \Laux$ the projection keys $\hp_0,\hp_1,\hp_2$ are defined by functions that are linearly independent from the functions used in $\Hash_0$ and $\Hash_x$, such that the resulting hash values $h_0\gets\Hash_0$ and $h_x\gets\Hash_x$ are uniformly distributed in $\GG$.
+Computing the discrete logarithm in base $g_1$ of $h_x,h_0$ and the projection keys $\hp_1,\hp_1$ and $\hp_2$ with $m=g^{\pwd}$ and $m'=g^{\pwd'}$ such that $\Enc^{\CS}_\pk(m')\not\in\Laux$ we get the following equations:
+\begin{align}
+	\log_{g_1}(h_0) =& \log_{g_1}(\hp_1[0])\cdot r_0 + \log_{g_1}(\hp_1[1])\cdot \xi_0r_0  \notag\\
+					 & + \log_{g_1}(\hp_2[0])\cdot r_0 + \log_{g_2}(\hp_2[1])\cdot \xi_0r_0 + \log_{g_1}(m'/m)\cdot (\nu_1+\nu_2)  \notag\\
+					=&~ r_0(\eta_{1,1}+\eta_{1,2}) + \xi_0r_0(\eta_{2,1}+\eta_{2,2}) + \log_{g_1}(g_2)\cdot r_0(\theta_1+\theta_2) + z\cdot r_0(\nu_1+\nu_2)  \label{eq:1}\\
+					 & + \log_{g_1}(c)\cdot r_0(\nu_1+\nu_2) + \log_{g_1}(d)\cdot\xi_0r_0(\nu_1+\nu_2) + \log_{g_1}(m'/m)\cdot (\nu_1+\nu_2) \notag
+\end{align}
+\begin{align}
+	\log_{g_1}(h_x) =& \log_{g_1}(\hp_0[0])\cdot(r_1+r_2) + \log_{g_1}(\hp_0[1])\cdot(\xi_1r_1+\xi_2r_2) + \log_{g_1}(m'/m)\cdot \nu_0  \notag\\
+					=&~ (r_1+r_2)\eta_{1,0} + (\xi_1r_1+\xi_2r_2)\eta_{2,0} + \log_{g_1}(g_2)\cdot (r_1+r_2)\theta_0 + z\cdot (r_1+r_2)\nu_0 \label{eq:2}\\
+					 & + \log_{g_1}(c)\cdot (r_1+r_2)\nu_0 + \log_{g_1}(d)\cdot (\xi_1r_1+\xi_2r_2)\nu_0 + \log_{g_1}(m'/m)\cdot \nu_0 \notag
+\end{align}
+\begin{align}
+	\log_{g_1}(\hp_0[0]) =&~ \eta_{1,0} + \log_{g_1}(g_2)\cdot\theta_{0} + \log_{g_1}(h)\cdot\mu_{0} + \log_{g_1}(v)\cdot\nu_{0} \label{eq:3}\\
+	\log_{g_1}(\hp_0[1]) =&~ \eta_{2,0} + \log_{g_1}(d)\cdot\nu_{0} \label{eq:4}\\
+	\log_{g_1}(\hp_1[0]) =&~ \eta_{1,1} + \log_{g_1}(g_2)\cdot\theta_{1} + z\cdot\mu_{1} + \log_{g_1}(v)\cdot\nu_{1} \label{eq:5}\\
+	\log_{g_1}(\hp_1[1]) =&~ \eta_{2,1} + \log_{g_1}(d)\cdot\nu_{1} \label{eq:6}\\
+	\log_{g_1}(\hp_2[0]) =&~ \eta_{1,2} + \log_{g_1}(g_2)\cdot\theta_{2} + z\cdot\mu_{2} + \log_{g_1}(v)\cdot\nu_{2} \label{eq:7}\\
+	\log_{g_1}(\hp_2[1]) =&~ \eta_{2,2} + \log_{g_1}(d)\cdot\nu_{2}. \label{eq:8}
+\end{align}
 
-\begin{theorem}[Cramer-Shoup \SPHFF Security]\label{theo:cssphff}
-The distributed Cramer-Shoup \SPHFF instantiation is secure against active adversaries according to Definition \ref{def:activesphff} when the DDH assumption in the used group $\GG$ holds and $\cL=\CS$ is CCA-secure.
+\noindent
+Since $C\not\in\Laux$ we know that $m\not=m'$ and thus $m'/m\not=1$.
+Therefore, the probability for $g_0=\log_{g_1}(m'/m)\cdot (\nu_1+\nu_2)$ and $g_x=\log_{g_1}(m'/m)\cdot \nu_0$ for any $g_0,g_x\in\GG$ is $1/|\GG|$ even knowing the projection keys $\hp_0,\hp_1,\hp_2$.
+Note that these equations for $g_0$ and $g_x$ are linearly independent from Equations \ref{eq:3} - \ref{eq:8} such that every element from $\GG$ is equally likely to be the result.
+Equations \ref{eq:1} and \ref{eq:2} are fully determined by public information $C_0,C_1,C_2$ and $\hp_0,\hp_1,\hp_2$ such that their result is uniformly distributed in $\GG$ given the randomness of $g_0$ and $g_x$.
+
+\subsubsection{Security Analysis}
+We show now that the proposed Cramer-Shoup \ac{D-SPHF} is secure.
+The intuition behind the proof is that the pseudorandomness of $h_x$ can be reduced directly to the \ac{DDH} problem in $\GG$ while pseudorandomness of $h_0$ follows from the smoothness and pseudorandomness of the underlying extended \ac{SPHF} scheme.
+
+\begin{theorem}[Cramer-Shoup \ac{D-SPHF} Security]\label{theo:cssphff}
+The Cramer-Shoup \ac{D-SPHF} instantiation is secure against active adversaries according to Definition \ref{def:activesphff} when the \ac{DDH} assumption in the used group \GG holds and $\cL=\CS$ is \ac{CCA}-secure.
 \end{theorem}
 \begin{proof}
 First, note that the theorem follows immediately from smoothness and pseudorandomness in the passive case if the adversary queries $\Test(P_0)$.
 We therefore focus on $\Test(P_1)$ queries.
-We start with the pseudorandomness of $h_x$, i.e. for all $g$ it holds that $\Pr[h_x=g]=1/|\GG|$.
-Consider an attacker $\cA$ on input $(\secpar,\aux_2,\cL,\crs)$ and let $\Exp_0$ denote the original \SPHFF experiment.\\
+We start with the pseudorandomness of $h_x$, \ie for all $g$ it holds that $\Pr[h_x=g]=1/|\GG|$.
+Consider an attacker $\cA$ on input $(\secpar,\aux_2,\cL,\crs)$ and let $\Exp_0$ denote the original \ac{D-SPHF} experiment.\\
 
 \noindent$\Exp_1:$
 We change $\Test$ such that a uniformly at random chosen element $g_x\rin\GG$ is returned for $h_x$.
@@ -396,18 +435,17 @@ $\left|\Adv_{\Pi,\cA}^{\Exp_0}-\Adv_{\Pi,\cA}^{\Exp_1}\right|\leq\varepsilon(\se
 
 \begin{proof}
 The hash value $h_x$ in $\Exp_0$ is computed as $h_x=(\hp'_0[1]\cdot\hp'_0[2]^{\xi_1})^{r_1}\cdot h_{x,2}$ with adversarially generated $h_{x,2}$ and $\hp'_0$.
-Indistinguishability of $h_x$ and $g_x$, and thus the claim, follows immediately as long as the DDH assumption in $\GG$ holds (using DDH triple $(\hp'_0[1]\cdot\hp'_0[2]^{\xi_1},g^{r_1},h_x)$ and $(\hp'_0[1]\cdot\hp'_0[2]^{\xi_1},g^{r_1},g_x)$).
+Indistinguishability of $h_x$ and $g_x$, and thus the claim, follows immediately as long as the \ac{DDH} assumption in $\GG$ holds (using \ac{DDH} triple $(\hp'_0[1]\cdot\hp'_0[2]^{\xi_1},g^{r_1},h_x)$ and $(\hp'_0[1]\cdot\hp'_0[2]^{\xi_1},g^{r_1},g_x)$).
 Note that $P_1$ aborts if either $h_{x,2}\not\in\GG$ or $\hp_0'\not\in\GG^2$.
-\qed
 \end{proof}
 
 \noindent
 To show the security (concurrent pseudorandomness and adaptive smoothness) of $h_0$ we define two $\Send$ queries that allow execution of the protocol:
-$(m_1,c'_1)\gets\Send_1(P_2,P_1,(\hp'_0,C'_0,\hp'_2,C'_2))$ starts the protocol execution between $P_1$ and $P_2$ and provides the attacker with $(m_1,c'_1)$.
+$(m_1,c'_1)\gets\Send_1(P_2$, $P_1$, $(\hp'_0$, $C'_0$, $\hp'_2$, $C'_2))$ starts the protocol execution between $P_1$ and $P_2$ and provides the attacker with $(m_1,c'_1)$.
 Using these messages the adversary ($P_2$) computes a message $m_2$ and sends it to $P_1$ with $\Send_2(P_2,P_1,m_2)$.
 This reflects the execution of a single protocol run of $\Hash_0^D$ such that $P_1$ eventually computes $h_0$.
 In contrast to the passive and classical SPHF proofs we can not replace the ciphertexts with encryptions of words not in the language.
-However, this is not necessary as $t$ is in fact the \Hash computation of the classical Cramer-Shoup SPHF without cancelling the message, i.e. $t=h\cdot m^\mu$.\\
+However, this is not necessary as $t$ is in fact the \Hash computation of the classical Cramer-Shoup SPHF without cancelling the message, \ie $t=h\cdot m^\mu$.\\
 
 \noindent$\Exp_2:$
 We change $\Test$ such that a uniformly at random chosen element $g_0\rin\GG$ is returned for $h_0$.
@@ -420,54 +458,77 @@ $\left|\Adv_{\Pi,\cA}^{\Exp_1}-\Adv_{\Pi,\cA}^{\Exp_2}\right|\leq\varepsilon(\se
 The hash value $h_0$ in $\Exp_1$ is computed as $h_0=g^{-\mu_1\cdot\aux'_1}\cdot\Dec_{\sk_1}^{\EG}(m_2)\cdot t$ with $t=u_{1,0}^{\eta_{1,1}+\xi_0\eta_{2,1}}u_{2,0}^{\theta_1}\allowbreak e_0^{\mu_1}v_0^{\nu_1}$ where $m_2$ and $C'_0=(u_{1,0}, u_{2,0},\allowbreak e_0, v_0)$ may be adversarially generated.
 The value $t$ is actually the $\Hash$ value of the classical Cramer-Shoup SPHF without cancelled message, or in other words $t$ is the result of a SPHF \Hash computation for language $L_{(\crs,0)}$ such that any $C'_0$, encrypting some correct $\aux'\not=0$, is not in this language.
 Due to smoothness of the \Hash function \cite{Benhamouda2013} $t$ is indistinguishable from a uniformly at random chosen element.
-If the adversary encrypted $0$ in $C'_0$ pseudorandomness of \Hash takes effect.
+If the adversary encrypted $0$ in $C'_0$, pseudorandomness of \Hash takes effect.
 Therefore $h_0=d\cdot t$ is indistinguishable from a random group element for all $d\in\GG$.
-\qed
 \end{proof}
 
 \noindent
 In $\Exp_2$ the adversary always gets random group elements in answer to his $\Test$ query.
 Therefore, he can not do better than guessing bit $b$.
-\qed
 \end{proof}
 
+\subsection{Instantiation -- ElGamal D-SPHF}\label{app:elgamalsphff}
+Similar to Cramer-Shoup \ac{D-SPHF} we can instantiate ElGamal \ac{D-SPHF}.
+We use $m$ for the encrypted message, that is part of $\aux'$ and $\pk$ for the ElGamal public key $h=g^z$ from the \crs.
+The ciphertexts are created as $C_i=(u,e)\gets\Enc^{\EG}_{\pk}(m_i;r_i)$ for all $i=1,\dots,x$ with $m_i=h(m)[i]$ and $C_0=(u,e)\gets\Enc^{\EG}_{\pk}(m;r_0)$.
+The decryption follows the ElGamal decryption such that $\Dec'_\pi=\Dec^{\EG}_z$.
+The combining function $g$ uses the homomorphic property of $u$ and $e$ such that $g(C_1,\dots,C_x)=(\prod^x_{i=1}u_{i},\prod^x_{i=1}e_i)$.
+To use the \ac{SPHF} framework we also need the following variables and functions:
+
+\[ \Gamma(C)= (g,h)^T \in \GG^{2\times 1},~~ {\lambda}=r\in\ZZ_p,~~ \Theta^0_{\aux}(C)=(u,e/m)\in\GG^{1\times 2} \]
+\[ \Theta^x_{\aux}(C_1,\dots,C_x)=(\prod^x_{i=1}u_{i},\prod^x_{i=1}e_i/m)\in\GG^{1\times 2} \]
+
+\noindent
+Using them in the extended \ac{SPHF} Definition \ref{def:symgensphf} yields the following ElGamal extended \ac{SPHF} (building the according \ac{D-SPHF} is then straightforward):
+\begin{itemize}
+	\item $h_0\algout\Hash_0(\hk_1,\dots,\hk_x,\Laux,C_0):$
+	 $$h_0=\prod_{i=1}^x\Theta_\aux^0(C) \odot \hk_i = \prod_{i=1}^x [(u_0,e_0/m) \odot (\eta,\theta)] =\prod_{i=1}^x [u_0^{\eta_i}(e_0/m)^{\theta_i}]\in\GG$$
+	
+	\item $h_x\algout\PHash_x(\hp_0,\Laux,C_1,\dots,C_x,r_1,\dots,r_x):$
+	$$h_x = \prod_{i=1}^x (\lambda^i \odot \hp_0) = \prod_{i=1}^x (r_i \odot g^{\eta_0}h^{\theta_0}) = \prod_{i=1}^x (g^{\eta_0}h^{\theta_0})^{r_i} \in\GG$$
+\end{itemize}
+
+
+% ************************** 2PAKE Framework from D-SPHF
+
 \section{Two-Server PAKE from Distributed SPHF}\label{sec:twoserverpake}
-In this section we present a new two-server PAKE framework as an application of our distributed \SPHFF concept.
-Moreover, we show that the two-server PAKE protocol by Katz et al. \cite{Katz_MacKenzie_Taban_Gligor_2005} can be considered as a variant of our framework using a ``mix'' of distributed \SPHFF for Cramer-Shoup and El-Gamal ciphertexts.
+Using \ac{D-SPHF} it is easy to build \ac{2PAKE} protocols.
+In this section we present a new \ac{2PAKE} framework based on \acp{D-SPHF}.
+Moreover, we show that the \ac{2PAKE} protocol by \citet{Katz2012a} can be considered a variant of the proposed framework using a mix of \acp{D-SPHF} for Cramer-Shoup and El-Gamal ciphertexts.
+We consider the same setting as \citet{Katz2012a} in which the client computes two independent session keys with the two servers.
 
-With a single server storing the password, password authenticated key exchange (PAKE) protocols have an intrinsic single point of failure.
-As soon as the server's database, storing the client's secrets, gets compromised the attacker can impersonate the client to this server, and most likely also to others considering that users tend to reuse their passwords across multiple services.
-Mechanisms have been proposed to solve the problem of server compromise \cite{Gentry2006,rfc2945}.
-However, as long as only one server is used, PAKE protocols are prone to offline dictionary attacks on the server side.
-Two-server PAKE (2PAKE) protocols can solve this problem by splitting the password in two parts such that a malicious or compromised server can be used to recover only one part of the password.
-Raimondo and Gennaro \cite{Raimondo_Gennaro_2003} proposed a $t$-out-of-$n$ threshold PAKE, which is not suitable for the 2PAKE setting as it requires $t<n/3$.
-Another $t$-out-of-$n$ threshold PAKE was proposed in a PKI-based setting with random oracles \cite{MacKenzie_Shrimpton_Jakobsson_2002}.
-Brainard and Juels \cite{Brainard_Juels_2003} proposed two-server password based authentication without security proof.
-Szydlo and Kaliski \cite{Szydlo_Kaliski_2005} later modified constuctions from \cite{Brainard_Juels_2003} and proved their security in a simulation-based model.
-The first two-server PAKE in the password-only setting, i.e. without a PKI, is due to Katz et al. \cite{Katz_MacKenzie_Taban_Gligor_2005}, based on the KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}.
-We consider the same setting as \cite{Katz_MacKenzie_Taban_Gligor_2005} in which the client computes two independent session keys with the two servers.
+% With a single server storing the password, password authenticated key exchange (PAKE) protocols have an intrinsic single point of failure.
+% As soon as the server's database, storing the client's secrets, gets compromised the attacker can impersonate the client to this server, and most likely also to others considering that users tend to reuse their passwords across multiple services.
+% Mechanisms have been proposed to solve the problem of server compromise \cite{Gentry2006,rfc2945}.
+% However, as long as only one server is used, PAKE protocols are prone to offline dictionary attacks on the server side.
+% Two-server PAKE (2PAKE) protocols can solve this problem by splitting the password in two parts such that a malicious or compromised server can be used to recover only one part of the password.
+% Raimondo and Gennaro \cite{Raimondo_Gennaro_2003} proposed a $t$-out-of-$n$ threshold PAKE, which is not suitable for the 2PAKE setting as it requires $t<n/3$.
+% Another $t$-out-of-$n$ threshold PAKE was proposed in a PKI-based setting with random oracles \cite{MacKenzie_Shrimpton_Jakobsson_2002}.
+% Brainard and Juels \cite{Brainard_Juel\Server_2003} proposed two-server password based authentication without security proof.
+% Szydlo and Kaliski \cite{Szydlo_Kaliski_2005} later modified constuctions from \cite{Brainard_Juel\Server_2003} and proved their security in a simulation-based model.
+% The first two-server PAKE in the password-only setting, \ie without a PKI, is due to Katz et al. \cite{Katz2012a}, based on the KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}.
 
-\subsection{A new Two-Server PAKE Framework}
-Using distributed \SPHFF we can build efficient 2PAKE protocols.
-We consider the same setting as 2KOY \cite{Katz_MacKenzie_Taban_Gligor_2005}, in particular a client that negotiates independent session keys with both servers that hold $\pwd_1+\pwd_2=\pwd$.
-We omit the second server in the description of the protocol in Figure \ref{fig:twopake} as the framework is symmetric in the sense that the second server $S_2$ performs like $S_1$.
-The framework follows the same principle as the latest PAKE frameworks from SPHFs.
-In particular it can be seen as a two-server variant of the PAKE protocol from \cite{Katz2011}.
+\subsection{A Two-Server PAKE Framework}
+% Using \ac{D-SPHF} we can build efficient \ac{2PAKE} protocols.
+Considering the setting from \citet{Katz2012a} means that a client negotiates independent session keys with both servers that hold $\share_1+\share_2=\pwd$.
+We omit the second server in the description of the protocol in Figure \ref{fig:twopake} as the framework is symmetric in the sense that the second server $\Server_2$ performs like $\Server_1$.
+The framework follows the same principle as the latest \ac{PAKE} frameworks from \acp{SPHF}.
+In particular it can be seen as a two-server variant of the \ac{PAKE} protocol from \citet{Katz2011}.
 
-You can think of the two-server protocol as the execution of two distributed \SPHFF protocols, one between $(C,S_1,S_2)$ and one between $(C,S_2,S_1)$ where servers $S_2$ and $S_1$ swap roles, such that $(C,S_1)$ and $(C,S_2)$ eventually hold common hash values that can be used to generate a shared session key $\sk_1$ and $\sk_2$.
-The only overlap between the two \SPHFF executions is the $\Hash_x$ computation.
+You can think of the two-server protocol as the execution of two \ac{D-SPHF} protocols, one between $(\Client,\Server_1,\Server_2)$ and one between $(\Client,\Server_2,\Server_1)$ where servers $\Server_2$ and $\Server_1$ swap roles, such that $(\Client,\Server_1)$ and $(\Client,\Server_2)$ eventually hold common hash values that can be used to generate a shared session key $\sk_1$ and $\sk_2$.
+The only overlap between the two \ac{D-SPHF} executions is the $\Hash_x$ computation.
 The reuse of $C_1,C_2$ in $\Hash_x$ functions is covered by the concurrent pseudorandomness.
 
 \subsubsection{Framework}
-The servers encrypt their password shares under a public key $\pk$ stored in the \crs using a CCA-secure labelled encryption scheme and distribute this ciphertext together with two appropriate projection keys for a secure distributed \SPHFF, $(\hp_{1,1},\hp_{1,2},C_1)$ and $(\hp_{2,1},\hp_{2,2},C_2)$.
+The servers encrypt their password shares under a public key $\pk$ stored in the \crs using a \ac{CCA}-secure labelled encryption scheme and distribute this ciphertext together with two appropriate projection keys for a secure \ac{D-SPHF}, $(\hp_{1,1},\hp_{1,2},C_1)$ and $(\hp_{2,1},\hp_{2,2},C_2)$.
 The client computes two independent encryptions of the password and generates two independent according projection keys $(\hp_{0,1},C_{0,1},\hp_{0,2},C_{0,2})$.
-The previously described \SPHFF allows us to send all $\hp_i,C_i$ in one round and therefore reach optimality for this step.
-Using these values, the client can compute session keys as product of the two hash values $h_{0,1},h_{x,1}$ for $\sk_1$, which is shared with $S_1$ and from $h_{0,2},h_{x,2}$ for $\sk_2$ that is shared with $S_2$.
+The previously described \ac{D-SPHF} allows us to send all $\hp_i,C_i$ in one round and therefore reach optimality for this step.
+Using these values, the client can compute session keys as product of the two hash values $h_{0,1},h_{x,1}$ for $\sk_1$, which is shared with $\Server_1$ and from $h_{0,2},h_{x,2}$ for $\sk_2$ that is shared with $\Server_2$.
 
-Subsequently, the two servers perform the $\Hash_0^D$ and $\PHash_x^D$ protocols such that $S_1$ and $S_2$ eventually hold hash values $h_{0,1}$ and $h_{x,1}$, $h_{0,2}$ and $h_{x,2}$ respectively, to compute $\sk_1$, $\sk_2$ respectively.
-Eventually, $C$ holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\sk_2=h_{0,2}\cdot h_{x,2}$, $S_1$ holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $S_2$ holds $\sk_2=h_{0,2}\cdot h_{x,2}$.
-An instantiation of the framework using labelled Cramer-Shoup encryption and the aforementioned distributed \SPHFF yields a secure 2PAKE protocol.
-Note that this actually requires two \SPHFF executions.
+Subsequently, the two servers perform the $\Hash_0^D$ and $\PHash_x^D$ protocols such that $\Server_1$ and $\Server_2$ eventually hold hash values $h_{0,1}$ and $h_{x,1}$, $h_{0,2}$ and $h_{x,2}$ respectively, to compute $\sk_1$, $\sk_2$ respectively.
+Eventually, \Client holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\sk_2=h_{0,2}\cdot h_{x,2}$, $\Server_1$ holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\Server_2$ holds $\sk_2=h_{0,2}\cdot h_{x,2}$.
+An instantiation of the framework using labelled Cramer-Shoup encryption and the aforementioned \ac{D-SPHF} yields a secure \ac{2PAKE} protocol.
+Note that this actually requires two \ac{D-SPHF} executions.
 
 \begin{figure}[!t]
 \centering
@@ -477,9 +538,9 @@ Note that this actually requires two \SPHFF executions.
 		column 2/.style={nodes={minimum width=10em}},
 		column 3/.style={nodes={minimum width=20em}},
 		column 4/.style={nodes={minimum width=5em}}]{
-	{$\bm{C}$} & & {$\bm{S_1}$} \\ [-1mm]
+	{\Client} & & {$\Server_1$} \\ [-1mm]
 	
-	$\pk,\pwd$ & & $\pk,\pwd_1,\sk_1,\pk_2$ & \\ [2mm]
+	$\pk,\pwd$ & & $\pk,\share_1,\sk_1,\pk_2$ & \\ [2mm]
 	
 	$\hk_{0,1}\gets \HKGen(\Laux), \hk_{0,2}\gets \HKGen(\Laux)$ & &
 	$\hk_{1,1}\gets \HKGen(\Laux), \hk_{1,2}\gets \HKGen(\Laux)$ & \\
@@ -487,11 +548,11 @@ Note that this actually requires two \SPHFF executions.
 	$\hp_{0,1}\gets \PKGen(\hk_{0,1}), \hp_{0,2}\gets \PKGen(\hk_{0,2})$ & &
 	$\hp_{1,1}\gets \PKGen(\hk_{1,1}), \hp_{1,2}\gets \PKGen(\hk_{1,2})$ & \\
 	
-	$\ell_{0,1}=(C,S_1,S_2), \ell_{0,2}=(C,S_2,S_1)$ & & $\ell_1=(S_1,C,S_2)$ & \\
+	$\ell_{0,1}=(C,\Server_1,\Server_2), \ell_{0,2}=(C,\Server_2,\Server_1)$ & & $\ell_1=(\Server_1,C,\Server_2)$ & \\
 	
 	$C_{0,1}\gets\Enc_{\pk}^\cL(\ell_{0,1},\pwd;r_{0,1}), C_{0,2}\gets\Enc_{\pk}^\cL(\ell_{0,2},\pwd;r_{0,2})$ &
 	$\hp_{0,1},C_{0,1},\hp_{0,2},C_{0,2}$ &
-	$C_1\gets\Enc_\pk^\cL(\ell_1,\pwd_1,r_1)$ &
+	$C_1\gets\Enc_\pk^\cL(\ell_1,\share_1,r_1)$ &
 	$\hp_{2,1},\hp_{2,2},C_2$ \\
 	
 	 &
@@ -499,13 +560,13 @@ Note that this actually requires two \SPHFF executions.
 	 & \\
 	
 	$h_{0,1}\gets\PHash_0(\hp_1,\hp_2,\Laux,C_{0,1},r_{0,1})$ & &
-	$h_{0,1}\gets\Hash_0^{D}(C_{0,1},\hk_{1,1},\pwd_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
+	$h_{0,1}\gets\Hash_0^{D}(C_{0,1},\hk_{1,1},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
 
 	$h_{0,2}\gets\PHash_0(\hp_1,\hp_2,\Laux,C_{0,2},r_{0,2})$ & &
 	$h_{x,1}\gets\PHash_x^{D}(\hp_{1,1},C_1,r_1)$ & \hspace*{5em} \\
 	
 	$h_{x,1}\gets\Hash_x(\hk_{0,1},\Laux,C_1,C_2)$ & &
-	$\Hash_0^{D}(C_{0,2},\hk_{1,2},\pwd_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
+	$\Hash_0^{D}(C_{0,2},\hk_{1,2},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
 	
 	$h_{x,2}\gets\Hash_x(\hk_{0,2},\Laux,C_1,C_2)$ & &
 	$\PHash_x^{D}(\hp_{1,2},C_1,r_1)$ & \hspace*{5em} \\
@@ -532,55 +593,81 @@ Note that this actually requires two \SPHFF executions.
 
 \end{tikzpicture}
 \caption{Two-Server PAKE framework using \ac{D-SPHF}
-\\{\tiny Dashed lines denote broadcast messages.}}
+\\{\small Dashed lines denote broadcast messages.}}
 \label{fig:twopake}
 \end{figure}
 
 \subsubsection{Security Analysis}
-We use the well-known game based PAKE model first introduced by Bellare et al. \cite{Bellare2000} in it's two-server variant from \cite{Katz_MacKenzie_Taban_Gligor_2005}.
-For a formal description of the model we refer to \cite{Katz_MacKenzie_Taban_Gligor_2005}.
-The security of the two-server PAKE framework follows directly from the CCA-security of the used encryption scheme and the security of the distributed \SPHFF.
+We use the well-known game based \ac{PAKE} model first introduced by \citet{Bellare2000} in it's two-server variant by \citet{Katz2012a}.
+% For a formal description of the model we refer to \cite{Katz2012a}.
+Security of the \ac{2PAKE} framework follows directly from the \ac{CCA}-security of the used encryption scheme and the security of the used \ac{D-SPHF}.
 
 \begin{theorem}\label{theo:twopake}
-Let $(\HKGen,\allowbreak\PKGen,\allowbreak\PHash_0,\allowbreak\Hash_x,\allowbreak\Hash_0^D,\allowbreak\PHash_x^D)$ be a secure distributed \SPHFF and $(\KGen$, $\Enc$, $\Dec)$ a CCA-secure labelled encryption scheme, then the proposed framework in Figure \ref{fig:twopake} is a secure two-server PAKE protocol.
+Let $(\HKGen,\allowbreak\PKGen,\allowbreak\PHash_0,\allowbreak\Hash_x,\allowbreak\Hash_0^D,\allowbreak\PHash_x^D)$ be a secure \ac{D-SPHF} and $(\KGen$, $\Enc$, $\Dec)$ a \ac{CCA}-secure labelled encryption scheme, then the proposed framework in Figure \ref{fig:twopake} is a secure \ac{2PAKE} protocol.
 \end{theorem}
 
-\begin{proof}[sketch]
-Let $\Pi$ denote a secure instantiation of the 2PAKE framework.
-To prove security of $\Pi$ we introduce three experiments such that the adversary in the last experiment $\Exp_3$ can not do better than guessing the password as all messages are password independent, i.e. $\Adv_{\Pi,\cA}^{\Exp_3}\leq q/|\cD|$ for $q$ active attacks.
-We initially focus on the $\AKE$-security of $\sk_1$.
+\begin{proof}[Proof sketch]
+Let $\Pi$ denote a secure instantiation of the \ac{2PAKE} framework.
+To prove security of $\Pi$ we introduce three experiments such that the adversary in the last experiment $\Exp_3$ can not do better than guessing the password as all messages are password independent, \ie $\Adv_{\Pi,\cA}^{\Exp_3}\leq q/|\cD|$ for $q$ active attacks.
+We initially focus on the \ac{AKE}-security of $\sk_1$.
 
-$\Exp_1$ is identical to the two-server $\AKE$-security experiment except that the simulator knows $\pi$, the decryption key to $\pk$ in the $\crs$ (only a syntactical change) and the following changes:
-If $C_{0,1}$ or $C_{1}$, handed to $S_1$ or $C$ are adversarially generated and encrypt the correct password(share), the simulator stops and $\cA$ wins the experiment.
-If $C_{0,1}$, $C_1$ or $C_2$, handed to $S_1$ or $C$ encrypt a wrong password(share), the key for that session is drawn uniformly at random from $\GG$.
-The first change only increases the adversarial advantage and the second one introduces a negligible gap according to the adaptive smoothness of the used \SPHFF.
+$\Exp_1$ is identical to the two-server \ac{AKE}-security experiment except that the simulator knows $\pi$, the decryption key to $\pk$ in the $\crs$ (only a syntactical change) and the following changes:
+If $C_{0,1}$ or $C_{1}$, handed to $\Server_1$ or \Client are adversarially generated and encrypt the correct password(share), the simulator stops and $\cA$ wins the experiment.
+If $C_{0,1}$, $C_1$ or $C_2$, handed to $\Server_1$ or \Client encrypt a wrong password(share), the key for that session is drawn uniformly at random from $\GG$.
+The first change only increases the adversarial advantage and the second one introduces a negligible gap according to the adaptive smoothness of the used \ac{D-SPHF}.
 
-$\Exp_2$ performs like $\Exp_1$ except that it draws the session key at random from $\GG$ if all $C_i$ handed to $C$ and $S_1$ are oracle generated or encrypt the correct password and no session key has been chosen for the partner in that session (otherwise that previously drawn key is used).
-This introduces a negligible gap between advantages in $\Exp_1$ and $\Exp_2$ due to the concurrent pseudorandomness of the used \SPHFF.
+$\Exp_2$ performs like $\Exp_1$ except that it draws the session key at random from $\GG$ if all $C_i$ handed to \Client and $\Server_1$ are oracle generated or encrypt the correct password and no session key has been chosen for the partner in that session (otherwise that previously drawn key is used).
+This introduces a negligible gap between advantages in $\Exp_1$ and $\Exp_2$ due to the concurrent pseudorandomness of the used \ac{D-SPHF}.
 
 $\Exp_3$ acts like $\Exp_2$ except that it returns encryptions of $0$ for $C_{0,1}$ and $C_1$ (note that $0$ is not a valid password).
-This step is covered by the CCA-security of the used encryption scheme.
+This step is covered by the \ac{CCA}-security of the used encryption scheme.
 
-AKE-security of $\sk_1$ follows as all messages are password independent in $\Exp_3$ unless the adversary guesses the correct password.
-Using the same sequence of experiments but considering $C$ and $S_2$ instead of $C$ and $S_1$, AKE-security of $\sk_2$ follows.
+\ac{AKE}-security of $\sk_1$ follows as all messages are password independent in $\Exp_3$ unless the adversary guesses the correct password.
+Using the same sequence of experiments but considering \Client and $\Server_2$ instead of \Client and $\Server_1$, \ac{AKE}-security of $\sk_2$ follows.
 \end{proof}
 
 \subsubsection{The 2-Server KOY Protocol}\label{sec:twokoy}
-We can  now ``explain'' the use of SPHF in 2KOY from \cite{Katz_MacKenzie_Taban_Gligor_2005}; similar to \cite{Gennaro2003} that ``explained'' the original KOY protocol from \cite{Katz_Ostrovsky_Yung_2001}.
-We define encryption schemes and distributed \SPHFF used in 2KOY, highlight changes to our framework and discuss implications of this on the security of 2KOY.
+Using \ac{D-SPHF} we can ``explain'' the 2KOY proposed by \citet{Katz2012a}; similar to \citet{Gennaro2003} who ``explained'' the original KOY protocol from \citet{KatzOY01}.
+We define encryption schemes and \ac{D-SPHF} used in 2KOY, highlight changes to our framework and discuss implications of this on the security of 2KOY.
 
 The \crs contains a public key $\pk$ for Cramer-Shoup encryption as well as a public key $g_3$ for El-Gamal encryption.
-Since \cite{Katz_MacKenzie_Taban_Gligor_2005} uses El-Gamal encryptions on the server side, we have to use a combination of Cramer-Shoup and El-Gamal based \SPHFF in 2KOY.
-Instead of using Cramer-Shoup encryptions and \SPHFF, the client computes projection keys for an El-Gamal distributed \SPHFF, which is based on the aforementioned SPHF on El-Gamal ciphertexts.
+Since \cite{Katz2012a} uses El-Gamal encryptions on the server side, we have to use a combination of Cramer-Shoup and El-Gamal based \SPHFF in 2KOY.
+Instead of using Cramer-Shoup encryptions and \ac{D-SPHF}, the client computes projection keys for an El-Gamal \ac{D-SPHF}.
 
-Likewise, the servers compute projection keys for a Cramer-Shoup distributed GL-\SPHFF and El-Gamal encryptions of their password shares.\footnote{Note that an additional signature on the session transcript in round three ensures ``non-malleability'' of these ciphertexts.}
-We describe the original GL-\SPHF on Cramer-Shoup ciphertexts in Appendix \ref{app:glsphf}
+Likewise, the servers compute projection keys for a Cramer-Shoup distributed GL-D-SPHF and El-Gamal encryptions of their password shares.\footnote{Note that an additional signature on the session transcript in round three ensures ``non-malleability'' of these ciphertexts.}
+% We describe the original GL-\ac{SPHF} on Cramer-Shoup ciphertexts in Appendix \ref{app:glsphf}
+\citet{Gennaro2003} formally introduced the first use of \ac{SPHF} in the \ac{PAKE} setting, denoted by GL-\ac{SPHF} here.
+To describe GL-\ac{SPHF} on labelled Cramer-Shoup ciphertexts in the framework from \cite{cryptoeprint:2013:034} it is sufficient to define the following variables:
+Let $\Gamma(C)=
+\begin{pmatrix}
+g_1 & g_2 & h & c \\
+1 & 1 & 1 &  d^\xi
+\end{pmatrix}^T \in \GG^{4\times 2}$,
+${\bm \lambda}=r\in\ZZ_p$ and $\Theta_\aux(C)=(u_1,u_2,e/m,v)\in\GG^{1\times 4}$.
+% GL-\ac{SPHF} then is defined as follows:
+% \begin{itemize}
+% 	\item $\hk\ralgout\HKGen(\Laux):$ $\hk=(\eta,\theta,\mu,\nu)\rin\ZZ_p^{1\times 4}$
+% 	
+% 	\item $\hp\algout\PKGen(\hk,\Laux,C):$ $$\hp = \Gamma \odot \hk =
+% 		\begin{pmatrix}
+% 		g_1 & g_2 & h & c \\
+% 		1 & 1 & 1 &  d^\xi
+% 		\end{pmatrix}^T \odot (\eta,\theta,\mu,\nu) = g_1^{\eta}g_2^\theta h^\mu c^\nu  d^{\xi\nu} \in\GG$$
+% 	
+% 	\item $h\algout\Hash(\hk,\Laux,C):$ $$h=\Theta_\aux(C) \odot \hk = (u_1,u_2,e/m,v) \odot (\eta,\theta,\mu,\nu)
+% 			= u_1^{\eta}u_2^{\theta}(e/m)^\mu v^\nu\in\GG$$
+% 	
+% 	\item $h\algout\PHash(\hp,\Laux,C,r):$
+% 		$$h = \lambda \odot \hp = r \odot g_1^{\eta}g_2^\theta h^\mu c^\nu  d^{\xi\nu} = (g_1^{\eta}g_2^\theta h^\mu c^\nu  d^{\xi\nu})^r \in\GG$$
+% \end{itemize}
+
+% \noindent
 The client sends the projection keys in a third round together with a signature on the session transcript to the servers.
 The protocol is depicted in Figure \ref{fig:twokoy}.
 Note that we moved $K^r$ into a separate encryption compared to the original protocol.
 The ElGamal encryption of the password of party $i$, $\hat{C}_i\gets\Enc^\EG_{\pk_i}(g^{\pwd_i};r_i)$ is precomputed and stored on $S_{j},j\not=i,j\in\{1,2\}$.
-Eventually, the client computes hash values using the $\PHash_0$ function of the GL-\SPHFF scheme on CS ciphertexts and the $\Hash_x$ function of the \SPHFF scheme on El-Gamal ciphertexts.
-Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPHFF scheme on CS ciphertexts and the $\PHash_x^D$ protocol of the distributed \SPHFF scheme on El-Gamal ciphertexts.
+Eventually, the client computes hash values using the $\PHash_0$ function of the GL-\ac{D-SPHF} scheme on CS ciphertexts and the $\Hash_x$ function of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
+Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\ac{D-SPHF} scheme on Cramer-Shoup ciphertexts and the $\PHash_x^D$ protocol of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
 
 \begin{figure}[tbhp]
 \centering
@@ -590,9 +677,9 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPH
 		column 2/.style={nodes={minimum width=8em}},
 		column 3/.style={nodes={minimum width=20em}},
 		column 4/.style={nodes={minimum width=8em}}]{
-	{$\bm{C}$} & & {$\bm{S_1}$} \\ [-1mm]
+	{\Client} & & {$\Server_1$} \\ [-1mm]
 	
-	$\crs,\pwd$ & & $\crs,\pwd_1,\hat{C}_2$ & \\ [2mm]
+	$\crs,\pwd$ & & $\crs,\share_1,\hat{C}_2$ & \\ [2mm]
 	
 	$(\vk,\sk)\gets\Gen,~\ell=(C,\vk)$ & &
 	$(\hk_1,\hk'_1)\gets \HKGen^\CS(\Laux)$ & \\
@@ -608,7 +695,7 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPH
 	
 	$(\hp_{1,0},\hp_{2,0})\gets \PKGen^\EG(\hk_{1,0},\hk_{2,0},\Laux)$
 	& $C_1,\hp_1,\hp'_1$ &
-		$C_1\gets\Enc^{\EG}_{g_3}(g_1^{\pwd_1};r_1)$
+		$C_1\gets\Enc^{\EG}_{g_3}(g_1^{\share_1};r_1)$
 	& $C_2,\hp_2,\hp'_2$ \\
 	
 	$\sigma\gets\Sign(\trans,\hp_1,\hp_2)$
@@ -641,16 +728,16 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\SPH
 %\draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
 
 \end{tikzpicture}
-\caption{Two-Server KOY \cite{Katz_MacKenzie_Taban_Gligor_2005} using \SPHFF
-\\{\tiny Dashed lines denote broadcast messages.}}
+\caption{Two-Server KOY \cite{Katz2012a} using \ac{D-SPHF}
+\\{\small Dashed lines denote broadcast messages.}}
 \label{fig:twokoy}
 \end{figure}
 
 \paragraph{Security Analysis}
-Security of the protocol in Figure \ref{fig:twokoy} against passive adversaries follows immediately from \cite[Theorem 1]{Katz_MacKenzie_Taban_Gligor_2005} as we do not change the protocol.
-However, the authors of \cite{Katz_MacKenzie_Taban_Gligor_2005} need additional mechanisms to prove their protocol secure against an active adversary.
+Security of the protocol in Figure \ref{fig:twokoy} against passive adversaries follows immediately from \cite[Theorem 1]{Katz2012a} as we do not change the protocol.
+However, the authors of \cite{Katz2012a} need additional mechanisms to prove their protocol secure against an active adversary.
 They add witness-indistinguishable $\Sigma$-protocols to the $\PHash_x^{D}$ and $\Hash_0^{D}$ protocols that prove correctness of their messages.
-Without giving a proof it should be clear that Theorem \ref{theo:twopake} also holds for the 2KOY instantiation \emph{without} additional mechanisms.
-Examining the proof of \cite[Theorem 2]{Katz_MacKenzie_Taban_Gligor_2005} shows that the additional steps are only necessary to conduct the proof without actually giving additional security.
-This shows the power of distributed \SPHFF as they allow for much simpler proofs of multi-party protocols.
-Furthermore, with our framework the protocol becomes more efficient than 2KOY as it needs only two rounds instead of three and does not need correctness proofs in the distributed hash and projection protocols.
+Without giving a proof it seems that Theorem \ref{theo:twopake} also holds for the two-server KOY instantiation \emph{without} additional mechanisms.
+Examining the proof of \cite[Theorem 2]{Katz2012a} shows that the additional steps are only necessary to conduct the proof without actually giving additional security.
+This shows the power of \ac{D-SPHF} as they allow for much simpler proofs of multi-party protocols.
+Furthermore, with our framework the protocol becomes more efficient than two-server KOY as it needs only two rounds instead of three and does not need correctness proofs in the distributed hash and projection protocols.
