@@ -45,7 +45,7 @@ Other asymmetric \ac{2PAKE} protocols have been proposed \cite{Yang_Deng_Bao_200
 
 In this section we stick to the asymmetric setting where only one server computes a session key.
 This however can be easily extended to a \ac{2PAKE} protocol that computes an independent session keys for each server.
-% However, instead of using a game-based model such as the BPR derivatives, we propose an ideal functionality for the UC framework to show security of our \ac{2PAKE} protocol.
+% However, instead of using a game-based model such as the BPR derivatives, we propose an ideal functionality for the \ac{UC} framework to show security of our \ac{2PAKE} protocol.
 To this end we propose the first \ac{UC} functionality for \ac{2PAKE} protocols, which brings all benefits \ac{UC}-security carries in the \ac{PAKE} setting such as universal composability, security with arbitrary (related) password choices, security on execution with non-matching password (shares), and so on.
 For a comprehensible overview of advantages using \ac{UC} in the \ac{PAKE} setting we refer to \citet{Canetti2005}.
 To this end we extend \ac{D-SPHF} again to \ac{TD-SPHF} first.
@@ -327,18 +327,19 @@ We refer to the messages as $\Comm_{2}=(t_{\overline{m}1}, t_{\overline{m}2}, t_
 %==============================================================================
 \subsection{UC-secure Two Server PAKE (\FTWOPAKE)}\label{sec:2pake}
 With \ac{TD-SPHF} it is straight forward to build a \ac{2PAKE} protocol.
-We follow the general framework described in \cite{KieferM14a} to build \ac{2PAKE} protocols from distributed smooth projective hash functions.
-However, instead of aiming for key generation, where the client establishes a key with each of the two servers, we focus on a protocol that establishes a single key with one server, w.l.o.g. the first server.
+We follow the general framework described in the previous section to build \ac{2PAKE} protocols from \acp{D-SPHF}.
+However, instead of aiming for key generation where the client establishes a key with each of the two servers, we focus on a protocol that establishes a single key with one server, w.l.o.g. the first server.
 By running the protocol twice, keys can be exchanged between the client and the second sever.
-Note that UC security allows concurrent execution of the protocol such that round complexity is not increased by establishing two keys.
+Note that \ac{UC} security allows concurrent execution of the protocol such that round complexity is not increased by establishing two keys.
 
 \subsubsection{The Protocol}\label{sec:2pakeprotocol}
-% \fk{add figure}
-Building a \ac{2PAKE} protocol from the \ac{TD-SPHF} defined in Figure \ref{fig:cs-tdsphf} is straight forward following \cite{KieferM14a}.
+The idea behind this \ac{2PAKE} protocol is rather simple.
+Other ways to build \ac{2PAKE} protocols, \eg from \ac{D-SPHF} directly, are certainly possible, but less efficient than the proposed protocol based on \ac{TD-SPHF}.
 Client \Client, Server $\Server_1$ and Server $\Server_2$ execute a \ac{TD-SPHF} protocol as described in Section \ref{sec:tdsphf}.
-This provides \Client and $\Server_1$ with two hash values $h_0$ and $h_x$ each (if all protocol participants are honest and all messages reach their destination unaltered).
+This provides \Client and $\Server_1$ with two hash values $h_0$ and $h_x$ each (if all protocol participants execute the protocol honestly and all messages reach their destination unaltered).
 A session key can then be derived by simply multiplying $h_0$ and $h_x$ to $\sk=h_0\cdot h_x$.
 If the protocol is not terminated prematurely and a session key is computed on \Client and $\Server_1$, this ensures that \Client and $\Server_1$ share a unique random session key $\sk$ after finishing an honest and correct protocol run and two independent random session keys $\sk$ in case one of the parties inputs a wrong password (share) or the traffic is altered during transport.
+
 
 % \begin{tikzpicture}
 % \matrix (m)[matrix of nodes, column  sep=1cm,row  sep=4mm, nodes={draw=none, anchor=center,text depth=0pt} ]{
@@ -382,59 +383,56 @@ If the protocol is not terminated prematurely and a session key is computed on \
 % \end{tikzpicture}
 
 \subsubsection{UC Security Model for Two Server PAKE}\label{sec:2pakesecurity}
-We describe the ideal functionality for \ac{2PAKE} in the following, which can be seen as an extension of the known ideal functionality for PAKE protocols from Canetti et al. \cite{Canetti2005}.
+We describe the ideal functionality for \ac{2PAKE} in the following, which can be seen as an extension of the known ideal functionality for \ac{PAKE} protocols from Canetti et al. \cite{Canetti2005}.
 The ideal functionality \FTWOPAKE is given in Figure \ref{fig:2pakef}.
-\FTWOPAKE is very similar to the original two-party PAKE functionality but requires some additional functionality.
-We recall the PAKE functionality in Appendix \ref{app:pake} for convenience.
-In contrast to other password-related ideal functionalities such as VPAKE \cite{Gentry2006} (a.k.a. augmented PAKE) and 2PASS \cite{Camenisch_Lysyanskaya_Neven_2012} (two-server password authenticated secret sharing) we consider only the key-exchange functionality without explicit client authentication.
-While it is compelling to model \ac{2PAKE} (as well as PAKE) similar to \cite{Camenisch_Lysyanskaya_Neven_2012} and allow for throttling on wrong password guesses,\footnotemark\ this is only possible if the servers are able to verify validity of the client's password, \ie explicit authentication of the client.
+\FTWOPAKE is very similar to the original \ac{2PAKE} functionality but requires some additional functionality.
+The \ac{PAKE} functionality is recalled in Chapter \ref{ch:prelims} Section \ref{sec:uc-prelims} for convenience.
+In contrast to other password-related ideal functionalities such as \ac{VPAKE} \cite{Gentry2006} and \ac{PPSS} \cite{Camenisch2012} we consider only the key-exchange functionality without explicit client authentication.
+While it is compelling to model \ac{2PAKE} (as well as \ac{PAKE}) similar to \cite{Camenisch2012} and allow for throttling on wrong password guesses,\footnotemark\ this is only possible if the servers are able to verify validity of the client's password, \ie explicit authentication of the client.
 We want to keep the \ac{2PAKE} functionality simple and it is known that implicit authentication is sufficient for secure channels \cite{CanettiK01} and therefore stick with implicit authentication.
 
 \footnotetext{Servers often lock accounts or require additional authentication after a certain number of failed log-in attempts. This prevents automated online dictionary attacks, which are always possible in the password authenticated key exchange setting.}
 
 \paragraph{A Note on Corruption}
-We consider static corruption, s.t. the corrupted parties (clients and servers) are chosen by the adversary in advance.
-If a server $S_b$ is corrupted, the adversary only learns $S_b$'s password share. 
+We consider static corruption, such that the corrupted parties are chosen by the adversary in advance.
+If a server $\Server_b$ is corrupted, the adversary only learns $S_b$'s password share. 
 The password stays secret as long as the attacker does not corrupt both servers.
-while there exist two-party PAKE protocols in literature that are UC-secure with adaptive corruptions \cite{AbdallaBBCP13,AbdallaBP14a,AbdallaCCP09,AbdallaCP09}, we consider only static corruptions in this work.
-Static corruption in the UC model implies security in the BPR model with adaptive corruptions \cite{Canetti2005} for PAKE protocols.
+While there exist \ac{2PAKE} protocols in literature that are \ac{UC}-secure with adaptive corruptions \cite{AbdallaBBCP13,AbdallaBP14a,AbdallaCCP09,AbdallaCP09}, we consider only static corruptions in this work.
+Static corruption in the \ac{UC} model implies security in the \ac{BPR-M} model with adaptive corruptions for \ac{PAKE} protocols according to \citet{Canetti2005}.
 However, adaptive corruptions are obviously a stronger security notion that allow an attacker not only to execute a protocol on behalf of an honest participant but interfere with the execution of an honest party while executing the protocol.
-The only PAKE constructions known today that are secure against adaptive corruptions in the UC model require more complex SPHF constructions that are not translatable to the \ac{D-SPHF} approach.
-It therefore seems reasonable to settle with static corruptions for two-server PAKE UC security for now.
-We discuss the relation between our new UC formalisation of \ac{2PAKE} and the known BPR-based security model in Appendix \ref{app:relations}.
-
-% FIXME: \fk{currently both servers have to be corrupted to set \sk, see if we want this or if corruption of $\Server_1$ should be enough}
+The only \ac{PAKE} constructions known today that are secure against adaptive corruptions in the \ac{UC} model require complex \ac{SPHF} constructions that are not translatable to the \ac{D-SPHF} approach.
+It therefore seems reasonable to settle with static corruptions for \ac{2PAKE} \ac{UC} security for now.
+We discuss the relation between the proposed \ac{UC} formalisation of \ac{2PAKE} and the known BPR-based security model in Section \ref{sec:relations}.
 
 \paragraph{2PAKE Functionality}
-
 
 \begin{figure}[tbp]
 \begin{mdframed}[innertopmargin=10pt]
 \begin{center}
 {\bf Functionality $\cF_{\mathrm{2PAKE}}$}
 \end{center}
-The functionality $\cF_{\mathrm{2PAKE}}$ is parameterised by a security parameter $\secpar$.
-It interacts with an adversary, a client \Client and two servers $\Server_1$ and $\Server_2$ via the following interfaces.
+The functionality $\cF_{\mathrm{2PAKE}}$ is parameterised with security parameter $\secpar$.
+It interacts with an adversary \SIM, a client \Client and two servers $\Server_1$ and $\Server_2$ via the following interfaces.
 Without loss of generality the key is exchanged between \Client and $\Server_1$.
 
 \begin{description}
 
-  \item[KEX Init$_C$:] Upon input $(\KEXinit, \sid, \qid, \pwd)$ from client \Client, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, S_{1}, \alpha_{1})$ or $(\KEX, \sid, \qid, S_{2}, \alpha_{2})$ may exist) and send $(\KEX, \sid, \qid, C)$ to \SIM.
+  \item[KEX Init$_\Client$:] Upon input $(\KEXinit, \sid, \qid, \pwd)$ from client \Client, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, S_{1}, \share_{1})$ or $(\KEX, \sid, \qid, S_{2}, \share_{2})$ may exist) and send $(\KEX, \sid, \qid, C)$ to \SIM.
       If this is a valid request, create a \emph{fresh} record $(\KEX, \sid, \qid, C, \pwd)$.
   
-  \item[KEX Init$_S$:] Upon input $(\KEXinit, \sid, \qid, \alpha_b)$ from server $S_b$, $b\in\{1,2\}$, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, C, \pwd)$ or $(\KEX, \sid, \qid, S_{3-b}, \alpha_{3-b})$ may exist) and send $(\KEX, \sid, \qid, S_b)$ to \SIM.
-      If this is a valid request, create a fresh record $(\KEX, \sid, \qid, S_b, \alpha_b)$.
+  \item[KEX Init$_\Server$:] Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $S_b$, $b\in\{1,2\}$, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, C, \pwd)$ or $(\KEX, \sid, \qid, S_{3-b}, \share_{3-b})$ may exist) and send $(\KEX, \sid, \qid, S_b)$ to \SIM.
+      If this is a valid request, create a fresh record $(\KEX, \sid, \qid, S_b, \share_b)$.
     
   \item[TestPwd:] Upon input $(\TP, \sid, \qid, \pwd')$ from \SIM check that a fresh record $(\KEX, \sid, \qid, C, \pwd)$ exists. 
-      If this is the case, mark $(\KEX, \sid, \qid, \Server_1, \alpha_1)$ as \compromised and reply with ``correct guess'' if $\pwd=\pwd'$, and mark it as \interrupted and reply with ``wrong guess'' if $\pwd\not=\pwd'$.
+      If this is the case, mark $(\KEX, \sid, \qid, \Server_1, \share_1)$ as \compromised and reply with ``correct guess'' if $\pwd=\pwd'$, and mark it as \interrupted and reply with ``wrong guess'' if $\pwd\not=\pwd'$.
     
-%   \item[TestShares:] Upon input $(\TS, \sid, \qid, \alpha'_1, \alpha'_2)$ from \SIM check that a fresh records $(\KEX, \sid, \qid, \Server_1, \alpha_1)$, $(\KEX, \sid, \qid, \Server_2, \alpha_2)$ and $(\KEX, \sid, \qid, C, \pwd)$ exist. 
-%       If this is the case, mark  $(\KEX, \sid, \qid, C, \pwd)$ as \compromised and reply with ``correct guess'' if $\alpha'_1=\alpha_1 ~ \wedge ~ \alpha'_2=\alpha_2$ and as \interrupted and reply with ``wrong guess'' if $\alpha'_1\not=\alpha_1 ~ \vee ~ \alpha'_2\not=\alpha_2$.
+%   \item[TestShares:] Upon input $(\TS, \sid, \qid, \share'_1, \share'_2)$ from \SIM check that a fresh records $(\KEX, \sid, \qid, \Server_1, \share_1)$, $(\KEX, \sid, \qid, \Server_2, \share_2)$ and $(\KEX, \sid, \qid, C, \pwd)$ exist. 
+%       If this is the case, mark  $(\KEX, \sid, \qid, C, \pwd)$ as \compromised and reply with ``correct guess'' if $\share'_1=\share_1 ~ \wedge ~ \share'_2=\share_2$ and as \interrupted and reply with ``wrong guess'' if $\share'_1\not=\share_1 ~ \vee ~ \share'_2\not=\share_2$.
       
-  \item[Failed:] Upon input $(\FA, \sid, \qid)$ from \SIM check that records $(\KEX, \sid, \qid, C, \pwd)$ and $(\KEX, \sid, \qid, \Server_1, \alpha_1)$ exist that are not marked \completed. 
+  \item[Failed:] Upon input $(\FA, \sid, \qid)$ from \SIM check that records $(\KEX, \sid, \qid, C, \pwd)$ and $(\KEX, \sid, \qid, \Server_1, \share_1)$ exist that are not marked \completed. 
       If this is the case, mark both as \failed.
 	
-	\item[NewKey:] Upon input $(\NK, \sid,\qid, P, \sk')$ from \SIM with $P\in\{\Client,\Server_1\}$, check that a respective $(\KEX, \sid, \qid, C, \pwd)$ or $(\KEX, \sid, \qid, S, \alpha_1)$ record exists, $\sid=(\Client, \Server_1, \Server_2)$, $|\sk'|=\secpar$, then: %and the session is not marked for $P$ yet,
+	\item[NewKey:] Upon input $(\NK, \sid,\qid, P, \sk')$ from \SIM with $P\in\{\Client,\Server_1\}$, check that a respective $(\KEX, \sid, \qid, C, \pwd)$ or $(\KEX, \sid, \qid, S, \share_1)$ record exists, $\sid=(\Client, \Server_1, \Server_2)$, $|\sk'|=\secpar$, then: %and the session is not marked for $P$ yet,
 	\begin{itemize}
 		\item If the session is \compromised, or either \Client or $\Server_1$ and $\Server_2$ are corrupted, then output $(\NK, \sid,\qid,\sk')$ to $P$; else
 		
@@ -450,16 +448,15 @@ Without loss of generality the key is exchanged between \Client and $\Server_1$.
 \label{fig:2pakef}
 \end{figure}
 
-\noindent
-The ideal functionality for \ac{2PAKE} is very similar to the PAKE functionality but considers two servers from which only one generates a session key.
+The ideal functionality for \ac{2PAKE} is very similar to the \ac{PAKE} functionality but considers two servers from which only one generates a session key.
 The main difference is therefore the explicit modelling of participants (in contrast to symmetric parties in the two-party case).
 We specify two initialisation interfaces \textbf{KEX Init}, one for the client and one for the servers.
-A client is initialised with a password \pwd while a server gets a password share $\alpha_b$.
+A client is initialised with a password \pwd while a server gets a password share $\share_b$.
 The \textbf{TestPwd} interface allows the ideal world adversary to test client passwords.
 A tested session is marked \interrupted if the guess is wrong, \ie client and server in this session receive randomly chosen, independent session keys, or marked as \compromised if the password guess is correct, \ie the attacker is now allowed to set the session key.
 The attacker can only test client passwords but not password shares of the servers.
 Without knowledge of the password or any password share, a share is a uniformly at random chosen element and therefore not efficiently guessable.
-If the adversary corrupted server $\Server_2$, retrieving the second password share $\alpha_1$ from $\Server_1$ is equivalent to guessing the password.
+If the adversary corrupted server $\Server_2$, retrieving the second password share $\share_1$ from $\Server_1$ is equivalent to guessing the password.
 Complementing the TestPwd interface is a \textbf{Failed} interface that allows the adversary to let sessions fail.
 This allows the attacker to prevent protocol participants from computing any session, \ie failed parties do not compute a session key.
 Eventually the \textbf{NewKey} interface generates session keys for client \Client and server $\Server_1$.
@@ -472,26 +469,28 @@ Instead of using a single session identifier \sid we use \sid and \qid.
 %(as done in \cite{Camenisch_Lysyanskaya_Neven_2012})
 The session identifier \sid is composed of the three participants $(\Client, \Server_1, \Server_2)$ (note that we use the client \Client also as ``username'' that identifies its account on the servers) and therefore human memorable and unique.
 To handle multiple, concurrent \ac{2PAKE} executions of one \sid, we use a query identifier \qid that is unique within \sid and can be established with \Finit.
-In the multi-session extension \FTWOPAKEM the \sid becomes \ssid and \sid is a globally unique identifier for the used universe, \ie server public keys (\CA) and \crs.
+In the multi-session extension \FTWOPAKEM the \sid becomes \ssid and \sid is a globally unique identifier for the used universe, \ie server public keys (\ac{CA}) and \crs.
 
 
 \subsubsection{Security Analysis}\label{sec:2pakeproof}
 The following theorem formalises the security of the previously defined \ac{2PAKE} protocol.
-Note that we do not rely on any security of the \ac{TD-SPHF}.
-Instead we reduce the security of our \ac{2PAKE} protocol directly to the underlying problem (SXDH).
+Note that we do not rely on any security of the used \ac{TD-SPHF}.
+Instead we reduce the security of our \ac{2PAKE} protocol directly to the underlying problem (\ac{SXDH}).
 Thereby we give an indirect security proof of the proposed \ac{TD-SPHF}.
 % For details on the security of the \ac{TD-SPHF} we refer to the full version.
  
 \begin{theorem}\label{theo:uc2pake}
-  The \ac{2PAKE} protocol from Section \ref{sec:2pakeprotocol} securely realises \FTWOPAKEM with static corruptions in the \Fcrs-\Fca-hybrid model if the DDH assumption holds in $\GG_1$ and $\GG_2$ and $H_k$ is a universal one-way hash function, \ie Cramer-Shoup encryption is secure in $\GG_1$ and the DDH assumption holds in $\GG_2$.
+  The \ac{2PAKE} protocol from Section \ref{sec:2pakeprotocol} securely realises \FTWOPAKEM with static corruptions in the \Fcrs-\Fca-hybrid model if the \ac{DDH} assumption holds in $\GG_1$ and $\GG_2$ and $H_k$ is a universal one-way hash function, \ie Cramer-Shoup encryption is secure in $\GG_1$ and the \ac{DDH} assumption holds in $\GG_2$.
 \end{theorem}
 
+\mynote{rename challenger (same as client)}
+
 \paragraph{Sequence of Games}
-We start the proof of Theorem \ref{theo:uc2pake} by giving a sequence of games with \G{1} equal to the real-world execution with honest participants following the protocol description and the real-world adversary \cA that may have control over a set of participants, and \G{17} equal to the ideal-world execution where the protocol is replaced with the ideal functionality \FDSPHF acting on behalf of all honest protocol participants and the ideal-world adversary \SIM, detailed later.
+We start the proof of Theorem \ref{theo:uc2pake} by giving a sequence of games with \G{1} equal to the real-world execution with honest participants following the protocol description and the real-world adversary \cA that may have control over a set of participants, and \G{17} equal to the ideal-world execution where the protocol is replaced with the ideal functionality \FTWOPAKE acting on behalf of all honest protocol participants and the ideal-world adversary \SIM, detailed later.
 Let $\view_i$ denote the view of environment \cZ when interacting with game \G{i}.
-Note that \view is implicitly parametrised with \sid and the security parameter \secpar.
+Note that \view is implicitly parametrised with \sid and security parameter \secpar.
 Security then follows from showing that each $\view_i$ is computationally indistinguishable from the subsequent $\view_{i+1}$, such that we can eventually follow by an hybrid argument that $\view_1$ and $\view_{17}$ are computationally indistinguishable and the protocol therefore securely realises the ideal functionality \FTWOPAKE.
-All participants in the games are operated by the challenger \cC (receiving the participants input from environment \cZ), which we modify from game to game.
+All participants in the games are operated by challenger \cC (receiving the participants input from environment \cZ), which we modify from game to game.
 Every session for an $\sid=(\Client, \Server_1, \Server_2)$ is started with a KexInit call for each participant, defining secrets, roles, and the used query identifier.
 Invalid messages, \ie messages that do not pass the usual tests such as group membership, are discarded by the challenger.
 Note that we usually only give the actual payload of messages and omit additional parts such as \sid, \qid etc.
@@ -499,9 +498,9 @@ Note that we usually only give the actual payload of messages and omit additiona
 \Gh Game $1$ is the real-world experiment in which \cZ interacts with real participants that follow, if honest, the protocol description, and the real-world adversary \cA controlling the corrupted parties.
 All participants are honestly simulated by challenger \cC that knows all their inputs.
 
-\Gh This game is identical to \G{\theoldgame}, except that the \crs is generated by \cC such that it knows the trapdoor $\tau$.
+\Gh This game is identical to \G{\theoldgame}, except that \crs is generated by \cC such that it knows the according trapdoor $\tau$.
 Note that the second trapdoor $\tau'$ for $\zeta$ is \emph{not} controlled by \cC yet as this would destroy any security.
-Knowledge of $\tau$ allows \cC to decrypt ciphertexts $C_i$ and retrieve the used message.
+Knowledge of $\tau$ allows \cC to decrypt ciphertexts $C_i$ to retrieve the used password (share).
 This does not change anything and is therefore perfectly indistinguishable from \G{\theoldgame}.
 
 \Gh When \cC, on behalf of $\Server_1$, receives first messages $(C_0, \hp_0)$ and $(C_2, \hp_2)$, it decrypts $C_0$ to $\pwd'$ and checks if this is the correct password, \ie $\pwd'=\pwd$.
@@ -509,28 +508,28 @@ If this is not the case, $\pwd'\not=\pwd$, \cC chooses a random $h'_0\rin\GG_T$ 
 We claim that $\view_{\theoldgame}$ is computationally indistinguishable from $\view_{\thegame}$.
 The probability to distinguish the two games is bounded by the negligible probability to notice that $h_0$ is now chosen uniformly at random.
 Since $C=(C_0, C_1, C_2)$ is not in $L_{\pwd, \share_1, \share_2}$ the computation of $\Hash_0$ between $\Server_1$ and $\Server_2$ yields a uniformly at random distributed hash value $h_0$.
-This can be either deduced from the smoothness proven for the generic (not distributed) \ac{T-SPHF} in \cite{Benhamouda_Pointcheval_2013} or by the following simplified argument.
+This can be deduced by the following simplified argument.
 % The hash value for $\Server_1$ is computed as
 % \begin{align*}
 %   h_0 &= e\left( g_{1,1}^{-\mu_1 \share_1} \cdot \left( g_{1,1}^{-\mu_1 \share_2} \cdot g_{1,1}^{-\mu_2 \share_1} \cdot g_{1,1}^{-\mu_2 \share_2} \cdot u_{1,0}^{\eta_{1,2}+\xi_0 \eta_{2,2}} \cdot u_{2,0}^{\theta_2} \cdot e_0^{\mu_2} \cdot v_0^{\nu_2} \right) \cdot u_{1,0}^{\eta_{1,1}+\xi_0\eta_{2,1}} \cdot u_{2,0}^{\theta_1} \cdot e_0^{\mu_1} \cdot v_0^{\nu_1}, g_2 \right) \\
 % %   &= e\left( g_{1,1}^{-\mu_1 \share_1 -\mu_1 \share_2 -\mu_2 \share_1 -\mu_2 \share_2} \cdot u_{1,0}^{\eta_{1,2}+\xi_0 \eta_{2,2} + \eta_{1,1}+\xi_0\eta_{2,1}} \cdot u_{2,0}^{\theta_2 + \theta_1} \cdot e_0^{\mu_1 + \mu_2} \cdot v_0^{\nu_1 + \nu_2}, g_2 \right) \\
 %   &= e\left( g_{1,1}^{(\pwd - \pwd')(\mu_1 + \mu_2)} \cdot u_{1,0}^{\eta_{1,2}+\xi_0 \eta_{2,2} + \eta_{1,1}+\xi_0\eta_{2,1}} \cdot u_{2,0}^{\theta_2 + \theta_1} \cdot h^{r_0(\mu_1 + \mu_2)} \cdot v_0^{\nu_1 + \nu_2}, g_2 \right).
 % \end{align*}
-As long as $C\not\in L_{\pwd, \share_1, \share_2}$ the same argument as used for SPHF and \ac{D-SPHF} can be used, namely that $h_0$ is linearly independent from the adversarially known values and therefore indistinguishable from a random one.
+As long as $C\not\in L_{\pwd, \share_1, \share_2}$ the same argument as used for \ac{SPHF} and \ac{D-SPHF} can be used, namely that $h_0$ is linearly independent from the adversarially known values and therefore indistinguishable from a random one.
 However, this is not sufficient in this case as the attacker has the possibility to distinguish real $h_0$ values from random ones with use of the third projection keys $\hp_{3,i}$.
-To show that this is not possible we show how to break the DDH assumption in $\GG_2$ if there exists a distinguisher that can distinguish real $h_0$ from random ones.
-To this end we build a DDH triple $(\zeta, \fa, \fb)$ with $\crs'=\zeta=g_2^{\tau'}$ as follows.
-% The first triple, $(\zeta, \fa, \fb)$, is \emph{not} a DDH triple with random elements in $\GG_2$, $\fa,\fb\rin\GG_2$.
-% We construct $(\zeta, \fa, \fb)$ as DDH triple as follows.
-Let $\fa=\zeta^\alpha$ and $\fb=g_2^\alpha$, then $(\zeta, \fa, \fb)$ is obviously a DDH triple.
+To show that this is not possible we show how to break the \ac{DDH} assumption in $\GG_2$ if there exists a distinguisher that can distinguish real $h_0$ from random ones.
+To this end we build a \ac{DDH} triple $(\zeta, \fa, \fb)$ with $\crs'=\zeta=g_2^{\tau'}$ as follows.
+% The first triple, $(\zeta, \fa, \fb)$, is \emph{not} a \ac{DDH} triple with random elements in $\GG_2$, $\fa,\fb\rin\GG_2$.
+% We construct $(\zeta, \fa, \fb)$ as \ac{DDH} triple as follows.
+Let $\fa=\zeta^\alpha$ and $\fb=g_2^\alpha$, then $(\zeta, \fa, \fb)$ is obviously a \ac{DDH} triple.
 To link this to the \ac{TD-SPHF} we set $\alpha=\hk_{i,j}$, then $\fa=\hp_{3,i,j}=\zeta^{\hk_{i,j}}$ such that $\fb=g_2^{\hk_{i,j}}$. 
 To build a non-DDH triple $(\zeta, \fa, \fb)$ we choose random $\bm \alpha$ and set $\fa=\hp_{3,i,j}=\zeta^{\hk_{i,j}}$ and $\fb=g_2^{\alpha_{j}}$.
 To guarantee correctness we have to choose $\alpha$ such that $\alpha_j=\hk_{j,i}+\beta_j$ for $\beta\in\ker\begin{pmatrix}
   g_{1,1} & 1 & g_{1,2} & h & c \\
   1 & g_{1,1} & 1 & 1 & d
 \end{pmatrix}$ for $j\in[1,5]$.
-Note that this is possible because we know $\tau$, which contains the secret Cramer-Shoup key.
-If we can build a distinguisher on $h_0$, we can now decide whether $(\zeta, \fa, \fb)$ is a valid DDH triple or not.
+Note that this is possible because $\tau$ is known, which contains the secret Cramer-Shoup key.
+If we can build a distinguisher on $h_0$, the distinguisher can now decide whether $(\zeta, \fa, \fb)$ is a valid \ac{DDH} triple or not.
 
 % The idea here is to build a second hashing key $\widehat{\hk}_i$ that produces the same projection key $\hp_{1,i}, \hp_{2,i}$ but a different $\widehat{\hp}_{3,i}\not=\hp_{3,i}$.
 % This is possible because we know $\tau$, which contains the secret Cramer-Shoup key $(x_1, x_2, y_1, y_2, z)$ for public key $(c=g_{1,1}^{x_1}g_{1,2}^{x_2}, d=g_{1,1}^{y_1}g_{1,2}^{y_2}, h=g_{1,1}^z)$ in the \crs such that we are able to compute $\widehat{\hp}_{3,i}=(g_2^{\alpha_1}, g_2^{\alpha_2}, g_2^{\alpha_3}, g_2^{\alpha_4}, g_2^{\alpha_5})$ with $\alpha_j=\hk_{j,i}+\beta_j$ for $\beta\in\ker\begin{pmatrix}
@@ -554,7 +553,7 @@ Since $h_0$ on $\Server_1$ is uniformly at random already and $\sk=h_0h_x$, $\vi
 % Let this denote case \thegame.
 We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$.
 In this case we have $(C_0,C_1,C_1)\not\in L_{\widehat{\pwd}}$ with overwhelming probability.
-The claim therefore follows by a similar argument as in Game 3, \ie from the DDH assumption in $\GG_2$.
+The claim therefore follows by a similar argument as in Game 3, \ie from the \ac{DDH} assumption in $\GG_2$.
 
 \Gh In this game we choose $\sk\rin\GG_T$ at random in case we choose $h_x$ at random (the setting described in \G{\theoldgame}) and computation of \sk on \Client is successful (projection keys $\hp_1$ and $\hp_2$ are correct).
 % In case \theoldgame\xspace the password shares encrypted in $C_1$ and $C_2$ do not reconstruct to \pwd, and the session key computed on \Client (if computed) is therefore supposed to be uniformly at random distributed.
@@ -569,15 +568,15 @@ Due to the correctness of the used Cramer-Shoup \ac{TD-SPHF} $\view_{\thegame}$ 
 % We denote this case 2.
 That is, in this game $h_0$ for $\Server_1$ is always chosen uniformly at random instead of computing it with $\Hash_0$.
 We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$.
-The claim follows from the CCA-security of the labelled Cramer-Shoup encryption and the same argument as in Game 3, \ie from SXDH.
+The claim follows from the \ac{CCA}-security of the labelled Cramer-Shoup encryption and the same argument as in Game 3, \ie from SXDH.
 In particular, we define $\G{\theoldgame}'$ and $\G{\theoldgame}''$ with computationally indistinguishable views from \G{\theoldgame} as intermediate games before \G{\thegame} such that the claim follows.
 Note that the following games modify the experiment only in the previously defined case.
 In $\G{\theoldgame}'$ challenger \cC computes $C_1$ for $\Server_1$ on a random value $\share'_1\rin\ZZ_p$, $\share'_1\not=\share_1$.
-The CCA-security of the encryption scheme ensure that $\view_{\theoldgame'}$ is computationally indistinguishable from $\view_{\theoldgame}$.
+The \ac{CCA}-security of the encryption scheme ensure that $\view_{\theoldgame'}$ is computationally indistinguishable from $\view_{\theoldgame}$.
 In $\G{\theoldgame}''$ we choose a random $h_0\rin\GG_T$ instead of using the distributed $\Hash_0$ computation (the protocol is still performed but the values are not used).
 Using the same argument as in \G{3}, $\view_{\theoldgame''}$ is computationally indistinguishable from $\view_{\theoldgame'}$.
 The only difference between $\G{\theoldgame}''$ and \G{\thegame} now is that \cC encrypts a random value instead of $\share_1$ in $C_1$ in $\G{\theoldgame}''$.
-The claim now follows by observing again that $\view_{\theoldgame''}$ and $\view_{\thegame}$ are computationally indistinguishable considering the CCA-security of the labelled Cramer-Shoup encryption scheme.
+The claim now follows by observing again that $\view_{\theoldgame''}$ and $\view_{\thegame}$ are computationally indistinguishable considering the \ac{CCA}-security of the labelled Cramer-Shoup encryption scheme.
 
 \Gh In this game we choose $\sk\rin\GG_T$ at random in case we choose $h_0$ at random (the setting described in \G{\theoldgame}) and computation of \sk on $\Server_1$ is successful.
 Since $h_0$ on $\Server_1$ is uniformly at random and $\sk=h_0h_x$, $\view_{\thegame}$ is perfectly indistinguishable from $\view_{\theoldgame}$.
@@ -606,12 +605,12 @@ This is again possible because \cC now knows trapdoor $\tau'$.
 Due to \ac{TD-SPHF} soundness, $\view_{\thegame}$ is perfectly indistinguishable from $\view_{\theoldgame}$.
 
 \Gh Instead of encrypting the correct password \pwd in $C_0$ on behalf of client \Client, \cC encrypts $0$ (which is not a valid password).
-We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$ under the DDH assumption in $\GG_1$, \ie the CCA-security of the Cramer-Shoup encryption.
-Note that encryption randomness $r$ is not used in the computation of $h_0$ anymore such that the claim follows from the Cramer-Shoup CCA-security.
+We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$ under the \ac{DDH} assumption in $\GG_1$, \ie the \ac{CCA}-security of the Cramer-Shoup encryption.
+Note that encryption randomness $r$ is not used in the computation of $h_0$ anymore such that the claim follows from the Cramer-Shoup \ac{CCA}-security.
 
 \Gh Instead of encrypting the correct password share $\share_i$ in $C_i$ on behalf of server $S_i$ with $i\in[1,2]$, \cC encrypts a random element $\share'_i\rin\ZZ_p$.
-We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$ under the DDH assumption in $\GG_1$, \ie the CCA-security of the Cramer-Shoup encryption.
-Note that the probability for $\share'_i=\share_i$ is negligible such that the claim follows from the Cramer-Shoup CCA-security.
+We claim that $\view_{\thegame}$ is computationally indistinguishable from $\view_{\theoldgame}$ under the \ac{DDH} assumption in $\GG_1$, \ie the \ac{CCA}-security of the Cramer-Shoup encryption.
+Note that the probability for $\share'_i=\share_i$ is negligible such that the claim follows from the Cramer-Shoup \ac{CCA}-security.
 
 \Gh Instead of the challenger \cC simulating the protocol execution the ideal functionality \FTWOPAKE is used to interact with the ideal-world adversary \SIM.
 While this game is structurally different from \G{\theoldgame} its execution is indistinguishable from the latter.
@@ -619,13 +618,13 @@ This combined with the following description of the ideal world adversary \SIM c
 
 
 \paragraph{Simulator}
-We now describe the simulator \SIM that is used in the last experiment and acts as an attacker in the ideal world against the ideal functionality \FTWOPAKE, interacting with the real world adversary \cA.
+We now describe the simulator \SIM that is used in the last experiment and acts as an attacker in the ideal world against the ideal functionality \FTWOPAKE.
 It uses a real-world adversary \cA in a way that the environment \cZ cannot  distinguish whether it is interacting with \cA and honest protocol participants in the real world, or with \SIM and dummy protocol participants (simulated by \FTWOPAKE) in the ideal world.
 We describe \SIM for a single session $\sid=(\Client, \Server_1, \Server_2)$.
-The security then follows from the UC composition theorem \cite{Canetti2001a}, covering multiple sessions of the protocol, and joint-state UC composition theorem \cite{CanettiR03}, covering the fact that \Fca and \Fcrs create a joint state for all sessions and participants.
+The security then follows from the \ac{UC} composition theorem \cite{Canetti2001a}, covering multiple sessions of the protocol, and joint-state \ac{UC} composition theorem \cite{CanettiR03}, covering the fact that \Fca and \Fcrs create a joint state for all sessions and participants.
 As before, we assume that $0$ is not a valid password.
 
-First, \SIM generates $\crs=(q,g_{1,1},g_{1,2},h,c,d,\GG_1,g_{2},\zeta,\GG_2,\GG_T,e,H_k)$ with Cramer-Shoup secret key as trapdoor $\tau=(x_1,x_2,y_1,y_2,z)$ and second trapdoor $\tau'$ for $\zeta=g_2^{\tau'}$ to answer all \Fcrs queries with \crs.
+First, \SIM generates $\crs=(p,g_{1,1},g_{1,2},h,c,d,\GG_1,g_{2},\zeta,\GG_2,\GG_T,e,H_k)$ with Cramer-Shoup secret key as trapdoor $\tau=(x_1,x_2,y_1,y_2,z)$ and second trapdoor $\tau'$ for $\zeta=g_2^{\tau'}$ to answer all \Fcrs queries with \crs.
 Further, \SIM generates ElGamal key pairs $(g^{z_1},z_1)$ and $(g^{z_2},z_2)$, and responds to $\Retrieve(S_i)$ queries to \Fca from $S_i$ with $(\Retrieve, S_i, (g^{z_i},z_i))$ for $i\in\{1,2\}$ and with $(\Retrieve, S_i, g^{z_i})$ to all other request.
 We describe different scenarios in which the simulator operates.
 First we describe simulation of the initial KEXInit call before showing the way \SIM handles different input messages and the key generation.
@@ -639,67 +638,67 @@ The simulator essentially has to ensure that the functionality chooses random, c
 % 
 % \begin{enumerate}[i)]
 %   \item In this setting all parties $C, \Server_1, \Server_2$ are honest such that the entire protocol is simulated by \SIM and the attacker \cA has control over the network in between.
-        When receiving $(\KEX, \sid, \qid, P)$ with $\sid=(\Client, \Server_1, \Server_2)$ and $P\in\{\Client, \Server_1, \Server_2\}$ from \FTWOPAKE, \SIM starts simulation of the protocol for protocol participant $P$ by computing ciphertext, projection key pair $M_i=(C_i, \hp_i)$ for $i\in\{0,1,2\}$, encrypting a dummy value ($0$ for $P=C$ and a random value $\alpha'_i\rin\ZZ_p$ for $P=S_i$, $i\in\{1,2\}$).
+        When receiving $(\KEX, \sid, \qid, P)$ with $\sid=(\Client, \Server_1, \Server_2)$ and $P\in\{\Client, \Server_1, \Server_2\}$ from \FTWOPAKE, \SIM starts simulation of the protocol for protocol participant $P$ by computing ciphertext, projection key pair $M_i=(C_i, \hp_i)$ for $i\in\{0,1,2\}$, encrypting a dummy value ($0$ for $P=\Client$ and a random value $\share'_i\rin\ZZ_p$ for $P=\Server_i$, $i\in\{1,2\}$).
         \SIM outputs the computed $(C_i, \hp_i)$ to \cA.
         The first round of messages is handled as follows.
         
 \begin{enumerate}
   \item When any party receives an adversarially generated but well formed first message $M_i$, $i\in\{1,2\}$ from uncorrupted $S_i$, \ie $\VerHp$ on the projection key $\hp_i$ is $1$, \SIM queries $(\FA, \sid, \qid)$, which marks the session \failed for the receiving party and thus ensures that the party receives an independent, random session key (if any) on a NewKey query.
         
-  \item When any party receives an adversarially generated but well formed first message $M_2$ from a corrupted $\Server_2$ while $\Server_1$ is not corrupted, \SIM decrypts $C_2$ to $\alpha'_2$.
-        If this value is not correct, $\alpha'_2\not=\alpha_2$ (the party is corrupted such that \SIM knows the correct value), \SIM queries $(\FA, \sid, \qid)$ to ensure independent session keys on NewKey queries.    
+  \item When any party receives an adversarially generated but well formed first message $M_2$ from a corrupted $\Server_2$ while $\Server_1$ is not corrupted, \SIM decrypts $C_2$ to $\share'_2$.
+        If this value is not correct, $\share'_2\not=\share_2$ (the party is corrupted such that \SIM knows the correct value), \SIM queries $(\FA, \sid, \qid)$ to ensure independent session keys on NewKey queries.    
         
-  \item When client \Client receives an adversarially generated but well formed first message $M_1$ from a corrupted $\Server_1$ while $\Server_2$ is not corrupted, \SIM decrypts $C_1$ to $\alpha'_1$.
-        If this value is \emph{not} correct, $\alpha'_1\not=\alpha_1$, \SIM queries $(\FA, \sid, \qid)$ to ensure independent session keys on NewKey queries.    
+  \item When client \Client receives an adversarially generated but well formed first message $M_1$ from a corrupted $\Server_1$ while $\Server_2$ is not corrupted, \SIM decrypts $C_1$ to $\share'_1$.
+        If this value is \emph{not} correct, $\share'_1\not=\share_1$, \SIM queries $(\FA, \sid, \qid)$ to ensure independent session keys on NewKey queries.    
         
-  \item When any party receives adversarially generated but well formed first messages $M_1, M_2$ from corrupted $\Server_1, \Server_2$, \SIM decrypts $C_1$ and $C_2$ to $\alpha'_1$, $\alpha'_2$ respectively, and verifies their correctness against $\alpha_1$ and $\alpha_2$.
-        If they are correct, \SIM computes $h_0\gets\THash_0(\hp_1, \hp_2,  L_{\pwd, \share_1, \share_2}, C_0, \tau')$, $h_x\gets\Hash_x(\hp_0, L_{\widehat{\pwd}}$, $C_1, C_2)$, and $\sk_C=h_0\cdot h_x$.
-        Otherwise choose a random $\sk_C\in\GG_T$.
+  \item When any party receives adversarially generated but well formed first messages $M_1, M_2$ from corrupted $\Server_1, \Server_2$, \SIM decrypts $C_1$ and $C_2$ to $\share'_1$, $\share'_2$ respectively, and verifies their correctness against $\share_1$ and $\share_2$.
+        If they are correct, \SIM computes $h_0\gets\THash_0(\hp_1, \hp_2,  L_{\pwd, \share_1, \share_2}, C_0, \tau')$, $h_x\gets\Hash_x(\hp_0, L_{\widehat{\pwd}}$, $C_1, C_2)$, and $\sk_\Client=h_0\cdot h_x$.
+        Otherwise choose a random $\sk_\Client\in\GG_T$.
          
   \item When an honest $\Server_1$ or $\Server_2$ receives an adversarially generated but well formed first message $M_0$, \ie $\VerHp$ on $\hp_0$ is $\true$, \SIM extracts $\pwd'$ from $C_0$ and sends $(\TP, \sid, \qid, C, \pwd')$ to \FTWOPAKE.
-        If the functionality replies with ``correct guess'', \SIM uses $\pwd'$, \crs and $\tau'$ to compute $h_x\gets\THash_x(\hp_0, L_{\widehat{\pwd}}, C_1, C_2, \tau')$, $h_0\gets\Hash_0(\hk_1, \hk_2, L_{\pwd, \share_1, \share_2}, C_0)$, and $\sk_S=h_0\cdot h_x$.
+        If the functionality replies with ``correct guess'', \SIM uses $\pwd'$, \crs and $\tau'$ to compute $h_x\gets\THash_x(\hp_0, L_{\widehat{\pwd}}, C_1, C_2, \tau')$, $h_0\gets\Hash_0(\hk_1, \hk_2, L_{\pwd, \share_1, \share_2}, C_0)$, and $\sk_\Server=h_0\cdot h_x$.
         
   \item If verification of any $\hp_i$ fails at a recipient, \SIM aborts the session for the receiving participant.
 \end{enumerate}  
 
 \noindent              
         If a party does not abort, it proceeds as follows.
-        After \Client received all ciphertext, projection key pair messages and the previously described checks were performed \SIM sends $(\NK, \sid, \qid, C, \sk_C)$ to \FTWOPAKE if an $\sk_C$ for this session exists, or $(\NK, \sid, \qid, C, \bot)$ otherwise.
+        After \Client received all ciphertext, projection key pair messages and the previously described checks were performed \SIM sends $(\NK, \sid, \qid, C, \sk_\Client)$ to \FTWOPAKE if an $\sk_\Client$ for this session exists, or $(\NK, \sid, \qid, C, \bot)$ otherwise.
         %, which triggers \FTWOPAKE to either choose a random session key $\sk$, or use $\sk$ if $M_1$ and $M_2$ are unchanged and $sk$ was sent to $\Server_1$ earlier, and output $(\NK, \sid, \qid, \sk)$ to \Client.       $(\sid, \qid, 0, \Server_1, C_1, \hp_1)$ and $(\sid, \qid, 0, \Server_2, C_2, \hp_2)$
         After $\Server_1$ and $\Server_2$ received all ciphertext, projection key pair messages and the previously described checks were performed, \SIM simulates all further messages for honest parties, \ie $\PHash_x$ and $\Hash_0$ computation between $\Server_1$ and $\Server_2$, with random elements and simulated zero-knowledge proofs.
-        If all messages received by $\Server_1$ are oracle generated, send $(\NK, \sid, \qid, \Server_1, \sk_S)$ to \FTWOPAKE if this session is \compromised and $(\NK, \sid, \qid, \Server_1, \bot)$ if not.
+        If all messages received by $\Server_1$ are oracle generated, send $(\NK, \sid, \qid, \Server_1, \sk_\Server)$ to \FTWOPAKE if this session is \compromised and $(\NK, \sid, \qid, \Server_1, \bot)$ if not.
         %, which triggers \FTWOPAKE to either choose a random session key $\sk$, or uses $\sk$, sent to \Client earlier, and output $(\NK, \sid, \qid, \sk)$ to $\Server_1$.
         If any $\PHash_x$ or $\Hash_0$ message received by $\Server_1$ can not be verified, \ie validation of the zero-knowledge proof fails, \SIM does nothing and aborts the session for $\Server_1$.
         
         
 
-\subsection{\FTWOPAKE Discussion}\label{app:relations}
-In this section we discuss some additional points of the \FTWOPAKE functionality and investigate relations to other \ac{2PAKE} security models and UC models in the password setting.
+\subsection{\FTWOPAKE Discussion}\label{sec:relations}
+In this section we discuss some additional points of the \FTWOPAKE functionality and investigate relations to other \ac{2PAKE} security models and \ac{UC} models in the password setting.
 
 \subsubsection{\FTWOPAKE and the BPR \ac{2PAKE} Model}
-While other security models for \ac{2PAKE} protocols where proposed \cite{SzydloK05}, the BPR-like security model from \cite{Katz2012a} is the most comprehensible and (in its two-party version) established model.
-We therefore discuss relation between the proposed \ac{2PAKE} UC-security using \FTWOPAKE and the BPR-like security model from \cite{Katz2012a}.
-To compare security of a \ac{2PAKE} protocol $\Pi$ in a game-based and UC setting we have to ensure that it supports session ids (necessary in the UC framework).
-We therefore assume that $\Pi$ already uses UC compliant session ids.
+While other security models for \ac{2PAKE} protocols where proposed, \eg by \citet{SzydloK05}, the \ac{BPR-M}-like security model from \citet{Katz2012a} is the most comprehensible and (in its two-party version) established model.
+We therefore discuss relation between the proposed \ac{2PAKE} \ac{UC}-security using \FTWOPAKE and the \ac{BPR-M}-like security model by \citet{Katz2012a}.
+To compare security of a \ac{2PAKE} protocol $\Pi$ in a game-based and \ac{UC} setting we have to ensure that it supports session ids (necessary in the \ac{UC} framework).
+We therefore assume that $\Pi$ already uses \ac{UC} compliant session ids.
 Note that it is easy to transform any \ac{2PAKE} protocol into a \ac{2PAKE} protocol with such session ids.
-Before looking into relation between the full game-based model for \ac{2PAKE} and \FTWOPAKE we want to point out that $\Pi$, securely realising \FTWOPAKE, offers ``forward secrecy'', \ie even an adversary that knows the correct password is not able to attack an execution of $\Pi$ without actively taking part in the execution.
-With this in mind it is easy to see that $\Pi$, securely realising \FTWOPAKE, is secure in the BPR-like model from \cite{Katz2012a}.
+Before looking into relation between the full game-based model for \ac{2PAKE} and \FTWOPAKE we want to point out that a protocol $\Pi$ that securely realises \FTWOPAKE offers ``forward secrecy'', \ie even an adversary that knows the correct password is not able to attack an execution of $\Pi$ without actively taking part in the execution.
+With this in mind we argue that $\Pi$, securely realising \FTWOPAKE, is secure in the BPR-like model by \citet{Katz2012a}.
 This is because the attacker is either passive, which is covered by the previous observation, or is active and is therefore able tests one password.
-Those password tests (\TestPwd in \FTWOPAKE and \Send in the game based model) give the attacker a success probability of $q/|\cD|$, with $q$ the number of active sessions and $|\cD|$ the dictionary size, when considering a uniform distribution of passwords inside the dictionary \cD.
+Those password tests (\TestPwd in \FTWOPAKE and \Send in the game based model) give the attacker a success probability of $q/|\cD|$, with $q$ the number of active sessions and $|\cD|$ the dictionary size, when considering a uniform distribution of password dictionary \cD.
 Note that while the attacker may have knowledge of a password share, this does not increase this probability.
-Security on the model from \cite{Katz2012a} follows.
+Security of the model from \citet{Katz2012a} follows.
 
 \subsubsection{\FTWOPAKE and \FPAKE}
 While \FPAKE and \FTWOPAKE are very similar they contain some significant difference we want to point out here.
 First, the key-exchange is performed between all three participants, but only \Client and, w.l.o.g., $\Server_1$ agree on a common session key.
 The \role is a technical necessity in \FPAKE for correct execution.
 Since we have explicit roles in \FTWOPAKE this is not necessary here.
-Due to the asymmetry in \FTWOPAKE (a client negotiates with two servers) we assume that the client is always the invoking party.
-While this is the case in \FPAKE as well when considering a real world scenario, the roles might be different there such that any of the two participating parties can start the protocol execution.
-The asymmetric setting in \FTWOPAKE further restricts \TestPwd queries to the client since the servers hold high entropy password shares.
-While it is enough for the attacker to corrupt one party in \FPAKE to control the session key, in \FTWOPAKE he has to either corrupt or compromise the client, or corrupt both servers.
-As long as only one server is corrupted, the adversary has no control over the session 	keys and the parties receive uniformly at random chosen session keys
-In \FTWOPAKE session ids are human memorisable, consisting of all three involved parties $(\Client, \Server_1, \Server_2)$, and unique query identifier is used to distinguish between different (possibly concurrent) protocol runs of one account (\sid).
+% Due to the asymmetry in \FTWOPAKE (a client negotiates with two servers) we assume that the client is always the invoking party.
+% While this is the case in \FPAKE as well when considering a real world scenario, the roles might be different there such that any of the two participating parties can start the protocol execution.
+The asymmetric setting in \FTWOPAKE restricts \TestPwd queries to the client since the servers hold high entropy password shares.
+While it is enough for the attacker to corrupt one party in \FPAKE to control the session key, in \FTWOPAKE \SIM has to either corrupt or compromise the client, or corrupt both servers.
+As long as only one server is corrupted, the adversary has no control over the session 	keys and the parties receive uniformly at random chosen session keys.
+In \FTWOPAKE session ids are human memorisable, consisting of all three involved parties $(\Client, \Server_1, \Server_2)$, and a unique query identifier is used to distinguish between different (possibly concurrent) protocol runs of one account (\sid).
 This is a rather technical difference to \FPAKE that uses only session identifiers.
 
 % This allows both servers to negotiate a session key with \Client by running the protocol twice with swapped roles.
@@ -712,13 +711,13 @@ This is a rather technical difference to \FPAKE that uses only session identifie
 
 
 \subsubsection{Corruptions}
-The two-server extension of the BPR \ac{2PAKE} model used in \cite{Katz2012a} does not consider corruptions at all.
+The two-server extension of the \ac{BPR-M} \ac{2PAKE} model proposed by \citet{Katz2012a} does not consider corruptions.
 While parties can be malicious in the model (static corruption), the attacker is not allowed to query a corrupt oracle to retrieve passwords or internal state of participants.
-In our model the attacker is allowed to corrupt parties before execution.
-This however implies security in the model from \cite{Katz2012a} even if the attacker is allowed to corrupt clients to retrieve their passwords.
+In our model the attacker is allowed to corrupt parties before execution as well.
+This however implies security in the model by \citet{Katz2012a} even if the attacker is allowed to corrupt clients to retrieve their passwords.
 This is because the environment can provide the BPR attacker with the password.
 However, this does not increase his success probability.
 Dynamic corruptions in \FTWOPAKE on the other hand are much more intricate.
-While UC-secure two party PAKE protocols with dynamic corruptions exist their approaches are not translatable to the \ac{2PAKE} setting.
+While \ac{UC}-secure \ac{2PAKE} protocols with dynamic corruptions exist \cite{AbdallaBP14a} their approaches are not translatable to the \ac{2PAKE} setting.
 The challenge of dynamic corruptions is that the simulation has to be correct even if the attacker corrupts one party \emph{after} the protocol execution has started.
 This is left open for future work.
