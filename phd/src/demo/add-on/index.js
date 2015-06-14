@@ -132,6 +132,7 @@ function handleBprClient(m) {
 	// handle first result from bprClient (COM)
 	if (m.isTrusted && m.data.X == "0") {
 		COM = m.data.COM;
+		console.log(JSON.stringify(COM).length);
 		
 		if (COM == "-1") { // XXX: error handling
 			console.log("Sorry, your passwords don't match!");

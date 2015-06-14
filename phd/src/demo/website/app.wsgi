@@ -1,4 +1,8 @@
 #!/usr/bin/python
+import os, sys
+# Change working directory so relative paths (and template lookup) work again
+os.chdir(os.path.dirname(__file__))
+sys.path.insert(0, "/data/Surrey/thesis/phd/src/demo/website")
 
 from bottle import route, run, template, static_file, post, get, request, app, redirect, response, BaseRequest
 import json
@@ -284,4 +288,6 @@ def demoApp():
 ## run it
 ############################
 
-run(host=domain, port=int(port), reloader=True, app=app)
+#run(host=domain, port=int(port), reloader=True, app=app)
+application = app
+

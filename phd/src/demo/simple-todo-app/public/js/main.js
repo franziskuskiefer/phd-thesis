@@ -15,7 +15,7 @@ function get() {
             //data - response from server
 		        if (data.todos)
 				        data = data.todos;
-            if (data && data.todos) { // if user not logged in we don't get anything
+            if (data) { // if user not logged in we don't get anything
                 for (var i = 0; i < data.length; i++) {
                     var entry = data[i];
                     $("#todos").append("<li class='todoEntry list-group-item'>" + entry.text + "&nbsp;<span class='item-remove glyphicon glyphicon-remove'  id='" + entry.id + "'></span></li>");

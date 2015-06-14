@@ -97,8 +97,7 @@ function bprClient() {
 			// choose shuffling index for C2
 			var r = -1;
 			do {
-//				r = new BigInteger(Math.ceil(Math.log(pw.length) / Math.log(2)), rng).intValue();
-				r = r+1;
+				r = new BigInteger(Math.ceil(Math.log(pw.length) / Math.log(2)), rng).intValue();
 			} while (ks.indexOf(r) != -1 || r > pw.length-1);
 			ks.push(r);
 			
