@@ -65,8 +65,12 @@ Further, we propose a new framework for \ac{2PAKE} protocols that leads to a new
 % To this end we leverage recent advancements of smooth projective hashing in the two-server setting from \cite{KieferM14a} and in efficiency from \cite{Benhamouda2013}.
 
 \paragraph{Outline}
-\hfill\\
-\mynote{do outline}
+This chapter consists of six sections.
+The first section describes modelling of passwords, policies and password shares for the two-server setting.
+Section \ref{sec:2pake-registration} proposes a \acl{BPR} for the two-server setting, closely related to the approach in Chapter \ref{ch:vpake} Section \ref{sec:bpr}.
+This concludes the registration step of the framework.
+For the authentication step Section \ref{sec:twoserverpake} proposes a \ac{2PAKE} framework using \acp{D-SPHF} that are introduced in Section \ref{sec:dsphf-2pake}.
+To strengthen security guarantees of \ac{2PAKE} protocols we propose a security definition of \ac{2PAKE} in the \ac{UC} framework in Section \ref{sec:uc2pake}.
 
 \input{Chapters/passwords2}
 
@@ -85,4 +89,6 @@ Further, we propose a new framework for \ac{2PAKE} protocols that leads to a new
 % \mynote{2PAKE UC ???(ePrint) \cite{KieferM15b}}
 
 \section{Conclusion}
-\mynote{2BPR and 2PAKE conclusion}
+This chapter proposed a framework for two-server password registration and authentication.
+The password registration protocol allows the client to securely register password shares on two servers, while the servers can very that the client's password satisfies a password policy.
+To use the registered password shares in the second step, password-based authentication, we proposed a new \ac{2PAKE} framework, a concrete instantiation, and an enhanced protocol that satisfied the newly defined \ac{2PAKE} \ac{UC} functionality.

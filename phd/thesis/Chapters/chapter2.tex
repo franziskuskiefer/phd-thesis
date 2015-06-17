@@ -4,8 +4,7 @@
 
 \chapter{Prerequisites and Building Blocks}\label{ch:prelims}
 
-\mynote{give all the functions like password hashing unique symbols to use}
-\mynote{make all \PSetup etc unique and uniform}
+\mynote{give all the functions like password hashing and \PSetup unique symbols to use}
 
 In this chapter we recall known facts and assumptions as well as notations used throughout this thesis.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
@@ -392,22 +391,22 @@ To establish unique query identifiers between protocol participants we use the \
 \begin{center}
 {\bf Functionality \Finit}
 \end{center}
-\Finit, with fixed session identifier $0$, runs in the universe with parties $\cU$ and adversary $\cS$.
+\Finit, with fixed session identifier $0$, runs in the universe with parties $\cU$ and adversary \SIM.
 When called the first time, it sets $\Hist=\emptyset$.
 
 \begin{description}
 	
 	\item[Init:] Upon receiving $(\init, 0, \langle P_i, \cP, \cF \rangle)$ from $P_i$, where $\cP\subseteq\cU$, execute the following:
 	  \begin{enumerate}
-	    \item Send $(\init, 0, \langle P_i, \cP, \cF \rangle)$ to $\cS$.
-	    \item Upon receiving back $(\setId, 0, \langle \sid', P_i, \cP, \cF \rangle)$ from $\cS$, do the following:
+	    \item Send $(\init, 0, \langle P_i, \cP, \cF \rangle)$ to $\SIM$.
+	    \item Upon receiving back $(\setId, 0, \langle \sid', P_i, \cP, \cF \rangle)$ from $\SIM$, do the following:
 	      \begin{enumerate}
 	        \item If $\sid'\in \Hist$, choose an arbitrary $\sid\not\in \Hist$.
 	        \item If $\sid'\not\in \Hist$, set $\sid\gets\sid'$.
 	        \item Update $\Hist \gets \Hist \cup \{\sid\}$.
-	        \item Send $(\invoke, 0, \langle \sid, P_i, \cP, \cF \rangle)$ to $\cS$.
+	        \item Send $(\invoke, 0, \langle \sid, P_i, \cP, \cF \rangle)$ to $\SIM$.
 	      \end{enumerate}
-	    \item Upon receiving a message $(\sendoutput, 0, \langle \sid, P_i, \cP, \cF \rangle)$ from $\cS$:
+	    \item Upon receiving a message $(\sendoutput, 0, \langle \sid, P_i, \cP, \cF \rangle)$ from $\SIM$:
 	      \begin{enumerate}
 	        \item If $P_j\in\cP$ and it has not yet been sent to the \invoke message with $\langle \sid, P_i, \cP, \cF \rangle)$, send it $(\invoke, 0, \langle \sid, P_i, \cP, \cF \rangle)$.
 	      \end{enumerate}
@@ -448,6 +447,47 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 \caption{Ideal Functionality \FPAKE}
 \label{fig:pakef}
 \end{figure}
+
+
+\subsubsection{tSoke}
+In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol.
+It is recalled in Figure \ref{fig:tSOKE}.
+
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l l c l }
+\toprule
+& {\bf Client \Client} & & {\bf Server \Server} \\
+& Input: tag $\tg$ & & Input: tag $\tg$ \\
+1. & Enter username $\id_{\Client}$. & & \\
+2. & Enter password $\pwd_{\Client,\Server}$. & & \\
+3. & $x \rin \{2, \dots, n-1\}$ & & \\
+4. & $X = g^x$ & & \\
+5. & & $\stackrel{\id_{\Client}, X}{\llongrightarrow}$ & \\
+6. & & & Look up \ver for $\id_{\Client}$. \\
+7. & & & $y \rin \{2, \dots, n-1\}$ \\
+8. & & & $Y = g^y$ \\
+9. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
+10. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
+11. & $H \gets \HashP(\pwd, r)$ & & \\
+12. & $Y = Y^{*} / h^H$ & & \\
+13. & $Z = Y^x$ & & $Z' = X^y$ \\
+14. & $K \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ \\
+15. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
+16. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
+17. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
+18. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
+19. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
+20. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
+21. & Accept & & Accept \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\caption{tSoke Protocol \citet{Manulis2014}}
+\label{fig:tSOKE}
+\end{figure*}
 
 
 \subsection{Verifier-based PAKE Security}
@@ -497,7 +537,7 @@ Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on in
 
 \noindent
 Two protocol participants are \emph{partnered} if they have matching transcripts, \ie the recorded transcript of one participant is a subset of the one recorded by the other party.
-% Two protocol participants $P,P'$ are compatible if w.l.o.g. $P\in\cC$ and $P'\in\cS$, and $\PHash(\paramP, \PPreHash(\paramP, \pwd_P, s_P), s_H) = H_{P'}$.
+% Two protocol participants $P,P'$ are compatible if w.l.o.g. $P\in\Ciphertexts$ and $P'\in\cS$, and $\PHash(\paramP, \PPreHash(\paramP, \pwd_P, s_P), s_H) = H_{P'}$.
 % To define security we specify a real experiment $\Exp_\REAL$ and ideal experiment $\Exp_\IDEAL$.
 % The real world adversary in $\Exp_\REAL$ has access to the aforementioned oracles and interacts with real participants using passwords chosen according to the dictionary \cD.
 % The ideal world adversary in $\Exp_\IDEAL$ interacts with the aforementioned oracles that are modified as follows:
@@ -612,7 +652,7 @@ The basic definition is given as follows.
 A \ac{ZKPoK} protocol $\Pi$ is said to be a $\Sigma$ protocol for relation $R$ if it has the following message structure:
 \begin{enumerate}
   \item $P$ sends the first message (commitment) $m_1\gets P_1(x,w,r)$ for element $(x,w)\in R$ and randomness $r$.
-  \item $V$ sends random challenge $c\rin\bits^\secpar$ and returns it to prover $P$.
+  \item $V$ sends random challenge $c\rin\ZZ_p$ and returns it to prover $P$.
   \item $P$ sends the seconds message (response) $m_2\gets P_2(x,w,r,c)$ back to verifier $V$.
   \item $V$ accepts iff $(x,m_1,c,m_2)$ can be verified.
 \end{enumerate}
@@ -626,7 +666,7 @@ A committed $\Sigma$-protocol based on Pedersen commitments is then given by the
   \item The prover computes the first message $m_1\gets P_1(x,w,r)$, computes 
   \[M_1\gets\Com(H(x,m_1); r_1)=g^{H(x,m_1)}h^{r_1},\]
   and sends $M_1$ to the verifier.
-  \item The verifier chooses challenge $c\rin\bits^\secpar$ and returns it to the prover.
+  \item The verifier chooses challenge $c\rin\ZZ_p$ and returns it to the prover.
   \item The prover computes the second message $m_2\gets P_2(x,w,r,c)$, computes 
   \[M_2\gets\Com(H(m_2); r_2)=g^{H(m_2)}h^{r_2},\]
    and sends $M_2$ to the verifier.
@@ -724,15 +764,15 @@ Common \ac{CS} encryption simply omits label $\ell$.
 
 %----------------------- OBI ---------------------------
 \subsection{Oblivious Bloom Intersection}\label{sec:obi}
-Originally, the \ac{OBI} protocol was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\cC\cap \cS$ and the server learns nothing. 
-The \ac{OBI} protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \cC and \cS. 
-As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\cS$ with a data item $d_i$. 
+Originally, the \ac{OBI} protocol was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\ClientSet\cap \ServerSet$ and the server learns nothing. 
+The \ac{OBI} protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \ClientSet and \ServerSet. 
+As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\ServerSet$ with a data item $d_i$. 
 At the end of the protocol, for each element in the intersection the client also receives the corresponding data item from the server. 
-The protocol can be described at a high level as follows: let the server hold a set $\cS=\{s_i\}$ and a data set $\cS_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. 
-The server generates a garbled Bloom filter $G_\cS$ on \cS and $\cS_d$ using \citet[Algorithm 1]{WenD14} (recalled in Algorithm \ref{alg:gbf}). 
-The garbled Bloom filter encodes both $\cS$ and $\cS_d$ in a way such that querying the key $s_i\in\cS$ against $G_\cS$ returns the data item $d_i$ and querying $s_j\not \in \cS$ returns a random string. Let the client hold a set $\cC$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\cC$. 
+The protocol can be described at a high level as follows: let the server hold a set $\ServerSet=\{s_i\}$ and a data set $\ServerSet_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. 
+The server generates a garbled Bloom filter $G_\ServerSet$ on \ServerSet and $\ServerSet_d$ using \citet[Algorithm 1]{WenD14} (recalled in Algorithm \ref{alg:gbf}). 
+The garbled Bloom filter encodes both $\ServerSet$ and $\ServerSet_d$ in a way such that querying the key $s_i\in\ServerSet$ against $G_\ServerSet$ returns the data item $d_i$ and querying $s_j\not \in \ServerSet$ returns a random string. Let the client hold a set $\Ciphertexts$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\ClientSet$. 
 The client and the server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
-As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that encodes the intersection $\cC\cap \cS$ and the data items associated with the elements in $\cC\cap \cS$. Then the client can query $G_{\cC\cap\cS}$ with each element $c_i\in\cC$. If $c_i$ is in the intersection then there must be  some $s_j\in \cS$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
+As the result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$. Then the client can query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\in\ClientSet$. If $c_i$ is in the intersection then there must be  some $s_j\in \ServerSet$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
 
 \begin{algorithm}[htb]
 \caption{GBFIntesection $(G, B, m, \lambda)$}
@@ -760,12 +800,12 @@ As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that 
 		column 1/.style={nodes={minimum width=23em, align=left}}, %,text width=15em
 		column 2/.style={nodes={minimum width=14em}},
 		column 3/.style={nodes={minimum width=18em, align=right, text width=18em}}]{
-	\node[align=center](client){$C~ (B_\cC)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$S$ $(G_\cS)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+	\node[align=center](client){$\Client~ (B_\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\ServerSet$ $(G_\ServerSet)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
 	
-	\parbox{23em}{} \& %generate Bloom filter $B$ for $\cC$, generate GBF $G$ with Algorithm \ref{alg:gbf}
+	\parbox{23em}{} \& %generate Bloom filter $B$ for $\ClientSet$, generate GBF $G$ with Algorithm \ref{alg:gbf}
 	  neg. params $(n, m, k, H, E)$ \& \\
 	  
-	\parbox{23em}{} \& \&  \\ %	  on $(\cS, S_d, n, m, k, H, \lambda)$
+	\parbox{23em}{} \& \&  \\ %	  on $(\ServerSet, S_d, n, m, k, H, \lambda)$
 	
 	\parbox{23em}{generates  $r_i\ralgout\{0,1\}^\lambda$ for $i\in[0,m-1]$} \&
 	   $\{r_i\}_{i\in[0,m-1]}$ \&
@@ -798,44 +838,44 @@ As the result, the client receives a garbled Bloom filter $G_{\cC\cap\cS}$ that 
 \end{figure}
 
 \begin{algorithm}[htb]
-\caption{GBF $(S, S_d , n, m, k, H, \lambda)$}
+\caption{GBF $(\ServerSet, \ServerSet_d , n, m, k, H, \lambda)$}
 \label{alg:gbf}
 \begin{algorithmic}[1]
-\REQUIRE A set $S$, a set of data $S_d$ with $|S|=|S_d|$, integers $n, m, k, \lambda$, set of hash functions $H=\{h_0, \dots, h_{k-1}\}$
-\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_S$ of \key
-\STATE GBF$_S = [m]$ \COMMENT{create empty array of size $m$}
-\FOR{$i=0$ \TO $|S|-1$}
-  \STATE emptySlot $= -1$; share $=S_d[i]$
+\REQUIRE A set $\ServerSet$, a set of data $\ServerSet_d$ with $|\ServerSet|=|\ServerSet_d|$, integers $n, m, k, \lambda$, set of hash functions $H=\{h_0, \dots, h_{k-1}\}$
+\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_\ServerSet$ of \key
+\STATE GBF$_\ServerSet = [m]$ \COMMENT{create empty array of size $m$}
+\FOR{$i=0$ \TO $|\ServerSet|-1$}
+  \STATE emptySlot $= -1$; share $=\ServerSet_d[i]$
   \FOR{$j=0$ \TO $k-1$}
-    \STATE $\alpha=h_i(S[i])$
-    \IF{GBF$_S[\alpha] == \NULL$}
+    \STATE $\alpha=h_i(\ServerSet[i])$
+    \IF{GBF$_\ServerSet[\alpha] == \NULL$}
       \IF{emptySlot $== -1$}
         \STATE emptySlot $= \alpha$
         \ELSE
-          \STATE GBF$_S[j] \gets_{\$} \{0,1\}^\lambda$
-          \STATE share $= share \oplus$GBF$_S[\alpha]$
+          \STATE GBF$_\ServerSet[j] \gets_{\$} \{0,1\}^\lambda$
+          \STATE share $= share \oplus$GBF$_\ServerSet[\alpha]$
       \ENDIF
       \ELSE
-        \STATE share $= share \oplus$GBF$_S[\alpha]$
+        \STATE share $= share \oplus$GBF$_\ServerSet[\alpha]$
     \ENDIF
   \ENDFOR
-  \STATE GBF$_S[\text{emptySlot}]=\text{share}$
+  \STATE GBF$_\ServerSet[\text{emptySlot}]=\text{share}$
 \ENDFOR
 \FOR{$i=0$ \TO $m-1$}
-  \IF{GBF$_S[i] == \NULL$}
-    \STATE GBF$_S[i] \gets_{\$} \{0,1\}^\lambda$
+  \IF{GBF$_\ServerSet[i] == \NULL$}
+    \STATE GBF$_\ServerSet[i] \gets_{\$} \{0,1\}^\lambda$
   \ENDIF
 \ENDFOR
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Linear Secret Sharing}
-Given set \cS and access structure $\Gamma_\cS$ over \cS, a \ac{MSP} is defined as a triple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\cS$ and $\Gamma_\cS$) and $\rho:\{1,...l\}\rightarrow \cS$ labels each row of $M$ with an element in $\cS$. 
+Given set \ServerSet and access structure $\Gamma_\ServerSet$ over \ServerSet, a \ac{MSP} is defined as a triple $(\mathbb{F},M,\rho)$ where $\mathbb{F}$ is a field, $M$ is a $l\times n$ share-generating matrix over $\mathbb{F}$ ($l$ and $n$ are constants depending on  $\ServerSet$ and $\Gamma_\ServerSet$) and $\rho:\{1,...l\}\rightarrow \ServerSet$ labels each row of $M$ with an element in $\ServerSet$. 
 (\ac{LSSS} matrix $M$ can be generated from a boolean formula for example using \citet[Algorithm 1]{LiuC10}.)
 Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose $r_2,\ldots,r_n \in \mathbb{F}$ at random and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
 Then $M\mathbf{v}$ is a vector of $l$ shares of the secret. 
-The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \cS$. 
-For any set $C\in \Gamma_\cS$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
+The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \ServerSet$. 
+For any set $C\in \Gamma_\ServerSet$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
 The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, \ie there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
 The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
 
@@ -919,10 +959,10 @@ and word-dependent key (GL-SPHF, first proposed by \citet{Gennaro2003}).
 In this work we focus on the strongest notion behind KV-SPHF: \emph{word-independent key} with \emph{adaptive smoothness}.
 Unless stated otherwise all \acp{SPHF} in the following are KV-SPHFs where the projection key is independent of the ciphertext and \cL is a labelled CCA-secure encryption scheme.
 
-\mynote{have to properly define \Lpwd and \cC, we want ciphertext $C$ being part of it, not the entire triple $(\Label, C, \pwd)$ ????}
+% \mynote{have to properly define \Lpwd and \Ciphertexts, we want ciphertext $C$ being part of it, not the entire triple $(\Label, C, \pwd)$ ????}
 
 \begin{definition}[Languages of Ciphertexts]\label{def:language}
-Let $L_\pwd \subseteq \{(\Label, C, \pwd^\ast)\}=\cC$ denote the language of labelled ciphertexts under consideration with ciphertext $(\Label,C)$ under \pk and password $\pwd^\ast\in\cD$.
+Let $L_\pwd \subseteq \{(\Label, C, \pwd^\ast)\}=\Ciphertexts$ denote the language of labelled ciphertexts under consideration with ciphertext $(\Label,C)$ under \pk and password $\pwd^\ast\in\cD$.
 A ciphertext $C$ is in language \Lpwd iff there exists randomness $r$ such that $C\gets\Enc^{\cL}_\pk(\ell,\pwd;r)$.
 \eod
 \end{definition}
@@ -947,7 +987,7 @@ A \emph{\acl{SPHF}} for ciphertext language \Lpwd consists of the following four
 An \ac{SPHF} has to fulfil the following three properties:
 \begin{itemize}
 	\item \emph{Correctness}: If $C\in \Lpwd$, with $r$ proving so, then \[\Hash(\hk,\Lpwd,C)=\PHash(\hp,\Lpwd,C,r).\]
-	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni \cC\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
+	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni \Ciphertexts\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
 	\item \emph{Pseudorandomness}: If $(\ell, C, \pwd^\ast)\in\Lpwd$, the hash value $h$ is (computationally) indistinguishable from a random element. 
 \end{itemize}
 
@@ -955,7 +995,7 @@ An \ac{SPHF} has to fulfil the following three properties:
 In a nutshell, smoothness ensures that the hash value always looks random in \GG when computed on an element not in the language, while pseudorandomness ensures that it looks random in \GG when computed on an element in the language.
 Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness.
 The corresponding notion of adaptive smoothness with word-independent keys is defined as follows.
-For any function $f:\GG^m \mapsto \cC\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
+For any function $f:\GG^m \mapsto \Ciphertexts\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
 \begin{align*}
 & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,f(\hp))\} \\
 \stackrel{\varepsilon}{=}~ & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}

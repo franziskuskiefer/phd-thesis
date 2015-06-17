@@ -239,20 +239,21 @@ An example on game-based security proof using so called ``sequences of games'' i
 
 %********************************** %Simulation-based Security  **************************************
 \subsection{Simulation-Based Security}
-The idea of simulation-based security proofs is due to \citet{Goldreich87}.
+The idea of simulation-based security proofs is due to \citet{Goldreich87}, further formalised by \citet{Canetti00}.
+(We use the formalism from \citet{Goldreich2001,Goldreich2004}.)
 In contrast to the previously described game-based approach simulation-based security does not define a challenger and oracles the adversary interacts with, but an ideal functionality the actual protocol should mimic in the real world.
 The adversaries goal is to distinguish between the execution in the ideal world with a perfectly secure algorithm/protocol, and the real world with the actual algorithm/protocol.
 Security reasoning is then done as follows: since the ideal primitive does not leak any information other than publicly observable and its behaviour is indistinguishable from the real world, the real world primitive is secure.
 
 \paragraph{Universal Composability} \label{sec:uc-intro}
 The \ac{UC} framework proposed by \citet{Canetti2001a} is a popular general purpose simulation-based security model.
-It overcomes an inherent shortcoming of most game-based security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure, which is stronger than the general simulation-based approach from \citet{Goldreich87}.
+It overcomes an inherent shortcoming of most game-based security models as it allows for secure arbitrary composition with other primitives once a primitive is proven secure, which is stronger than the general simulation-based approach from \citet{Canetti00}.
+The main difference between the general simulation-based security by \citet{Canetti00} and the \ac{UC} framework by \citet{Canetti2001a} is that the composition theorems from \citet{Canetti00} only hold in a non-concurrent setting.
 Most game-based security models only allow to derive statements about the algorithm in a shielded environment or are limited otherwise.
 As soon as the algorithm is used with other primitives, and thus sharing \ac{IO} channels and data, the security can not be guaranteed anymore.
 The \ac{UC} framework introduces another adversary \UCZ, the environment, that generates all inputs for all parties, and reads their outputs.
 A protocol is secure in \ac{UC} when it realises a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with \UCS and the ideal functionality \UCF.
 
-\mynote{enhance and describe exact difference between \citet{Goldreich87} and \citet{Canetti2001a}?}
 
 % *****************************************************************************
 % Section: Password Registration
@@ -394,14 +395,13 @@ As mentioned before, \citet{Gentry2006} propose a way of transforming \ac{PAKE} 
 \citet{BenhamoudaP13} recently proposed the first game-based security model, based on the well known BPR model for \ac{PAKE} protocols.
 
 \subsubsection{Discussion}\label{sec:intro:vpake-discusion}
-\mynote{check this later depending on phrasing of Section \ref{ch:vpake}}
 One reason for the relatively limited interest in \acl{VPAKE} might be the somewhat artificial security benefits and models.
 Security models for \ac{PAKE} protocols consider security of a key-exchange protocol using a password as authentication mechanism.
 Often however, they do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
 \ac{VPAKE} security models try to capture whether the protocol is secure (in the sense of \acl{PAKE}) \emph{and} if the server securely handles and stores the passwords/verifiers.
 Since those security goals are significantly different and somewhat unrelated, it is difficult to find a meaningful security model for it.
 
-Another reason for low adoption rate of \ac{VPAKE} in the research community is its questionable benefit.
+Another reason for low adoption rate of \ac{VPAKE} in the research community could be its questionable benefit.
 While it is arguably that secure handling and storage of passwords is important, \ac{VPAKE} offers little benefit compared to \ac{PAKE}.
 Since necessary randomness has to be stored on the server (recall that the client is stateless and can only handle human memorable secrets), it has to be transferred to the client at some point in the protocol.
 However, when the randomness has to be transmitted from the server to the client, there is no reason not to do this as early in the protocol as possible and then use the verifier for authentication rather than the password in a common \ac{PAKE} protocol.
@@ -499,15 +499,15 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 % Section: Outline & Summary
 % *****************************************************************************
 \section{Outline of this Thesis \& Summary of Results}\label{sec:intro:outline}
-This thesis consists of ??? more chapters.
-\mynote{Do this when done...}
-It starts in Chapter \ref{ch:prelims} with prerequisites and building blocks used throughout this work.
-After defining the foundations, Chapter \ref{ch:vpake} describes the first major contribution of this thesis, a framework for password registration (Section \ref{sec:vpake-registration}) and password authenticated key-exchange (Section \ref{sec:vpake-pake}) in the verifier-based setting where the server stores only a verifier of the password.
-The description of the implementation and demonstration can be found in Section \ref{sec:vpake-registration}.
-Chapter \ref{ch:2pake} transfers the results from Chapter \ref{ch:vpake} to the two-server setting for the second contribution by proposing a framework for password registration and authentication in the two-server \ac{PAKE} setting.
-To this end we describe a secure registration process for two-server \ac{PAKE} protocols in Section \ref{sec:2pake-registration} and the first \ac{UC} secure two-server \ac{PAKE} protocol in Section \ref{sec:2pake-uc}.
-Chapter \ref{ch:realworld} extends \cite{MSD13} and depicts solutions on how to bring cryptographic password authentication to the web on desktop and mobile browsers.
-Eventually, the thesis is concluded by chapter \ref{ch:conclusion} summarising results described in the thesis and giving an outlook to potential future work.
+This thesis consists of four more chapters.
+Chapter \ref{ch:prelims} gives with prerequisites and building blocks used throughout this work.
+The remainder of the work consists of the two main Chapters \ref{ch:vpake} and \ref{ch:2pake} before concluding the work in Chapter \ref{ch:conclusion}.
+Chapter \ref{ch:vpake} describes a framework for password registration comprising two new password registration protocols and a new password-based authentication protocol in the verifier-based setting.
+To demonstrate practicability of the framework we further implement some of the proposed protocols and give a demo as an example of how a real-world integration could look.
+Chapter \ref{ch:2pake} describes a framework similar to the one from Chapter \ref{ch:vpake} but for thew two-server setting.
+In particular, it gives a new password registration for the two-server setting as well as a new framework for two-server password-based authentication and propose a new security definition for it in the \ac{UC} framework.
+% Chapter \ref{ch:realworld} extends \cite{MSD13} and depicts solutions on how to bring cryptographic password authentication to the web on desktop and mobile browsers.
+Eventually, the thesis is concluded in Chapter \ref{ch:conclusion} summarising results described in the thesis and giving an outlook to potential future work.
 
 
 

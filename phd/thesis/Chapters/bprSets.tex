@@ -5,40 +5,40 @@ However, it uses an approach closely related to the \ac{ZKPPC}-based approach fr
 In this section we propose an entirely different approach to \acl{BPR} based on set theory rather than zero-knowledge proofs, which allows us to build a significantly faster protocol but also requires a different security model.
 Note that the \ac{BPR} protocol in this section is based on a more general approach that can be used in other scenarios than password policy checks.
 
-The high-level idea is to use \ac{OBI} so that the server can send a set of secret shares to the client based on the client's set \cC without knowing anything about \cC. 
+The high-level idea is to use \ac{OBI} so that the server can send a set of secret shares to the client based on the client's set \ClientSet without knowing anything about \ClientSet. 
 Although in general we can use any \ac{PSI} with data transfer protocol (\eg \citet{fre04}), \ac{OBI} is chosen here because of its efficiency. 
 \ac{OBI} is very efficient due to the fact that it relies mostly on hash operations. 
 While the performance of \ac{OBI} can be further improved by the modifications proposed by \citet{Pinkas0Z14}, based on hashtable plus oblivious transfer that is more efficient than \ac{OBI}, the new \ac{PSI} protocol cannot be used in our case because it does not support data transfer.
 
 \subsection{Secure Set-based Policy Checking (SPC)} \label{sec:spc}
 In this section we introduce a new protocol called secure \ac{SPC}. 
-In \ac{SPC}, a server holds a public policy $f$ as defined in Section \ref{sec:spc-passwords} and a client holds a private set \cC. 
-The goal is to allow the server to check whether \cC satisfies $f$ without learning anything else about $\cC$. 
+In \ac{SPC}, a server holds a public policy $f$ as defined in Section \ref{sec:spc-passwords} and a client holds a private set \ClientSet. 
+The goal is to allow the server to check whether \ClientSet satisfies $f$ without learning anything else about $\ClientSet$. 
 
 \begin{definition}[Secure Set-based Policy Checking, SPC]\label{def:SPC}
-Set-based policy checking is executed between client $C$ with a private set \cC and server $S$ with a public policy $f=(\cS,\Gamma_\cS)$.
-Server and client retrieve $f(\cC)$ as result. 
+Set-based policy checking is executed between client $C$ with a private set \ClientSet and server $S$ with a public policy $f=(\ServerSet,\Gamma_\ServerSet)$.
+Server and client retrieve $f(\ClientSet)$ as result. 
 We call a set-based policy checking protocol secure iff it fulfils the following three notions.
 \begin{enumerate}
-  \item Correctness: Honest execution of the protocol with $f(\cC)=\true$ is accepted by the server with overwhelming probability.
-  \item Client Privacy: Server $S$ learns nothing about the client set \cC other than $f(\cC)$.
- % \item Server Privacy: Client $C$ learns nothing new about the server sets $\cS$.
-  \item Soundness: A client $C$ holding \cC with $f(\cC)\not=\true$ has negligible probability in getting $S$ to accept the \ac{SPC} execution. \eod
+  \item Correctness: Honest execution of the protocol with $f(\ClientSet)=\true$ is accepted by the server with overwhelming probability.
+  \item Client Privacy: Server $S$ learns nothing about the client set \ClientSet other than $f(\ClientSet)$.
+ % \item Server Privacy: Client $C$ learns nothing new about the server sets $\ServerSet$.
+  \item Soundness: A client $C$ holding \ClientSet with $f(\ClientSet)\not=\true$ has negligible probability in getting $S$ to accept the \ac{SPC} execution. \eod
 \end{enumerate}
 %We write $|C\cap S|_m^{t}$ for $t=(t_1, \cdots, t_m)$.
 \end{definition}
 
 \noindent
-Definition \ref{def:SPC} says in particular that an \ac{SPC} protocol provides both participants with the result of $f(\cC)$ while the server learns nothing about \cC more than it can can infer from the result and public information.
-%Depending on the application, the server's set \cS can be private or public. 
-%(If \cS is secret, the client learns nothing. If \cS is public, there are no new information to learn from the execution.)
-%Definition \ref{def:SPC} says in particular that an \ac{SPC} protocol provides both participants with the result of $f(\cC)$ while the client learns nothing new about \cS and the server learns nothing about \cC.
-%Depending on the application, the server's set \cS can be private or public. 
-%(If \cS is secret, the client learns nothing. If \cS is public, there are no new information to learn from the execution.)
+Definition \ref{def:SPC} says in particular that an \ac{SPC} protocol provides both participants with the result of $f(\ClientSet)$ while the server learns nothing about \ClientSet more than it can can infer from the result and public information.
+%Depending on the application, the server's set \ServerSet can be private or public. 
+%(If \ServerSet is secret, the client learns nothing. If \ServerSet is public, there are no new information to learn from the execution.)
+%Definition \ref{def:SPC} says in particular that an \ac{SPC} protocol provides both participants with the result of $f(\ClientSet)$ while the client learns nothing new about \ServerSet and the server learns nothing about \ClientSet.
+%Depending on the application, the server's set \ServerSet can be private or public. 
+%(If \ServerSet is secret, the client learns nothing. If \ServerSet is public, there are no new information to learn from the execution.)
 Formally, privacy is defined using the simulation-based approach.
 Privacy of an \ac{SPC} protocol $\Pi$ in particular holds if its execution in the real model emulates execution of the ideal model with a trusted party for \ac{SPC} functionality $f_\Pi$, \ie
 $ \{\IDEAL_{f_\Pi, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi, A(z)}(x, y)\}_{x, y, z}$.
-Functionality $f_\Pi$ outputs $f(\cC)$ to the server and client, \ie $f_{\Pi}(\cC, f)=(f(\cC), f(\cC))$.
+Functionality $f_\Pi$ outputs $f(\ClientSet)$ to the server and client, \ie $f_{\Pi}(\ClientSet, f)=(f(\ClientSet), f(\ClientSet))$.
 
 \setlength{\textfloatsep}{21pt}
 % \setlength{\belowcaptionskip}{2pt}
@@ -52,14 +52,14 @@ Functionality $f_\Pi$ outputs $f(\cC)$ to the server and client, \ie $f_{\Pi}(\c
 		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
 		column 2/.style={nodes={minimum width=4em}},
 		column 3/.style={nodes={minimum width=20em, align=right, text width=20em}}]{
-	\node[align=center](client){$C~ (\cC)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$S$ $(f$ $=$ $(\cS,\Gamma_\cS))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+	\node[align=center](client){$\Client~ (\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\Server$ $(f$ $=$ $(\ServerSet,\Gamma_\ServerSet))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
 	
 	\& \& choose a secret \secret $\in_R$ $\mathbb{Z}_p$ \\
 	\& \& generate matrix $M$ and function $\rho$ from $f$\\
-	\parbox{18em}{}\&  $f, M, \rho$\& generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\cS$ \\
-	\parbox{18em}{get shares from $G_{\cC\cap\cS}$: $\{\secret_i|\rho(i)\in \cS\cap \cC\}$} \& % generate $B_{\cC}$ encoding $\cC$ generate $G_{\cS}$ encoding $\cS$ and $\{\secret_{\rho(s_i)}: s_i\in \cS\}$
+	\parbox{18em}{}\&  $f, M, \rho$\& generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
+	\parbox{18em}{get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$} \& % generate $B_{\ClientSet}$ encoding $\ClientSet$ generate $G_{\ServerSet}$ encoding $\ServerSet$ and $\{\secret_{\rho(s_i)}: s_i\in \ServerSet\}$
 	  \ac{OBI} \& \\
-% 	\parbox{18em}{query $G'$ with all $\cC$ to get according $s_{xi}$} \& \& \\
+% 	\parbox{18em}{query $G'$ with all $\ClientSet$ to get according $s_{xi}$} \& \& \\
 	\parbox{18em}{if possible: recover $\secret$ from the shares} \& \& \\
 	\parbox{18em}{else: abort and output $\bot$} \& \& \\
 	\parbox{18em}{$m_\secret\gets H(\secret,C,S,\trans)$} \& 
@@ -78,37 +78,37 @@ Functionality $f_\Pi$ outputs $f(\cC)$ to the server and client, \ie $f_{\Pi}(\c
 \noindent
 We give now an instantiation of \ac{SPC}.
 An overview of the protocol is depicted in Fig.~\ref{fig:spc}. 
-Let $f=(\cS,\Gamma_\cS)$ be the server's policy defined over its set $\cS$ and $\cC$ be the client's set. 
-The two parties want to check $f(\cC)$, \ie whether $\cC$ satisfies $f$. 
+Let $f=(\ServerSet,\Gamma_\ServerSet)$ be the server's policy defined over its set $\ServerSet$ and $\ClientSet$ be the client's set. 
+The two parties want to check $f(\ClientSet)$, \ie whether $\ClientSet$ satisfies $f$. 
 Both parties get a collision resistant hash function $H$ and a security parameter $\lambda$ as common input. 
 The server can map policy $f$ into a set of secret shares $\mathfrak{S}$ by first choosing a random secret \secret from $\ZZ_p$, where $f$ is a large prime number chosen according to the security parameter $\lambda$, then generating the \ac{LSSS} matrix $M$ and the mapping function $\rho$ from policy $f$ and computing shares. 
-Each share $\secret_i \in \mathfrak{S}$ is associated with an element $\rho(i)\in \cS$. 
-Depending on the policy, it is possible that an element in $s_j\in\cS$ is associated with multiple shares, \ie there exist multiple rows $i$ in $M$ such that $\rho(i)=s_j$. 
-In this case, the server concatenates all $\secret_i$ associated with $s_j$ so that $\mathfrak{S}$ still has cardinality $|\cS|$. 
-The two parties then run the \ac{OBI} protocol with the server using $(\cS, \mathfrak{S})$ and the client using $\cC$ as their inputs. 
-In the \ac{OBI} protocol, the server's garbled Bloom filter is built using elements in $\cS$ as keys and shares in $\mathfrak{S}$ as data items\footnote{The data items to be transferred in \ac{OBI} must be at least $\lambda$-bits and of equal length. 
+Each share $\secret_i \in \mathfrak{S}$ is associated with an element $\rho(i)\in \ServerSet$. 
+Depending on the policy, it is possible that an element in $s_j\in\ServerSet$ is associated with multiple shares, \ie there exist multiple rows $i$ in $M$ such that $\rho(i)=s_j$. 
+In this case, the server concatenates all $\secret_i$ associated with $s_j$ so that $\mathfrak{S}$ still has cardinality $|\ServerSet|$. 
+The two parties then run the \ac{OBI} protocol with the server using $(\ServerSet, \mathfrak{S})$ and the client using $\ClientSet$ as their inputs. 
+In the \ac{OBI} protocol, the server's garbled Bloom filter is built using elements in $\ServerSet$ as keys and shares in $\mathfrak{S}$ as data items\footnote{The data items to be transferred in \ac{OBI} must be at least $\lambda$-bits and of equal length. 
 We assume a proper scheme (\eg zero padding) to pad elements in $\mathfrak{S}$ to the correct length.}.
-At the end of the \ac{OBI} protocol the client gets a set of shares $\{\secret_i|\rho(i)\in \cS\cap \cC\}$. 
-If $\cC$ satisfies policy $f$, then the shares obtained from the \ac{OBI} protocol will allow the client to reconstruct the secret \secret, otherwise the client learns nothing about \secret and aborts. 
+At the end of the \ac{OBI} protocol the client gets a set of shares $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$. 
+If $\ClientSet$ satisfies policy $f$, then the shares obtained from the \ac{OBI} protocol will allow the client to reconstruct the secret \secret, otherwise the client learns nothing about \secret and aborts. 
 In the last step, by proving knowledge of secret \secret, the client can convince the server that its set is compliant with policy~$f$.
 
 
 \subsubsection{SPC Security Analysis}
 \begin{lemma}[Correctness]\label{lem:correct}
-  Let $\cC$ and $\cS$ denote sets from some universe and $f=(\cS,\Gamma_\cS)$.
-  Assuming the used \ac{OBI} and \ac{LSSS} algorithms are correct, then the \ac{SPC} protocol from Fig. \ref{fig:spc} is correct, \ie honest execution of the protocol with $f(\cC) = \true$ is accepted by the server with overwhelming probability.\end{lemma}
+  Let $\ClientSet$ and $\ServerSet$ denote sets from some universe and $f=(\ServerSet,\Gamma_\ServerSet)$.
+  Assuming the used \ac{OBI} and \ac{LSSS} algorithms are correct, then the \ac{SPC} protocol from Fig. \ref{fig:spc} is correct, \ie honest execution of the protocol with $f(\ClientSet) = \true$ is accepted by the server with overwhelming probability.\end{lemma}
 \begin{proof}
-%First we argue that the proposed protocol is correct, \ie the server and the client are always able to determine $f(\cC)$ if the protocol is executed honestly.
+%First we argue that the proposed protocol is correct, \ie the server and the client are always able to determine $f(\ClientSet)$ if the protocol is executed honestly.
 Assuming correct \ac{LSSS} and \ac{OBI}, correctness can be proved by the following argument.
-LSSS guarantees correct sharing of secret \secret, \ie for any authorised set $S_i\in \Gamma_\cS$ there is a set of shares associated with the elements in $S_i$ that can reconstruct \secret and for any other set the secret cannot be reconstructed. 
-OBI guarantees that for each element in the intersection of $\cS\cap \cC$, the client is able to obtain the share associated with it. 
-All elements in $\cC$ that are not in the intersection are irrelevant as by definition they are not in $\cS$ thus not in any authorised set. 
-Then the client can reconstruct \secret iff there exists a subset of $\cS\cap \cC$ that is an authorised set. 
-If there is such an authorised set then $f(\cC)=\true$. Eventually, the hash value $m_\secret$ is the same on the client and server if the same key \secret, transcript \trans, and participants identifiers $C$ and $S$ are used.
+LSSS guarantees correct sharing of secret \secret, \ie for any authorised set $S_i\in \Gamma_\ServerSet$ there is a set of shares associated with the elements in $S_i$ that can reconstruct \secret and for any other set the secret cannot be reconstructed. 
+OBI guarantees that for each element in the intersection of $\ServerSet\cap \ClientSet$, the client is able to obtain the share associated with it. 
+All elements in $\ClientSet$ that are not in the intersection are irrelevant as by definition they are not in $\ServerSet$ thus not in any authorised set. 
+Then the client can reconstruct \secret iff there exists a subset of $\ServerSet\cap \ClientSet$ that is an authorised set. 
+If there is such an authorised set then $f(\ClientSet)=\true$. Eventually, the hash value $m_\secret$ is the same on the client and server if the same key \secret, transcript \trans, and participants identifiers $C$ and $S$ are used.
 \end{proof}
 
 \begin{lemma}[Privacy]\label{lem:SPCprivacy}
- Let $\cC$ and $\cS$ denote sets from some universe, $f=(\cS,\Gamma_\cS)$ a policy and $f_\SPC(\cC, f)=(f(\cC), f(\cC))$. 
+ Let $\ClientSet$ and $\ServerSet$ denote sets from some universe, $f=(\ServerSet,\Gamma_\ServerSet)$ a policy and $f_\SPC(\ClientSet, f)=(f(\ClientSet), f(\ClientSet))$. 
  If the \ac{OBI} protocol is secure and the \ac{LSSS} is correct, the \ac{SPC} protocol from Figure \ref{fig:spc} securely realises $f_\SPC$ in the presence of a malicious server or client.
 \end{lemma}
 
@@ -122,26 +122,26 @@ Note that we omit auxiliary input $z$ if not needed.
 We build $\SIM_S$ that on input of the server's policy $f$, and access to the real world adversary $\cA_S$ that plays server $S$, generates $\view_S$ that is indistinguishable from $\view_{AS}$ of $\cA_S$.
 
 $\SIM_S$ starts by invoking server $\cA_S$ with $f$ and $z$ to receive share-generating matrix $M$ and $\rho$ and policy $f'$ from adversary $\cA_S$ in the first protocol message. 
-Then as input to the \ac{OBI} functionality $\SIM_S$ receives the server's \ac{OBI} input  from $\cA_S$, \ie a set $\cS'$ and shares $\cS_d=\{\secret_i\}$. 
-$\SIM_S$ then sends $\cS'$ to the trusted party. 
+Then as input to the \ac{OBI} functionality $\SIM_S$ receives the server's \ac{OBI} input  from $\cA_S$, \ie a set $\ServerSet'$ and shares $\ServerSet_d=\{\secret_i\}$. 
+$\SIM_S$ then sends $\ServerSet'$ to the trusted party. 
 If the trusted party replies with $\bot$, the simulation terminates and $\SIM_S$ outputs whatever $\cA_S$ outputs. 
 If the trusted party replies with $\true$, 
-simulator $\SIM_S$ generates a set \cC with $f'(\cC)=\true$ based on $f'$ and $\cS'$. 
-If the trusted party replies with $\texttt{false}$, simulator $\SIM_S$ generates a set \cC with $f(\cC)=\texttt{false}$ based on $f'$ and $\cS'$. 
-Building \cC from $\cS'$ and $f'$ is straightforward. 
+simulator $\SIM_S$ generates a set \ClientSet with $f'(\ClientSet)=\true$ based on $f'$ and $\ServerSet'$. 
+If the trusted party replies with $\texttt{false}$, simulator $\SIM_S$ generates a set \ClientSet with $f(\ClientSet)=\texttt{false}$ based on $f'$ and $\ServerSet'$. 
+Building \ClientSet from $\ServerSet'$ and $f'$ is straightforward. 
 $\SIM_S$ sends client and server input to the \ac{OBI} functionality to retrieve the server's and client's view on the \ac{OBI} execution. 
 Further, $\SIM_S$ tries to recover \secret from the output of $f_\OBI$ using the combination algorithm of \ac{LSSS}. 
-If the client can reconstruct \secret, $\SIM_S$ generates $m_\secret$ using $M, \rho, f'$ and $\cS'$, the (simulated) \ac{OBI} transcript, \secret, $C$, and $S$ and sends it to $A_S$. 
+If the client can reconstruct \secret, $\SIM_S$ generates $m_\secret$ using $M, \rho, f'$ and $\ServerSet'$, the (simulated) \ac{OBI} transcript, \secret, $C$, and $S$ and sends it to $A_S$. 
 Otherwise, if $\SIM_S$ cannot recover \secret from the $f_\OBI$ output, it terminates the session with $\bot$.
 Eventually $\SIM_S$ outputs the transcript and whatever $A_S$ returns on terminating as $\view_S$.
 
 We claim that the output of an honest client in the ideal execution is indistinguishable from the client's output in the real world.
-This is easy to see as the client always receives $f$ and the possibility to compute $f(\cC)$ using either the public server set \cS, or the output of the \ac{OBI}/$f_\OBI$ execution.
-Note that the evaluation of $f$ depends on the set used by $A_S$ in the \ac{OBI} execution ($\cS'$).
+This is easy to see as the client always receives $f$ and the possibility to compute $f(\ClientSet)$ using either the public server set \ServerSet, or the output of the \ac{OBI}/$f_\OBI$ execution.
+Note that the evaluation of $f$ depends on the set used by $A_S$ in the \ac{OBI} execution ($\ServerSet'$).
 Since this strategy is the same in the real and the ideal world, the claim follows.
 Indistinguishability of $\view_S$ and $\view_{AS}$ follows from the following observations.
 If the server's input to \ac{OBI} is not correct, the protocol terminates.
-It is easy to see that the transcript containing $f, M, \rho$, and \cS, and the \ac{OBI} execution in $\view_S$ and $\view_{AS}$ is identical.
+It is easy to see that the transcript containing $f, M, \rho$, and \ServerSet, and the \ac{OBI} execution in $\view_S$ and $\view_{AS}$ is identical.
 Since the input to the hash function $H$ is equivalent in both worlds, $\view_S$ and $\view_{AS}$ are indistinguishable.
 
 \end{proof}
@@ -151,12 +151,12 @@ Lemma \ref{lem:SPCprivacy} proves that the \ac{SPC} protocol ensures client priv
 We now give a lemma to show soundness of our \ac{SPC} protocol that concludes the security analysis of the proposed \ac{SPC} protocol.
 
 \begin{lemma}[Soundness]\label{lem:SPCsecurity}
-  Let $\cC$ and $\cS$ denote sets from some universe and $f=(\cS,\Gamma_\cS)$ a policy.
-  Assuming the used \ac{OBI} and \ac{LSSS} algorithms are secure and $H$ is collision resistant, then the \ac{SPC} protocol from Fig. \ref{fig:spc} is sound in the presence of a malicious client, \ie the server accepts the protocol with negligible probability if $f(\cC)\not=\true$.
+  Let $\ClientSet$ and $\ServerSet$ denote sets from some universe and $f=(\ServerSet,\Gamma_\ServerSet)$ a policy.
+  Assuming the used \ac{OBI} and \ac{LSSS} algorithms are secure and $H$ is collision resistant, then the \ac{SPC} protocol from Fig. \ref{fig:spc} is sound in the presence of a malicious client, \ie the server accepts the protocol with negligible probability if $f(\ClientSet)\not=\true$.
 \end{lemma}
 
 \begin{proof}
-Lemma \ref{lem:SPCsecurity} can be proven by showing that convincing \Server to accept the protocol despite the fact that $f(\cC)\not=\true$ implies a collision in $H$.
+Lemma \ref{lem:SPCsecurity} can be proven by showing that convincing \Server to accept the protocol despite the fact that $f(\ClientSet)\not=\true$ implies a collision in $H$.
 First, it is clear that the attacker is not able to recover the correct secret \secret from the \ac{OBI} interaction with \Server since this would break either \ac{OBI} or \ac{LSSS} security.
 Now it follows directly that any attacker that is able to generate a message $m_\secret$ such that $m_\secret=H(\secret,C,S,\trans)$ found a collision in $H$ as it does not know the correct secret \secret.
 \end{proof}
@@ -169,8 +169,8 @@ In this section we want to give some ideas of other \ac{SPC} use-cases.
 \paragraph{Policy checks for Access Control}
 In a role-based access control scenario \cite{FerraioloK09} a user has to have a certain role (or combination of roles) in order to access a resource.
 \ac{SPC} can be used in this case to verify whether a client has necessary roles that allow it to access the resource.
-The server in this case defines \cS to contain identifiers for all allowed roles $S_i$ and $\Gamma_\cS$ according to the access policy.
-The user's set \cC contains the client's role identifiers $c_i$.
+The server in this case defines \ServerSet to contain identifiers for all allowed roles $S_i$ and $\Gamma_\ServerSet$ according to the access policy.
+The user's set \ClientSet contains the client's role identifiers $c_i$.
 Access should be granted if and only if the \ac{SPC} protocol is successful, \ie the user can convince the server that he has all necessary roles.
 
 \paragraph{Policies for Friendship Analysis}
@@ -209,11 +209,10 @@ It is also not difficult to see how \ac{SPC} can be applied in the password poli
 % Since the blinded characters are generated with proper randomness, the client can be assured that the password is secure even if the password database is compromised (modulo unavoidable offline dictionary attacks).
 
 \subsubsection{The Password Registration Protocol}
-
 An overview of the proposed password registration protocol is given in Fig. \ref{fig:bpr}. 
 To simplify the presentation, we assume the protocol is run over a secure channel, \eg implemented as a server authenticated \ac{TLS} channel. 
 The secure channel will address common network-based attacks such as replay, eavesdropping and man-in-the-middle. 
-The server publishes its password policy $f=(\cS,\Gamma_\cS)$ where \cS is a set transformed from dictionary \cD according to Section \ref{sec:spc-passwords} and $\Gamma_\cS$ is a threshold access structure defined over \cS. 
+The server publishes its password policy $f=(\ServerSet,\Gamma_\ServerSet)$ where \ServerSet is a set transformed from dictionary \cD according to Section \ref{sec:spc-passwords} and $\Gamma_\ServerSet$ is a threshold access structure defined over \ServerSet. 
 Other public parameters consist of a security parameter $\lambda$, a pseudorandom function family $f_k$, and three hash functions $H_1, H_2$, and $H_3$. 
 The client has a private password \pwd which will be used in the protocol as its input, \ie we assume the client received policy $f$ already and entered an appropriate password \pwd. 
 The protocol has two phases, a setup phase and a policy checking phase. 
@@ -223,13 +222,13 @@ The blinded sets are later used in the policy checking phase. In the policy chec
 The protocol proceeds as follows. 
 In the setup phase, the server runs the RSA key generation algorithm on input of security parameter $\lambda$ to generate an RSA key pair $\pk=(e,N), \sk=(d,N)$ using $\KGen(\secpar)$. 
 The public key is sent to the client while the secret key is kept private. 
-Upon receiving the server's public key $\pk=(e,N)$, the client's first step is to compute a key $k=H_1(\pwd)$ for the pseudorandom function by hashing the password using $H_1$. The client uses the password pre-processing function $\psi$ to generate $\cC\gets\psi(\pwd)$ and to compute $r_i=f_k(i)$ and $u_i=H_2(c_i)\cdot r_i^e$ for each $c_i\in\cC$.
+Upon receiving the server's public key $\pk=(e,N)$, the client's first step is to compute a key $k=H_1(\pwd)$ for the pseudorandom function by hashing the password using $H_1$. The client uses the password pre-processing function $\psi$ to generate $\ClientSet\gets\psi(\pwd)$ and to compute $r_i=f_k(i)$ and $u_i=H_2(c_i)\cdot r_i^e$ for each $c_i\in\ClientSet$.
 The result $(u_1,\ldots,u_v)$ is sent to the server.
 For each $i\in[1,v]$ the server computes $u_i'=u_i^d$ and returns $(u_1',\ldots,u_v')$ back to the client. 
-Eventually, upon receiving $(u_1',\ldots,u_v')$, the client creates an empty set $\hat{\cC}$ and for $i\in[1,v]$ puts $u_i'\cdot r_i^{-1}=(H_2(c_i))^d$ into $\hat{\cC}$. 
-The server also creates an empty set $\hat{\cS}$ and for $i\in[1,w]$ puts $(H_2(s_i))^d$ into $\hat{\cS}$. The set $\hat{\cS}$ is partitioned into $m$ subsets according to the character classes. 
-The server also generate $\hat{f}$ from $f$ by replacing $\cS$ with $\hat{\cS}$.
-The policy checking phase is essentially an execution of  the \ac{SPC} protocol using $\hat{\cC}$ and $\hat{f}$ as inputs. 
+Eventually, upon receiving $(u_1',\ldots,u_v')$, the client creates an empty set $\hat{\ClientSet}$ and for $i\in[1,v]$ puts $u_i'\cdot r_i^{-1}=(H_2(c_i))^d$ into $\hat{\ClientSet}$. 
+The server also creates an empty set $\hat{\ServerSet}$ and for $i\in[1,w]$ puts $(H_2(s_i))^d$ into $\hat{\ServerSet}$. The set $\hat{\ServerSet}$ is partitioned into $m$ subsets according to the character classes. 
+The server also generate $\hat{f}$ from $f$ by replacing $\ServerSet$ with $\hat{\ServerSet}$.
+The policy checking phase is essentially an execution of  the \ac{SPC} protocol using $\hat{\ClientSet}$ and $\hat{f}$ as inputs. 
 At the end of the \ac{SPC} protocol the server learns whether the client's password satisfies the policy or not. 
 If the \ac{SPC} execution is successful, the server computes the hash of the product of the client's $u_i$ values $h\gets H_3(\prod_{i=1}^v u_i)$, and stores the password verifier $\ver = (h,e,N,d,\bm{u})$, where $(e,N,d)$ is the RSA key pair from the setup phase and $\bm{u}=\{u_1,\dots,u_v\}$ is the vector of client ``commitments''.
 Note that $(d, \bm{u})$ as part of \ver is only a technical necessity in order to prove security.
@@ -243,27 +242,27 @@ Note that $(d, \bm{u})$ as part of \ver is only a technical necessity in order t
 		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
 		column 2/.style={nodes={minimum width=10em}},
 		column 3/.style={nodes={minimum width=17em, align=right, text width=17em}}]{
-	\node[align=center](client){$C\ (f, \pwd)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& {\it Setup Phase} \& \node[align=center](server){$S$ $(f,\cS$ $=$ $\{s_1,\dots,s_w\})$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+	\node[align=center](client){$C\ (f, \pwd)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& {\it Setup Phase} \& \node[align=center](server){$S$ $(f,\ServerSet$ $=$ $\{s_1,\dots,s_w\})$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
 	
 	\parbox{18em}{$k\gets H_1(\pwd)$} \& 
 	  $(e,N)$ \& 
 	  $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\  %Define policy $f$
-	\parbox{18em}{$\cC=\{c_1,c_2,\ldots,c_v\}\gets\psi(\pwd)$} \&  \&  \\
+	\parbox{18em}{$\ClientSet=\{c_1,c_2,\ldots,c_v\}\gets\psi(\pwd)$} \&  \&  \\
 	\parbox{18em}{$\forall i\in[1,v]:~ r_i\gets f_k(i),~ u_i\gets H_2(c_i)\cdot r_i^e$} \& 
 	  $(u_1,\cdots,u_v)$ \& 
 	  abort if $v$ $<$ \pmin \\
-	\parbox{18em}{$\hat{\cC} = \emptyset$} \& 
+	\parbox{18em}{$\hat{\ClientSet} = \emptyset$} \& 
 	  $(u'_1,\cdots,u'_v)$ \& 
-	  $\forall i$ $\in$ $[1,v]$: $u'_i$ $=$ $u_i^d$;~ $\hat{\cS}$ $=$ $\emptyset$ \\
-	\parbox{18em}{$\forall i\in[1,v]:~ \hat{\cC}\cup u'_i\cdot r_i^{-1}$} \& \&
-	  $\forall i$ $\in$ $[1,w]$: $\hat{\cS}$ $\cup$ $(H_2(s_i))^d$ \\
+	  $\forall i$ $\in$ $[1,v]$: $u'_i$ $=$ $u_i^d$;~ $\hat{\ServerSet}$ $=$ $\emptyset$ \\
+	\parbox{18em}{$\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$} \& \&
+	  $\forall i$ $\in$ $[1,w]$: $\hat{\ServerSet}$ $\cup$ $(H_2(s_i))^d$ \\
 \parbox{18em}{} \& \&
 	  $\hat{f}$ $\gets$ $f,\hat{S}$ \\
 	\hfill \& \hfill \& \hfill \\
 	\parbox{18em}{} \& {\it Policy Checking Phase} \& \\
-	\parbox{18em}{} \& {$\hat{\cC}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$} \& 
+	\parbox{18em}{} \& {$\hat{\ClientSet}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$} \& 
 	  If \ac{SPC} execution is successful \\
-	\parbox{18em}{} \& \hfill \& %$\forall c_i\in\pwd$ but not in \cC:
+	\parbox{18em}{} \& \hfill \& %$\forall c_i\in\pwd$ but not in \ClientSet:
 	  store $\ver$ $\gets$ $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
 };
 
@@ -282,27 +281,27 @@ The protocol in Figure~\ref{fig:bpr} leaks the password length to the server. By
 This is intentional because this peripheral information leakage allows the server to efficiently enforce the minimal password length in the policy. 
 However, in cases where the password length is considered sensitive, it can be hidden from the  server at small additional~cost.
 
-The client generates a set $\cC'\subseteq\cC$ and uses it in the setup phase to generate $\hat{\cC}$. 
-$\cC'$ contains only necessary characters to fulfil $f$. 
-That is, the client first takes characters from $\cC$ according to character class $A_i$ and threshold $t_i$, and puts them in $\cC'$.
-If the size of $\cC'$ is smaller than the minimal password length \pmin, the client pads it with other characters in $\cC$ that are not in $\cC'$ yet. 
-In the setup phase, the client only uses characters in $\cC'$ and obtains the corresponding $\hat{\cC}$. In this process, the server learns the size of $\cC'$ and can check whether this is equal to the minimal password length \pmin required by the policy. 
-The client then uses this $\hat{\cC}$ in the policy checking phase to convince the server about the password complexity. 
-If the server accepts, all characters in $\cC\setminus\cC'$ that have not been sent to the server are put into an additional $u^\ast=r_{v+1}^e\cdot\prod u_i$ with $r_i\gets f_k(i),~ u_i\gets H_2(c_i)\cdot r_i^e$ for $c_i\in\cC\setminus\cC'$. 
+The client generates a set $\ClientSet'\subseteq\ClientSet$ and uses it in the setup phase to generate $\hat{\ClientSet}$. 
+$\ClientSet'$ contains only necessary characters to fulfil $f$. 
+That is, the client first takes characters from $\ClientSet$ according to character class $A_i$ and threshold $t_i$, and puts them in $\ClientSet'$.
+If the size of $\ClientSet'$ is smaller than the minimal password length \pmin, the client pads it with other characters in $\ClientSet$ that are not in $\ClientSet'$ yet. 
+In the setup phase, the client only uses characters in $\ClientSet'$ and obtains the corresponding $\hat{\ClientSet}$. In this process, the server learns the size of $\ClientSet'$ and can check whether this is equal to the minimal password length \pmin required by the policy. 
+The client then uses this $\hat{\ClientSet}$ in the policy checking phase to convince the server about the password complexity. 
+If the server accepts, all characters in $\ClientSet\setminus\ClientSet'$ that have not been sent to the server are put into an additional $u^\ast=r_{v+1}^e\cdot\prod u_i$ with $r_i\gets f_k(i),~ u_i\gets H_2(c_i)\cdot r_i^e$ for $c_i\in\ClientSet\setminus\ClientSet'$. 
 This value $u^\ast$ is then sent to the server and is multiplied with the other $u_i$ values the server received in the setup phase.
 This product is then used to generate the verifier \ver, \ie $\ver\gets(H_3(r_{v+1}^e\prod_{i=1}^v u_i), e, N, d, \bm{u})$. 
 Note that we require $r_{v+1}^e$ as a multiplicand when computing $u^\ast$. 
-Without this, the server could learn the client's password length when $\cC\setminus\cC'=\emptyset$ because the client would have nothing to send in this case. 
+Without this, the server could learn the client's password length when $\ClientSet\setminus\ClientSet'=\emptyset$ because the client would have nothing to send in this case. 
 
 \subsubsection{Security Analysis} \label{sec:bpr:security}
 We now analyse the security of the password registration protocol. Note that in the password registration protocol, the two parties have different security requirements. For the server, privacy is not a concern since its input, the policy, is public. On the other hand, the server cares about the soundness of the protocol because an unsound protocol would allow a user to register an invalid password. For the client, privacy is the main concern while soundness is not. Since the policy is public, the client can check the policy by itself and can detect if the server cheats. 
-We therefore refrain from using an over-complicated security definition and use the following comprehensible security model that is simpler. Let $\ver\gets\phi(\pwd,r)$ denote a password verifier, computed from a password \pwd and some randomness $r$, and $\psi(\pwd)$ a function to generate set \cC from password \pwd.
+We therefore refrain from using an over-complicated security definition and use the following comprehensible security model that is simpler. Let $\ver\gets\phi(\pwd,r)$ denote a password verifier, computed from a password \pwd and some randomness $r$, and $\psi(\pwd)$ a function to generate set \ClientSet from password \pwd.
 %Note that we retain from using an over-complicated security definition that would be necessary to capture the asymmetric properties of the protocol and use the following comprehensible security model.
 % A password registration protocol $\Pi$ for a password verifier \ver has to fulfil the following properties in order to be secure.
 \begin{enumerate}
-  \item Privacy: A malicious server must not be able to retrieve more information from the protocol than the password verifier and the result of the policy verification, \ie the protocol must implement the functionality $f_{\Pi}=(f(\cC), (f(\cC), \ver))$. Furthermore, the verifier must not give a malicious server advantage in terms of password guessing. 
+  \item Privacy: A malicious server must not be able to retrieve more information from the protocol than the password verifier and the result of the policy verification, \ie the protocol must implement the functionality $f_{\Pi}=(f(\ClientSet), (f(\ClientSet), \ver))$. Furthermore, the verifier must not give a malicious server advantage in terms of password guessing. 
 %   The server cannot guess the password faster than a dictionary attack on verifier \ver.
-  \item Soundness: The server accepts a password verifier $\ver\gets\phi(\pwd,r)$ if and only if (i) the password is compliant with the server's policy, \ie $f(\cC)=\true$ for $\cC\gets\psi(\pwd)$, and (ii) the verifier is uniquely defined by the password and some server known randomness, \ie there exists no password $\pwd'\not=\pwd$ such that $\phi(\pwd',r)=\ver$ and it is not possible to find randomness $r'\not=r$ in polynomial time such that $\phi(\pwd,r')=\ver$.
+  \item Soundness: The server accepts a password verifier $\ver\gets\phi(\pwd,r)$ if and only if (i) the password is compliant with the server's policy, \ie $f(\ClientSet)=\true$ for $\ClientSet\gets\psi(\pwd)$, and (ii) the verifier is uniquely defined by the password and some server known randomness, \ie there exists no password $\pwd'\not=\pwd$ such that $\phi(\pwd',r)=\ver$ and it is not possible to find randomness $r'\not=r$ in polynomial time such that $\phi(\pwd,r')=\ver$.
 \end{enumerate}
 
 
@@ -326,11 +325,11 @@ If $f_k$ is a secure pseudorandom function family, $H_1$ is collision resistant,
   We first show that the server is simulatable, \ie the protocol realises the functionality $f_\Pi$, and then show that the verifier \ver is of no help when performing a dictionary attack.
   
   We start with the simulation by building a simulator $\SIM_S$, simulating a malicious server.
-  $\SIM_S$ starts by invoking adversary $A_S$ with $(P, \cS)$ that is playing the role of server $S$ in the protocol, and is provided with $(e,N)$ as a result.
+  $\SIM_S$ starts by invoking adversary $A_S$ with $(P, \ServerSet)$ that is playing the role of server $S$ in the protocol, and is provided with $(e,N)$ as a result.
   Using $(e,N)$, $\SIM_S$ generates $(u_1, \dots, u_l)$ as $u_i=\alpha_i r_i^e$ for $\alpha_i\rin \ZZ^\ast_N$, $r_i\gets f_{H_1(\pwd)}(i)$, and some $l=\pmin$ where $\pwd\in\cD_f$, and returns it to $A_S$.
   The random oracle $H_2$ is honestly simulated by $\SIM_S$.
   % with the same values used for characters $c_i$, and random values for all other queries.
-  After receiving $(u'_1, \dots, u'_l)$ the simulator builds $\hat{\cC}$ according to protocol specification and uses it together with $\hat{f}$, which is provided by $A_S$, to simulate the \ac{SPC} execution.
+  After receiving $(u'_1, \dots, u'_l)$ the simulator builds $\hat{\ClientSet}$ according to protocol specification and uses it together with $\hat{f}$, which is provided by $A_S$, to simulate the \ac{SPC} execution.
   Eventually, $\SIM_S$ gives the result of the \ac{SPC} execution as well as $u^\ast\rin\ZZ^\ast_N$ to $A_S$ and outputs whatever $A_S$ returns on termination.
   It is easy to see that the client's view after the protocol is identical in the real and ideal world as the protocol execution is correct and all server values despite $d$ are public.
   Further, the adversary's view is computationally indistinguishable from the simulator's output since all client messages have the same distribution in both worlds.
@@ -348,12 +347,12 @@ If $f_k$ is a secure pseudorandom function family, $H_1$ is collision resistant,
 \end{lemma}
 
 \begin{proof}
-  First note that the used \ac{SPC} protocol is secure and therefore guarantees that the server accepts iff the elements in $\hat{\cC}$ are compliant with policy $f$ with respect to $\hat{\cS}$.
-  We therefore only have to show that (i) the client is not able to use different elements in \cC than in $\hat{\cC}$, \ie the password \pwd actually satisfies $f$, and (ii) the password verifier $\ver$ is uniquely defined by $(\pwd, e, N, d, \bm{u})$, \ie there exists no password $\pwd'\not=\pwd$ that generates the same verifier as \pwd and it is not possible to find randomness $(e',N', d')\not=(e, N, d)$ in polynomial time that generates the same verifier as $(e,N, d)$.
+  First note that the used \ac{SPC} protocol is secure and therefore guarantees that the server accepts iff the elements in $\hat{\ClientSet}$ are compliant with policy $f$ with respect to $\hat{\ServerSet}$.
+  We therefore only have to show that (i) the client is not able to use different elements in \ClientSet than in $\hat{\ClientSet}$, \ie the password \pwd actually satisfies $f$, and (ii) the password verifier $\ver$ is uniquely defined by $(\pwd, e, N, d, \bm{u})$, \ie there exists no password $\pwd'\not=\pwd$ that generates the same verifier as \pwd and it is not possible to find randomness $(e',N', d')\not=(e, N, d)$ in polynomial time that generates the same verifier as $(e,N, d)$.
   
-  (i) We claim that the mapping from \cC to $\hat{\cC}$ is an injective function such that the client is not able to build $\hat{\cC}$ from a password $\pwd'\not=\pwd$.
-  The elements in $\hat{\cC}$ have the form $\hat{c_i}=(H_2(c_i))^d$ where $d$ is the server's secret RSA key.
-  If the attacker is able to generate $\hat{c_i}=(H_2(c_i))^d$ from $c_i\not\in\cC$, we can use it to build a successful attacker on the one-more RSA assumption.
+  (i) We claim that the mapping from \ClientSet to $\hat{\ClientSet}$ is an injective function such that the client is not able to build $\hat{\ClientSet}$ from a password $\pwd'\not=\pwd$.
+  The elements in $\hat{\ClientSet}$ have the form $\hat{c_i}=(H_2(c_i))^d$ where $d$ is the server's secret RSA key.
+  If the attacker is able to generate $\hat{c_i}=(H_2(c_i))^d$ from $c_i\not\in\ClientSet$, we can use it to build a successful attacker on the one-more RSA assumption.
   
   (ii) We claim that the password verifier $\ver=(H_3(r_{v+1}^e\prod_{i=1}^{v} u_i), e, N, d, \bm{u})$ is uniquely identified by $(\pwd, e, N, d, \bm{u})$.
   In this case we assume the client chose a policy compliant password \pwd and performed the protocol honestly.

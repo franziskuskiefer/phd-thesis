@@ -23,7 +23,8 @@ This leads to the conclusion that BPR1 is the preferable protocol when strong se
 \subsection{Performance \& Implementation} \label{sec:performance}
 
 While the \ac{BPR} protocol from Section \ref{sec:bpr} has stronger security guarantees than the \ac{SPC}-based \ac{BPR} protocol, performance of the \ac{SPC}-based \ac{BPR} protocol is significantly better as discussed in the following.
-\mynote{performance trade-off discussion (registration VS authentication)}
+However, password registration is a task that is performed rarely, such that it is acceptable for it to take a noticeable time. 
+This is in contrast to authentication, which is performed regularly and thus has to have execution time that is not noticeable by the user.
 
 \subsubsection{Zero-knowledge-based BPR Protocols}
 We first compare the two zero-knowledge-based \ac{BPR} protocols from Section \ref{sec:zkppc} and \ref{sec:bpr}.
@@ -55,7 +56,10 @@ Note that $\omega^\ast_i$ in the \ac{ZKPPC} context depends on the maximum passw
 Therefore, the cost of a \ac{ZKPPC}-based password registration protocol is given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. 
 A \ac{ZKPPC}-based password registration protocol is thus much less efficient than the \ac{BPR} protocol from Section \ref{sec:bpr}: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
 
-\mynote{add estimation of SPC-based BPR}
+The \ac{SPC}-based \ac{BPR} protocol from Section \ref{sec:spc-bpr} is based on mainly symmetric primitives, which yields a significant lower complexity.
+In particular, the server in the \ac{SPC}-based \ac{BPR} protocol has to perform $\pmin+|S|$ exponentiations where the size of the server set $|S|$ is $x_i\sum_i |\omega_i|$ for $x_i$ being the number of characters required from subset $\omega_i$.
+The client performs $n$ exponentiations.
+We omit counting symmetric operations.
 
 % \paragraph{Implementation}
 % We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
@@ -107,11 +111,11 @@ In the first row of the table, the pairs indicate the policy and the password le
 The table shows the total running time as well as the time spent on checking the policies (Pol-ck) in the protocol. As we can see, the performance of our protocol is much better than the ZKPPC protocol. The main difference comes from policy checking time. Policy checking in ZKPPC is done by using a zero-knowledge proof of set membership protocol. 
 The cost of the zero-knowledge proof protocol is $6\cdot n\cdot\sum_{i=1}^n\omega_i$ exponentiations, where $n$ is the password length in the experiments, and $\omega_i$ is the size of character class to which the i$th$ character in the password belongs. In our protocol,  policy checking is done by using the \ac{SPC} protocol and the cost is mainly the \ac{OBI} protocol which is based on symmetric cryptography. The cost of the \ac{OBI} protocol is $4.32\cdot |\hat{S}|\cdot \lambda$ hash operations, where $\lambda$ is the security parameter. More concretely, in setting $(P1,20)$,  the zero-knowledge proof based policy checking requires around 200,000 exponentiations while our \ac{OBI} based \ac{SPC} requires only less than 33,000 hash operations.
 
-\begin{figure}[!bp]
-\centering
-\includegraphics[width=0.6\textwidth]{Figs/break}
-\caption{Time Breakdown}\label{fig::break}%\vspace{-5mm}
-\end{figure}
+% \begin{figure}[!bp]
+% \centering
+% \includegraphics[width=0.6\textwidth]{Figs/break}
+% \caption{Time Breakdown}\label{fig::break}%\vspace{-5mm}
+% \end{figure}
 
 We also show the running time for each step in our protocol (see Fig. \ref{fig::break}). As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$. A possible optimisation is to take this step offline. 
 Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 

@@ -9,7 +9,6 @@ A \ac{2BPR} protocol between an honest client $\Client$ and two honest servers $
   \label{eq:zkppc-pok}
 \end{align}
 Note that the \ac{2BPR} protocol can be used to register new clients or to register new passwords for existing clients. The following definition formally captures the functionality of \ac{2BPR} protocols.
-\mynote{check if we want this... }
 
 \begin{definition}[Two-Server Blind Password Registration]\label{def:2bpr}
 A \ac{2BPR} protocol is executed between a client $\Client$ and two servers $\Server_0$ and $S_{1}$, holding a password policy $f_b$ each, such that the servers, when honest, eventually accept password shares $\share_b$ of a policy compliant, client chosen password \pwd iff $f(\pwd)=\true$ for $f=f_0\cap f_1$, $\pwdint(\pwd)=\share_b+\share_{1-b}$ and $b\in\{0,1\}$.
@@ -44,7 +43,7 @@ Protocol participants without specified role are denoted by $P$, and $\Server_b$
 A client can only register one password with one server pair, but can register passwords at an arbitrary number of server pairs.
 Client $\Client$ and servers $\Server_b$ are unique and used as identifier on the server, \ie as \emph{username} to store alongside the password share.
 We say a client registers a client, server pair at a server, \ie a client $\Client$ registers a password share for $(\Client, S_{1-b})$ at a server $\Server_b$ and a password share for $(\Client,S_{b})$ at server $S_{1-b}$.
-\mynote{Further, a server only allows a single registration from a client, server pair such that any attempt to register a password with a server that already stores a password share for this client, server pair overwrites existing entries, \ie resets the password.}
+Further, a server only allows a single registration from a client, server pair such that any attempt to register a password with a server that already stores a password share for this client, server pair overwrites existing entries, \ie resets the password.
 An entry $(\Client,S_{1-b},\share_b)$ is only stored on server $\Server_b$ if the \ac{2BPR} protocol is successful.
 
 \paragraph{Oracles}

@@ -64,7 +64,7 @@ To interact with protocol participants, the adversary has access to an \Execute 
 
 \noindent
 % Security of a \ac{BPR} protocol is defined by two properties: \emph{policy compliance} and \emph{dictionary attack resistance}.
-Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client \Client after a successful registration of $(C,\ver_C)$ on a server (client identities \Client are unique but not secret and can therefore be used by the adversary).
+Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client \Client after a successful registration of $(\Client,\ver_C)$ on a server (client identities \Client are unique but not secret and can therefore be used by the adversary).
 
 \paragraph{Policy Compliance}
 Policy compliance is the first natural security property of \ac{BPR} protocols, requiring that a password set up with a \ac{BPR} protocol is compliant with the server's policy $f$.
@@ -281,7 +281,7 @@ This protocol proves that password hash $H_2$ contains the same encoded password
     with 
     $k_{s_P},k_{\pi},k_{r^\ast}\rin\Zrp$.
     
-  \item The server stores received values and sets $\Ch_\PoE=c\rin\bits^\secpar$. 
+  \item The server stores received values and sets $\Ch_\PoE=c\rin\ZZ_p$. 
   
   \item After receiving challenge \Client from the server, the client computes the following verification values
     \[
@@ -300,7 +300,7 @@ This protocol proves that password hash $H_2$ contains the same encoded password
 % This concludes the proof of equivalence for the client.
 
 
-\subsubsection{Proof of Membership (\PoM)}
+\subsubsection{Proof of Membership (\PoM)} \label{sec:bpr:pom}
 This protocol proves that every password character $c_{k_i}\in\omega_{k_i}$ using the shuffled set of commitments $\bm C'$, \ie
 \[\ZKPoK\{(\{\pi_i,r_i\}_{i\in[0,n-1]}) : ~ C'_{{k_i}}=g^{\pi_{i}}h^{r_{i}} ~ \wedge ~ \pi_{i}\in \omega_{{k_i}}\},\]
 (we use $\pi_{i}\in \omega_{{k_i}}$ as a short form of $c_i\in\omega_{{k_i}}$ with $\pi_i\gets \chrint(c_i)$).
@@ -318,7 +318,7 @@ Note that $C'_{k_i}\in \bm C'$.
     Note that $t_{l_{k_i}}$ has to be added at the correct position ($l_{k_i}$) in $\bm t_{k_i}$.
     After computing the proof for every $C'_{k_i}$ the client sets the message $\Comm_\PoM=\bm t = \{\bm t_{k_i}\}$.
     
-  \item The server stores received values, checks them for group membership, chooses a random challenge $c\rin\bits^\secpar$ and sets $\Ch_\PoM=c$.
+  \item The server stores received values, checks them for group membership, chooses a random challenge $c\rin\ZZ_p$ and sets $\Ch_\PoM=c$.
   
   \item After receiving the challenge \Client from the server, the client computes the following verification values for all commitments $C'_{{k_i}}$ (note that $\Server_j$ and $c_j$ for all $j\not= l_{k_i}$ are chosen already):
     \[
@@ -408,7 +408,7 @@ After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(
 Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but computing $g^{\sum_{j=1}^{n} \pi_j A_{j0}}$ $h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}$ saves $n-1$ exponentiations.
 
 
-\item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\bits^\secpar$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
+\item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\ZZ_p$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
 
 \item After receiving challenges $\bm c$ from the server, the client computes the following verification values and sets \allowbreak $\Res_\PoS=(\bm s, \bm s')$ for $\bm s = \{s_v\}$ and $\bm s' = \{s'_v\}$ with $v\in[-4,n]$.
 Let $c_0=1$.
@@ -426,8 +426,6 @@ Let $c_0=1$.
 The server accepts the \ac{PoS} proof if all verifications succeed.
 %This concludes the proof of correctness of a shuffling.
 \end{enumerate}
-
-\mynote{check choice of challenge everywhere!}
 
 \subsubsection{Security Analysis}
 The security of our \ac{BPR} protocol is established by the following theorem. 
@@ -524,7 +522,7 @@ Instead it is sufficient in our case that client \Client can not make the server
 Soundness of \ac{PoM} implies that if there exists a commitment $C'_{k_i}$ that commits to an encoded character $\pi_i$ \emph{not} in the respective set $\omega_{k_i}$, then
 \[ \bm t_i[j] \stackrel{?}{=} g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
 does not hold with overwhelming probability for given values.
-This holds under the assumption that the discrete logarithm problem is hard in \GG and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\bits^\secpar$.
+This holds under the assumption that the discrete logarithm problem is hard in \GG and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\ZZ_p$.
 The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrp$.
 Note that this also holds for our case in which we use the same \Client in all $n$ proofs.
 Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in \GG, \ie the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + c\log_h(C'_{k_i}g^{-\pi_j})$.

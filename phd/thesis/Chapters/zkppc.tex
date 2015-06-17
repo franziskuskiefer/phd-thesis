@@ -129,21 +129,26 @@ See Section \ref{sec:discussion} for further performance discussions with the in
 \end{remark}
 
 \subsection{A Concrete ZKPPC Protocol for ASCII-based Passwords}\label{sec:instantiation}
-\mynote{The ZKs need description!!}
 To show feasibility of the \ac{ZKPPC} approach we give a concrete \ac{ZKPPC} protocol construction for \ac{ASCII}-based passwords in a cyclic group \GG of prime order $p$. 
 The protocol is built from the Pedersen commitment scheme $C=(\SetupC,\Com,\Open)$ and the randomised password hashing scheme $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ from Section~\ref{sec:pwhashped} that share the same group $G$. 
 In particular, public parameters used by \Client and \Server in the \ac{ZKPPC} protocol are defined as $(p,g,h,\secpar)$ where $g$ and $h$ are independent generators of \GG. 
+
+\paragraph{Set Membership Proof}
 For set membership proofs $\SMP(\pi_i,r_i,\Omega')$ we adopt a three-move honest-verifier proof 
 \[\ZKPoK\{(\pi_i,r_i):~ C_i=g^{\pi_i}h^{r_i} \wedge (\pi_i=\omega_0 \vee \dots \vee \pi_i=\omega_{|\Omega'|})\}\]
 for $\omega_j\in\Omega'$, whose length is proportional to $|\Omega'|$. 
 Assuming that for each $\omega_j\in\Omega'$ the corresponding value $g^{\omega_j}\in \GG$ is pre-computed this proof can be realised as 
 \[\ZKPoK\{(\pi_i,r_i):~ C_i=g^{\pi_i}h^{r_i} \wedge (C_i=g^{\omega_0}h^{r_i} \vee \dots \vee C_i=g^{\omega_{|\Omega'|}}h^{r_i})\}.\]
-More efficient SMPs, \eg \cite{CamenischCS08}, can possibly be used with a different commitment and password hashing scheme. 
+(See Section \ref{sec:bpr:pom} for an example how to realise a \ac{ZK} proof like this.)
+More efficient SMPs, \eg \citet{CamenischCS08}, can possibly be used with a different commitment and password hashing scheme. 
 In this case care must be taken when it comes to the instantiation of \ac{VPAKE} that must be able to handle password hashes generated in \ac{ZKPPC} (cf. Section~\ref{sec:vpake}).
+
+
+\paragraph{Proof of Correctness}
 The final \ac{ZKPoK} proof is instantiated as a three-move honest-verifier proof 
 \[\ZKPoK\{(\pi, s_P, s_H, r):~ H_1=g^{s_P} \wedge H_2 = H_1^{\pi}h^{s_H} \wedge C = g^\pi h^{r}\}\] 
 that proceeds in the following classical way. 
-\Client picks random $k_\pi, k_{s_P}, k_{s_H}, k_{r}\in\ZZ_p$, computes $t_1=g^{k_{s_P}}$, $t_2=H_1^{k_\pi}h^{k_{s_H}}$, and $t_3=g^{k_\pi}h^{k_{r}}$, and sends $(t_1,t_2,t_3)$ to \Server that replies with a random challenge $c\in\bits^\secpar$. 
+\Client picks random $k_\pi, k_{s_P}, k_{s_H}, k_{r}\in\ZZ_p$, computes $t_1=g^{k_{s_P}}$, $t_2=H_1^{k_\pi}h^{k_{s_H}}$, and $t_3=g^{k_\pi}h^{k_{r}}$, and sends $(t_1,t_2,t_3)$ to \Server that replies with a random challenge $c\in\ZZ_p$. 
 \Client computes $a_1=k_{s_P}+cs_P\mod p$, $a_2=k_\pi+c\pi \mod p$, $a_3=k_{s_H}+cs_{H}\mod p$ and $a_4=k_{r}+cr\mod p$, and sends $(a_1,a_2,a_3,a_4)$ to \Server that accepts the proof if $g^{a_1}=t_1 H_1^{c}$, $H_1^{a_2}h^{a_3}=t_2H_2^c$, and $g^{a_2}h^{a_4}=t_3C^c$ holds.
 
 \begin{remark}
@@ -199,8 +204,8 @@ By modeling \Server as a malicious party in the \ac{ZKPPC} protocol we can offer
 
 The resulting password registration protocol guarantees that no server \Server can do better in recovering the client's \pwd than any attacker \cA that compromises \Server during or after the registration phase. 
 This is an ideal security requirement for the registration of passwords that will be used in authentication protocols with password verifiers on the server side. 
-Note that security of such verifier-based authentication protocols implies that any $A$ who breaks into \Server cannot recover \pwd better than by mounting an offline dictionary attack. 
-Our approach thus extends this requirement to password registration protocols.
+Note that security of such verifier-based authentication protocols implies that any attacker \cA who breaks into \Server cannot recover \pwd better than by mounting an offline dictionary attack. 
+The approach thus extends this requirement to password registration protocols.
 
-\mynote{what is this?}
-For our concrete \ac{ZKPPC} construction from Section~\ref{sec:instantiation} we can modify the third stage of the registration protocol such that instead of $r=(s_P,s_H)$ server \Server receives only $s_H$ and stores $(id, H, s_H)$, where $H=(H_1, H_2)$, $H_2=H_1^\pi h^{s_H}$. This trick helps to significantly increase the complexity of an offline dictionary attack. Note that pre-image resistance of $\Pi$ guarantees that an offline password test based on equality $H_1^{\pi} = H_2h^{-s_H}$ would require $2^\beta$ exponentiations $H_1^{\pi^\ast}$ until $\pi^\ast=\pi$ is found. Note that if $s_P$ is disclosed then the above equality can be re-written to $g^{\pi} = (H_2h^{-s_H})^{1/s_P}$ and a pre-computed table $T=(\pi^\ast, g^{\pi^\ast})$ would immediately reveal $\pi^\ast=\pi$. The computation of $T$ requires $2^\beta$ exponentiations $g^{\pi^\ast}$ but $T$ would need to be computed only once. This also explains why we use $\Pi$ with randomised $\PPreHash$.
+% \mynote{what is this?}
+% For our concrete \ac{ZKPPC} construction from Section~\ref{sec:instantiation} we can modify the third stage of the registration protocol such that instead of $r=(s_P,s_H)$ server \Server receives only $s_H$ and stores $(id, H, s_H)$, where $H=(H_1, H_2)$, $H_2=H_1^\pi h^{s_H}$. This trick helps to significantly increase the complexity of an offline dictionary attack. Note that pre-image resistance of $\Pi$ guarantees that an offline password test based on equality $H_1^{\pi} = H_2h^{-s_H}$ would require $2^\beta$ exponentiations $H_1^{\pi^\ast}$ until $\pi^\ast=\pi$ is found. Note that if $s_P$ is disclosed then the above equality can be re-written to $g^{\pi} = (H_2h^{-s_H})^{1/s_P}$ and a pre-computed table $T=(\pi^\ast, g^{\pi^\ast})$ would immediately reveal $\pi^\ast=\pi$. The computation of $T$ requires $2^\beta$ exponentiations $g^{\pi^\ast}$ but $T$ would need to be computed only once. This also explains why we use $\Pi$ with randomised $\PPreHash$.

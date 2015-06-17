@@ -340,6 +340,8 @@
 \newcommand{\ralgout}{\ensuremath{\stackrel{\$}{\gets}}\xspace}
 \newcommand{\rin}{\ensuremath{\in_R}\xspace}
 
+\newcommand{\id}{\ensuremath{\mathtt{id}}\xspace}
+
 \newcommand{\bits}{\ensuremath{\{0,1\}}\xspace}
 \newcommand{\bigo}{\ensuremath{\mathcal{O}}\xspace}
 \newcommand{\secpar}{\ensuremath{\lambda}\xspace}
@@ -370,6 +372,12 @@
 
 \newcommand{\Client}{\ensuremath{\mathcal{C}}\xspace}
 \newcommand{\Server}{\ensuremath{\mathcal{S}}\xspace}
+
+\newcommand{\Challenger}{\ensuremath{\mathcal{Q}}\xspace}
+
+\newcommand{\ServerSet}{\ensuremath{\mathcal{V}}\xspace}
+\newcommand{\ClientSet}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\Ciphertexts}{\ensuremath{\mathcal{E}}\xspace}
 
 \newcommand{\RO}{\cH}
 
@@ -412,6 +420,7 @@
 \newcommand{\KGen}{\ensuremath{\mathsf{KGen}}\xspace}
 \newcommand{\Exp}{\ensuremath{\mathsf{Exp}}\xspace}
 \newcommand{\PRF}{\ensuremath{\mathsf{PRF}}\xspace}
+\newcommand{\SHA}{\ensuremath{\mathsf{SHA}}\xspace}
 
 \newcommand{\Adv}{\ensuremath{\mathsf{Adv}}\xspace}
 \newcommand{\AKESEC}{\ensuremath{\mathsf{AKE-SEC}}\xspace}
@@ -463,6 +472,8 @@
 \newcommand{\NS}{\ensuremath{\mathtt{NS}}\xspace}
 \newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
 \newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
+
+\newcommand{\tg}{\ensuremath{\mathtt{tg}}\xspace}
 
 \newcommand{\Setup}{\ensuremath{\mathsf{Setup}}\xspace}
 \newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
@@ -538,11 +549,13 @@
 \newcommand{\EG}{\ensuremath{\mathrm{EG}}\xspace}
 \newcommand{\Label}{\ensuremath{\ell}\xspace}
 \newcommand{\PKE}{\ensuremath{\mathsf{PKE}}\xspace}
-\newcommand{\PKEGen}{\ensuremath{\mathsf{KGen_{PK}}}\xspace}
-\newcommand{\Enc}{\ensuremath{\mathsf{Enc}}\xspace}
-\newcommand{\Dec}{\ensuremath{\mathsf{Dec}}\xspace}
 \newcommand{\cca}{\ensuremath{\mathsf{IND-CCA}}\xspace}
 \newcommand{\cpa}{\ensuremath{\mathsf{IND-CPA}}\xspace}
+
+% Public Key Encryption
+\newcommand{\PKEGen}{\ensuremath{\mathtt{KGen_{PK}}}\xspace}
+\newcommand{\Enc}{\ensuremath{\mathtt{Enc}}\xspace}
+\newcommand{\Dec}{\ensuremath{\mathtt{Dec}}\xspace}
 
 % SPHF
 \newcommand{\SPHF}{\ensuremath{\text{SPHF}}\xspace}
@@ -628,3 +641,10 @@
   \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
   \quad\hbox{#1}}
 \newcommand\eod{\xqed{$\Diamond$}}
+
+% diagrams
+\newcommand{\llongrightarrow}{\overrightarrow{\qquad\qquad}}
+\newcommand{\llongleftarrow}{\overleftarrow{\qquad\qquad}}
+\newcommand{\llongleftrightarrow}{\overleftarrow{\qquad\hspace{0.25em}}\hspace{-0.25em}\overrightarrow{\qquad}}
+\newcommand{\lllongrightarrow}{\overrightarrow{\qquad\qquad\qquad\qquad\qquad}}
+\newcommand{\lllongleftarrow}{\overleftarrow{\qquad\qquad\qquad\qquad\qquad}}

@@ -21,8 +21,8 @@ After sending $r$ to the client, he can compute \ver, which can then be used any
 \scalebox{1.0}{\begin{tikzpicture}
 \draw[] (-3.5,.5) rectangle (9,-2);
 
-\node[party,align=center] (client) at (-0.5,0) {{$C~ (\pwd)$}};
-\node[party,align=center,text width=10em] (server) at (7.5,0) {$S~ (C, \ver, r)$};
+\node[party,align=center] (client) at (-0.5,0) {{$\Client~ (\pwd)$}};
+\node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (C, \ver)$};
 
 \node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver\gets f(\pwd, r)$};
 
@@ -66,7 +66,6 @@ After sending $r$ to the client, he can compute \ver, which can then be used any
 % \label{fig:genericOVPAKE}
 % \end{figure}
 
-\mynote{VPAKE security model}
 
 \paragraph{Discussion -- Practical Implications}
 Sending verifier randomness to the client obviously exposes this randomness to an attacker.
@@ -95,7 +94,7 @@ It is also possible to use a standard key derivation function such as PBKDF2 \ci
 Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. Often we can piggyback the messages in the PAKE protocol to avoid increasing communication round. 
 For example, if we use the UC-secure PAKE protocol from \citet{Benhamouda2013}, the RSA public key $(e,N)$ can be piggybacked on the server's message sent in the PAKE protocol. Thus we do not increase the round complexity and the protocol remains a one-round protocol.
 
-\subsection{VPAKE Protocols} \label{sec:vpake}
+\subsection{A New VPAKE Protocol} \label{sec:vpake}
 % \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
 We now focus on suitable VPAKE protocols where the server $\bm{S}$ using $(id, H, r)$ stored from the ZKPPC-based registration protocol can authenticate the client $\bm{C}$ that uses only its $\pwd$. 
 Such protocols can be constructed with a general VPAKE framework introduced by Benhamouda and Pointcheval \cite{BenhamoudaP13}. 
@@ -165,6 +164,3 @@ Which SPHF algorithms $\HKGen$, $\PKGen$, $\Hash$, $\ProjHash$ are used by $\bm{
 By inspection one can see that if both $\bm{C}$ and $\bm{S}$ follow the protocol and $H$ used on the server side is a password hash of $\pi$ used on the client side then both parties compute the same (secret) group element $K=K_1\cdot K_2$. 
 Note that $\bm{C}$ derives $K_1$ using its own hashing key $\hk$ and received server's CS ciphertext $C'$ that encrypts $H_2$, whereas $\bm{S}$ derives $K_1$ using client's projection key $\hp$, its own $C'$ and $r'$. 
 Similarly, $\bm{S}$ derives $K_2$ using its own hashing key $\hk'$ and received client's CS ciphertext $C$ that encrypts $g_1^\pi$, whereas $\bm{C}$ derives $K_2$ using server's projection key $\hp'$, its own $C$ and $r$. Security of this VPAKE protocol follows from the security of the generic scheme.
-
-
-\mynote{tSOKE \cite{ManulisSKD15a}? is not contribution, make sure to make that clear}
