@@ -33,16 +33,20 @@ typedef struct alphabet{
 }alphabet;
 
 typedef struct pHashParam{
-    //order of group
+    // order of group
     BIGNUM* p;
-    //generator
+    
+    // generator
     EC_POINT* g;
     EC_POINT* h;
     EC_GROUP* curve;
     
+    // f_i (100 here)
+    EC_POINT** f;
+    
     //security parameter
     int lamda;
-}pHashParam;
+} pHashParam;
 
 typedef struct hashVal{
     EC_POINT* H1;
@@ -73,7 +77,7 @@ pHashParam* PSetup(int lambda);
 BIGNUM* PSalt(pHashParam* param);
 
 // shuffle array of integers
-void shuffle(BIGNUM** pi, BIGNUM** pip, int* k, int n);
+void shuffle(void** in, void** out, int* k, int n, int random);
 
 //pre hash
 EC_POINT* PPrehash(pHashParam* param, BIGNUM* pi, BIGNUM* salt);
@@ -84,9 +88,13 @@ hashVal* PHash(pHashParam* param, EC_POINT* preHash, BIGNUM* sp,BIGNUM* sh);
 //commitment
 EC_POINT* commit(pHashParam* param, BIGNUM* x, BIGNUM* r);
 
-//membership proof, return 1 is accept, 0 is not
-int PoM(pHashParam* param, char* password, char* policy,BIGNUM** r,BIGNUM** pi, EC_POINT** C, alphabet* alpha);
+// membership proof, return 1 is accept, 0 is not
+int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r,BIGNUM** pi, EC_POINT** C, alphabet* alpha);
 
-int PoE(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh);
+// proof of shuffle
+int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r, BIGNUM** pi, BIGNUM** pip, EC_POINT** C, EC_POINT** Cp);
+
+// proof of correctness
+int PoC(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh);
 
 #endif /* BPR_PASSWORD_H */

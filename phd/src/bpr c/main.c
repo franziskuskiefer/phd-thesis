@@ -38,6 +38,7 @@ int main(int argc, const char * argv[])
     BIGNUM** pip = calloc(n, sizeof(BIGNUM*));
     BIGNUM** r = calloc(n, sizeof(BIGNUM*));
     BIGNUM** rp = calloc(n, sizeof(BIGNUM*));
+    BIGNUM** rrp = calloc(n, sizeof(BIGNUM*));
     EC_POINT** C = calloc(n, sizeof(EC_POINT*));
     EC_POINT** Cp = calloc(n, sizeof(EC_POINT*));
     
@@ -58,19 +59,30 @@ int main(int argc, const char * argv[])
         C[i]=commit(param, pi[i], r[i]);
         
         //re-commitments of (pi[i],r[i]+rp[i])
-        BIGNUM* rs = BN_new();
-        BN_mod_add(rs, r[i], rp[i], param->p, ctx);
-        Cp[i]=commit(param, pi[i], rs);
+        rrp[i] = BN_new();
+        BN_mod_add(rrp[i], r[i], rp[i], param->p, ctx);
+        Cp[i]=commit(param, pi[i], rrp[i]);
     }
     
-    // shuffle pi
+    // shuffle pi, Cp
     int* k = calloc(n, sizeof(int));
-    shuffle(pi, pip, k, n);
-/*    for(int i=0; i < n; i++){*/
-/*        printf("k: %d\n",k[i]);*/
-/*        printf("pi: %s\n",BN_bn2dec(pi[i]));*/
-/*        printf("pip: %s\n",BN_bn2dec(pip[i]));*/
-/*    }*/
+    shuffle((void**)pi, (void**)pip, k, n, 1);
+    EC_POINT** Cpp = calloc(n, sizeof(EC_POINT*));
+    shuffle((void**)Cp, (void**)Cpp, k, n, 0);
+    BIGNUM** rpp = calloc(n, sizeof(BIGNUM*));
+    shuffle((void**)rp, (void**)rpp, k, n, 0);
+    BIGNUM** rrpp = calloc(n, sizeof(BIGNUM*));
+    shuffle((void**)rrp, (void**)rrpp, k, n, 0);
+    
+    
+    Cp = Cpp;
+    rp = rpp;
+    rrp = rrpp;
+    for(int i=0; i < n; i++){
+        printf("k: %d\t",k[i]);
+        printf("pi: %s\t",BN_bn2dec(pi[i]));
+        printf("pip: %s\n",BN_bn2dec(pip[i]));
+    }
     
     BIGNUM* sumPi = BN_new();
     BIGNUM* sumRi = BN_new();
@@ -102,10 +114,10 @@ int main(int argc, const char * argv[])
         EC_POINT_add(param->curve, sumCI_S, sumCI_S, C[i], ctx);
     }
     
-    //membership proof
+    //membership proof over shuffled pip and Cp
     
     gettimeofday(&t3, NULL);
-    int accept = PoM(param,password, policy, r, pi, C, alpha);
+    int accept = PoM(param, k, password, policy, rrp, pip, Cp, alpha);
     
     gettimeofday(&t4, NULL);
     cpu_time_used = (double)(t4.tv_sec-t3.tv_sec)*1000+(double)(t4.tv_usec-t3.tv_usec)/1000;
@@ -117,8 +129,22 @@ int main(int argc, const char * argv[])
         printf("PoM failed\n");
     }
 
+		// proof of shuffled
+		gettimeofday(&t3, NULL);
+    accept = PoS(param, n, k, rrp, rp, r, pi, pip, C, Cp);
     
-    accept=PoE(param, H, sumCI_S, sumPi, sumRi, sp, sh);
+    gettimeofday(&t4, NULL);
+    cpu_time_used = (double)(t4.tv_sec-t3.tv_sec)*1000+(double)(t4.tv_usec-t3.tv_usec)/1000;
+    printf("PoS time (ms) = %f\n",cpu_time_used);
+    
+    if(accept==1){
+        //printf("PoS succeeded\n");
+    }else{
+        printf("PoS failed\n");
+    }
+
+    // proof of correctness
+    accept=PoC(param, H, sumCI_S, sumPi, sumRi, sp, sh);
     
     if(accept==1){
        // printf("PoE succeeded\n");

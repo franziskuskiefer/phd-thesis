@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "password.h"
 #include <stdbool.h>
+#include <arpa/inet.h>   // For htonl to make the integer big endian
 
 int CHRtoInt(char c){
     assert(c>=33 &&c<=126);
@@ -100,17 +101,21 @@ pHashParam* PSetup(int secLev){
     EC_GROUP_get_order(result->curve, result->p, ctx);
     
     //generator
-    result->g=EC_POINT_dup(EC_GROUP_get0_generator(result->curve), result->curve);
+    result->g = EC_POINT_dup(EC_GROUP_get0_generator(result->curve), result->curve);
     
-    
-    //h
-    BIGNUM* rnd=BN_new();
-    
+    // h
+    BIGNUM* rnd = BN_new();
     BN_rand_range(rnd, result->p);
-    
-    result->h=EC_POINT_new(result->curve);
-    
+    result->h = EC_POINT_new(result->curve);
     EC_POINT_mul(result->curve, result->h, NULL, result->g, rnd, ctx);
+    
+    // generate f (100)
+    result->f = calloc(100, sizeof(EC_POINT*));
+    for (int i = 0; i < 100; ++i) {
+		  BN_rand_range(rnd, result->p);
+		  result->f[i] = EC_POINT_new(result->curve);
+		  EC_POINT_mul(result->curve, result->f[i], NULL, result->g, rnd, ctx);
+    }
     
     BN_free(rnd);
     BN_CTX_free(ctx);
@@ -143,7 +148,7 @@ EC_POINT* PPrehash(pHashParam* param, BIGNUM* pi, BIGNUM* salt){
 
 hashVal* PHash(pHashParam* param, EC_POINT* preHash, BIGNUM* sp,BIGNUM* sh){
     BN_CTX* ctx=BN_CTX_new();
-    hashVal* H= calloc(1, sizeof(hashVal));
+    hashVal* H = calloc(1, sizeof(hashVal));
     
     H->H1=EC_POINT_new(param->curve);
     H->H2=EC_POINT_new(param->curve);
@@ -439,25 +444,27 @@ bool isInArray(int val, int *arr, int size) {
     return false;
 }
 
-void shuffle(BIGNUM** pi, BIGNUM** pip, int* k, int n) {
+void shuffle(void** in, void** out, int* k, int n, int random) {
 		BIGNUM* range = BN_new();
     BN_set_word(range, n);
+    BIGNUM* temp = BN_new();
 		for(int i=0; i<n; ++i) {
 				bool done = false;
 				do {
-						pip[i] = BN_new();
-						BN_rand_range(pip[i], range);
-						char* tmp = BN_bn2dec(pip[i]);
-						k[i] = atoi(tmp);
-						if (!isInArray(k[i], k, i)) {
+						if (random) {
+								BN_rand_range(temp, range);
+								char* tmp = BN_bn2dec(temp);
+								k[i] = atoi(tmp);
+						}
+						if (!isInArray(k[i], k, i) || !random) {
 								done = true;
-								pip[i] = pi[k[i]];
+								out[i] = in[k[i]];
 						}
 				} while (!done);
     }
 }
 
-int PoM(pHashParam* param,char* password, char* policy,BIGNUM** r,BIGNUM** pi, EC_POINT** C, alphabet* alpha){
+int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r, BIGNUM** pi, EC_POINT** C, alphabet* alpha){
     //make a copy of the policy
     char* polCopy= calloc(strlen(policy)+1, sizeof(char));
     strcpy(polCopy, policy);
@@ -466,7 +473,7 @@ int PoM(pHashParam* param,char* password, char* policy,BIGNUM** r,BIGNUM** pi, E
     printf("policy: %s\n",policy);
     printf("password length = %d\n",n);
     
-    BIGNUM* challenge=BN_new();
+    BIGNUM* challenge = BN_new();
     BN_rand_range(challenge, param->p);
     
     
@@ -475,7 +482,8 @@ int PoM(pHashParam* param,char* password, char* policy,BIGNUM** r,BIGNUM** pi, E
     for(int i=0;i<n;i++){
         //find the server's set to run proof protocol
         BIGNUM** set;
-        int setSize = findSet(password[i],alpha,polCopy, &set);
+        printf("c[k[i]]: %c\n", password[k[i]]);
+        int setSize = findSet(password[k[i]], alpha, polCopy, &set);
         
         //character is not in the alphabet
         if(setSize==0){
@@ -491,7 +499,83 @@ int PoM(pHashParam* param,char* password, char* policy,BIGNUM** r,BIGNUM** pi, E
     return 1;
 }
 
-int PoE(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh){
+int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r, BIGNUM** pi, BIGNUM** pip, EC_POINT** C, EC_POINT** Cp) {
+	
+	printf("PoS\n");
+  BN_CTX* ctx = BN_CTX_new();
+	
+	// choose randome A'
+	BIGNUM** Ap = calloc(n+5, sizeof(BIGNUM*));
+	for (int i = -4; i < n+1; ++i) {
+		Ap[i+4] = BN_new();
+    BN_rand_range(Ap[i+4], param->p);
+	}
+	
+	// build matrix A
+	int MSize = (n+5)*(n+1);
+	BIGNUM*** A = calloc(MSize, sizeof(BIGNUM*));
+	for (int i = -4; i < n+1; ++i) { // choose random values, set re-randomiser and set shuffle matrix, fill the rest with 0
+		A[i+4] = calloc(n+1, sizeof(BIGNUM*));
+		for (int j = 0; j < n+1; ++j) {
+			if (j == 0 || i == -1) {
+				A[i+4][j] = BN_new();
+				BN_rand_range(A[i+4][j], param->p);
+			} else if (i == 0) {
+				A[i+4][j] = rrp[j-1];
+			} else if (i > 0 && i-1 == k[j-1]) {
+				A[i+4][j] = BN_new();
+				BN_one(A[i+4][j]);
+			} else {
+				A[i+4][j] = BN_new();
+				BN_zero(A[i+4][j]);
+			}
+		}
+	}
+	
+	int m = htonl(2);
+	BIGNUM* two = BN_new();
+	BN_bin2bn( (unsigned char *) &m, sizeof(m), two);
+	
+	m = htonl(3);
+	BIGNUM* three = BN_new();
+	BN_bin2bn( (unsigned char *) &m, sizeof(m), three);
+	
+	BIGNUM* tmp = BN_new();
+	for (int j = 1; j < n+1; ++j) { // replace 0s with the correct values
+		for (int v = 1; v < n+1; ++v) {
+			// -4,j
+			BN_mod_mul(tmp, A[v+4][0], A[v+4][j], param->p, ctx);
+			BN_mod_mul(A[0][j], two, tmp, param->p, ctx);
+			
+			// -3,j
+			BN_mod_mul(A[1][j], three, tmp, param->p, ctx);
+			
+			// -2,j
+			BN_mod_exp(tmp,  A[v+4][0], two, param->p, ctx);
+			BN_mod_mul(tmp, tmp, A[v+4][j], param->p, ctx);
+			BN_mod_mul(A[2][j], three, tmp, param->p, ctx);
+		}
+	}
+	
+	// compute commitment to A
+	EC_POINT** fpv = calloc(MSize, sizeof(EC_POINT*));
+	EC_POINT* temp = EC_POINT_new(param->curve);
+	for (int v = 0; v < n+1; ++v) {
+		fpv[v] = EC_POINT_new(param->curve);
+		EC_POINT_mul(param->curve, fpv[v], NULL, param->f[0], A[0][v], ctx);
+		for (int j = 1; j < n+1+3; ++j) {
+			EC_POINT_mul(param->curve, temp, NULL, param->f[j], A[j][v], ctx);
+			EC_POINT_add(param->curve, fpv[v], fpv[v], temp, ctx);
+		}
+/*			for j in range(-3, len(pwd)+1):*/
+/*				fj *= self.params[0]['f'+str(j)] ** A[j+4][v]*/
+/*			fpv.append(fj)*/
+	}
+
+	return 1;
+}
+
+int PoC(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh){
     printf("PoE\n");
     
     BIGNUM* kpi=PSalt(param);
@@ -503,7 +587,7 @@ int PoE(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sum
     
     EC_POINT* temp=EC_POINT_new(param->curve);
     
-    EC_POINT* t1= EC_POINT_new(param->curve);
+    EC_POINT* t1 = EC_POINT_new(param->curve);
     EC_POINT_mul(param->curve, t1, NULL, param->g, ksp, ctx);
     
     EC_POINT* t2=EC_POINT_new(param->curve);
