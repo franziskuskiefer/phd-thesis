@@ -20,8 +20,8 @@ int main(int argc, const char * argv[])
     struct timeval t4;
     int secLv=80;
     
-    char* policy="duls";
-    char* password="Iu1(";
+    char* policy="u";
+    char* password="AB";
     
     pHashParam* param= PSetup(secLv);
     
@@ -80,8 +80,11 @@ int main(int argc, const char * argv[])
     rrp = rrpp;
     for(int i=0; i < n; i++){
         printf("k: %d\t",k[i]);
+        printf("r: %s\t", BN_bn2dec(r[i]));
         printf("pi: %s\t",BN_bn2dec(pi[i]));
         printf("pip: %s\n",BN_bn2dec(pip[i]));
+        printf("C[%d]: ", i);
+        printPoint(C[i], param);
     }
     
     BIGNUM* sumPi = BN_new();

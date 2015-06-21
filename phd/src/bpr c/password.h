@@ -55,6 +55,8 @@ typedef struct hashVal{
 
 //character to int
 
+// print EC_POINT
+void printPoint(EC_POINT* P, pHashParam* param);
 
 //build alphabet on the server side
 alphabet* buildAlphabet(int nMax);

@@ -11,6 +11,15 @@
 #include <stdbool.h>
 #include <arpa/inet.h>   // For htonl to make the integer big endian
 
+void printPoint(EC_POINT* P, pHashParam* param) {
+	BIGNUM *x = BN_new();
+  BIGNUM *y = BN_new();
+
+  if (EC_POINT_get_affine_coordinates_GFp(param->curve, P, x, y, NULL)) {
+		printf("P: (%s, %s)\n", BN_bn2dec(x), BN_bn2dec(y));
+  }
+}
+
 int CHRtoInt(char c){
     assert(c>=33 &&c<=126);
     return c-32;
@@ -105,14 +114,16 @@ pHashParam* PSetup(int secLev){
     
     // h
     BIGNUM* rnd = BN_new();
-    BN_rand_range(rnd, result->p);
+/*    BN_rand_range(rnd, result->p);*/
+    BN_one(rnd);
     result->h = EC_POINT_new(result->curve);
     EC_POINT_mul(result->curve, result->h, NULL, result->g, rnd, ctx);
     
     // generate f (100)
     result->f = calloc(100, sizeof(EC_POINT*));
     for (int i = 0; i < 100; ++i) {
-		  BN_rand_range(rnd, result->p);
+/*		  BN_rand_range(rnd, result->p);*/
+	    BN_one(rnd);
 		  result->f[i] = EC_POINT_new(result->curve);
 		  EC_POINT_mul(result->curve, result->f[i], NULL, result->g, rnd, ctx);
     }
@@ -124,8 +135,10 @@ pHashParam* PSetup(int secLev){
 
 BIGNUM* PSalt(pHashParam* param){
     BIGNUM* salt=BN_new();
-    
-    BN_rand_range(salt, param->p);
+
+// FIXME    
+/*    BN_rand_range(salt, param->p);*/
+		BN_one(salt);
     return salt;
     
 }
@@ -503,12 +516,37 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	
 	printf("PoS\n");
   BN_CTX* ctx = BN_CTX_new();
+
+	int m = htonl(2);
+	BIGNUM* one = BN_new();
+	BN_bin2bn( (unsigned char *) &m, sizeof(m), one);
+  	
+	m = htonl(2);
+	BIGNUM* two = BN_new();
+	BN_bin2bn( (unsigned char *) &m, sizeof(m), two);
+	
+	m = htonl(3);
+	BIGNUM* three = BN_new();
+	BN_bin2bn( (unsigned char *) &m, sizeof(m), three);
+  
+  printPoint(C[0], param);
+  printPoint(Cp[0], param);
+  
+  // XXX
+	EC_POINT* fuu1 = EC_POINT_new(param->curve);
+	EC_POINT* fuu2 = EC_POINT_new(param->curve);
+	EC_POINT_mul(param->curve, fuu1, NULL, param->g, pi[0], ctx);
+	EC_POINT_mul(param->curve, fuu2, NULL, param->h, one, ctx);
+	EC_POINT_add(param->curve, fuu1, fuu1, fuu2, ctx);
+  printPoint(fuu1, param);
+  //////
 	
 	// choose randome A'
 	BIGNUM** Ap = calloc(n+5, sizeof(BIGNUM*));
 	for (int i = -4; i < n+1; ++i) {
 		Ap[i+4] = BN_new();
-    BN_rand_range(Ap[i+4], param->p);
+/*    BN_rand_range(Ap[i+4], param->p);*/
+		BN_one(Ap[i+4]);
 	}
 	
 	// build matrix A
@@ -517,43 +555,42 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	for (int i = -4; i < n+1; ++i) { // choose random values, set re-randomiser and set shuffle matrix, fill the rest with 0
 		A[i+4] = calloc(n+1, sizeof(BIGNUM*));
 		for (int j = 0; j < n+1; ++j) {
+			A[i+4][j] = BN_new();
 			if (j == 0 || i == -1) {
-				A[i+4][j] = BN_new();
-				BN_rand_range(A[i+4][j], param->p);
+/*				BN_rand_range(A[i+4][j], param->p);*/
+				BN_one(A[i+4][j]);
 			} else if (i == 0) {
-				A[i+4][j] = rrp[j-1];
+				BN_copy(A[i+4][j], rp[j-1]);
 			} else if (i > 0 && i-1 == k[j-1]) {
-				A[i+4][j] = BN_new();
 				BN_one(A[i+4][j]);
 			} else {
-				A[i+4][j] = BN_new();
 				BN_zero(A[i+4][j]);
 			}
+        printf("A[%d][%d]: %s\n", i+4, j, BN_bn2dec(A[i+4][j]));
 		}
 	}
-	
-	int m = htonl(2);
-	BIGNUM* two = BN_new();
-	BN_bin2bn( (unsigned char *) &m, sizeof(m), two);
-	
-	m = htonl(3);
-	BIGNUM* three = BN_new();
-	BN_bin2bn( (unsigned char *) &m, sizeof(m), three);
 	
 	BIGNUM* tmp = BN_new();
 	for (int j = 1; j < n+1; ++j) { // replace 0s with the correct values
 		for (int v = 1; v < n+1; ++v) {
 			// -4,j
 			BN_mod_mul(tmp, A[v+4][0], A[v+4][j], param->p, ctx);
-			BN_mod_mul(A[0][j], two, tmp, param->p, ctx);
+			BN_mod_mul(tmp, tmp, two, param->p, ctx);
+			BN_mod_add(A[0][j], A[0][j], tmp, param->p, ctx);
+			printf(">> A[0][%d]: %s\n", j, BN_bn2dec(A[0][j]));
 			
 			// -3,j
-			BN_mod_mul(A[1][j], three, tmp, param->p, ctx);
+			BN_mod_mul(tmp, A[v+4][0], A[v+4][j], param->p, ctx);
+			BN_mod_mul(tmp, tmp, three, param->p, ctx);
+			BN_mod_add(A[1][j], A[1][j], tmp, param->p, ctx);
+			printf(">> A[1][%d]: %s\n", j, BN_bn2dec(A[1][j]));
 			
 			// -2,j
 			BN_mod_exp(tmp,  A[v+4][0], two, param->p, ctx);
 			BN_mod_mul(tmp, tmp, A[v+4][j], param->p, ctx);
-			BN_mod_mul(A[2][j], three, tmp, param->p, ctx);
+			BN_mod_mul(tmp, tmp, three, param->p, ctx);
+			BN_mod_add(A[2][j], A[2][j], tmp, param->p, ctx);
+			printf(">> A[2][%d]: %s\n", j, BN_bn2dec(A[2][j]));
 		}
 	}
 	
@@ -563,15 +600,185 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	for (int v = 0; v < n+1; ++v) {
 		fpv[v] = EC_POINT_new(param->curve);
 		EC_POINT_mul(param->curve, fpv[v], NULL, param->f[0], A[0][v], ctx);
-		for (int j = 1; j < n+1+3; ++j) {
-			EC_POINT_mul(param->curve, temp, NULL, param->f[j], A[j][v], ctx);
+		for (int j = -3; j < n+1; ++j) {
+			EC_POINT_mul(param->curve, temp, NULL, param->f[j+4], A[j+4][v], ctx);
 			EC_POINT_add(param->curve, fpv[v], fpv[v], temp, ctx);
 		}
-/*			for j in range(-3, len(pwd)+1):*/
-/*				fj *= self.params[0]['f'+str(j)] ** A[j+4][v]*/
-/*			fpv.append(fj)*/
+		printf("fpv[%d]: ", v);
+		printPoint(fpv[v], param);
+	}
+	
+	EC_POINT* ftil = EC_POINT_new(param->curve);
+	EC_POINT_mul(param->curve, ftil, NULL, param->f[0], Ap[0], ctx);
+	for (int j = -3; j < n+1; ++j) {
+		EC_POINT_mul(param->curve, temp, NULL, param->f[j+4], Ap[j+4], ctx);
+		EC_POINT_add(param->curve, ftil, ftil, temp, ctx);
 	}
 
+	BIGNUM* piSum = BN_new();
+	BN_mod_mul(piSum, pi[0], A[5][0], param->p, ctx);
+
+	BIGNUM* rSum = BN_new();
+	BN_mod_mul(rSum, r[0], A[5][0], param->p, ctx);	
+  BN_mod_add(rSum, A[4][0], rSum, param->p, ctx);
+	for (int j = 1; j < n; ++j) { // in range(1, len(pwd)):
+		BN_mod_mul(tmp, pi[j], A[j+5][0], param->p, ctx);	
+		BN_mod_add(piSum, piSum, tmp, param->p, ctx);		
+		
+		BN_mod_mul(tmp, r[j], A[j+5][0], param->p, ctx);	
+		BN_mod_add(rSum, rSum, tmp, param->p, ctx);
+	}
+	EC_POINT* Cp0 = EC_POINT_new(param->curve);
+	EC_POINT_mul(param->curve, Cp0, NULL, param->g, piSum, ctx);
+	EC_POINT_mul(param->curve, temp, NULL, param->h, rSum, ctx);
+	EC_POINT_add(param->curve, Cp0, Cp0, temp, ctx);
+
+	BIGNUM* w = BN_new();
+	BN_zero(w);
+	BN_mod_sub(w, w, A[2][0], param->p, ctx);
+	BN_mod_sub(w, w, Ap[1], param->p, ctx);
+
+	BIGNUM* wtil = BN_new();
+	BN_zero(wtil);
+	BN_mod_sub(wtil, wtil, A[0][0], param->p, ctx);
+	
+	for (int j = 0; j < n; ++j) {
+		BN_mod_exp(tmp,  A[j+5][0], three, param->p, ctx);
+		BN_mod_add(w, w, tmp, param->p, ctx);
+		
+		BN_mod_exp(tmp, A[j+5][0], two, param->p, ctx);
+		BN_mod_add(wtil, wtil, tmp, param->p, ctx);	
+	}
+	printf("w: %s\n", BN_bn2dec(w));
+	printf("wtil: %s\n", BN_bn2dec(wtil));
+	
+	// GENERATE PoS CHALLENGES
+	BIGNUM** challenges = calloc(n+1, sizeof(BIGNUM*));
+	challenges[0] = BN_new();
+	BN_one(challenges[0]);
+	for (int i = 1; i < n+1; ++i) {
+		challenges[i] = BN_new();
+/*		BN_rand_range(challenges[i], param->p);*/
+		BN_one(challenges[i]);
+	}
+	
+	// PROVE PoS
+	BIGNUM** s = calloc(n+1+4, sizeof(BIGNUM*));
+	BIGNUM** sp = calloc(n+1+4, sizeof(BIGNUM*));
+	for (int v = -4; v < n+1; ++v) { // in range(-4, len(self.pwd)+1):
+		s[v+4] = BN_new();
+		sp[v+4] = BN_new();
+		BN_mod_mul(s[v+4], A[v+4][0], challenges[0], param->p, ctx);
+		BN_copy(sp[v+4], Ap[v+4]);
+		for (int j = 1; j < n+1; ++j) { // in range(1, len(self.pwd)+1):
+			BN_mod_mul(tmp, A[v+4][j], challenges[j], param->p, ctx);
+			BN_mod_add(s[v+4], s[v+4], tmp, param->p, ctx);	
+			
+			BN_mod_exp(tmp, challenges[j], two, param->p, ctx);
+			BN_mod_mul(tmp, A[v+4][j], tmp, param->p, ctx);
+			BN_mod_add(sp[v+4], sp[v+4], tmp, param->p, ctx);	
+		}
+	}
+
+	// VERIFY PoS
+	BIGNUM* a = BN_new();
+/*	BN_rand_range(a, param->p);*/
+	BN_one(a);
+
+	EC_POINT* f1 = EC_POINT_new(param->curve);
+	BN_mod_mul(tmp, a, sp[0], param->p, ctx);
+	BN_mod_add(tmp, s[0], tmp, param->p, ctx);
+	EC_POINT_mul(param->curve, f1, NULL, param->f[0], tmp, ctx);
+        printf("sp[%d]: %s\n", 0, BN_bn2dec(sp[0]));
+        printf("s[%d]: %s\n", 0, BN_bn2dec(s[0]));
+	for	(int v = -3; v < n; ++v) {
+        printf("sp[%d]: %s\n", v+4, BN_bn2dec(sp[v+4]));
+        printf("s[%d]: %s\n", v+4, BN_bn2dec(s[v+4]));
+		BN_mod_mul(tmp, a, sp[v+4], param->p, ctx);
+		BN_mod_add(tmp, s[v+4], tmp, param->p, ctx);
+		EC_POINT_mul(param->curve, f1, NULL, param->f[v+4], tmp, ctx);		
+	}
+  
+	EC_POINT* f2 = EC_POINT_new(param->curve); 
+	EC_POINT_mul(param->curve, f2, NULL, ftil, a, ctx);		
+	EC_POINT_add(param->curve, f2, fpv[0], f2, ctx); 
+	for (int j = 1; j < n; ++j) {
+        printf("challenge[%d]: %s\n", j, BN_bn2dec(challenges[j-1]));
+		BN_mod_exp(tmp, challenges[j-1], two, param->p, ctx);		
+		BN_mod_mul(tmp, a, tmp, param->p, ctx);
+		BN_mod_add(tmp, challenges[j-1], tmp, param->p, ctx);
+		EC_POINT_mul(param->curve, temp, NULL, fpv[j], tmp, ctx);	
+		EC_POINT_add(param->curve, f2, f2, temp, ctx);		
+	}
+	
+	if (EC_POINT_cmp(param->curve, f1, f2, ctx) != 0){
+		printf(">>>>>>>>>>>>>>> f1 != f2 :(\n");
+		printPoint(f1, param);
+		printPoint(f2, param);
+/*		return 0;*/
+	}
+	
+	EC_POINT* cProd = EC_POINT_new(param->curve);
+	EC_POINT_mul(param->curve, cProd, NULL, C[0], s[4], ctx);
+	for (int v = 1; v < n; ++v) {
+		EC_POINT_mul(param->curve, temp, NULL, C[v], s[v+4], ctx);
+		EC_POINT_add(param->curve, cProd, cProd, temp, ctx); 
+	}
+  
+  EC_POINT* cpProd = EC_POINT_new(param->curve);
+  EC_POINT_copy(cpProd, Cp0);
+	for (int j = 0; j < n; ++j) {
+		EC_POINT_mul(param->curve, temp, NULL, Cp[j], challenges[j], ctx);
+		EC_POINT_add(param->curve, cpProd, cpProd, temp, ctx); 
+	}
+	
+	if (EC_POINT_cmp(param->curve, cProd, cpProd, ctx) != 0){
+		printf(">>>>>>>>>>>>>>> cProd != cpProd :(\n");
+		printPoint(cProd, param);
+		printPoint(cpProd, param);
+/*		return 0;*/
+	}
+  
+	BIGNUM* l1 = BN_new();
+	BIGNUM* l2 = BN_new();
+	BN_zero(l1);
+	BN_zero(l2);
+	BIGNUM* tmp2 = BN_new();
+	for (int j = 1; j < n+1; ++j) {
+		BN_mod_exp(tmp, challenges[j-1], two, param->p, ctx);
+		BN_mod_exp(tmp2, s[j+4], two, param->p, ctx);
+		BN_mod_sub(tmp, tmp2, tmp, param->p, ctx);
+		BN_mod_add(l2, l2, tmp, param->p, ctx);
+		
+		BN_mod_exp(tmp, challenges[j-1], three, param->p, ctx);
+		BN_mod_exp(tmp2, s[j+4], three, param->p, ctx);
+		BN_mod_sub(tmp, tmp2, tmp, param->p, ctx);
+		BN_mod_add(l1, l1, tmp, param->p, ctx);
+	} 
+  
+	if (BN_cmp(l1, l2) != 0){
+		printf(">>>>>>>>>>>>>>> l1 != l2 :(\n");
+		printf("%s != %s\n", BN_bn2dec(l1), BN_bn2dec(l2));
+/*		return 0;*/
+	}
+	
+	BIGNUM* r1 = BN_new();
+	BN_zero(r1);
+	BN_mod_add(r1, r1, s[2], param->p, ctx);
+	BN_mod_add(r1, r1, sp[1], param->p, ctx);
+	BN_mod_add(r1, r1, w, param->p, ctx);
+	
+	BIGNUM* r2 = BN_new();
+	BN_zero(r2);
+	BN_mod_add(r2, r2, s[0], param->p, ctx);
+	BN_mod_add(r2, r2, wtil, param->p, ctx);
+  
+	if (BN_cmp(r1, r2) != 0){
+		printf(">>>>>>>>>>>>>>> r1 != r2 :(\n");
+		printf("%s != %s\n", BN_bn2dec(r1), BN_bn2dec(r2));
+		return 0;
+	}
+  
 	return 1;
 }
 
