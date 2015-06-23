@@ -21,7 +21,7 @@ int main(int argc, const char * argv[])
     int secLv=80;
     
     char* policy="u";
-    char* password="AB";
+    char* password="A(";
     
     pHashParam* param= PSetup(secLv);
     
@@ -56,12 +56,12 @@ int main(int argc, const char * argv[])
         rp[i]=PSalt(param);
         
         //commitments of (pi[i],r[i])
-        C[i]=commit(param, pi[i], r[i]);
+        C[i] = commit(param, pi[i], r[i]);
         
         //re-commitments of (pi[i],r[i]+rp[i])
         rrp[i] = BN_new();
         BN_mod_add(rrp[i], r[i], rp[i], param->p, ctx);
-        Cp[i]=commit(param, pi[i], rrp[i]);
+        Cp[i] = commit(param, pi[i], rrp[i]);
     }
     
     // shuffle pi, Cp
@@ -85,6 +85,8 @@ int main(int argc, const char * argv[])
         printf("pip: %s\n",BN_bn2dec(pip[i]));
         printf("C[%d]: ", i);
         printPoint(C[i], param);
+        printf("Cp[%d]: ", i);
+        printPoint(Cp[i], param);
     }
     
     BIGNUM* sumPi = BN_new();
