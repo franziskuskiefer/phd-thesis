@@ -118,16 +118,16 @@ pHashParam* PSetup(int secLev){
     
     // h
     BIGNUM* rnd = BN_new();
-/*    BN_rand_range(rnd, result->p);*/
-    BN_one(rnd);
+    BN_rand_range(rnd, result->p);
+/*    BN_one(rnd);*/
     result->h = EC_POINT_new(result->curve);
     EC_POINT_mul(result->curve, result->h, NULL, result->g, rnd, ctx);
     
     // generate f (100)
     result->f = calloc(100, sizeof(EC_POINT*));
     for (int i = 0; i < 100; ++i) {
-/*		  BN_rand_range(rnd, result->p);*/
-	    BN_one(rnd);
+		  BN_rand_range(rnd, result->p);
+/*	    BN_one(rnd);*/
 		  result->f[i] = EC_POINT_new(result->curve);
 		  EC_POINT_mul(result->curve, result->f[i], NULL, result->g, rnd, ctx);
     }
@@ -141,8 +141,8 @@ BIGNUM* PSalt(pHashParam* param){
     BIGNUM* salt=BN_new();
 
 // FIXME    
-/*    BN_rand_range(salt, param->p);*/
-		BN_one(salt);
+    BN_rand_range(salt, param->p);
+/*		BN_one(salt);*/
     return salt;
     
 }
@@ -493,8 +493,6 @@ int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r, BIG
     BIGNUM* challenge = BN_new();
     BN_rand_range(challenge, param->p);
     
-    
-    
     //prove the ith char is in a set determined by the policy
     for(int i=0;i<n;i++){
         //find the server's set to run proof protocol
@@ -603,7 +601,6 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	BN_mod_mul(piSum, pi[0], A[5][0], param->p, ctx);
 
 	BIGNUM* rSum = BN_new();
-/*	BN_zero(rSum);*/
 	BN_mod_mul(rSum, r[0], A[5][0], param->p, ctx);	
   BN_mod_add(rSum, A[4][0], rSum, param->p, ctx);
 	for (int j = 1; j < n; ++j) { // in range(1, len(pwd)):
@@ -641,9 +638,8 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	BN_one(challenges[0]);
 	for (int i = 1; i < n+1; ++i) {
 		challenges[i] = BN_new();
-/*		BN_rand_range(challenges[i], param->p);*/
-/*		BN_one(challenges[i]);*/
-    BN_set_word(challenges[i], i);
+		BN_rand_range(challenges[i], param->p);
+/*    BN_set_word(challenges[i], 2);*/
 	}
 	
 	// PROVE PoS
@@ -666,8 +662,8 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 
 	// VERIFY PoS
 	BIGNUM* a = BN_new();
-/*	BN_rand_range(a, param->p);*/
-	BN_one(a);
+	BN_rand_range(a, param->p);
+/*	BN_one(a);*/
 
 	EC_POINT* f1 = EC_POINT_new(param->curve);
 	BN_mod_mul(tmp, a, sp[0], param->p, ctx);
@@ -684,9 +680,9 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	EC_POINT_mul(param->curve, f2, NULL, ftil, a, ctx);		
 	EC_POINT_add(param->curve, f2, fpv[0], f2, ctx); 
 	for (int j = 1; j < n+1; ++j) {
-		BN_mod_exp(tmp, challenges[j-1], two, param->p, ctx);		
+		BN_mod_exp(tmp, challenges[j], two, param->p, ctx);		
 		BN_mod_mul(tmp, a, tmp, param->p, ctx);
-		BN_mod_add(tmp, challenges[j-1], tmp, param->p, ctx);
+		BN_mod_add(tmp, challenges[j], tmp, param->p, ctx);
 		EC_POINT_mul(param->curve, temp, NULL, fpv[j], tmp, ctx);	
 		EC_POINT_add(param->curve, f2, f2, temp, ctx);		
 	}
@@ -708,7 +704,7 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
   EC_POINT* cpProd = EC_POINT_new(param->curve);
   EC_POINT_copy(cpProd, Cp0);
 	for (int j = 0; j < n; ++j) {
-		EC_POINT_mul(param->curve, temp, NULL, Cp[j], challenges[j], ctx);
+		EC_POINT_mul(param->curve, temp, NULL, Cp[j], challenges[j+1], ctx);
 		EC_POINT_add(param->curve, cpProd, cpProd, temp, ctx); 
 	}
 	
@@ -725,12 +721,12 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	BN_zero(l2);
 	BIGNUM* tmp2 = BN_new();
 	for (int j = 1; j < n+1; ++j) {
-		BN_mod_exp(tmp, challenges[j-1], two, param->p, ctx);
+		BN_mod_exp(tmp, challenges[j], two, param->p, ctx);
 		BN_mod_exp(tmp2, s[j+4], two, param->p, ctx);
 		BN_mod_sub(tmp, tmp2, tmp, param->p, ctx);
 		BN_mod_add(l2, l2, tmp, param->p, ctx);
 		
-		BN_mod_exp(tmp, challenges[j-1], three, param->p, ctx);
+		BN_mod_exp(tmp, challenges[j], three, param->p, ctx);
 		BN_mod_exp(tmp2, s[j+4], three, param->p, ctx);
 		BN_mod_sub(tmp, tmp2, tmp, param->p, ctx);
 		BN_mod_add(l1, l1, tmp, param->p, ctx);
