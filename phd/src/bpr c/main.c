@@ -18,10 +18,13 @@ int main(int argc, const char * argv[])
     
     struct timeval t3;
     struct timeval t4;
+    struct timeval t5;
+    struct timeval t6;
+    
     int secLv=80;
     
-    char* policy="u";
-    char* password="A(";
+    char* policy="dulsduls";
+    char* password="ILuv21()n.";
     
     pHashParam* param= PSetup(secLv);
     
@@ -78,16 +81,6 @@ int main(int argc, const char * argv[])
     Cp = Cpp;
     rp = rpp;
     rrp = rrpp;
-    for(int i=0; i < n; i++){
-        printf("k: %d\t",k[i]);
-        printf("r: %s\t", BN_bn2dec(r[i]));
-        printf("pi: %s\t",BN_bn2dec(pi[i]));
-        printf("pip: %s\n",BN_bn2dec(pip[i]));
-        printf("C[%d]: ", i);
-        printPoint(C[i], param);
-        printf("Cp[%d]: ", i);
-        printPoint(Cp[i], param);
-    }
     
     BIGNUM* sumPi = BN_new();
     BIGNUM* sumRi = BN_new();
@@ -126,7 +119,7 @@ int main(int argc, const char * argv[])
     
     gettimeofday(&t4, NULL);
     cpu_time_used = (double)(t4.tv_sec-t3.tv_sec)*1000+(double)(t4.tv_usec-t3.tv_usec)/1000;
-    printf("PoM time (ms) = %f\n",cpu_time_used);
+    printf("PoM time (ms) = %f\n", cpu_time_used);
     
     if(accept==1){
         //printf("PoM succeeded\n");
@@ -137,10 +130,9 @@ int main(int argc, const char * argv[])
 		// proof of shuffled
 		gettimeofday(&t3, NULL);
     accept = PoS(param, n, k, rrp, rp, r, pi, pip, C, Cp);
-    
     gettimeofday(&t4, NULL);
     cpu_time_used = (double)(t4.tv_sec-t3.tv_sec)*1000+(double)(t4.tv_usec-t3.tv_usec)/1000;
-    printf("PoS time (ms) = %f\n",cpu_time_used);
+    printf("PoS time (ms) = %f\n", cpu_time_used);
     
     if(accept==1){
         //printf("PoS succeeded\n");
@@ -149,7 +141,11 @@ int main(int argc, const char * argv[])
     }
 
     // proof of correctness
+		gettimeofday(&t5, NULL);
     accept=PoC(param, H, sumCI_S, sumPi, sumRi, sp, sh);
+    gettimeofday(&t6, NULL);
+    cpu_time_used = (double)(t6.tv_sec-t5.tv_sec)*1000+(double)(t6.tv_usec-t5.tv_usec)/1000;
+    printf("PoE time (ms) = %f\n", cpu_time_used);
     
     if(accept==1){
        // printf("PoE succeeded\n");

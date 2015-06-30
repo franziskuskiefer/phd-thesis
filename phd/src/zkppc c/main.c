@@ -18,11 +18,14 @@ int main(int argc, const char * argv[])
     
     struct timeval t3;
     struct timeval t4;
+    struct timeval t5;
+    struct timeval t6;
+    
     int secLv=80;
     
-    char* policy="dulsdulsdulsduls";
+    char* policy="dulsduls";
     
-    char* password="ILuv21()n.ILuv21()n.";
+    char* password="ILuv21()n.";
     
     pHashParam* param= PSetup(secLv);
     
@@ -87,10 +90,9 @@ int main(int argc, const char * argv[])
     
     gettimeofday(&t3, NULL);
     int accept=PoM(param,password, policy, r, pi, C, alpha);
-    
     gettimeofday(&t4, NULL);
     cpu_time_used = (double)(t4.tv_sec-t3.tv_sec)*1000+(double)(t4.tv_usec-t3.tv_usec)/1000;
-    printf("SCP time (ms) = %f\n",cpu_time_used);
+    printf("PoM time (ms) = %f\n",cpu_time_used);
     
     if(accept==1){
         //printf("PoM succeeded\n");
@@ -99,7 +101,11 @@ int main(int argc, const char * argv[])
     }
 
     
+    gettimeofday(&t5, NULL);
     accept=PoE(param, H, sumCI_S, sumPi, sumRi, sp, sh);
+    gettimeofday(&t6, NULL);
+    cpu_time_used = (double)(t6.tv_sec-t5.tv_sec)*1000+(double)(t6.tv_usec-t5.tv_usec)/1000;
+    printf("PoE time (ms) = %f\n",cpu_time_used);
     
     if(accept==1){
        // printf("PoE succeeded\n");

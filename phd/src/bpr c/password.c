@@ -497,7 +497,7 @@ int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r, BIG
     for(int i=0;i<n;i++){
         //find the server's set to run proof protocol
         BIGNUM** set;
-        printf("c[k[i]]: %c\n", password[k[i]]);
+/*        printf("c[k[i]]: %c\n", password[k[i]]);*/
         int setSize = findSet(password[k[i]], alpha, polCopy, &set);
         
         //character is not in the alphabet
@@ -516,7 +516,8 @@ int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r, BIG
 
 int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r, BIGNUM** pi, BIGNUM** pip, EC_POINT** C, EC_POINT** Cp) {
 	
-	printf("PoS\n");
+/*	printf("PoS\n");*/
+
   BN_CTX* ctx = BN_CTX_new();
 
 	int m = htonl(2);
@@ -639,7 +640,6 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	for (int i = 1; i < n+1; ++i) {
 		challenges[i] = BN_new();
 		BN_rand_range(challenges[i], param->p);
-/*    BN_set_word(challenges[i], 2);*/
 	}
 	
 	// PROVE PoS
@@ -663,7 +663,6 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 	// VERIFY PoS
 	BIGNUM* a = BN_new();
 	BN_rand_range(a, param->p);
-/*	BN_one(a);*/
 
 	EC_POINT* f1 = EC_POINT_new(param->curve);
 	BN_mod_mul(tmp, a, sp[0], param->p, ctx);
@@ -691,7 +690,7 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 		printf(">>>>>>>>>>>>>>> f1 != f2 :(\n");
 		printPoint(f1, param);
 		printPoint(f2, param);
-/*		return 0;*/
+		return 0;
 	}
 	
 	EC_POINT* cProd = EC_POINT_new(param->curve);
@@ -759,45 +758,36 @@ int PoS(pHashParam* param, int n, int* k, BIGNUM** rrp, BIGNUM** rp, BIGNUM** r,
 }
 
 int PoC(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh){
-    printf("PoE\n");
+/*    printf("PoE\n");*/
     
-    BIGNUM* kpi=PSalt(param);
-    BIGNUM* ksp=PSalt(param);
-    BIGNUM* ksh=PSalt(param);
-    BIGNUM* kr=PSalt(param);
+    BIGNUM* kpi = PSalt(param);
+    BIGNUM* ksp = PSalt(param);
+    BIGNUM* kr = PSalt(param);
     BN_CTX* ctx = BN_CTX_new();
-
     
     EC_POINT* temp=EC_POINT_new(param->curve);
     
     EC_POINT* t1 = EC_POINT_new(param->curve);
     EC_POINT_mul(param->curve, t1, NULL, param->g, ksp, ctx);
     
-    EC_POINT* t2=EC_POINT_new(param->curve);
-    EC_POINT_mul(param->curve, t2, NULL, param->h, ksh, ctx);
-    EC_POINT_mul(param->curve, temp, NULL, H->H1, kpi, ctx);
-    EC_POINT_add(param->curve, t2,t2, temp, ctx);
+    EC_POINT* t2 = EC_POINT_new(param->curve);
+    EC_POINT_mul(param->curve, t2, NULL, H->H1, kpi, ctx);
     
     EC_POINT* t3 = commit(param,kpi,kr);
     
-    
     BIGNUM* challenge= PSalt(param);
     
-    BIGNUM* a1=BN_new();
+    BIGNUM* a1 = BN_new();
     BN_mod_mul(a1, challenge, sp, param->p, ctx);
     BN_mod_add(a1, ksp, a1, param->p, ctx);
     
-    BIGNUM* a2=BN_new();
+    BIGNUM* a2 = BN_new();
     BN_mod_mul(a2, challenge, sumPi, param->p, ctx);
-    BN_mod_add(a2, a2, kpi, param->p, ctx);
+    BN_mod_sub(a2, kpi, a2, param->p, ctx);
     
-    BIGNUM* a3=BN_new();
-    BN_mod_mul(a3, challenge, sh, param->p, ctx);
-    BN_mod_add(a3, a3, ksh, param->p, ctx);
-    
-    BIGNUM* a4=BN_new();
+    BIGNUM* a4 = BN_new();
     BN_mod_mul(a4, challenge, sumR, param->p, ctx);
-    BN_mod_add(a4, a4, kr, param->p, ctx);
+    BN_mod_sub(a4, kr, a4, param->p, ctx);
     
     EC_POINT* left=EC_POINT_new(param->curve);
     EC_POINT* right=EC_POINT_new(param->curve);
@@ -811,31 +801,30 @@ int PoC(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sum
         return 0;
     }
     
-    EC_POINT_mul(param->curve, left, NULL,H->H1, a2,ctx);
-    EC_POINT_mul(param->curve, temp, NULL, param->h, a3, ctx);
-    EC_POINT_add(param->curve, left, left, temp, ctx);
+    EC_POINT_mul(param->curve, right, NULL, param->h, sh, ctx);
+    EC_POINT_invert(param->curve, right, ctx);
+    EC_POINT_add(param->curve, right, H->H2, right, ctx);
+    EC_POINT_mul(param->curve, right, NULL, right, challenge, ctx);
+    EC_POINT_mul(param->curve, temp, NULL, H->H1, a2, ctx);
+    EC_POINT_add(param->curve, right, right, temp, ctx);
     
-    EC_POINT_mul(param->curve, right, NULL, H->H2, challenge, ctx);
-    EC_POINT_add(param->curve, right, right, t2, ctx);
-    
-    if(EC_POINT_cmp(param->curve, left, right, ctx)!=0){
-        printf("H1^a2 * h^a3 !=t2* H2^c\n");
+    if(EC_POINT_cmp(param->curve, t2, right, ctx)!=0){
+        printf("H1^a2 * (H2/h^s_H)^c != t2\n");
         return 0;
     }
     
-    EC_POINT_mul(param->curve, left, a2, param->h, a4, ctx);
+    EC_POINT_mul(param->curve, temp, NULL, param->h, a4, ctx);
+    EC_POINT_mul(param->curve, right, NULL, param->g, a2, ctx);
+    EC_POINT_add(param->curve, temp, right, temp, ctx);
     EC_POINT_mul(param->curve, right, NULL, com, challenge, ctx);
-    EC_POINT_add(param->curve,right, right, t3, ctx);
+    EC_POINT_add(param->curve, right, right, temp, ctx);
     
-    if(EC_POINT_cmp(param->curve, left, right, ctx)!=0){
-        printf("g^a2 * h^a4 !=t3* C^c\n");
+    if(EC_POINT_cmp(param->curve, t3, right, ctx)!=0){
+        printf("g^a2 * h^a4 * C^c != t3\n");
         return 0;
     }
     
     return 1;
-    
-    
-    
 }
 
 
