@@ -1,0 +1,207 @@
+password: ILuv21()n.
+policy: duls
+password length = 10
+
+PoM time (ms) = 14459.788000
+PoE time (ms) = 4.638000
+Total time (ms) = 14471.520000
+
+PoM time (ms) = 14459.307000
+PoE time (ms) = 4.612000
+Total time (ms) = 14471.008000
+
+PoM time (ms) = 14426.072000
+PoE time (ms) = 4.587000
+Total time (ms) = 14439.781000
+
+PoM time (ms) = 14432.811000
+PoE time (ms) = 4.822000
+Total time (ms) = 14444.409000
+
+PoM time (ms) = 14423.898000
+PoE time (ms) = 4.677000
+Total time (ms) = 14435.624000
+
+PoM time (ms) = 14397.860000
+PoE time (ms) = 4.654000
+Total time (ms) = 14409.209000
+
+PoM time (ms) = 14628.868000
+PoE time (ms) = 4.900000
+Total time (ms) = 14643.880000
+
+PoM time (ms) = 14464.536000
+PoE time (ms) = 4.633000
+Total time (ms) = 14476.195000
+
+PoM time (ms) = 14417.587000
+PoE time (ms) = 4.575000
+Total time (ms) = 14428.889000
+
+PoM time (ms) = 14379.300000
+PoE time (ms) = 4.634000
+Total time (ms) = 14390.820000
+
+==============================
+
+password: ILuv21()n.
+policy: dulsduls
+password length = 10
+
+PoM time (ms) = 8274.578000
+PoE time (ms) = 4.584000
+Total time (ms) = 8286.266000
+
+PoM time (ms) = 8259.821000
+PoE time (ms) = 4.623000
+Total time (ms) = 8272.464000
+
+PoM time (ms) = 8269.362000
+PoE time (ms) = 4.611000
+Total time (ms) = 8280.735000
+
+PoM time (ms) = 8236.432000
+PoE time (ms) = 4.610000
+Total time (ms) = 8249.062000
+
+PoM time (ms) = 8302.090000
+PoE time (ms) = 4.836000
+Total time (ms) = 8313.716000
+
+PoM time (ms) = 8227.157000
+PoE time (ms) = 4.579000
+Total time (ms) = 8238.971000
+
+PoM time (ms) = 8228.800000
+PoE time (ms) = 4.589000
+Total time (ms) = 8240.140000
+
+PoM time (ms) = 8248.584000
+PoE time (ms) = 4.659000
+Total time (ms) = 8260.347000
+
+PoM time (ms) = 8249.529000
+PoE time (ms) = 4.595000
+Total time (ms) = 8260.907000
+
+PoM time (ms) = 8233.602000
+PoE time (ms) = 4.554000
+Total time (ms) = 8245.418000
+
+==============================
+
+password: ILuv21()n.ILuv21()n.
+policy: dulsdulsdulsduls
+password length = 20
+
+PoM time (ms) = 41539.973000
+PoE time (ms) = 4.550000
+Total time (ms) = 41560.097000
+
+PoM time (ms) = 41477.858000
+PoE time (ms) = 4.713000
+Total time (ms) = 41500.137000
+
+PoM time (ms) = 41568.105000
+PoE time (ms) = 4.664000
+Total time (ms) = 41588.194000
+
+PoM time (ms) = 41498.336000
+PoE time (ms) = 4.572000
+Total time (ms) = 41520.789000
+
+PoM time (ms) = 41513.330000
+PoE time (ms) = 4.827000
+Total time (ms) = 41533.387000
+
+PoM time (ms) = 41742.036000
+PoE time (ms) = 4.710000
+Total time (ms) = 41761.968000
+
+PoM time (ms) = 41628.387000
+PoE time (ms) = 4.629000
+Total time (ms) = 41648.267000
+
+PoM time (ms) = 41461.149000
+PoE time (ms) = 4.635000
+Total time (ms) = 41483.563000
+
+PoM time (ms) = 41705.924000
+PoE time (ms) = 4.623000
+Total time (ms) = 41728.265000
+
+PoM time (ms) = 41604.560000
+PoE time (ms) = 4.593000
+Total time (ms) = 41624.451000
+
+==============================
+
+password: ILuv21()n.ILuv21()n.
+policy: dulsduls
+password length = 20
+
+PoM time (ms) = 73029.726000
+PoE time (ms) = 4.587000
+Total time (ms) = 73051.735000
+
+PoM time (ms) = 72784.177000
+PoE time (ms) = 4.614000
+Total time (ms) = 72804.168000
+
+PoM time (ms) = 72922.430000
+PoE time (ms) = 4.708000
+Total time (ms) = 72943.162000
+
+PoM time (ms) = 72956.044000
+PoE time (ms) = 4.649000
+Total time (ms) = 72979.845000
+
+PoM time (ms) = 72914.118000
+PoE time (ms) = 4.606000
+Total time (ms) = 72935.334000
+
+PoM time (ms) = 72737.509000
+PoE time (ms) = 4.540000
+Total time (ms) = 72757.291000
+
+PoM time (ms) = 73117.205000
+PoE time (ms) = 4.576000
+Total time (ms) = 73140.382000
+
+PoM time (ms) = 73159.272000
+PoE time (ms) = 4.535000
+Total time (ms) = 73178.965000
+
+PoM time (ms) = 73319.284000
+PoE time (ms) = 4.552000
+Total time (ms) = 73339.794000
+
+PoM time (ms) = 72780.156000
+PoE time (ms) = 4.660000
+Total time (ms) = 72802.718000
+
+==============================
+
+password: ILuv21()n.ILuv21()n.ILuv21()n.ILuv21()n.
+policy: dulsduls
+password length = 40
+
+PoM time (ms) = 500889.759000
+PoE time (ms) = 4.734000
+Total time (ms) = 500936.034000
+
+PoM time (ms) = 500704.452000
+PoE time (ms) = 4.602000
+Total time (ms) = 500749.756000
+
+PoM time (ms) = 496713.972000
+PoE time (ms) = 4.611000
+Total time (ms) = 496759.048000
+
+PoM time (ms) = 499750.195000
+PoE time (ms) = 4.525000
+Total time (ms) = 499795.651000
+
+PoM time (ms) = 497059.460000
+PoE time (ms) = 4.852000
+Total time (ms) = 497109.365000

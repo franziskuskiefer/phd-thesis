@@ -1,0 +1,322 @@
+policy: 4:(D,1)(U,1)(L,1)(S,1)
+passsword length: 10
+
+Client prepare uis (ms) = 6.240000
+Sever computes ui' (ms) = 11.915000
+Client prepare hat{C} (ms) = 0.628000
+Server prepare hat{S} (ms) = 112.341000
+SCP time (ms) = 6.055000
+
+Client prepare uis (ms) = 6.958000
+Sever computes ui' (ms) = 12.081000
+Client prepare hat{C} (ms) = 0.626000
+Server prepare hat{S} (ms) = 113.115000
+SCP time (ms) = 5.792000
+
+Client prepare uis (ms) = 6.282000
+Sever computes ui' (ms) = 11.944000
+Client prepare hat{C} (ms) = 0.703000
+Server prepare hat{S} (ms) = 113.675000
+SCP time (ms) = 5.794000
+
+Client prepare uis (ms) = 6.393000
+Sever computes ui' (ms) = 12.538000
+Client prepare hat{C} (ms) = 0.702000
+Server prepare hat{S} (ms) = 113.618000
+SCP time (ms) = 5.727000
+
+Client prepare uis (ms) = 6.185000
+Sever computes ui' (ms) = 11.846000
+Client prepare hat{C} (ms) = 0.620000
+Server prepare hat{S} (ms) = 113.218000
+SCP time (ms) = 6.189000
+
+Client prepare uis (ms) = 6.282000
+Sever computes ui' (ms) = 11.938000
+Client prepare hat{C} (ms) = 0.629000
+Server prepare hat{S} (ms) = 112.605000
+SCP time (ms) = 5.783000
+
+Client prepare uis (ms) = 6.241000
+Sever computes ui' (ms) = 11.921000
+Client prepare hat{C} (ms) = 0.680000
+Server prepare hat{S} (ms) = 114.142000
+SCP time (ms) = 5.833000
+
+Client prepare uis (ms) = 6.268000
+Sever computes ui' (ms) = 12.002000
+Client prepare hat{C} (ms) = 0.661000
+Server prepare hat{S} (ms) = 115.332000
+SCP time (ms) = 5.770000
+
+Client prepare uis (ms) = 6.218000
+Sever computes ui' (ms) = 11.911000
+Client prepare hat{C} (ms) = 0.616000
+Server prepare hat{S} (ms) = 112.359000
+SCP time (ms) = 5.737000
+
+Client prepare uis (ms) = 6.143000
+Sever computes ui' (ms) = 11.893000
+Client prepare hat{C} (ms) = 0.614000
+Server prepare hat{S} (ms) = 112.537000
+SCP time (ms) = 5.806000
+
+======================================
+
+policy: 4:(D,2)(U,2)(L,2)(S,2)
+passsword length: 10
+
+Client prepare uis (ms) = 6.288000
+Sever computes ui' (ms) = 11.918000
+Client prepare hat{C} (ms) = 1.215000
+Server prepare hat{S} (ms) = 225.230000
+SCP time (ms) = 11.514000
+
+Client prepare uis (ms) = 6.281000
+Sever computes ui' (ms) = 11.973000
+Client prepare hat{C} (ms) = 1.200000
+Server prepare hat{S} (ms) = 237.967000
+SCP time (ms) = 12.695000
+
+Client prepare uis (ms) = 6.269000
+Sever computes ui' (ms) = 12.288000
+Client prepare hat{C} (ms) = 1.227000
+Server prepare hat{S} (ms) = 226.877000
+SCP time (ms) = 11.826000
+
+Client prepare uis (ms) = 6.140000
+Sever computes ui' (ms) = 11.986000
+Client prepare hat{C} (ms) = 1.232000
+Server prepare hat{S} (ms) = 226.819000
+SCP time (ms) = 11.791000
+
+Client prepare uis (ms) = 6.256000
+Sever computes ui' (ms) = 12.277000
+Client prepare hat{C} (ms) = 1.247000
+Server prepare hat{S} (ms) = 230.234000
+SCP time (ms) = 11.739000
+
+Client prepare uis (ms) = 6.231000
+Sever computes ui' (ms) = 12.059000
+Client prepare hat{C} (ms) = 1.258000
+Server prepare hat{S} (ms) = 227.735000
+SCP time (ms) = 11.891000
+
+Client prepare uis (ms) = 6.325000
+Sever computes ui' (ms) = 12.171000
+Client prepare hat{C} (ms) = 1.249000
+Server prepare hat{S} (ms) = 229.099000
+SCP time (ms) = 11.656000
+
+Client prepare uis (ms) = 6.194000
+Sever computes ui' (ms) = 11.829000
+Client prepare hat{C} (ms) = 1.203000
+Server prepare hat{S} (ms) = 226.314000
+SCP time (ms) = 11.545000
+
+Client prepare uis (ms) = 6.168000
+Sever computes ui' (ms) = 11.819000
+Client prepare hat{C} (ms) = 1.221000
+Server prepare hat{S} (ms) = 225.697000
+SCP time (ms) = 12.156000
+
+Client prepare uis (ms) = 6.259000
+Sever computes ui' (ms) = 11.809000
+Client prepare hat{C} (ms) = 1.260000
+Server prepare hat{S} (ms) = 225.462000
+SCP time (ms) = 11.658000
+
+======================================
+
+policy: 4:(D,4)(U,4)(L,4)(S,4)
+passsword length: 20
+
+Client prepare uis (ms) = 12.359000
+Sever computes ui' (ms) = 24.423000
+Client prepare hat{C} (ms) = 2.402000
+Server prepare hat{S} (ms) = 449.515000
+SCP time (ms) = 23.050000
+
+Client prepare uis (ms) = 12.649000
+Sever computes ui' (ms) = 23.758000
+Client prepare hat{C} (ms) = 2.408000
+Server prepare hat{S} (ms) = 447.619000
+SCP time (ms) = 22.995000
+
+Client prepare uis (ms) = 12.423000
+Sever computes ui' (ms) = 23.631000
+Client prepare hat{C} (ms) = 2.374000
+Server prepare hat{S} (ms) = 449.352000
+SCP time (ms) = 23.292000
+
+Client prepare uis (ms) = 12.442000
+Sever computes ui' (ms) = 23.864000
+Client prepare hat{C} (ms) = 2.424000
+Server prepare hat{S} (ms) = 445.639000
+SCP time (ms) = 22.921000
+
+Client prepare uis (ms) = 12.410000
+Sever computes ui' (ms) = 23.582000
+Client prepare hat{C} (ms) = 2.442000
+Server prepare hat{S} (ms) = 454.835000
+SCP time (ms) = 23.354000
+
+Client prepare uis (ms) = 12.306000
+Sever computes ui' (ms) = 23.585000
+Client prepare hat{C} (ms) = 2.471000
+Server prepare hat{S} (ms) = 454.995000
+SCP time (ms) = 23.323000
+
+Client prepare uis (ms) = 12.388000
+Sever computes ui' (ms) = 23.688000
+Client prepare hat{C} (ms) = 2.457000
+Server prepare hat{S} (ms) = 453.331000
+SCP time (ms) = 23.172000
+
+Client prepare uis (ms) = 12.411000
+Sever computes ui' (ms) = 23.799000
+Client prepare hat{C} (ms) = 2.498000
+Server prepare hat{S} (ms) = 446.876000
+SCP time (ms) = 23.074000
+
+Client prepare uis (ms) = 12.497000
+Sever computes ui' (ms) = 23.797000
+Client prepare hat{C} (ms) = 2.453000
+Server prepare hat{S} (ms) = 452.919000
+SCP time (ms) = 23.606000
+
+Client prepare uis (ms) = 12.516000
+Sever computes ui' (ms) = 23.829000
+Client prepare hat{C} (ms) = 2.448000
+Server prepare hat{S} (ms) = 450.260000
+SCP time (ms) = 23.217000
+
+======================================
+
+policy: 4:(D,2)(U,2)(L,2)(S,2)
+passsword length: 20
+
+Client prepare uis (ms) = 12.776000
+Sever computes ui' (ms) = 23.944000
+Client prepare hat{C} (ms) = 1.252000
+Server prepare hat{S} (ms) = 224.087000
+SCP time (ms) = 11.591000
+
+Client prepare uis (ms) = 12.414000
+Sever computes ui' (ms) = 23.803000
+Client prepare hat{C} (ms) = 1.247000
+Server prepare hat{S} (ms) = 225.043000
+SCP time (ms) = 11.619000
+
+Client prepare uis (ms) = 12.215000
+Sever computes ui' (ms) = 23.875000
+Client prepare hat{C} (ms) = 1.298000
+Server prepare hat{S} (ms) = 225.367000
+SCP time (ms) = 11.957000
+
+Client prepare uis (ms) = 12.409000
+Sever computes ui' (ms) = 23.869000
+Client prepare hat{C} (ms) = 1.239000
+Server prepare hat{S} (ms) = 224.559000
+SCP time (ms) = 11.479000
+
+Client prepare uis (ms) = 12.324000
+Sever computes ui' (ms) = 23.785000
+Client prepare hat{C} (ms) = 1.260000
+Server prepare hat{S} (ms) = 248.792000
+SCP time (ms) = 11.854000
+
+Client prepare uis (ms) = 13.003000
+Sever computes ui' (ms) = 27.002000
+Client prepare hat{C} (ms) = 1.340000
+Server prepare hat{S} (ms) = 229.611000
+SCP time (ms) = 11.565000
+
+Client prepare uis (ms) = 12.391000
+Sever computes ui' (ms) = 24.020000
+Client prepare hat{C} (ms) = 1.292000
+Server prepare hat{S} (ms) = 224.767000
+SCP time (ms) = 11.609000
+
+Client prepare uis (ms) = 12.621000
+Sever computes ui' (ms) = 23.845000
+Client prepare hat{C} (ms) = 1.254000
+Server prepare hat{S} (ms) = 229.791000
+SCP time (ms) = 12.527000
+
+Client prepare uis (ms) = 13.035000
+Sever computes ui' (ms) = 24.978000
+Client prepare hat{C} (ms) = 1.331000
+Server prepare hat{S} (ms) = 229.792000
+SCP time (ms) = 11.499000
+
+Client prepare uis (ms) = 13.016000
+Sever computes ui' (ms) = 24.001000
+Client prepare hat{C} (ms) = 1.291000
+Server prepare hat{S} (ms) = 224.373000
+SCP time (ms) = 11.616000
+
+======================================
+
+policy: 4:(D,2)(U,2)(L,2)(S,2)
+passsword length: 40
+
+Client prepare uis (ms) = 25.295000
+Sever computes ui' (ms) = 47.586000
+Client prepare hat{C} (ms) = 1.206000
+Server prepare hat{S} (ms) = 226.484000
+SCP time (ms) = 11.731000
+
+Client prepare uis (ms) = 25.002000
+Sever computes ui' (ms) = 47.627000
+Client prepare hat{C} (ms) = 1.204000
+Server prepare hat{S} (ms) = 227.365000
+SCP time (ms) = 11.582000
+
+Client prepare uis (ms) = 25.007000
+Sever computes ui' (ms) = 47.670000
+Client prepare hat{C} (ms) = 1.221000
+Server prepare hat{S} (ms) = 226.242000
+SCP time (ms) = 11.601000
+
+Client prepare uis (ms) = 24.987000
+Sever computes ui' (ms) = 47.797000
+Client prepare hat{C} (ms) = 1.296000
+Server prepare hat{S} (ms) = 226.436000
+SCP time (ms) = 11.651000
+
+Client prepare uis (ms) = 24.626000
+Sever computes ui' (ms) = 47.821000
+Client prepare hat{C} (ms) = 1.231000
+Server prepare hat{S} (ms) = 225.904000
+SCP time (ms) = 11.508000
+
+Client prepare uis (ms) = 25.263000
+Sever computes ui' (ms) = 47.283000
+Client prepare hat{C} (ms) = 1.201000
+Server prepare hat{S} (ms) = 228.479000
+SCP time (ms) = 11.518000
+
+Client prepare uis (ms) = 24.680000
+Sever computes ui' (ms) = 47.404000
+Client prepare hat{C} (ms) = 1.206000
+Server prepare hat{S} (ms) = 224.773000
+SCP time (ms) = 11.572000
+
+Client prepare uis (ms) = 24.697000
+Sever computes ui' (ms) = 47.701000
+Client prepare hat{C} (ms) = 1.212000
+Server prepare hat{S} (ms) = 226.557000
+SCP time (ms) = 11.990000
+
+Client prepare uis (ms) = 25.674000
+Sever computes ui' (ms) = 47.901000
+Client prepare hat{C} (ms) = 1.222000
+Server prepare hat{S} (ms) = 227.772000
+SCP time (ms) = 11.475000
+
+Client prepare uis (ms) = 24.845000
+Sever computes ui' (ms) = 47.406000
+Client prepare hat{C} (ms) = 1.196000
+Server prepare hat{S} (ms) = 227.661000
+SCP time (ms) = 11.608000

@@ -468,7 +468,7 @@ int PoM(pHashParam* param,char* password, char* policy,BIGNUM** r,BIGNUM** pi, E
 }
 
 int PoE(pHashParam* param, hashVal* H, EC_POINT* com, BIGNUM* sumPi, BIGNUM* sumR, BIGNUM* sp, BIGNUM* sh){
-    printf("PoE\n");
+/*    printf("PoE\n");*/
     
     BIGNUM* kpi=PSalt(param);
     BIGNUM* ksp=PSalt(param);

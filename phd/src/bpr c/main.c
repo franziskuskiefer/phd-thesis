@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
     int secLv=80;
     
     char* policy="dulsduls";
-    char* password="ILuv21()n.";
+    char* password="ILuv21()n.ILuv21()n.ILuv21()n.ILuv21()n.";
     
     pHashParam* param= PSetup(secLv);
     

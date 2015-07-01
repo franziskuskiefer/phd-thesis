@@ -78,7 +78,7 @@ void testProtocol(){
     
     char* polStr="4:(D,2)(U,2)(L,2)(S,2)";
     // Pl35B@dm1nt()n.ILuv2Pl35B@dm1nt()n.
-    char* passstr="ILuv21()n.";
+    char* passstr="ILuv21()n.ILuv21()n.ILuv21()n.ILuv21()n.";
     printf("policy: %s\n",polStr);
     int len=strlen(polStr);
     
