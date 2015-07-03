@@ -146,6 +146,7 @@ function loginListener(event){
         contentType: 'application/json',
         success: function (data, textStatus, jqXHR) {
             console.log("logged in");
+            location.reload();
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("api error: " + textStatus);

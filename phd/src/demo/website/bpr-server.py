@@ -39,7 +39,7 @@ policyCharacters = ["d", "u", "l", "s"]
 
 defaultPolicy = {
 	'regex': 'sdul',
-	'minlength': 1
+	'minlength': 5
 }
 
 params, paramsJSON = Util.Params.getJSONParams("bprServer/pc.param")
@@ -277,8 +277,8 @@ def demoApp():
     s = request.environ.get('beaker.session')
     return template("client-app.html",
         params = '',
-        user = s.get('name', "Alice"),
-        key = s.get('key', "1234567890"))
+        user = s.get('name', ""),
+        key = s.get('key', ""))
     
 ############################
 ## run it

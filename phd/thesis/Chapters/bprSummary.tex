@@ -124,6 +124,12 @@ The measurements further show that the actual time needed for policy checking in
 % \caption{Time Breakdown}\label{fig::break}%\vspace{-5mm}
 % \end{figure}
 
-We also show the running time for each step in our protocol (see Fig. \ref{fig::break}). As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$. A possible optimisation is to take this step offline. 
-Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 
-The keys and pre-computed values can be stored together. Later when a client sends a registration request, the server can retrieve them and run the protocol. If this step is taken offline, then the online computation cost is small, usually no more than 100 milliseconds in a typical setting. 
+\paragraph{Discussion SPC-based BPR}
+% We also show the running time for each step in our protocol (see Fig. \ref{fig::break}). 
+As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. 
+The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$.
+A possible optimisation is to take this step offline. 
+Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random \ac{RSA} key pair and pre-compute $\hat{S}$ before engaging with the client. 
+The keys and pre-computed values can be stored together. 
+Later when a client sends a registration request, the server can retrieve them and run the protocol. 
+If this step is taken offline, then the online computation cost is small, usually no more than 100 milliseconds in a typical setting. 

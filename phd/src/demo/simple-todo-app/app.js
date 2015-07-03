@@ -6,7 +6,6 @@ const url = require("url");
 const clientSessions = require("client-sessions");
 
 /* DEFAULT PATH */
-//var DEFAULT_PATH = "/pow/demo/";
 var DEFAULT_PATH = "/";
 
 /* parse request bodies */
@@ -14,9 +13,6 @@ app.use(express.bodyParser());
 
 /* static content directory */
 app.use(express.static(__dirname + '/public'));
-
-// http://iconwanted.com/en/pixelledesigns/free-mobile-app-icons/list-bullets.html
-app.use(express.favicon("./public/images/favicon.ico")); 
 
 /* mongoose connection */
 mongoose.connect('mongodb://localhost/todo');
@@ -104,27 +100,21 @@ function checkAuth(req, res, next) {
 function renderPage(req, res, device){
 	var username = req.my_session.username;
 	console.log('hello "'+username+'"');
-//	if (device.Android)
-//		res.render('index.jade', {user: req.my_session.username, mobile: 1, params: JSON.stringify(mobileParams)});
-//	else
 		res.render('index.jade', {user: username, mobile: 0, params: JSON.stringify(browserParams)});
 };
 
 /* serve website */
 app.get('/', function(req, res){
 	var ua = req.headers['user-agent']; // mobile or desktop browser?
-//		console.log("user-agent: "+ua);
 	var device = {};
 	if (/mobile/i.test(ua))
 		device.Mobile = true;
 	if (/Android/.test(ua)){
-	//	device.Android = /Android ([0-9\.]+)[\);]/.exec(ua)[1];
 		device.Android = true;
 	}
 
 	// generate new session id if user has none
 	if (!req.my_session || !req.my_session.sid) {
-//		login.genIDs(db);
 		console.log("genIDs ... ");
 		var sessionID = crypto.randomBytes(64).toString('hex');
 		
@@ -139,9 +129,8 @@ app.get('/', function(req, res){
 
 		// set session id in cookie
 		req.my_session.sid = sessionID; 
-	} //else
-//		console.log("fuuu: "+JSON.stringify(req.my_session));
-		
+	} 
+	
 	// render page
 	renderPage(req, res, device);
 });
@@ -166,7 +155,6 @@ app.post('/todo/api', checkAuth, function(req, res){
 	make.save(function (err, make) {
 		if (err)
 			console.log("ERROR: "+err);
-//		console.log("stored "+JSON.stringify(make));
 		res.send('ok');
 	});
 });
@@ -186,9 +174,6 @@ app.delete('/todo/api', checkAuth, function(req, res){
 /* LOGIN API */
 
 app.post('/user/loginDone', function(req, res){
-//	var parsedUrl = url.parse(req.url, true); // true to get query as object
-//	var queryAsObject = parsedUrl.query;
-	
 	if (req.my_session) {
 		console.log(req.body.username);
 		console.log(req.body.key);
@@ -212,38 +197,13 @@ app.get('/user/api', function(req, res){
 		
 	if (queryAsObject && queryAsObject.sessionID && req.my_session && req.my_session.sid) { // read server auth1 from database to check
 		db.getSession(queryAsObject.sessionID, function(err, result) {
-//			console.log("queryAsObject.sessionID: "+queryAsObject.sessionID);
-//			console.log("req.my_session.sid: "+req.my_session.sid);
-			// db.succ == 1 && query.sid == db.sid == cookie.sid && query.auth == db.auth
-//			if (result[0] && result[0].success == null) { //result[0].success == "1"
-//				console.log("DO WE EVER REACH THIS POINT ??? DON'T THINK SO -> GET RID OF THE CODE !!!");
-//				if (queryAsObject.auth1 && queryAsObject.auth1 == result[0].a1 && queryAsObject.sessionID == req.my_session.sid) {
-//					req.my_session.username = result[0].username;
-//					// delete session from DB -> no one else can use it and we don't have so much waste in that DB
-//					db.dropSession(req.my_session.sid);
-//					var app = req.header('MobilePoWApp');
-//					if (app) { // just return success & auth2 token to app
-//						res.send("success;"+result[0].a2);
-//					} else { // redirect to webpage for browsers
-//						res.redirect(DEFAULT_PATH); // TODO: send result[0].a2 back
-//					}
-//				} else {
-//					res.redirect(DEFAULT_PATH+'user/loginerror');
-//					console.log("wrong username or password (or sth. else) !!! 1");
-//					/* TODO: we have to remove the session from the DB at some point, even if something went wrong and the user never comes back! */
-//				}
-//			} else 
 			if (result[0] && result[0].success != null) {
 				if (queryAsObject.key && result[0].success == "1" && queryAsObject.key == result[0].a3 && queryAsObject.sessionID == req.my_session.sid) {
 					req.my_session.username = result[0].username;
 					// delete session from DB -> no one else can use it and we don't have so much waste in that DB
 					db.dropSession(req.my_session.sid);
 					var app = req.header('MobilePoWApp');
-//					if (app) { // just return success & auth2 token to app
-//						res.send("success;"+result[0].a2);
-//					} else { // redirect to webpage for browsers
-						res.redirect(DEFAULT_PATH); // TODO: send result[0].a2 back
-//					}
+					res.redirect(DEFAULT_PATH); // TODO: send result[0].a2 back
 				} else {
 					res.redirect(DEFAULT_PATH+'user/loginerror');
 					console.log("wrong username or password (or sth. else) !!! 1");
@@ -268,13 +228,6 @@ app.get('/user/api', function(req, res){
 	} else {
 		res.redirect(DEFAULT_PATH+'user/loginerror');
 	}
-//	else { // return login window / parameters
-//		if (queryAsObject && queryAsObject.sessionID || queryAsObject.auth1)
-//			res.redirect(DEFAULT_PATH+'user/loginerror');
-//		var ua = req.headers['user-agent'];
-//		var loginPopup = login.render(ua, false, req.my_session.sid);
-//		res.send(loginPopup);
-//	} 
 });
 
 app.get('/user/logout', checkAuth, function (req, res) {

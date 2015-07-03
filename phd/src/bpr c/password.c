@@ -497,7 +497,6 @@ int PoM(pHashParam* param, int* k, char* password, char* policy, BIGNUM** r, BIG
     for(int i=0;i<n;i++){
         //find the server's set to run proof protocol
         BIGNUM** set;
-/*        printf("c[k[i]]: %c\n", password[k[i]]);*/
         int setSize = findSet(password[k[i]], alpha, polCopy, &set);
         
         //character is not in the alphabet
