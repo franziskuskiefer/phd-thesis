@@ -300,7 +300,7 @@ This protocol proves that password hash $H_2$ contains the same encoded password
 % This concludes the proof of equivalence for the client.
 
 
-\subsubsection{Proof of Membership (\PoM)} \label{sec:bpr:pom}
+\paragraph{Proof of Membership (\PoM)} \label{sec:bpr:pom}
 This protocol proves that every password character $c_{k_i}\in\omega_{k_i}$ using the shuffled set of commitments $\bm C'$, \ie
 \[\ZKPoK\{(\{\pi_i,r_i\}_{i\in[0,n-1]}) : ~ C'_{{k_i}}=g^{\pi_{i}}h^{r_{i}} ~ \wedge ~ \pi_{i}\in \omega_{{k_i}}\},\]
 (we use $\pi_{i}\in \omega_{{k_i}}$ as a short form of $c_i\in\omega_{{k_i}}$ with $\pi_i\gets \chrint(c_i)$).
@@ -341,7 +341,7 @@ Note that $C'_{k_i}\in \bm C'$.
     The verification of the proof is successful iff all verifications above are successful \emph{and} \vect{\omega} contains all significant characters for $f$.
 \end{enumerate}
 
-\subsubsection{Proof of Shuffle (\PoS)}
+\paragraph{Proof of Shuffle (\PoS)}
 Let $\phi$ denote a function such that $\phi(i)=k_i$ shuffles the set $\bm C$ to $\bm C'$.
 We use the efficient proof for correct shuffling for ElGamal ciphertexts from \citet{Furukawa05}, which is an optimised version of the protocol proposed by \citet{FurukawaS01}, and adapt it to Pedersen commitments, which translates
 \[

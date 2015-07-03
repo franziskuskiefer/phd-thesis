@@ -4,7 +4,7 @@
 
 \chapter{Prerequisites and Building Blocks}\label{ch:prelims}
 
-\mynote{give all the functions like password hashing and \PSetup unique symbols to use}
+\mynote{check naming of all functions that we don't re-use}
 
 In this chapter we recall known facts and assumptions as well as notations used throughout this thesis.
 We start with some general mathematical fundamentals before giving generally useful definition in our setting.
@@ -448,48 +448,6 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 \label{fig:pakef}
 \end{figure}
 
-
-\subsubsection{tSoke}
-In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol.
-It is recalled in Figure \ref{fig:tSOKE}.
-
-\begin{figure*}[t]
-\begin{center}
-\scalebox{1.0}{\small
-\begin{tabular}{ l l c l }
-\toprule
-& {\bf Client \Client} & & {\bf Server \Server} \\
-& Input: tag $\tg$ & & Input: tag $\tg$ \\
-1. & Enter username $\id_{\Client}$. & & \\
-2. & Enter password $\pwd_{\Client,\Server}$. & & \\
-3. & $x \rin \{2, \dots, n-1\}$ & & \\
-4. & $X = g^x$ & & \\
-5. & & $\stackrel{\id_{\Client}, X}{\llongrightarrow}$ & \\
-6. & & & Look up \ver for $\id_{\Client}$. \\
-7. & & & $y \rin \{2, \dots, n-1\}$ \\
-8. & & & $Y = g^y$ \\
-9. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
-10. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
-11. & $H \gets \HashP(\pwd, r)$ & & \\
-12. & $Y = Y^{*} / h^H$ & & \\
-13. & $Z = Y^x$ & & $Z' = X^y$ \\
-14. & $K \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ \\
-15. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
-16. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
-17. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
-18. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
-19. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
-20. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
-21. & Accept & & Accept \\
-\bottomrule
-\end{tabular}
-}
-\end{center}
-\caption{tSoke Protocol \citet{Manulis2014}}
-\label{fig:tSOKE}
-\end{figure*}
-
-
 \subsection{Verifier-based PAKE Security}
 
 We recall the related password model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
@@ -549,6 +507,48 @@ A \ac{VPAKE} protocol $\Pi$ is secure if for all \ac{PPT} adversaries \cA runnin
 $2^{-\beta}q_s + \Adv_{\text{OW}}(\cB, \secpar) + \varepsilon(\secpar)$
 for some attacker \cB on the one-wayness of the used password hashing scheme running in time $r$, $q_s$ active sessions, and independently chosen passwords from \cD of min-entropy $\beta$.
 Password hashing and its security if defined in Chapter \ref{sec:vpake} Section \ref{sec:strucphash}.
+
+
+\subsubsection{tSoke}
+In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol.
+It is recalled in Figure \ref{fig:tSOKE}.
+
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l l c l }
+\toprule
+& {\bf Client \Client} & & {\bf Server \Server} \\
+& Input: tag $\tg$ & & Input: tag $\tg$ \\
+1. & Enter username $\id_{\Client}$. & & \\
+2. & Enter password $\pwd_{\Client,\Server}$. & & \\
+3. & $x \rin \{2, \dots, n-1\}$ & & \\
+4. & $X = g^x$ & & \\
+5. & & $\stackrel{\id_{\Client}, X}{\llongrightarrow}$ & \\
+6. & & & Look up \ver for $\id_{\Client}$. \\
+7. & & & $y \rin \{2, \dots, n-1\}$ \\
+8. & & & $Y = g^y$ \\
+9. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
+10. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
+11. & $H \gets \HashP(\pwd, r)$ & & \\
+12. & $Y = Y^{*} / h^H$ & & \\
+13. & $Z = Y^x$ & & $Z' = X^y$ \\
+14. & $K \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ \\
+15. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
+16. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
+17. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
+18. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
+19. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
+20. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
+21. & Accept & & Accept \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\caption[The tSoke Protocol]{The tSoke Protocol \citet{Manulis2014}}
+\label{fig:tSOKE}
+\end{figure*}
+
 
 \subsection{Two-server PAKE Security}
 We briefly recall the \ac{2PAKE} security from \citet{Katz2012a}.
@@ -694,7 +694,7 @@ A public key encryption scheme $\PKE=(\PKEGen$, $\Enc$, $\Dec)$ consists of the 
 \end{definition}
 
 
-\subsubsection{Public Key Encryption secure against Chosen-Plaintext Attacks}
+\subsubsection[Chosen-Plaintext Attacks]{Public Key Encryption secure against Chosen-Plaintext Attacks}
 \acp{CPA} define security for \ac{PKE} schemes where the attacker is allowed to query an encryption oracle.
 
 \begin{definition}[IND-CPA Security]\label{def:indcpa}
@@ -724,7 +724,7 @@ Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message
 % Decryption is given by $m=\Dec_\sk^\EG(C)=e/u^z$.
 
 
-\subsubsection{Public Key Encryption secure against Chosen-Ciphertext Attacks}
+\subsubsection[Chosen-Ciphertext Attacks]{Public Key Encryption secure against Chosen-Ciphertext Attacks}
 \acp{CCA} define security for \ac{PKE} schemes where the attacker is allowed to query encryption \emph{and} decryption oracles.
 It is therefore a stronger security notion than \ac{CPA}.
 Note that we always refer to adaptive \ac{CCA}-security, i.e. \ac{CCA}2, when talking about \ac{CCA}-security.
@@ -791,51 +791,84 @@ As the result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\Ser
 \end{algorithmic}
 \end{algorithm}
 
-\begin{figure}[htb]
-\centering
-\scalebox{0.58}{
-\begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=23em, align=left}}, %,text width=15em
-		column 2/.style={nodes={minimum width=14em}},
-		column 3/.style={nodes={minimum width=18em, align=right, text width=18em}}]{
-	\node[align=center](client){$\Client~ (B_\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\ServerSet$ $(G_\ServerSet)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-	\parbox{23em}{} \& %generate Bloom filter $B$ for $\ClientSet$, generate GBF $G$ with Algorithm \ref{alg:gbf}
-	  neg. params $(n, m, k, H, E)$ \& \\
-	  
-	\parbox{23em}{} \& \&  \\ %	  on $(\ServerSet, S_d, n, m, k, H, \lambda)$
-	
-	\parbox{23em}{generates  $r_i\ralgout\{0,1\}^\lambda$ for $i\in[0,m-1]$} \&
-	   $\{r_i\}_{i\in[0,m-1]}$ \&
-	   $\sk$ $\ralgout$ $\KGen_E(\lambda)$\\ 
-	   
-	\& \& $\forall i$ $\in$ $[0,m-1]$ $: c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
-	
-	\& \& share \sk into $(t_0, \dots, t_{m-1})$ using XOR\\
-	
-  \parbox{23em}{$\forall i\in[0,m-1]:$ if $B[i]=1$ get $c_i;$ else $t_i$} \& 
-  $B \rightarrow$ {\bf OT} $\leftarrow \{(c_i, t_i)\}_{i\in[0,m-1]}$ \& \\
-  
-  \parbox{23em}{Recover \sk from recovered $t_i$ XOR} \& \& \\
-  
-  \parbox{23em}{$\forall $ recovered $c_i: d_i\gets\Dec_\sk(c_i)$} \& \&  \\
-  
-  \parbox{23em}{$\forall $ recovered $d_i: d_i[0,\lambda-1] \stackrel{?}{=} r_i$; else return with $\bot$} \& \&  \\
-  
-  \parbox{23em}{Build $G'$ with Algorithm \ref{alg:gbfintersection} on $(\{d_i\}, B, m, \lambda)$} \& \&  \\
-  
-  \parbox{23em}{Return recovered $\{d_i\}$ from $G'$} \& \& \\
-};
+% \begin{figure}[htb]
+% \centering
+% \scalebox{0.58}{
+% \begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=23em, align=left}}, %,text width=15em
+% 		column 2/.style={nodes={minimum width=14em}},
+% 		column 3/.style={nodes={minimum width=18em, align=right, text width=18em}}]{
+% 	\node[align=center](client){$\Client~ (B_\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\ServerSet$ $(G_\ServerSet)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% 	\parbox{23em}{} \& %generate Bloom filter $B$ for $\ClientSet$, generate GBF $G$ with Algorithm \ref{alg:gbf}
+% 	  neg. params $(n, m, k, H, E)$ \& \\
+% 	  
+% 	\parbox{23em}{} \& \&  \\ %	  on $(\ServerSet, S_d, n, m, k, H, \lambda)$
+% 	
+% 	\parbox{23em}{generates  $r_i\ralgout\{0,1\}^\lambda$ for $i\in[0,m-1]$} \&
+% 	   $\{r_i\}_{i\in[0,m-1]}$ \&
+% 	   $\sk$ $\ralgout$ $\KGen_E(\lambda)$\\ 
+% 	   
+% 	\& \& $\forall i$ $\in$ $[0,m-1]$ $: c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
+% 	
+% 	\& \& share \sk into $(t_0, \dots, t_{m-1})$ using XOR\\
+% 	
+%   \parbox{23em}{$\forall i\in[0,m-1]:$ if $B[i]=1$ get $c_i;$ else $t_i$} \& 
+%   $B \rightarrow$ {\bf OT} $\leftarrow \{(c_i, t_i)\}_{i\in[0,m-1]}$ \& \\
+%   
+%   \parbox{23em}{Recover \sk from recovered $t_i$ XOR} \& \& \\
+%   
+%   \parbox{23em}{$\forall $ recovered $c_i: d_i\gets\Dec_\sk(c_i)$} \& \&  \\
+%   
+%   \parbox{23em}{$\forall $ recovered $d_i: d_i[0,\lambda-1] \stackrel{?}{=} r_i$; else return with $\bot$} \& \&  \\
+%   
+%   \parbox{23em}{Build $G'$ with Algorithm \ref{alg:gbfintersection} on $(\{d_i\}, B, m, \lambda)$} \& \&  \\
+%   
+%   \parbox{23em}{Return recovered $\{d_i\}$ from $G'$} \& \& \\
+% };
+%
+% \draw[<->] (m-2-2.south west) -- (m-2-2.south east);
+% \draw[->] (m-4-2.south west) -- (m-4-2.south east);
+% \draw[<->] (m-7-2.south west) -- (m-7-2.south east);
+% \end{tikzpicture}}
+% \caption{Oblivious Bloom Intersection} % on $(n, m, k, H, E, \lambda)$
+% \label{fig:obi}
+% \end{figure}
 
-\draw[<->] (m-2-2.south west) -- (m-2-2.south east);
-\draw[->] (m-4-2.south west) -- (m-4-2.south east);
-\draw[<->] (m-7-2.south west) -- (m-7-2.south east);
-\end{tikzpicture}}
-\caption{Oblivious Bloom Intersection} % on $(n, m, k, H, E, \lambda)$
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: Set $B_\ClientSet$ & & Input: Set $G_\ServerSet$ \\
+& neg. params & \\
+& $(n, m, k, H, E)$ & \\
+for $i\in[0,m-1]$ & & \\ [-.25em]
+\hspace*{1em} gen.  $r_i\ralgout\{0,1\}^\lambda$ & $\stackrel{\{r_i\}_{i\in[0,m-1]}}{\llongrightarrow}$ & $\sk$ $\ralgout$ $\KGen_E(\lambda)$ \\
+& & $\forall i$ $\in$ $[0,m-1]$ \\
+& & \hspace*{1em} $c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
+& & share \sk into $t_0, \dots, t_{m-1}$ ($\oplus$) \\
+& {\bf OT} on& \\
+Recover $t_i$ if $B_\ClientSet[i]=0$ & $B$ and $\{(c_i, t_i)\}_{i\in[0,m-1]}$ & \\
+Recover \sk from $t_i$ & & \\
+$\forall $ recovered $c_i$ & & \\
+\hspace*{1em} $d_i\gets\Dec_\sk(c_i)$ & & \\
+$\forall $ recovered $d_i:$& & \\
+\hspace*{1em} $d_i[0,\lambda-1] \stackrel{?}{=} r_i$ & & \\
+\hspace*{1em} else return with $\bot$ & & \\
+Build $G'$ with Algorithm \ref{alg:gbfintersection} & & \\
+on $(\{d_i\}, B, m, \lambda)$ & & \\
+Return $\{d_i\}$ from $G'$ & & \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\caption{Oblivious Bloom Intersection}
 \label{fig:obi}
-\end{figure}
+\end{figure*}
 
 \begin{algorithm}[htb]
 \caption{GBF $(\ServerSet, \ServerSet_d , n, m, k, H, \lambda)$}

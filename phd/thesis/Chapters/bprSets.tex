@@ -42,7 +42,7 @@ Functionality $f_\Pi$ outputs $f(\ClientSet)$ to the server and client, \ie $f_{
 
 \setlength{\textfloatsep}{21pt}
 % \setlength{\belowcaptionskip}{2pt}
-\subsubsection{SPC Instantiation}
+\subsubsection{Instantiation}
 \begin{figure}[!b]
 \centering
 \scalebox{0.75}{
@@ -93,7 +93,7 @@ If $\ClientSet$ satisfies policy $f$, then the shares obtained from the \ac{OBI}
 In the last step, by proving knowledge of secret \secret, the client can convince the server that its set is compliant with policy~$f$.
 
 
-\subsubsection{SPC Security Analysis}
+\subsubsection{Security Analysis}
 \begin{lemma}[Correctness]\label{lem:correct}
   Let $\ClientSet$ and $\ServerSet$ denote sets from some universe and $f=(\ServerSet,\Gamma_\ServerSet)$.
   Assuming the used \ac{OBI} and \ac{LSSS} algorithms are correct, then the \ac{SPC} protocol from Fig. \ref{fig:spc} is correct, \ie honest execution of the protocol with $f(\ClientSet) = \true$ is accepted by the server with overwhelming probability.\end{lemma}
@@ -162,7 +162,7 @@ Now it follows directly that any attacker that is able to generate a message $m_
 \end{proof}
 
 
-\subsubsection{SPC Applications}\label{sec:generalisation}
+\subsubsection{Applications}\label{sec:generalisation}
 While \ac{SPC} can be used in many different scenarios will be detailed for use in password-policy checks in order to build \ac{BPR} protocols.
 In this section we want to give some ideas of other \ac{SPC} use-cases.
 
@@ -184,7 +184,7 @@ Using \ac{SPC} further allows to build subsets in friend sets, such as colleague
 The tests can often be reduced to check a set of SNPs (Single Nucleotide Polymorphism) that are present in a patient's genome against some predefined sets of SNPs. Although it is not exactly policy checking, our \ac{SPC} protocol can be used in this setting too. 
 
 
-\subsection{SPC based Password Registration}\label{sec:protocol}
+\subsection{SPC-based Password Registration}\label{sec:protocol}
 
 The connection between \acl{SPC} and password policies is easy to see, since password policies are defined in terms of thresholds and subsets over an alphabet which is a set of characters.
 We can use the algorithm proposed by \citet{LiuC10} to translate such threshold access structures efficiently into \acp{MSP}. 

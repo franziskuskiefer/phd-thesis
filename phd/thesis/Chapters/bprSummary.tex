@@ -26,7 +26,7 @@ While the \ac{BPR} protocol from Section \ref{sec:bpr} has stronger security gua
 However, password registration is a task that is performed rarely, such that it is acceptable for it to take a noticeable time. 
 This is in contrast to authentication, which is performed regularly and thus has to have execution time that is not noticeable by the user.
 
-\subsubsection{Zero-knowledge-based BPR Protocols}
+\subsubsection{Performance}
 We first compare the two zero-knowledge-based \ac{BPR} protocols from Section \ref{sec:zkppc} and \ref{sec:bpr}.
 In the implementation of both protocols we can adopt several tricks aiming to improve its performance. 
 First, we can pre-compute and reuse values $g^{\pi_i}$ on the client and server side.
@@ -72,7 +72,7 @@ We omit counting symmetric operations.
 % With the overall running time of $1.5$ seconds for 10-character passwords, $2.5$ seconds for 15-character passwords, and $3.3$ seconds for 20-character passwords the proposed \ac{BPR} protocol can be deemed practical.
 
 % \subsubsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
-\paragraph{Implementation}
+\subsubsection{Implementation}
 We implemented a prototypes of all three password registration protocols and measured their real performance. 
 The implementations are in C and use OpenSSL 1.0.2.c-1\footnote{\url{https://www.openssl.org}} for underlying cryptographic operations. 
 In the experiments, we set the security parameter to 80-bit and use 1024-bit RSA keys and the \mbox{{SHA-}1} hash function in our protocol. 
@@ -107,12 +107,11 @@ The alphabet is partitioned into the four usual classes: digits, lower case, upp
 We used three policies $P1, P2$ and $P4$ in the experiments, which require at least one, two and four characters in all character classes respectively. 
 In the first row of the table, the pairs indicate the policy and the password length that were used in the experiment, \eg $(P1, 10)$ means policy $P1$ is used and the password was $10$ characters long. 
 
-\mynote{rewrite below when BPR is implemented}
 The table shows the total running time as well as the time spent on checking the policies (Pol-ck) in each protocol. 
 As expected, the \ac{ZKPPC} approach is significantly slower than the two \ac{BPR} protocols.
 The main differences in all protocols comes from policy checking time.
 Differences between the general \ac{ZKPPC} approach and \ac{BPR} come from the set membership proofs and therefore differ depending on the password length and its relation to the password policy. 
-The measurements further show that the actual time needed for policy checking in the \ac{SPC}-based \ac{BPR} protocol is indeed independent of the password length.
+The measurements further show that the actual time needed for policy checking in the \ac{SPC}-based \ac{BPR} protocol is indeed independent of the password length (it depends on the password policy as everything else is negligible).
 
 % The cost of the zero-knowledge proof protocol is $6\cdot n\cdot\sum_{i=1}^n\omega_i$ exponentiations, where $n$ is the password length in the experiments, and $\omega_i$ is the size of character class to which the i$th$ character in the password belongs. 
 % In our protocol,  policy checking is done by using the \ac{SPC} protocol and the cost is mainly the \ac{OBI} protocol which is based on symmetric cryptography. The cost of the \ac{OBI} protocol is $4.32\cdot |\hat{S}|\cdot \lambda$ hash operations, where $\lambda$ is the security parameter.
@@ -129,7 +128,7 @@ The measurements further show that the actual time needed for policy checking in
 As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. 
 The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$.
 A possible optimisation is to take this step offline. 
-Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random \ac{RSA} key pair and pre-compute $\hat{S}$ before engaging with the client. 
+Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 
 The keys and pre-computed values can be stored together. 
 Later when a client sends a registration request, the server can retrieve them and run the protocol. 
 If this step is taken offline, then the online computation cost is small, usually no more than 100 milliseconds in a typical setting. 

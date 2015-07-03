@@ -1,4 +1,4 @@
-\section{Blind Password Registration} \label{sec:2pake-registration}
+\section{Two-Server Blind Password Registration} \label{sec:2pake-registration}
 Two-server \ac{2BPR} allows a client to register password shares with two servers for later use in \ac{2PAKE}/\ac{PPSS} protocols and prove that the shares can be combined to a password that complies with the mutual password policy of both servers, without disclosing the password.
 % The password shares can later be used in two-server PAKE protocols or two-server password protected secret sharing (cf. Section \ref{sec:application}).
 A \ac{2BPR} protocol is executed between client $\Client$ and two servers $\Server_0$ with password policy $f_0$ and $\Server_1$ with password policy $f_1$.
@@ -25,7 +25,7 @@ This requirement can be relaxed by requiring the client to forward messages (aut
 For simplicity however we assume direct communication between the two servers in our model.
 
 
-\subsection{2BPR Model}\label{sec:securitymodel}
+\subsection{Model}\label{sec:securitymodel}
 Security of \ac{2BPR} protocols, given according to Eq. \ref{eq:zkppc-pok}, has to guarantee that the client knows the sum $\pwdint(\pwd)$ of the password shares $\share_0$ and $\share_1$, and that \pwd fulfils both password policies $f_0$ and $f_1$ in case both servers accept the registration.
 This model is related to the \ac{BPR} model from Chapter \ref{ch:vpake} Section \ref{sec:bpr} but requires handling of two servers and server corruption.
 We translate Eq. (\ref{eq:zkppc-pok}) into a game-based security model that captures the equation using two different security definitions.
@@ -243,7 +243,7 @@ In the third phase \emph{(Share Verification)} the two servers $\Server_0$ and $
 Upon receiving $\fD'_{b}$, $\Server_b$ checks it against $\fD_b$ to verify that the client used the same password with both servers in the second phase, \ie that $\share_b+\share_{1-b}=\pi$.
 If this verification is successful, $\Server_b$ stores the client's password share $(\Client,S_{1-b},\share_b)$ and considers $\Client$ as being registered.
 
-\subsubsection{Two-Server BPR Specification}\label{sec:protocol}
+\subsubsection{Specification}\label{sec:protocol}
 In the following we give a detailed description of the \ac{2BPR} protocol.
 To this end we describe the three proofs \ac{PoC}, \ac{PoM} and \ac{PoS} detailing on their computations.
 We describe the interaction between client $\Client$ and server $\Server_b$ and therefore only consider one policy $f_b$.
@@ -720,20 +720,23 @@ In this last game all proofs are simulated such that an attacker can only guess 
 % =================================================================
 % Implementation & Performance
 % =================================================================
-\subsection{Implementation}
+\subsection{Performance Discussion}
+Considering similarities between \ac{2BPR} and \ac{BPR}, performance of the proposed \ac{2BPR} protocol is very similar to the performance of the \ac{BPR} protocol from Section \ref{sec:bpr} Chapter \ref{ch:vpake}.
+We therefore refrain from implementing this protocol and refer to the performance discussion on \ac{BPR} (Section \ref{sec:performance} Chapter \ref{ch:vpake}) for details.
+The additional time needed for committed zero-knowledge proofs is negligible compared to the time needed for the \ac{PoM} protocol itself.
 
-\mynote{redo when implementation is done}
-
-% \subsubsection{Implementation}
-We implement an unoptimised prototype of the \ac{2BPR} protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
-% In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
-% Note however that the performance influence of $b$ is negligible.
-The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the claim that the proposed is practical.
-In particular, execution of the \ac{2BPR} protocol with a password of length $10$ and policies $(dl, 5)$ and $(ds, 7)$ needs $1.4$ seconds on the client and $0.68$ seconds on each server.
-With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a password of length $15$ and $6.34$ for a password of length $20$ the proposed \ac{2BPR} protocol is deemed practical.
-Also note that the client execution can be parallelised performing the proofs with $\Server_0$ and $\Server_1$ at the same time, which allows to significantly decrease the execution time.
-The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
-
+% \mynote{redo when implementation is done}
+%
+% % \subsubsection{Implementation}
+% We implement an unoptimised prototype of the \ac{2BPR} protocol from Section \ref{sec:framework} over the NIST P-192 elliptic curve \cite{nist} in Python using the Charm framework \cite{charm13} to estimate performance of the proposed protocol.
+% % In order to be able to compare this implementation with the approach from \cite{KieferM14c}, we set $b=10^5$.
+% % Note however that the performance influence of $b$ is negligible.
+% The performance tests (completed on a laptop with an Intel Core Duo P8600 at 2.40GHz) underline the claim that the proposed is practical.
+% In particular, execution of the \ac{2BPR} protocol with a password of length $10$ and policies $(dl, 5)$ and $(ds, 7)$ needs $1.4$ seconds on the client and $0.68$ seconds on each server.
+% With $2.76$ seconds overall runtime for a password of length $10$, $4.59$ for a password of length $15$ and $6.34$ for a password of length $20$ the proposed \ac{2BPR} protocol is deemed practical.
+% Also note that the client execution can be parallelised performing the proofs with $\Server_0$ and $\Server_1$ at the same time, which allows to significantly decrease the execution time.
+% The source code is available from \url{https://franziskuskiefer.de/data/2bpr.zip}.
+%
 
 \subsection{Application to 2PAKE/PPSS protocols}
 The \ac{2BPR} protocol can be used to register passwords for two-server protocols such as \ac{2PAKE} and two-server \ac{PPSS}.

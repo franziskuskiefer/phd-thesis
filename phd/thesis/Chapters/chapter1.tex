@@ -44,7 +44,7 @@ The chapter is concluded with Section \ref{sec:intro:real-world} describing real
 % Password-Based Cryptography
 % *****************************************************************************
 
-\section{Password-Based Security} \label{sec:intro:pwd-security}
+\section{Password-based Security} \label{sec:intro:pwd-security}
 Using passwords as means of authentication in a computer system allows users to log into the system without the need for any additional devices or tools.
 This huge advantage over other ways of authenticating, \ie with something you have or are, is probably responsible for passwords being the most popular authentication mechanism and is likely to stay such despite increasing efforts to changes this (cf. Section \ref{sec:enhanced-login}).
 The most common place where passwords are used as user authentication mechanism is the Internet where personal content is protected with a username and password.
@@ -223,7 +223,7 @@ Even though efforts have been made to reconcile the two completely different app
 For more discussion on these two worlds we refer the interested reader to \citet{cortier2011survey}.
 
 %********************************** %Game-based Security  **************************************
-\subsection{Game-Based Security}
+\subsection{Game-based Security}
 In this and the following section we give a short introduction in the two general directions of computational security proofs, game-based and simulation-based security.
 Game-based security models allow the (\ac{PPT}) adversaries to play a game against a challenger.
 During this game (\aka experiment) he is allowed to query a set of \emph{oracles} to simulate and interact with the primitive or protocol under consideration.
@@ -428,14 +428,14 @@ The threshold \ac{PAKE} from \citet{RaimondoG03} for example requires $t<n/3$ su
 The first real two-server PAKE protocol is due to \citet{BrainardJKS03}, which was proven secure by \citet{SzydloK05} in a modified version.
 The first two server PAKE with thorough security model based on the popular game-based \ac{BPR-M} model \cite{Bellare2000} is due to \citet{Katz2012a}.
 
-\subsubsection{Tag-based Password Authentication}
-While \ac{PAKE} is the most popular password-based authentication protocol in cryptography research, it is often sufficient to perform authentication without key exchange.
-To this end \citet{Manulis2014} introduced \ac{tPAuth} that essentially strips a \ac{PAKE} protocol of its key exchange phase and performs mutual authentication instead.
-The additional tag allows to use \ac{tPAuth} protocols to be used in \ac{PACCE} protocols, which is useful when performing password-based authentication on top of an already confidential channel.
-
 %********************************** %Other PAKE protocols  **************************************
 \subsection{Other Password Authenticated Protocols} \label{sec:other-pake}
 Besides the client-server authentication and key-exchange case, there exist several other scenarios in the password-based authentication setting we discuss in the following.
+
+\paragraph{Tag-based Password Authentication}
+While \ac{PAKE} is the most popular password-based authentication protocol in cryptography research, it is often sufficient to perform authentication without key exchange.
+To this end \citet{Manulis2014} introduced \ac{tPAuth} that essentially strips a \ac{PAKE} protocol of its key exchange phase and performs mutual authentication instead.
+The additional tag allows to use \ac{tPAuth} protocols to be used in \ac{PACCE} protocols, which is useful when performing password-based authentication on top of an already confidential channel.
 
 \paragraph{Three-Party Password Authenticated Key Exchange}
 The three-party setting (3\ac{PAKE}) considers two humans who want to securely communicate with each other.

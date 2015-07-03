@@ -230,7 +230,7 @@ Building symmetric distribution protocols where all parties $P_i$ compute the sa
 Likewise, it is possible to build asymmetric distribution protocols where \emph{all} $P_i$ compute \emph{different} hash values (we will see an example of that later).
 \end{remark}
 
-\subsection{Security against Active Adversaries}
+\subsection{Security Model}
 Smooth projective hashing has not been used in a distributed manner before such that it was not necessary to consider active adversaries.
 By introducing distributed computation of hash values the $\Hash_0^D$ and $\PHash_x^D$ protocols are exposed to active attacks.
 However, the adversary must still not be able to distinguish real hash values from random elements, \ie smoothness and pseudorandomness must hold.
@@ -626,7 +626,7 @@ This step is covered by the \ac{CCA}-security of the used encryption scheme.
 Using the same sequence of experiments but considering \Client and $\Server_2$ instead of \Client and $\Server_1$, \ac{AKE}-security of $\sk_2$ follows.
 \end{proof}
 
-\subsubsection{The 2-Server KOY Protocol}\label{sec:twokoy}
+\subsection{The 2-Server KOY Protocol}\label{sec:twokoy}
 Using \ac{D-SPHF} we can ``explain'' the 2KOY proposed by \citet{Katz2012a}; similar to \citet{Gennaro2003} who ``explained'' the original KOY protocol from \citet{KatzOY01}.
 We define encryption schemes and \ac{D-SPHF} used in 2KOY, highlight changes to our framework and discuss implications of this on the security of 2KOY.
 
