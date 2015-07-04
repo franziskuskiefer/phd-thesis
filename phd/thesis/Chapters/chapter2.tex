@@ -562,10 +562,10 @@ Further $\term_P^i$ and $\acc_P^i$ keep track whether $P_i$ terminated, respecti
 The adversary is given access to the following oracles in order to communicate with protocol participants:
 
 \begin{itemize}
-  \item $\Send(\Client_i, \Server, m)$ for $\Client_i$ registered with \Server sends message $m$, supposedly from \Server, to $\Client_i$ and returns message $m'$ output by $\Client_i$, if any.
+  \item $\Send(\Server, \Client_i, m)$ for $\Client_i$ registered with \Server sends message $m$, supposedly from \Server, to $\Client_i$ and returns message $m'$ output by $\Client_i$, if any.
     An empty message $m$ initiates the protocol.
   
-  \item $\Send(\Server_i, \Client, m)$ for $\Client$ registered with $\Server_i$ sends message $m$, supposedly from \Client, to $\Server_i$ and returns message $m'$ output by $\Server_i$, if any.
+  \item $\Send(\Client, \Server_i, m)$ for $\Client$ registered with $\Server_i$ sends message $m$, supposedly from \Client, to $\Server_i$ and returns message $m'$ output by $\Server_i$, if any.
     If \Server is corrupted, the adversary receives the internal state of \Server; if the other associated server is corrupted as well, the attacker is given the internal state of that server as well.
     
   \item $\Execute(\Client_i, \Server_{0,j}, \Server_{1,j})$ for $\Client_i$ registered with $(\Server_{0,j},\Server_{1,j})$ executes the protocol and returns the transcript.

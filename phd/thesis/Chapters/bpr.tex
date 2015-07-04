@@ -57,7 +57,7 @@ To interact with protocol participants, the adversary has access to an \Execute 
   \item $\Execute(C,S)$ models a passive attack and executes a \ac{BPR} protocol between new instances of \Client and \Server.
         If there exists a verifier $\ver_C$ for client \Client on server \Server, the oracle aborts.
         Otherwise, it returns the protocol transcript and the internal state of server \Server.
-  \item $\Send(C_i,S_i,m)$ models an active attack and sends message $m$, allegedly from client instance $\Client_i$, to server instance $\Server_i$ (a new server instance with a unique index $i$ is created if it does not exist yet).
+  \item $\Send(C,S_i,m)$ models an active attack and sends message $m$, allegedly from client $\Client$, to server instance $\Server_i$ (a new server instance with a unique index $i$ is created if it does not exist yet).
         If there exists a verifier $\ver_C$ for client \Client on server \Server, the oracle aborts.
         Otherwise, it returns the server's answer $m'$ if there exists any.
 \end{itemize}

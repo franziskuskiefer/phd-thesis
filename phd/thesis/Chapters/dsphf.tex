@@ -239,8 +239,6 @@ Let $\{(P^j_0,P^k_1,\dots,P^l_x)\}_{P_0^j\in\cP_0,P^k_i\in\cP~i\in\{1,\dots,x\}}
 We say $P_0$ is \emph{registered} with $(P_1,\dots,P_x)$.
 The additional indices $j,k,l$ denote the instance of the respective participant.
 
-\mynote{unify $\Send(A, B m)$ for $A\rightarrow B$ or $B\rightarrow A$}
-
 \begin{definition}[D-SPHF Security]\label{def:activesphff}
 A \ac{D-SPHF} protocol $\Pi$ is secure (offers adaptive smoothness and concurrent pseudorandomness) if for all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon(\cdot)$ such that :
 \[\Adv_{\Pi,\cA}^{\DSPHF}(\secpar)=\left|\Pr[\Exp^{\DSPHF}_{\Pi,\cA}(\secpar)=1]-\frac12\right|\leq\varepsilon(\secpar)\]
@@ -254,7 +252,7 @@ $\Exp^{\DSPHF}_{\Pi,\cA}(\secpar):$ \\
 \begin{itemize}
 	\item $\Setup(P_0,\dots,P_x)$ initialises new instances with $(\aux,P_1,\dots,P_x)$ for $P_0$ registered with $(P_1,\dots,P_x)$ and $(\aux_1,P_1,P_0,\dots,P_x)$ for $P_1$ and returns $((\hp_0,\allowbreak C_0),(\hp_1,C_1))$ with $C_i\gets\Enc_{\pk}^{\cL}(\ell,\aux'_i;r_i)$ and $\hk_i\gets\Pi.\HKGen(\Laux)$, $\hp_i\gets\Pi.\PKGen(\hk_i,\Laux)$
 		
-	\item $\Send(P_a,P_b,m)$ sends message $m$ with alleged originator $P_b$ to $P_a$ and returns $P_a$'s resulting message $m'$ if any.
+	\item $\Send(P_a,P_b,m)$ sends message $m$ with alleged originator $P_a$ to $P_b$ and returns $P_b$'s resulting message $m'$ if any.
 	
 	\item $\Test(P_i^j)$ for $i\in\bits$ returns two hash values $(h_0,h_x)$. If the global bit $b$ is $0$, the hash values are chosen uniformly at random from $\GG$, otherwise the hash values are computed according to protocol specification $\Pi$. \eod
 \end{itemize}
@@ -374,7 +372,7 @@ $\PHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:d
 \draw ([xshift=0pt,yshift=-5pt] m-11-3.south west) rectangle (m-11-5.north east);
 \coordinate[label=right:$\PHash_x^D$] (hx) at (m-11-5.mid east);
 \end{tikzpicture}
-\caption{Cramer-Shoup \ac{D-SPHF}\\{\small Dashed lines denote broadcast messages.}}
+\caption[Cramer-Shoup D-SPHF]{Cramer-Shoup D-SPHF\\{\small Dashed lines denote broadcast messages.}}
 \label{fig:dsphf}
 \end{figure}
 
@@ -441,8 +439,8 @@ Note that $P_1$ aborts if either $h_{x,2}\not\in\GG$ or $\hp_0'\not\in\GG^2$.
 
 \noindent
 To show the security (concurrent pseudorandomness and adaptive smoothness) of $h_0$ we define two $\Send$ queries that allow execution of the protocol:
-$(m_1,c'_1)\gets\Send_1(P_2$, $P_1$, $(\hp'_0$, $C'_0$, $\hp'_2$, $C'_2))$ starts the protocol execution between $P_1$ and $P_2$ and provides the attacker with $(m_1,c'_1)$.
-Using these messages the adversary ($P_2$) computes a message $m_2$ and sends it to $P_1$ with $\Send_2(P_2,P_1,m_2)$.
+$(m_1,c'_1)\gets\Send_1(P_1$, $P_2$, $(\hp'_0$, $C'_0$, $\hp'_2$, $C'_2))$ starts the protocol execution between $P_1$ and $P_2$ and provides the attacker with $(m_1,c'_1)$.
+Using these messages the adversary ($P_2$) computes a message $m_2$ and sends it to $P_1$ with $\Send_2(P_1,P_2,m_2)$.
 This reflects the execution of a single protocol run of $\Hash_0^D$ such that $P_1$ eventually computes $h_0$.
 In contrast to the passive and classical SPHF proofs we can not replace the ciphertexts with encryptions of words not in the language.
 However, this is not necessary as $t$ is in fact the \Hash computation of the classical Cramer-Shoup SPHF without cancelling the message, \ie $t=h\cdot m^\mu$.\\
@@ -592,7 +590,7 @@ Note that this actually requires two \ac{D-SPHF} executions.
 \draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=-4pt] m-11-4.south east);
 
 \end{tikzpicture}
-\caption{Two-Server PAKE framework using \ac{D-SPHF}
+\caption[Two-Server PAKE framework using D-SPHF]{Two-Server PAKE framework using D-SPHF
 \\{\small Dashed lines denote broadcast messages.}}
 \label{fig:twopake}
 \end{figure}
@@ -728,7 +726,7 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\ac{
 %\draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
 
 \end{tikzpicture}
-\caption{Two-Server KOY \cite{Katz2012a} using \ac{D-SPHF}
+\caption[Two-Server KOY using D-SPHF]{Two-Server KOY \cite{Katz2012a} using D-SPHF
 \\{\small Dashed lines denote broadcast messages.}}
 \label{fig:twokoy}
 \end{figure}
