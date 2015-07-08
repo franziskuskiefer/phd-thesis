@@ -328,7 +328,7 @@ In addition to the aforementioned approaches that are tailored to the password-b
 
 Like key exchange protocols with high entropy secrets, \ac{PAKE} protocols can be modelled in one of the following general settings.
 
-\subsubsection{Game-Based \ac{PAKE}-Security}
+\subsubsection{Game-Based PAKE-Security}
 The original game-based \ac{PAKE} models in \citet{Bellare2000} (denoted \ac{BPR-M} here) and \citet{Boyko2000} specify the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
 (Semantic security states that no \ac{PPT} adversary exists that has non-negligible probability of winning the experiment, in this case the \ac{PAKE} experiment.)
 The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take actively part in executions and corrupt protocol participants to retrieve private information from a party.

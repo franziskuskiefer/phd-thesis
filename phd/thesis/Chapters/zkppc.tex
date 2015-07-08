@@ -1,7 +1,7 @@
 \section[ZKPPC and Password Registration]{Zero-knowledge Password Policy Checks and\\ Policy Compliant Passwords Registration} \label{sec:zkppc}
 
 We propose the concept of \ac{ZKPPC} enabling a client to prove compliance of its chosen passwords $\pwd$ with respect to a server's password policy $f$ without disclosing $\pwd$. 
-We give a general framework for building \ac{ZKPPC} protocols for \ac{ASCII}-based passwords and a concrete \ac{ZKPPC} instantiation. 
+We give a framework for building \ac{ZKPPC} protocols for \ac{ASCII}-based passwords and a concrete \ac{ZKPPC} instantiation. 
 We then show how to build registration protocols that use \ac{ZKPPC} as a building block.
 
 \subsection{Zero-Knowledge Password Policy Checks}
@@ -10,7 +10,7 @@ At the end of the \ac{PPC} execution \Server accepts $H\gets \HashP(\pwd,r)$ for
 A \ac{PPC} protocol is a proof of knowledge for $\pwd$ and $r$ such that $H\gets \HashP(\pwd,r)$ and $f(\pwd)=\true$. 
 It thus includes the requirements on completeness and soundness. 
 In addition, a \ac{ZKPPC} protocol is a \ac{PPC} protocol with zero-knowledge property to ensure that no information about $\pwd$ is leaked to \Server. 
-More formally, %If the client's prospective password is not policy conform, i.e. $f(\pwd)=\false$, the server rejects the setup process.
+More formally, %If the client's prospective password is not policy compliant, i.e. $f(\pwd)=\false$, the server rejects the setup process.
 
 \begin{definition}[ZKPPC]\label{def:pocopas}
 Let $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ be a secure password hashing scheme and $f$ be a password policy. A \ac{ZKPPC} protocol is a zero-knowledge proof of knowledge protocol between a prover \Client (client) and a verifier \Server (server), defined as
@@ -26,11 +26,11 @@ Let $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\P
 %In other words, there exists an efficient extractor $\Ext$ that extracts $(\pwd,r)$ from any (malicious) client $A$ that can convince an honest server to accept $(A,H)$.
 %A \ac{PPC} protocol is a \ac{ZKPPC} protocol if there exists a simulator $\Sim(f)$ for every $H$ with $f(\pwd)=\true$ and $H\gets \HashP(\pwd,r)$ that can produce a view that is indistinguishable from the view of a possibly malicious server $B$, interacting with a client $A$ (Zero-Knowledge).
 
-\subsection{A General ZKPPC Framework for ASCII-based Passwords} \label{sec:genconstruction}
-We present a general \ac{ZKPPC} construction for password strings $\pwd$ composed of printable \ac{ASCII} characters using a homomorphic commitment scheme $C=(\SetupC,\Com,\Open)$, a password hashing scheme $\Pi=(\PSetup,\PPHSalt,\allowbreak\PPreHash,\allowbreak\PHSalt,\allowbreak\PHash)$ and appropriate \acp{SMP} $\SMP$. 
+\subsection{A ZKPPC Framework for ASCII-based Passwords} \label{sec:genconstruction}
+We present a general \ac{ZKPPC} construction for password strings $\pwd$ composed of printable \ac{ASCII} characters using a homomorphic commitment scheme $\Commitment=(\SetupC,\Com,\Open)$, a password hashing scheme $\Pi=(\PSetup,\PPHSalt,\allowbreak\PPreHash,\allowbreak\PHSalt,\allowbreak\PHash)$ and appropriate \acp{SMP} $\SMP$. 
 We assume that the common input of \Client and \Server includes $\paramP\gets\PSetup(\secpar)$, $\paramC\gets\SetupC(\secpar)$, and the server's password policy $f=(R, \pmin, \pmax)$ that is communicated to \Client beforehand.
 
-The \ac{ZKPPC} protocol proceeds as follows (see also Figure~\ref{fig:zkpconeserver} for an overview). 
+The \ac{ZKPPC} protocol proceeds as follows (see Figure~\ref{fig:zkpconeserver} for an overview). 
 Let $R_j$ be the $j$th character of $R$. 
 $R_j$ uniquely identifies one of the four \ac{ASCII} subsets of $\Sigma = d \cup u \cup l \cup s$ and one of the four integer sets $\Omega_x$, $x\in\Sigma'=\{d, u, l, s\}$. 
 Let $\Omega_\Sigma=\bigcup_{x\in\Sigma'}\Omega_x$ be a joint integer set of these four sets. 
@@ -38,10 +38,10 @@ The client picks an \ac{ASCII} string $\pwd=(c_0,\ldots,c_{n-1})$ such that $f(\
 For each position $i=0,\ldots,n-1$ the client computes commitment $C_i \gets \Com(\pi_i, r_i)$ and sends its password hash $H$ with the set of commitments $\{C_i\}$ to \Server that by checking $|\{C_i\}|\in[\pmin,\pmax]$ will be able to check the password length requirement from $f$. 
 Since $f(\pwd)=\true$, for each $R_j$ in $R$ the client can determine the first character $c_j\in\pwd$ that fulfils $R_j$ and mark it as \emph{significant}. 
 Let $\{c_{i_1},\ldots c_{i_{|R|}}\}$ denote the set of significant characters from $\pwd$ that is sufficient to fulfil $R$. 
-For each significant $c_{i_j}\in\pwd$, $j=1,\ldots, |R|$ client \Client as prover and server \Server as verifier execute an \ac{SMP} $\SMP(\pi_{i_j},r_{i_j},\Omega_x)$, \ie proving that position-dependent integer value $\pi_{i_j}$ committed to in $C_{i_j}$ is in $\Omega_x$ for one of the four \ac{ASCII} subsets in $\Sigma$ identified by $R_j$. 
+For each significant $c_{i_j}\in\pwd$, $j=1,\ldots, |R|$ client \Client as prover and server \Server as verifier execute $\SMP(\pi_{i_j},r_{i_j},\Omega_x)$, \ie \Client proves that position-dependent integer value $\pi_{i_j}$ committed to in $C_{i_j}$ is in $\Omega_x$ for one of the four \ac{ASCII} subsets in $\Sigma$ identified by $R_j$. 
 These \acp{SMP} ensure that characters in password \pwd fulfil $R$. 
 For every other character $c_i\in\pwd$, $i\neq i_j$, $j=1,\ldots, |R|$ client \Client as prover and server \Server as verifier execute $\SMP(\pi_{i},r_{i},\Omega_\Sigma)$ proving that position-dependent integer value $\pi_{i}$ committed to in $C_{i}$ is in the joint integer set $\Omega_{\Sigma}$. 
-This proves that each remaining $c_i$ is a printable \ac{ASCII} character without disclosing its type and thus ensures that \Server doesn't learn types of (remaining) password characters that are not necessary for $R$. 
+This proves that each remaining $c_i$ is a printable \ac{ASCII} character without disclosing its type and thus ensures that \Server does not learn types of (remaining) password characters that are not necessary for $R$. 
 Note that in the notation $\SMP(\pi_i,r_i,\Omega')$ used in Figure~\ref{fig:zkpconeserver}, set $\Omega'$ is either one of $\Omega_x$, $x\in\Sigma'$ if $\pi_i$ represents a significant character or $\Omega_\Sigma$ for all remaining characters.
 
 If all \acp{SMP} are successful then \Server is convinced that commitments $\{C_i\}$ contain some integer values $\pi_i$ representing characters $c_i$ that fulfil $R$ and that $n\in[\pmin,\pmax]$. 
@@ -50,11 +50,11 @@ This does not complete the proof yet since two issues remain:
 (2) the client has not proved yet that this $\pi$ was used to compute the hash value $H$. 
 In order to address (1) and (2) the \ac{ZKPPC} framework first uses the homomorphic property of the commitment scheme.
 Both \Client and \Server independently compute $C\gets\prod_{i=0}^{n-1}C_i=\Com(\sum_{i=0}^{n-1} \pi_i,r)= \Com(\pi, r)$, where $r = \sum_{i=0}^{n-1} r_i$, whereas \Client additionally uses the knowledge of all $r_i$ to compute $r$. 
-As a last step of the \ac{ZKPPC} protocol client \Client as prover and server \Server as verifier execute a \ac{ZKPoK} proof that \Client knows $\pi$ and random salts $(s_P, s_H)$ that were used to compute $H$ and that $\pi$ is an integer contained in the (combined) commitment $C$ for which the client knows the (combined) randomness $r$. 
+As a last step of the \ac{ZKPPC} protocol client \Client as prover and server \Server as verifier execute a \ac{ZKPoK} that \Client knows $\pi$ and random salts $(s_P, s_H)$ that were used to compute $H$ and that $\pi$ is an integer contained in the (combined) commitment $C$ for which the client knows the (combined) randomness $r$. 
 If this final \ac{ZKPoK} is successful then \Server accepts the hash value $H$.
 
 
-%$C=\prod_{i=0}^{|\pwd|-1}C_i=\Com(\pi,\sum_{i=0}^{|\pwd|-1} r_i)$,  is policy conform.
+%$C=\prod_{i=0}^{|\pwd|-1}C_i=\Com(\pi,\sum_{i=0}^{|\pwd|-1} r_i)$,  is policy compliant.
 %However, the server still does not know whether the client actually knows the password in $H$ and if the password committed to in $H$ is the same as the one used in $C$.
 %Therefore, the client must further prove in zero-knowledge to the server its knowledge of $\pwd$ and randomness that were   used to generate $H$ and $C$.
 %The server accepts the password verifier $H$ for $A$ if all these proofs are successful.
@@ -104,33 +104,33 @@ In reference to Definition \ref{def:pocopas}, our \ac{ZKPPC} framework in Figure
 %This is the adaptation of Definition \ref{def:pocopas} to our construction using set membership proofs and commitments, i.e. $f(\pwd)=\true$ is interpreted as $\PK\{(\xi_\pwd,\{\rho_i\}_{i\in[0,|\{C_i\}|-1]}):~C_i=\Com(\xi_{\pwd,i}, \rho_i) \wedge \xi_{\pwd,i}\in\Omega_x\}$ for all $i\in 0,\dots, |\{C_i\}|-1$ and sets $\Omega_x$ from regular expression $R$.
 
 \begin{theorem}\label{theo:singlegen}
-If $C=(\SetupC,\Com,\Open)$ is an (additively) homomorphic commitment scheme, $\Pi=(\PSetup$, $\PPHSalt$, $\PPreHash$, $\PHSalt$, $\PHash)$ a secure randomised password hashing scheme, $\SMP$ a zero-knowledge set membership proof and $\ZKPoK$ a zero-knowledge proof of knowledge, then the protocol from Figure \ref{fig:zkpconeserver} is a \ac{ZKPPC} protocol according to Definition~\ref{def:pocopas}.
+If $\Commitment=(\SetupC,\Com,\Open)$ is an (additively) homomorphic commitment scheme, $\Pi=(\PSetup$, $\PPHSalt$, $\PPreHash$, $\PHSalt$, $\PHash)$ a secure randomised password hashing scheme, $\SMP$ a zero-knowledge set membership proof and $\ZKPoK$ a zero-knowledge proof of knowledge, then the protocol from Figure \ref{fig:zkpconeserver} is a \ac{ZKPPC} protocol according to Definition~\ref{def:pocopas}.
 \end{theorem}
 
 \begin{proof}
 Protocol \emph{completeness} follows by inspection.
-To prove \emph{soundness} we assume that the server accepts $H$ from a malicious client that was not computed as $\HashP(\pi,r)$ for integer $\pi$ that represents a policy-conform password string $\pwd$. 
+To prove \emph{soundness} we assume that the server accepts $H$ from a malicious client that was not computed as $\HashP(\pi,r)$ for integer $\pi$ that represents a policy-compliant password string $\pwd$. 
 By construction of the protocol the client must have either 
-(1) cheated in one of the $\SMP(\pi_i,r_i,\Omega')$ proofs or the final $\ZKPoK$ proof which contradicts the soundness properties of those proofs, or 
-(2) was able to compute $H$ in two different ways, as $\HashP(\pi,r)$ using $\pi$ that corresponds to a policy-conform $\pwd\in\cD_f$ and as $\HashP(\pi^\ast,r^\ast)$ using $\pi^\ast$ for some $\pwd^\ast\in\cD$ that is not policy-conform, which contradicts the second pre-image resistance of $\Pi$, or 
-(3) was able to compute at least one $C_i$ in two different ways, as $\Com(\pi_i, r_i)$ using $\pi_i$  that corresponds to a character $c_i$ that is significant for the regular expression $R$ and as $\Com(\pi^\ast_i, r^\ast_i)$ using $\pi^\ast_i$ that does not fulfil any character $R_j$ from $R$, which contradicts to the binding property of commitment $C$.
+(1) cheated in one of the $\SMP(\pi_i,r_i,\Omega')$ proofs or the final $\ZKPoK$ proof, which contradicts the soundness properties of those proofs, or 
+(2) was able to compute $H$ in two different ways, as $\HashP(\pi,r)$ using $\pi$ that corresponds to a policy-compliant $\pwd\in\cD_f$ and as $\HashP(\pi^\ast,r^\ast)$ using $\pi^\ast$ for some $\pwd^\ast\in\cD$ that is not policy-compliant, which contradicts the second pre-image resistance of $\Pi$, or 
+(3) was able to compute at least one $C_i$ in two different ways, as $\Com(\pi_i, r_i)$ using $\pi_i$  that corresponds to a character $c_i$ that is significant for policy expression $R$ and as $\Com(\pi^\ast_i, r^\ast_i)$ using $\pi^\ast_i$ that does not fulfil any character $R_j$ from $R$, which contradicts to the binding property of commitment \Commitment.
 
 To prove the \emph{zero-knowledge} property we need to build a simulator $\Sim$ to simulate the view of the server. 
-$\Sim$ internally uses the simulators for SMP proofs and the \ac{ZKPoK} proofs to simulate server's view, thereby relying on the password hiding property of $\Pi$ and the hiding property of commitment $C$ in the simulation of $H$ and every $C_i$, respectively.
+$\Sim$ internally uses the simulators for \ac{SMP} proofs and the \ac{ZKPoK} proofs to simulate server's view, thereby relying on the password hiding property of $\Pi$ and the hiding property of commitment \Commitment in the simulation of $H$ and every $C_i$, respectively.
 \end{proof}
 
 \begin{remark}\label{rangeproofs}
 Depending on the maximal password length $\pmax$ and complexity of $f=(R,\pmin,\pmax)$ using range proofs instead of set membership proofs, may be more efficient.
-Although \ac{ZKPPC} complexity is currently dominated by set membership proofs, passwords in practice are rather short and policies not too complex, so that set membership proofs will be sufficiently efficient in most cases.
+Although \ac{ZKPPC} complexity is currently dominated by set membership proofs, passwords in practice are rather short and policies not too complex, so that set membership proofs might be sufficiently efficient in most cases.
 Further notice that leakage of password length $n$ to the server is not considered as an attack against the \ac{ZKPPC} protocol. 
-For policies that implicitly defines $\pmin$ in regular expression $R$, the password length $n$ may be hidden using the homomorphic property the commitment scheme $C$, \ie by combining commitments $C_i$ for $\pi_i$ representing (remaining) password characters that are not needed to satisfy $R$.
-However, complexity of the framework is dominated by the complexity of the set membership proofs $\SMP_i$, which mainly depends on the upper bound $n$ on the password length.
-See Section \ref{sec:discussion} for further performance discussions with the instantiation from the following section in mind.
+For policies that implicitly define $\pmin$ in policy expression $R$, password length $n$ may be hidden using the homomorphic property the commitment scheme $C$, \ie by combining commitments $C_i$ for $\pi_i$ representing (remaining) password characters that are not needed to satisfy $R$.
+However, complexity of the framework is dominated by the complexity of the set membership proofs $\SMP$, which mainly depends on the upper bound $n$ on the password length.
+See Section \ref{sec:discussion} for further performance discussions with the instantiation from the following section in mind and comparison to the \ac{BPR} protocol of Section \ref{bpr}.
 \end{remark}
 
 \subsection{A Concrete ZKPPC Protocol for ASCII-based Passwords}\label{sec:instantiation}
 To show feasibility of the \ac{ZKPPC} approach we give a concrete \ac{ZKPPC} protocol construction for \ac{ASCII}-based passwords in a cyclic group \GG of prime order $p$. 
-The protocol is built from the Pedersen commitment scheme $C=(\SetupC,\Com,\Open)$ and the randomised password hashing scheme $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ from Section~\ref{sec:pwhashped} that share the same group $G$. 
+The protocol is built from the Pedersen commitment scheme $\Commitment=(\SetupC,\Com,\Open)$ and the randomised password hashing scheme $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ from Section~\ref{sec:pwhashped} that share the same group \GG. 
 In particular, public parameters used by \Client and \Server in the \ac{ZKPPC} protocol are defined as $(p,g,h,\secpar)$ where $g$ and $h$ are independent generators of \GG. 
 
 \paragraph{Set Membership Proof}
@@ -140,7 +140,7 @@ for $\omega_j\in\Omega'$, whose length is proportional to $|\Omega'|$.
 Assuming that for each $\omega_j\in\Omega'$ the corresponding value $g^{\omega_j}\in \GG$ is pre-computed this proof can be realised as 
 \[\ZKPoK\{(\pi_i,r_i):~ C_i=g^{\pi_i}h^{r_i} \wedge (C_i=g^{\omega_0}h^{r_i} \vee \dots \vee C_i=g^{\omega_{|\Omega'|}}h^{r_i})\}.\]
 (See Section \ref{sec:bpr:pom} for an example how to realise a \ac{ZK} proof like this.)
-More efficient SMPs, \eg \citet{CamenischCS08}, can possibly be used with a different commitment and password hashing scheme. 
+More efficient \acp{SMP}, \eg as proposed by \citet{CamenischCS08}, can possibly be used with a different commitment and password hashing scheme. 
 In this case care must be taken when it comes to the instantiation of \ac{VPAKE} that must be able to handle password hashes generated in \ac{ZKPPC} (cf. Section~\ref{sec:vpake}).
 
 
@@ -152,9 +152,9 @@ that proceeds in the following classical way.
 \Client computes $a_1=k_{s_P}+cs_P\mod p$, $a_2=k_\pi+c\pi \mod p$, $a_3=k_{s_H}+cs_{H}\mod p$ and $a_4=k_{r}+cr\mod p$, and sends $(a_1,a_2,a_3,a_4)$ to \Server that accepts the proof if $g^{a_1}=t_1 H_1^{c}$, $H_1^{a_2}h^{a_3}=t_2H_2^c$, and $g^{a_2}h^{a_4}=t_3C^c$ holds.
 
 \begin{remark}
-The honest-verifier \ac{ZK} property of the adopted three-move \ac{SMP} and \ac{ZKPoK} protocols is sufficient since \ac{ZKPPC} will be executed as part of the registration protocol over a server-authenticated secure channel (cf. Section~\ref{sec:pwreg}) where the server is assumed to be honest-but-curios. 
-If \ac{ZKPPC} protocol is executed outside of such a secure channel then common techniques from \citet{CramerDM00} can be applied to obtain \ac{ZK} property in presence of malicious verifiers. 
-We also observe that all \acp{SMP} and \ac{ZKPoK} protocols can be made non-interactive (in the random oracle model) using the techniques from \citet{FiatS86}.
+The honest-verifier \ac{ZK} property of the adopted three-move \ac{SMP} and \ac{ZKPoK} protocols is sufficient since \ac{ZKPPC} will be executed as part of a registration protocol over a server-authenticated secure channel (cf. Section~\ref{sec:pwreg}) where the server is assumed to be honest-but-curious. 
+If \ac{ZKPPC} is executed outside of such a secure channel then common techniques from \citet{CramerDM00} or \citet{Damgard00} (cf. Section \ref{sec:commited-sigma} in Chapter \ref{ch:prelims}) can be applied to obtain \ac{ZK} property in presence of malicious verifiers. 
+We also observe that \ac{SMP} and \ac{ZKPoK} can be made non-interactive (in the random oracle model) using the techniques from \citet{FiatS86}.
 \end{remark}
 
 
@@ -190,22 +190,24 @@ We also observe that all \acp{SMP} and \ac{ZKPoK} protocols can be made non-inte
 Blind registration of passwords based on our generic \ac{ZKPPC} construction from Section~\ref{sec:genconstruction} proceeds in \emph{three} main stages and requires server-authenticated secure channel, \eg \ac{TLS}, between \Client and \Server: 
 (1) \Server sends its password policy $f$ to \Client; 
 (2) \Client picks its user login credentials, containing $id$ (such as its email address) which \Client wants to use for later logins at \Server, and initiates the execution of the \ac{ZKPPC} protocol. 
-If the \ac{ZKPPC} protocol is successful then \Client has a policy-conform password $\pwd$ and \Server receives $id$ and the password hash $H\algout\HashP(\pi,r)$; 
-(3) \Client sends used random salt $r$ to \Server and \Server stores a tuple $(id, H, r)$ in its password database.
+If the \ac{ZKPPC} protocol is successful then \Client has a policy-compliant password $\pwd$ and \Server receives $id$ and the password hash $H\algout\HashP(\pi,r)$; 
+(3) \Client sends used random salt $s_H$ to \Server and \Server stores a tuple $(id, H, s_H)$ in its password database.
 This is necessary as the client is only able to remember the low-entropy password.
 
-The use of server-authenticated secure channel guarantees that no active adversary \cA can impersonate honest \Server and obtain $(id, H, r)$ nor can \cA mount an attack based on modification of server's policy $f$, e.g. by replacing it with a weaker one.
-Especially, $r$ needs protection since knowledge of $(H, r)$ enables an offline attack that recovers $\pwd$. Assuming an efficiently samplable dictionary $\cD$ with min-entropy $\beta$ a brute force attack would require at most $2^\beta$ executions of $\HashP(\pi^\ast,r)$, where $\pi^\ast \gets \pwdint(\pwd^\ast)$, $\pwd^\ast\in\cD$.
+The use of a server-authenticated secure channel guarantees that no active adversary \cA can impersonate honest \Server and obtain $(id, H, s_H)$ nor can \cA mount an attack based on modification of the server's policy $f$, e.g. by replacing it with a weaker one.
+Especially, $s_H$ needs protection since knowledge of $(H, s_H)$ enables an offline attack that recovers $\pwd$. 
+Assuming an efficiently samplable dictionary $\cD$ with min-entropy $\beta$ a brute force attack would require at most $2^\beta$ executions of $\HashP(\pi^\ast,r)$, where $\pi^\ast \gets \pwdint(\pwd^\ast)$, $\pwd^\ast\in\cD$.
 
 The execution of the \ac{ZKPPC} protocol in the second stage does not require a secure channel due to the assumed \ac{ZK} property. 
-However, if secure channel is in place then we can work with the \emph{honest-verifier} \ac{ZK} property, which may lead to more efficient \ac{ZKPPC} constructions. 
+However, if a secure channel is in place, we can work with the \emph{honest-verifier} \ac{ZK} property, which may lead to more efficient \ac{ZKPPC} constructions. 
 Note that \Server is not assumed to be fully malicious but rather honest-but-curios since it cannot be trusted to process plain passwords in a secure way. 
-By modeling \Server as a malicious party in the \ac{ZKPPC} protocol we can offer strong guarantees that no information about \pwd is leaked to \Server in the second stage and so the only way for \Server to recover \pwd at the end is to mount an offline dictionary attack using $r$ from the third stage.
+By modelling \Server as a malicious party in the \ac{ZKPPC} protocol we can offer strong guarantees that no information about \pwd is leaked to \Server in the second stage and so the only way for \Server to recover \pwd at the end is to mount an offline dictionary attack using $s_H$ from the third stage.
 
 The resulting password registration protocol guarantees that no server \Server can do better in recovering the client's \pwd than any attacker \cA that compromises \Server during or after the registration phase. 
 This is an ideal security requirement for the registration of passwords that will be used in authentication protocols with password verifiers on the server side. 
 Note that security of such verifier-based authentication protocols implies that any attacker \cA who breaks into \Server cannot recover \pwd better than by mounting an offline dictionary attack. 
 The approach thus extends this requirement to password registration protocols.
+In the following section we formalise the approach of \acl{BPR}.
 
 % \mynote{what is this?}
 % For our concrete \ac{ZKPPC} construction from Section~\ref{sec:instantiation} we can modify the third stage of the registration protocol such that instead of $r=(s_P,s_H)$ server \Server receives only $s_H$ and stores $(id, H, s_H)$, where $H=(H_1, H_2)$, $H_2=H_1^\pi h^{s_H}$. This trick helps to significantly increase the complexity of an offline dictionary attack. Note that pre-image resistance of $\Pi$ guarantees that an offline password test based on equality $H_1^{\pi} = H_2h^{-s_H}$ would require $2^\beta$ exponentiations $H_1^{\pi^\ast}$ until $\pi^\ast=\pi$ is found. Note that if $s_P$ is disclosed then the above equality can be re-written to $g^{\pi} = (H_2h^{-s_H})^{1/s_P}$ and a pre-computed table $T=(\pi^\ast, g^{\pi^\ast})$ would immediately reveal $\pi^\ast=\pi$. The computation of $T$ requires $2^\beta$ exponentiations $g^{\pi^\ast}$ but $T$ would need to be computed only once. This also explains why we use $\Pi$ with randomised $\PPreHash$.

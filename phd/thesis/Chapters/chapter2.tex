@@ -7,22 +7,12 @@
 \mynote{check naming of all functions that we don't re-use}
 
 In this chapter we recall known facts and assumptions as well as notations used throughout this thesis.
-We start with some general mathematical fundamentals before giving generally useful definition in our setting.
-While these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \citet{katz2008introduction} or \citet{Goldreich2001}.
+We start with some general mathematical fundamentals before giving generally useful definitions in our setting.
+While most of these definitions are all well known and do not need reference, most of them can be found (in maybe slightly different version) in \citet{katz2008introduction} or \citet{Goldreich2001}.
 
 %********************************** %Math  **************************************
 \section{Mathematical Background}
 This is not a complete mathematical introduction but recalls the most important definitions needed in our context.
-One very central definition when modelling computational security is the notion of computational indistinguishability.
-
-\begin{definition}[Computational Indistinguishability]
-Polynomial-time indistinguishability between two ensembles $X=\{X_n\}_{n\in\NN}$ and $Y=\{Y_n\}_{n\in\NN}$ is given if for every \ac{PPT} algorithm $D$, there exists a negligible function $\varepsilon(\cdot)$ such that
-\[
-  \left| \Pr[D(X) = 1] - \Pr[D(Y) = 1] \right| < \varepsilon(n).
-\]
-We use computational or polynomial-time indistinguishable interchangeably and write $X\stackrel{\varepsilon}{=}Y$.
-\eod
-\end{definition}
 
 \subsection{Groups}
 Groups are an important mathematical structure in cryptography.
@@ -35,9 +25,8 @@ Let \GG denote a set and $\circ$ a binary operation on two elements from \GG.
 	\item For all $g,h\in\GG$, $g\circ h \in\GG$
 	\item There exists an element $e\in\GG$, called \emph{identity}, such that for all $g\in\GG$, $e\circ g=g=g\circ e$.
 	\item For all $g\in\GG$ there exists an \emph{inverse} element $h\in\GG$ such that $g\circ h=e=h\circ g$.
-	\item For all $g,h,k\in\GG$, $(g\circ h)\circ k=g\circ (h \circ k)$.
+	\item For all $g,h,k\in\GG$, $(g\circ h)\circ k=g\circ (h \circ k)$. \eod
 \end{itemize}
-\eod
 \end{definition}
 
 \noindent
@@ -62,14 +51,13 @@ Working in subgroups of $\ZZ_p$ it is further useful to know that $\ZZ^\ast_p=\{
 In the case of cyclic groups where $p$ is prime all elements in $\ZZ^\ast_p$ are relatively prime to $p$ (and thus invertible modulo $p$) such that $\phi(p)=p-1$, where $\phi(p)=|\ZZ^\ast_p|$ denotes the cardinality of $\ZZ^\ast_p$.
 
 \subsubsection{Composite Order Groups}
-Composite order groups $\ZZ^\ast_N$ for integer $N=pq$ that is a product of two distinct primes $p$ and $q$ are another useful group for cryptography.
+Composite order groups $\ZZ^\ast_N$ for integers $N=pq$ that are product of two distinct primes $p$ and $q$ are another useful group for cryptography.
 Note that $\ZZ^\ast_N=\{x\in{1,\dots,N-1}~|~\gcd(x,N)=1\}$ is always an abelian group under multiplication modulo integer $N>1$.
 The cardinality of $\ZZ^\ast_N$ is given by $\phi(p)=(p-1)(q-1)$.
 
 \subsection{Elliptic Curves}
 This work is only marginally concerned with elliptic curve cryptography.
 We therefore keep this section short and refer to \citet{HankersonMS03} for further introduction into elliptic curves in cryptography and more general definitions.
-
 An \emph{elliptic curve} $E$ over prime-field $\ZZ_p$ is given by 
 \[
   y^2 = x^3 + ax + b \mod p,
@@ -77,7 +65,7 @@ An \emph{elliptic curve} $E$ over prime-field $\ZZ_p$ is given by
 with $a,b\in\ZZ_p$, $p>5$, and $4a^3 + 27b^2 \not= 0 \mod p$.
 Points on curve $E$ are given by pairs $(x,y)\in\ZZ^2_p$ that fulfil those equations.
 The set containing all these points, plus the point at infinity $\infty$, are denoted $E(\ZZ_p)$.
-$E(\ZZ_p)$ with $\infty$ as identity and common arithmetic operations such as addition, subtraction, multiplication, and inversion forms an abelian group.
+$E(\ZZ_p)$ with $\infty$ as identity and common arithmetic operations such as addition, subtraction, multiplication, and inversion form an abelian group.
 Note that we use the multiplicative notation for elliptic curves (even though it is an additive group).
 
 \subsection{Pairings}
@@ -91,14 +79,14 @@ In cryptography we usually distinguish between three different types of pairings
   \item Type III: $\GG_1 \not= \GG_2$, without any efficiently computable homomorphism between $\GG_1$ and $\GG_2$.
 \end{itemize}
 
-\subsection{Computational Assumptions}
+\subsubsection{Computational Assumptions}
 In this section we recall computational assumptions used in the remainder of this thesis.
 We distinguish between assumptions on cyclic groups and assumptions on composite order groups.
 When saying something is hard with respect to the security parameter \secpar, this means that there exists no algorithm that can solve the problem in polynomial time in \secpar.
 
 Asymptotic notation allows us to describe the behaviour of a function when its arguments converging towards some limit.
 As mentioned earlier, security models used in this work are from the computational world.
-In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions on security parameter \secpar.
+In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions of security parameter \secpar.
 Security is therefore only given for \emph{reasonable} security parameters.
 To express this asymptotic notation is used.
 
@@ -115,12 +103,12 @@ A function $f$ is \emph{negligible} if for every polynomial $p(\cdot)$ there exi
 % 	\item $f(n)=\Theta(g(n)):$ Both $f(n)=\cO(g(n))$ and $f(n)=\Omega(g(n))$ hold.
 % 	\item $f(n)=o(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=0$
 % 	\item $f(n)=\omega(g(n)):$ $\lim_{m\rightarrow\infty}\frac{f(n)}{g(n)}=\infty$ 
-% 	\eod
+% 	
 % \end{itemize}
 % \end{definition}
 
 \paragraph{Probabilistic Polynomial-Time}
-We often use the phrase \ac{PPT} to describe an efficient algorithm.
+We use \ac{PPT} to describe an efficient algorithm.
 The actual definition of \ac{PPT}, first defined by \citet{gill1977}, is given for \ac{PP}, how \ac{PPT} is usually called in complexity theory, as follows:
 
 \begin{definition}[\acl{PP}]\label{def:ppt}
@@ -128,7 +116,7 @@ The actual definition of \ac{PPT}, first defined by \citet{gill1977}, is given f
 \begin{itemize}
 	\item \cA runs in polynomial-time,
 	\item at least $1/2$ of the computation paths accept when the answer is `yes', and
-	\item less than $1/2$ of the computation paths accept when the answer is `no'. \eod
+	\item less than $1/2$ of the computation paths accept when the answer is `no'.  \eod
 \end{itemize}
 \end{definition}
 
@@ -147,6 +135,16 @@ The computation of a \ac{PTM} is deterministic except that in coin-tossing state
 Note that the running time is always parametrised with security parameter \secpar.
 One may think of \ac{PPT} as a notion for ``feasible strategies'' or ``efficient algorithms'' running in time polynomial in \secpar.
 In other words, this means that for some constants $a$ and $c$ the algorithm runs in time $a\cdot \secpar^c$ with security parameter \secpar.
+One very central definition when modelling computational security is the notion of computational indistinguishability.
+
+\begin{definition}[Computational Indistinguishability]
+Polynomial-time indistinguishability between two ensembles $X=\{X_n\}_{n\in\NN}$ and $Y=\{Y_n\}_{n\in\NN}$ is given if for every \ac{PPT} algorithm $D$, there exists a negligible function $\varepsilon(\cdot)$ such that
+\[
+  \left| \Pr[D(X) = 1] - \Pr[D(Y) = 1] \right| < \varepsilon(n).
+\]
+We use computational or polynomial-time indistinguishable interchangeably and write $X\stackrel{\varepsilon}{=}Y$.
+\eod
+\end{definition}
 
 \subsubsection{Cyclic Groups}
 In this section we recall some computational assumptions in the group context that are believed to be hard.
@@ -173,20 +171,19 @@ $\Exp_{\cA,\GG}^{\DLog}(\secpar):$\\
 Several \ac{DLP}-based assumptions have been proposed.
 The two most important ones are the \ac{DDH} and \ac{CDH} assumptions.
 
+\begin{definition}[\acl{CDH}]\label{def:cdh}
+Let \GG denote a group of order $p$ of length $\secpar$ with generator $g$.
+The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard relative to $\secpar$ to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
+\eod
+\end{definition}
+
 \begin{definition}[\acl{DDH}]\label{def:ddh}
 Let \GG denote a group of order $p$ of length $\secpar$ with generator $g$.
 The \ac{DDH} assumption in \GG states that given $(g,g^a,g^b,g^c)\in\GG^4$ it is hard relative to $\secpar$ to determine whether $c=ab$ for random scalars $a,b,c\rin\ZZ_p$, i.e. 
-
 \[
   \left| \Pr[\cA(\GG, p, g, g^a, g^b, g^c)=1] - \Pr[\cA(\GG, p, g, g^a, g^b, g^{ab})=1] \right| \leq \varepsilon(\secpar).
 \]
 % for $a,b,c\rin\ZZ_p$.
-\eod
-\end{definition}
-
-\begin{definition}[\acl{CDH}]\label{def:cdh}
-Let \GG denote a group of order $p$ of length $\secpar$ with generator $g$.
-The \ac{CDH} assumption in \GG states that given $(g,g^a,g^b)\in\GG^3$ it is hard relative to $\secpar$ to compute $g^{ab}$ for random scalars $a,b\rin\ZZ_p$.
 \eod
 \end{definition}
 
@@ -195,7 +192,7 @@ When using \ac{DLP}-based assumptions in pairing groups we have to be more caref
 
 \begin{definition}[\acl{SXDH} \cite{BallardGMM05,AtenieseCHM05}]\label{def:sxdh}
 Let $\GG_1=\genG[1]$, $\GG_2=\genG[2]$, and $\GG_T=\genG[T]$ denote groups of prime-order $p$ of length $\secpar$ with associated bilinear map $e$.
-The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard relative to $\secpar$, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exists values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
+The \ac{SXDH} assumption states that the DDH assumption in $\GG_1$ and $\GG_2$ is hard relative to $\secpar$, i.e. given $(w_1,x_1,y_1,z_1)\in\GG^4_1$ and $(w_2,x_2,y_2,z_2)\in\GG^4_2$ it is hard to decide whether there exist values $a_1,a_2$ such that $x_1=w_1^{a_1}$, $z_1=y_1^{a_1}$, $x_2=w_2^{a_2}$, and $z_2=y_2^{a_2}$.
 \eod
 \end{definition}
 
@@ -219,7 +216,7 @@ The RSA problem over $\ZZ^\ast_N$ states that given $(N,e,d,y)$ defined as above
 \end{definition}
 
 \noindent
-Informally, the one-more RSA assumption indicates that the RSA problem is hard relative to $\secpar$ even if the adversary is given access to an RSA oracle.
+The one-more RSA assumption is a variant of the RSA assumption, indicating that the RSA problem is hard relative to $\secpar$ even if the adversary is given access to an RSA oracle.
 
 \begin{definition}[One-more RSA]\label{def:onemoreRSA}
 Let $(N, e, d)\ralgout\KGen(\lambda)$ denote the RSA key-generation algorithm, and $r_j\rin\ZZ^\ast_N$ be uniformly random integers in $\ZZ^\ast_N$ for $j\in[1,t+1]$.
@@ -253,11 +250,9 @@ where $x_i^e=r_i\mod N$, \cA made at most $t$ queries to the RSA oracle $(\cdot)
 
 %********************************** SECURITY MODELS **********************************
 \section{Security Models}
-% \mynote{* PAKE\\ * VPAKE\\ * 2PAKE}
-
-The two most popular models are the \ac{ROM} and the standard model.
-In the \ac{ROM} a public randomly chosen black-box function $H$ is available to all parties, whereas no such function exists in the \emph{standard model}.
-While this function \RO can not be instantiated in the real world it is useful (sometimes necessary) in many proofs.
+The two most popular general models to define security in are the \ac{ROM} and the standard model.
+In the \ac{ROM} a public randomly chosen black-box function \RO is available to all parties, whereas no such function exists in the \emph{standard model}.
+While this function \RO can not be instantiated in the real world it is useful (sometimes necessary) in security proofs.
 Implementations of protocols requiring a random oracle usually instantiate it with a cryptographic hash function.
 The function \RO is queried on an input $x$ and returns the ``hash value'' of $x$.
 It is consistent, such that $y=\RO(x)$ for all $y\gets \RO(x)$, and the output $y$ of \RO is uniformly at random such that one can think of \RO as drawing a random element $y$ each time it is queried on a new $x$.
@@ -269,14 +264,14 @@ In the \ac{CRS} model all parties have access to a common reference string that 
 This model is usually referred to as the standard model with \ac{CRS} as the assumption of the additional \ac{CRS} being available is rather weak.
 
 \subsection{Simulation-based Security}\label{app:simulation}
-We recall the basic setting of the malicious model from \cite{Goldreich2004}.
+We recall the basic setting of the malicious model from \citet{Goldreich2004}.
 Let $f:\bits^\ast \times \bits^\ast \rightarrow \bits^\ast \times \bits^\ast$ be a functionality such that $f(x,y)=(f_1(x, y), f_2(x,y))$ and $\Pi$ a two-party protocol to compute $f$.
 % $\Lambda$ denotes the empty string and
 In the ideal model every party gets an input and access to a trusted party.
 Honest participants send their input to the trusted party while malicious parties, with additional input $z$ and random tape $r$, either abort or send some value with the length of their non-additional input to the trusted party.
 The trusted party answers to the first party with $f_1(x, y)$ after obtaining input $(x,y)$.
 If only one input is received, the trusted party replies with $\bot$ to both parties.
-The trusted party further answers the second party with $f_2(x,y)$ if it didn't stop before, $\bot$ otherwise.
+The trusted party further answers the second party with $f_2(x,y)$ if it did not stop before, $\bot$ otherwise.
 It may stop depending on its input and output if the first party is malicious.
 While an honest party always outputs the value received from the trusted party, malicious parties can output any polynomially computable function of all its inputs.
 The ideal and real model are formalised as follows.
@@ -290,7 +285,8 @@ The joint execution of $f$ under $B$ in the ideal model on input pair $(x, y)$ a
 \[ \IDEAL_{f, B(z)} (x, y) := \Xi(x,y,z,r),\]
 with $\Xi(x,y,z,r)$ defined as follows.
 If party 1 is honest:
-\[ \Xi(x,y,z,r) := (f_1(x,B_2(y,z,r)), B_2(y,z,r,f_2(x,y'))); \]
+\[ \Xi(x,y,z,r) := (f_1(x,y'), B_2(y,z,r,f_2(x,y'))) \]
+with $y'\algout B_2(y,z,r)$;
 If party 2 is honest:
 \[
  \Xi(x,y,z,r) := \left\{
@@ -300,7 +296,7 @@ If party 2 is honest:
   \end{array}\right.
 \]
 % $(B_1(x, z, r, v), B_2(y, z, r, \Lambda))$
-with $x'=B_2(x,z,r)$.
+with $x'\algout B_2(x,z,r)$.
 \eod
 \end{definition}
 
@@ -324,7 +320,7 @@ where $x,y,z\in\bits^\ast$ such that $|x|=|y|$ and $|z|=\poly(|x|)$.
 
 \paragraph{The Hybrid Model}
 When proving security of a protocol that is combined of other primitives and protocols we view those protocols as black boxes and prove security in the \HYBRID model instead of the \REAL model.
-Security then follows from the composition theorem from \citet{Canetti00}.
+Security then follows from the composition theorem by \citet{Canetti00}.
 In the $g$-\HYBRID world protocol $f$ is executed between two parties like in the \REAL world, but every invocation of sub-protocol $g$ is replaced with the according ideal functionality, \ie a call to the trusted party that computes $g$.
 The output of the $g$-\HYBRID world for functionality $f$ and protocol $\Pi$ is denoted by $\HYBRID_{\Pi, A(z)}^{g} (x, y)$.
 Let $\Pi^\Gamma$ denote the real world protocol $\Pi$ that uses $\Gamma$ as a sub-protocol, \ie instead of querying the trusted party to compute $g$, the real protocol $\Gamma$ is executed.
@@ -335,11 +331,11 @@ $\{\IDEAL_{f, B(z)}(x, y)\}_{x, y, z} \stackrel{c}{\equiv} \{\REAL_{\Pi^{\Gamma}
 as shown by \citet{Canetti00}.
 
 \subsection{Universal Composability} \label{sec:uc-prelims}
+The \ac{UC} framework is a special simulation-based security framework.
 We refrain from recalling the \ac{UC}-framework and refer to Chapter \ref{ch:intro} Section \ref{sec:uc-intro} for a brief overview and \citet{Canetti2001a} for a complete formal description.
 In the following we give definitions of common \ac{UC} functionalities used in this thesis.
 
-The \ac{CRS} functionality from \citet{CanettiF01} describes generation and distribution of the \ac{CRS}.
-It is recalled in Figure \ref{fig:crsfunctionality}.
+The \ac{CRS} functionality by \citet{CanettiF01}, recalled in Figure \ref{fig:crsfunctionality}, describes generation and distribution of the \ac{CRS}.
 
 \begin{figure}[h!]
 \begin{mdframed}[innertopmargin=10pt]
@@ -371,9 +367,9 @@ The ideal \ac{CA} functionality \Fca was introduced by \citet{Canetti04}, recall
 
 \begin{description}
 	
-	\item[Registration:] Upon receiving the first message $(\Register, \sid, v)$ from party \cP, send $(\Registered, \sid, v)$ to the adversary; upon receiving \ok from the adversary, and if $\sid=\cP$ and this is the first request from \cP, then record the pair $(\cP,v)$.
+	\item[Registration:] Upon receiving the first message $(\Register, \sid, v)$ from party \cP, send $(\Registered, \sid, v)$ to the adversary; upon receiving \ok from adversary \SIM, and if $\sid=\cP$ and this is the first request from \cP, then record the pair $(\cP,v)$.
 	
-	\item[Retrieve:] Upon receiving a message $(\Retrieve, \sid)$ from party $\cP'$, send $(\Retrieve, \sid, \cP')$ to the adversary, and wait for an \ok from the adversary.
+	\item[Retrieve:] Upon receiving a message $(\Retrieve, \sid)$ from party $\cP'$, send $(\Retrieve, \sid, \cP')$ to the adversary, and wait for an \ok from adversary \SIM.
 	            Then, if there is a recorded pair $(\sid, v)$ output $(\Retrieve, \sid, v)$ to $\cP'$.
 	            Otherwise output $(\Retrieve, \sid, \bot)$ to $\cP'$.
 	
@@ -419,7 +415,7 @@ When called the first time, it sets $\Hist=\emptyset$.
 \end{figure}
 
 \noindent
-For reference we also recall the \ac{UC} functionality $\cF_{\mathrm{PAKE}}$ for \ac{PAKE} protocols in Figure \ref{fig:pakef}.
+For reference we also recall the \ac{UC} functionality by \citet{Canetti2005} $\cF_{\mathrm{PAKE}}$ for \ac{PAKE} protocols in Figure \ref{fig:pakef}.
 
 \begin{figure}[htb]
 \begin{mdframed}[innertopmargin=10pt]
@@ -449,9 +445,8 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 \end{figure}
 
 \subsection{Verifier-based PAKE Security}
-
 We recall the related password model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
-We consider client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\PHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
+It considers client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\PHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
 Passwords $\pwd_\Client$ and $\pwd_\Server$ are drawn from dictionary \cD with min-entropy $\beta$.
 Adversary \cA has access to the following oracles to interact with protocol participants:
 
@@ -469,7 +464,7 @@ Adversary \cA has access to the following oracles to interact with protocol part
 
 \noindent
 Let $b$ denote a bit chosen prior to every execution of the experiment.
-Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on input of participant instance $P_i$, returns a session key \key chosen as follows:
+Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on input of participant instance $P_i$, returns a session key \sk chosen as follows:
 \begin{itemize}
 	\item If $P_i$ has not computed a session key or $P_i$ is a partnered and corrupted client instance, return $\bot$.
 	
@@ -477,7 +472,7 @@ Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on in
 	
 	\item If $P_i$ has been queried before, output the same as for the previous query.
 	
-	\item Otherwise return the real session key of $P_i$ if $b=1$, and a random session key if $b=0$.
+	\item Otherwise return the real session key of $P_i$ if $b\verify 1$, and a random session key if $b\verify 0$.
 \end{itemize}
 
 %\begin{wrapfigure}[5]{r}{0.5\textwidth}
@@ -519,33 +514,31 @@ It is recalled in Figure \ref{fig:tSOKE}.
 \begin{tabular}{ l l c l }
 \toprule
 & {\bf Client \Client} & & {\bf Server \Server} \\
-& Input: tag $\tg$ & & Input: tag $\tg$ \\
-1. & Enter username $\id_{\Client}$. & & \\
-2. & Enter password $\pwd_{\Client,\Server}$. & & \\
-3. & $x \rin \{2, \dots, n-1\}$ & & \\
-4. & $X = g^x$ & & \\
-5. & & $\stackrel{\id_{\Client}, X}{\llongrightarrow}$ & \\
-6. & & & Look up \ver for $\id_{\Client}$. \\
-7. & & & $y \rin \{2, \dots, n-1\}$ \\
-8. & & & $Y = g^y$ \\
-9. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
-10. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
-11. & $H \gets \HashP(\pwd, r)$ & & \\
-12. & $Y = Y^{*} / h^H$ & & \\
-13. & $Z = Y^x$ & & $Z' = X^y$ \\
-14. & $K \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\id_{\Client}, H, \tg, X, Y^{*}, Z)$ \\
-15. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
-16. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
-17. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
-18. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
-19. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
-20. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
-21. & Accept & & Accept \\
+& Input: $\tg, \pwd$ & & Input: $\tg$ \\
+1. & $x \rin \ZZ_p$ & & \\
+2. & $X = g^x$ & & \\
+3. & & $\stackrel{\Client, X}{\llongrightarrow}$ & \\
+4. & & & Look up \ver for $\Client$. \\
+5. & & & $y \rin \ZZ_p$ \\
+6. & & & $Y = g^y$ \\
+7. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
+8. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
+9. & $H \gets \HashP(\pwd, r)$ & & \\
+10. & $Y = Y^{*} / h^H$ & & \\
+11. & $Z = Y^x$ & & $Z' = X^y$ \\
+12. & $K \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ \\
+13. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
+14. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
+15. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
+16. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
+17. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
+18. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
+19. & Accept & & Accept \\
 \bottomrule
 \end{tabular}
 }
 \end{center}
-\caption[The tSoke Protocol]{The tSoke Protocol \citet{Manulis2014}}
+\caption[The tSoke Protocol]{The tSoke Protocol by \citet{Manulis2014}}
 \label{fig:tSOKE}
 \end{figure*}
 
@@ -556,8 +549,8 @@ This model assumes that a client negotiates a distinct session key with each ser
 It is assumed that adversary \cA corrupted servers before the execution of the experiment such that not more than one server in a protocol execution is corrupted.
 Server to server communication is assumed to be secured with common mechanisms while client to server communication can be fully controlled by the attacker.
 We consider clients \Client and servers \Server chosen from some fixed set of participants.
-Clients hold a uniformly at random chosen password $\pwd\rin\cD$ and each server $\Server_0$ and $\Server_1$ that the is registered with holds an according password share $\share_0$, respectively $\share_1$.
-Each participant instance $P_i$ holds a state with $\sid_P^i, \pid_P^i$, and $\sk_P^i$ to keep track of the sessions, partners, and the negotiated session key.
+Clients hold a uniformly at random chosen password $\pwd\rin\cD$ and each server $\Server_0$ and $\Server_1$ that \Client is registered with holds an according password share $\share_0$, $\share_1$ respectively.
+Each participant instance $P_i$ holds a state with $\sid_P^i, \pid_P^i$, and $\sk_P^i$ to keep track of sessions, partners, and the negotiated session key.
 Further $\term_P^i$ and $\acc_P^i$ keep track whether $P_i$ terminated, respectively accepted.
 The adversary is given access to the following oracles in order to communicate with protocol participants:
 
@@ -566,21 +559,21 @@ The adversary is given access to the following oracles in order to communicate w
     An empty message $m$ initiates the protocol.
   
   \item $\Send(\Client, \Server_i, m)$ for $\Client$ registered with $\Server_i$ sends message $m$, supposedly from \Client, to $\Server_i$ and returns message $m'$ output by $\Server_i$, if any.
-    If \Server is corrupted, the adversary receives the internal state of \Server; if the other associated server is corrupted as well, the attacker is given the internal state of that server as well.
+    If \Server is corrupted, the adversary receives the internal state of \Server; if the other associated server is corrupted as well, the attacker is given the internal state of that server too.
     
   \item $\Execute(\Client_i, \Server_{0,j}, \Server_{1,j})$ for $\Client_i$ registered with $(\Server_{0,j},\Server_{1,j})$ executes the protocol and returns the transcript.
     In addition, the adversary is given the internal state of any corrupted server.
   
   \item $\Reveal(P_i, P'_i)$ for partnered instances $P_i$ and $P'_i$ returns session key $\sk_{P_i,P'_i}$ of $P_i$.
   
-  \item $\Test(P_i, P'_i)$ for partnered instances $P_i$ and $P'_i$ returns $\bot$ if $\sk_{P_i, P'_i}=\NULL$, and either $\sk_{P_i,P'_i}$ of $P_i$ if a randomly chosen bit $b=1$, or a random value if $b=0$.
+  \item $\Test(P_i, P'_i)$ for partnered instances $P_i$ and $P'_i$ returns $\bot$ if $\sk_{P_i, P'_i}=\NULL$, and either $\sk_{P_i,P'_i}$ of $P_i$ if a randomly chosen bit $b\verify 1$, or a random value if $b\verify 0$.
     
 \end{itemize}
 
 \noindent
 Partnering is defined based on matching transcripts as usual.
-The attacker, after interacting the oracles, outputs a bit $b'$.
-$\Succ$ for \cA is then defined as $b=b'$.
+The attacker, after interacting with the oracles, outputs a bit $b'$.
+$\Succ$ for \cA is then defined as $b\verify b'$.
 A \ac{2PAKE} protocol $\Pi$ is called secure if the advantage of any \ac{PPT} adversary \cA there exists a negligible function $\varepsilon(\cdot)$ such that 
 \[
   \Adv_{\cA,\Pi}(\secpar) = \left| \Pr[\Succ] - \frac12 \right| \leq \frac{q_s}{|\cD|} + \varepsilon(\secpar)
@@ -589,13 +582,13 @@ for $q_s$ active sessions and dictionary \cD.
 
 %********************************** %Building Blocks  **************************************
 \section{Building Blocks}
-This section describes building blocks used throughout this work to build the proposed protocols.
+This section describes building blocks used throughout this work.
 % But before starting with that we want to give a short description of some general models used to specify security in.
 % the random oracle, which is an important though disputed, and standard model.
 
 
 \subsection{Hash Functions}
-Hash functions, usually denoted $H$, take arbitrary long strings as input and output a compressed string of shorter length than the input.
+Hash functions, denoted $H$, take arbitrary long strings as input and output a compressed string of shorter length than the input.
 While originally used in data structures to store and retrieve data in constant time, they are an important cryptographic building block.
 A main goal of (cryptographic) hash functions is to yield as few collisions as possible.
 Informally speaking, a collision is a pair of distinct input elements $x$ and $x'$ to hash function $H$ such that $H(x)=H(x')$.
@@ -604,6 +597,8 @@ In cryptography families of functions are used, indexed by a key $s$, such that 
 Note that the key is usually chosen in advance and omitted.
 A successful \ac{PPT} attacker on the collision resistance of a hash function family $H_s$ is able to produce two distinct elements $(x,x')$ (which may be subject to a certain length if $H_s$ requires so) such that $H_s(x)=H_s(x')$.
 $H$ is a \emph{collision resistant hash function} if any such attacker has negligible probability in succeeding.
+
+The SHA hash family is one of the most used hash function family, specified by \citet{FIPS-180}.
 
 % \mynote{* Collision resistant\\ * any other?}
 
@@ -614,11 +609,11 @@ A commitment scheme $\Commitment=(\SetupC,\Com)$ is \emph{efficient} if $\SetupC
   \item Binding: For all \ac{PPT} adversaries \cA there exists a negligible function $\varepsilon_{\mathrm{bi}}(\cdot)$ such that for all $(x,x',r,r',C)\gets \cA(\secpar)$:
     $\Pr[x\not=x'\wedge (C,d)=\Com(x;r)\wedge (C,d')=\Com(x';r')] \leq \varepsilon_{\mathrm{bi}}(\secpar)$,
   \item Hiding: For all \ac{PPT} adversaries $\cA$ there exists a negligible function $\varepsilon_{\mathrm{hi}}(\cdot)$ such that for all $x_0,x_1$ with $|x_0|=|x_1|$, $b\rin\bits, (C,d)\gets\Com(x_b;r)$, and $b'\gets \cA(C,x_1,x_2)$:
-    $\Pr[b=b'] \leq 1/2+\varepsilon_{\mathrm{hi}}(\secpar)$.
+    $\Pr[b\verify b'] \leq 1/2+\varepsilon_{\mathrm{hi}}(\secpar)$.
 \end{itemize}
 
 \noindent
-A commitment scheme is further homomorph if there exist functions $\circ$ and $\star$ such that for all commitments $(C_i,d_i)\gets\Com(x_i;r_i)$  for $i\in[1,n]$ that $C_1 \circ \cdots \circ C_n = \Com(x_1\star \cdots \star x_n, r_i\star \cdots \star r_n)$.
+A commitment scheme is further homomorph if there exist functions $\circ$ and $\star$ such that for all commitments $(C_i,d_i)\gets\Com(x_i;r_i)$  for $i\in[1,n]$, $C_1 \circ \cdots \circ C_n = \Com(x_1\star \cdots \star x_n, r_i\star \cdots \star r_n)$.
 
 \subsubsection{Pedersen commitments}
 \citet{Pedersen91} commitments are perfectly hiding, computationally binding, homomorphic commitments, defined as follows.
@@ -631,18 +626,12 @@ Pedersen commitments are trapdoor commitments as they can be opened to any eleme
 
 %----------------------------------- Zero Knowledge Proofs-----------------------
 \subsection{Zero Knowledge Proofs}
-A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so.
+A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so, \ie there exist $w$ such that $(x,w)\in R$ for relation $R$.
 An interactive protocol $\Pi$ for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
 \begin{itemize}
 	\item Completeness: If $x\in L$, $V$ accepts if $P$ holds a witness proving so.
 	\item Soundness: For every malicious prover $P^\ast(x)$ with $x\not\in L$ the probability of making $V$ accept is negligible.
 	\item Zero-Knowledge: If $x\in L$, then there exists an efficient simulator \Sim that on input of $x$ is able to generate a view, indistinguishable from the view of a (malicious) verifier $V^\ast$.
-\end{itemize}
-
-\paragraph{Zero-Knowledge Proof of Knowledge}
-A \ac{ZKPoK} is a zero-knowledge proof with the following special soundness definition:
-\begin{itemize}
-	\item Special Soundness: For any $x$ and any pair of accepting conversations on input $x$, $(m_1, c, m_2)$, $(m_1, c', m'_2)$ with $c\not= c'$ there exists an efficient knowledge extractor \Ext that can extract a witness $w$ such that $(x,w)\in R$.
 \end{itemize}
 
 \paragraph{$\bm{\Sigma}$ Protocols}\hfill\\
@@ -651,28 +640,33 @@ $\Sigma$-protocols describe a common structure of \ac{ZKPoK} protocols.
 The basic definition is given as follows.
 A \ac{ZKPoK} protocol $\Pi$ is said to be a $\Sigma$ protocol for relation $R$ if it has the following message structure:
 \begin{enumerate}
-  \item $P$ sends the first message (commitment) $m_1\gets P_1(x,w,r)$ for element $(x,w)\in R$ and randomness $r$.
-  \item $V$ sends random challenge $c\rin\ZZ_p$ and returns it to prover $P$.
-  \item $P$ sends the seconds message (response) $m_2\gets P_2(x,w,r,c)$ back to verifier $V$.
-  \item $V$ accepts iff $(x,m_1,c,m_2)$ can be verified.
+  \item $P$ sends the first message (commitment) $\Comm\gets P_1(x,w,r)$ for element $(x,w)\in R$ and randomness $r$.
+  \item $V$ sends random challenge $\Ch$ (with length in security parameter \secpar) and returns it to prover $P$.
+  \item $P$ sends the seconds message (response) $\Res\gets P_2(x,w,r,\Ch)$ back to verifier $V$.
+  \item $V$ accepts iff $(x,\Comm,\Ch,\Res)$ can be verified.
 \end{enumerate}
 
+\paragraph{Zero-Knowledge Proof of Knowledge}
+A \ac{ZKPoK} is a zero-knowledge proof with the following special soundness definition:
+\begin{itemize}
+	\item Special Soundness: For any $x$ and any pair of accepting conversations on input $x$, $(\Comm, \Ch, \Res)$, $(\Comm, \Ch', \Res')$ with $\Ch\not= \Ch'$ there exists an efficient knowledge extractor \Ext that can extract a witness $w$ such that $(x,w)\in R$.
+\end{itemize}
 
 \subsubsection{Committed Zero-knowledge Proofs} \label{sec:commited-sigma}
-\citet{Damgard00} and \citet{JareckiL00} proposed the following committed $\Sigma$-protocol to ensure extractability (\ac{ZKPoK}) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
+\citet{Damgard00} and \citet{JareckiL00} propose the following committed $\Sigma$-protocol to ensure extractability (\ac{ZKPoK}) and simulatability when interacting with a malicious verifier and preserve zero-knowledge under parallel execution.
 Let $P_1(x,w,r)$ and $P_2(x,w,r,c)$ denote the two prover steps of a $\Sigma$-protocol and $H:\bits^\ast\mapsto\ZZ_p$ a collision-resistant hash function.
 A committed $\Sigma$-protocol based on Pedersen commitments is then given by the following four steps:
-\begin{itemize}
-  \item The prover computes the first message $m_1\gets P_1(x,w,r)$, computes 
-  \[M_1\gets\Com(H(x,m_1); r_1)=g^{H(x,m_1)}h^{r_1},\]
-  and sends $M_1$ to the verifier.
-  \item The verifier chooses challenge $c\rin\ZZ_p$ and returns it to the prover.
-  \item The prover computes the second message $m_2\gets P_2(x,w,r,c)$, computes 
-  \[M_2\gets\Com(H(m_2); r_2)=g^{H(m_2)}h^{r_2},\]
-   and sends $M_2$ to the verifier.
-  \item Further, the prover opens the commitments $M_1$ and $M_2$ by sending $(x,m_1,m_2,r_1,r_2)$ to the verifier.
-  \item The verifier accepts iff both commitments are valid and if the verification of the $\Sigma$-protocol $(x,m_1,c,m_2)$ is successful.
-\end{itemize}
+\begin{enumerate}
+  \item The prover computes the first message $\Comm\gets P_1(x,w,r)$, and
+  \[\widehat{\Comm}\gets\Com(H(x,\Comm); r_1)=g^{H(x,\Comm)}h^{r_1},\]
+  and sends $\widehat{\Comm}$ to the verifier.
+  \item The verifier chooses challenge $\Ch$ (with length in security parameter \secpar) and returns it to the prover.
+  \item The prover computes the second message $\Res\gets P_2(x,w,r,\Ch)$, and 
+  \[\widehat{\Res}\gets\Com(H(\Res); r_2)=g^{H(\Res)}h^{r_2},\]
+   and sends $\widehat{\Res}$ to the verifier.
+  \item Further, the prover opens the commitments $\widehat{\Comm}$ and $\widehat{\Res}$ by sending $(x,\Comm,\Res,r_1,r_2)$ to the verifier.
+  \item The verifier accepts iff both commitments are valid and if the verification of the $\Sigma$-protocol $(x,\Comm,\Ch,\Res)$ is successful.
+\end{enumerate}
 
 % \noindent
 % Despite being zero-knowledge in the malicious verifier setting, this type of protocol has the advantage of concurrent zero-knowledge (since no rewinding is necessary \cite{Damgard00,JareckiL00}).
@@ -703,10 +697,11 @@ A \ac{PKE} scheme $\Pi=(\PKEGen,\Enc,\Dec)$ is \emph{IND-CPA} secure if for all 
 
 \noindent
 $\Exp^{\cpa}_{\Pi,\cA}(\secpar):$\\
-\hspace*{2em}$(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
-\hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk)$\\
-\hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
-\hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
+\hspace*{2em} $(\pk,\sk)\ralgout\KGen(\secpar),~b\rin\bits$\\
+\hspace*{2em} $(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk)$\\
+\hspace*{2em} $c\gets\Enc_\pk(m_b)$\\
+\hspace*{2em} $b'\gets\cA^{\Enc_\pk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
+\hspace*{2em} return $b\verify b'$
 \eod
 \end{definition}
 
@@ -739,7 +734,7 @@ $\Exp^{\cca}_{\Pi,\cA}(\secpar):$\\
 \hspace*{2em}$(m_0,m_1)\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk)$\\
 \hspace*{2em}$c\gets\Enc_\pk(m_b)$\\
 \hspace*{2em}$b'\gets\cA^{\Enc_\pk(\cdot),\Dec_\sk(\cdot)}(\secpar,\pk,m_0,m_1,c)$\\
-\hspace*{2em}return $b=b'$ if \cA did not query $\Dec_\sk(c)$; $0$ otherwise
+\hspace*{2em}return $b\verify b'$ if \cA did not query $\Dec_\sk(c)$; $0$ otherwise
 \eod
 \end{definition}
 
@@ -749,9 +744,9 @@ The attacker in the \ac{CCA}-security experiment is now also allowed to query th
 
 
 \paragraph{Cramer-Shoup Encryption}\label{sec:csencryption}
-Labelled \ac{CS} encryption here operates on a multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
-Note that we assume $m\in\GG$, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
-Common \ac{CS} encryption simply omits label $\ell$.
+Labelled \ac{CS} encryption operates on a multiplicative group $\GG$ of prime order $p$ with generators $g_1$ and $g_2$.
+Note that we assume $m\in\GG$ again, which can be achieved by $m=g^{m'}$ for a message $m'\in\ZZ_p$.
+While we describe labelled \ac{CS} encryption, common \ac{CS} encryption simply omits label $\ell$.
 % Key generation $\PKEGen(\secpar)$ returns public key $\pk=(c,d,H_k)$ with $c=g_{1}^{x_1}g_{2}^{x_2}, d=g_{1}^{y_1}g_{2}^{y_2}, h=g_{1}^z$ and hash function $H_k$ such that $\sk=(x_1,x_2,y_1,y_2,z)$ denotes the decryption key.
 % Let $C=(\ell,\bm{u},e,v)\algout\Enc^{\CS}_\pk(\ell,m;r)$ (on label $\ell$, message $m$, and randomness $r$) with $\bm{u}=(u_1,u_2)=(g_{1}^r,g_{2}^r),~ e=h^rg_1^m$ and $v=(cd^{\xi})^r$ with $\xi=H_k(\ell,\bm{u},e)$ denote a labelled Cramer-Shoup ciphertext.
 % Decryption is defined as $g_1^m=\Dec_\sk^\CS(C)=e/u_1^z$ if $u_1^{x_1+y_1\cdot \xi'}u_2^{x_2+y_2\cdot \xi'}=v$ with $\xi'=H_k(\ell,\bm{u},e)$.
@@ -764,15 +759,19 @@ Common \ac{CS} encryption simply omits label $\ell$.
 
 %----------------------- OBI ---------------------------
 \subsection{Oblivious Bloom Intersection}\label{sec:obi}
-Originally, the \ac{OBI} protocol was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\ClientSet\cap \ServerSet$ and the server learns nothing. 
-The \ac{OBI} protocol by \citet{DongCW13} is executed between a client and a server on the respective sets \ClientSet and \ServerSet. 
-As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. In this case, the server can associate each element $s_i\in\ServerSet$ with a data item $d_i$. 
-At the end of the protocol, for each element in the intersection the client also receives the corresponding data item from the server. 
+The \ac{OBI} protocol by \citet{DongCW13} was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\ClientSet\cap \ServerSet$ and the server learns nothing. 
+% \ac{OBI} by \citet{DongCW13} is executed between a client and a server on the respective sets \ClientSet and \ServerSet. 
+As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. 
+In this case, the server can associate each element $s_i\in\ServerSet$ with a data item $d_i$. 
+At the end of the protocol (see Figure \ref{fig:obi} for an overview), for each element in the intersection the client also receives the corresponding data item from the server. 
 The protocol can be described at a high level as follows: let the server hold a set $\ServerSet=\{s_i\}$ and a data set $\ServerSet_d=\{d_{i}\}$. The two sets are of equal cardinality and each $(s_i,d_i)$ can be viewed as a key-value pair. 
 The server generates a garbled Bloom filter $G_\ServerSet$ on \ServerSet and $\ServerSet_d$ using \citet[Algorithm 1]{WenD14} (recalled in Algorithm \ref{alg:gbf}). 
-The garbled Bloom filter encodes both $\ServerSet$ and $\ServerSet_d$ in a way such that querying the key $s_i\in\ServerSet$ against $G_\ServerSet$ returns the data item $d_i$ and querying $s_j\not \in \ServerSet$ returns a random string. Let the client hold a set $\Ciphertexts$. The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\ClientSet$. 
-The client and the server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
-As the result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$. Then the client can query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\in\ClientSet$. If $c_i$ is in the intersection then there must be  some $s_j\in \ServerSet$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
+The garbled Bloom filter encodes both $\ServerSet$ and $\ServerSet_d$ in a way such that querying the key $s_i\in\ServerSet$ against $G_\ServerSet$ returns the data item $d_i$ and querying $s_j\not \in \ServerSet$ returns a random string. 
+Let the client hold a set $\ClientSet$. 
+The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\ClientSet$. 
+Then client and server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
+As result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$. 
+The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\in\ClientSet$. If $c_i$ is in the intersection then there must be  some $s_j\in \ServerSet$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
 
 \begin{algorithm}[htb]
 \caption{GBFIntesection $(G, B, m, \lambda)$}
@@ -908,9 +907,9 @@ Given set \ServerSet and access structure $\Gamma_\ServerSet$ over \ServerSet, a
 Given a secret $\mathfrak{s}\in \mathbb{F}$, we can choose $r_2,\ldots,r_n \in \mathbb{F}$ at random and set a column vector $\mathbf{v}=(\mathfrak{s},r_2,\ldots,r_n)$. 
 Then $M\mathbf{v}$ is a vector of $l$ shares of the secret. 
 The $j$th share $(M\mathbf{v})_{j}$ is associated with an element $\rho(j) \in \ServerSet$. 
-For any set $C\in \Gamma_\ServerSet$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in C\}$. 
+For any set $\ClientSet\in \Gamma_\ServerSet$ that is an authorised set, we can define a set $I\subseteq \{1,\ldots,l\}$ as $I=\{i|\rho(i)\in \ClientSet\}$. 
 The vector $(1,0,\ldots,0)$ is in the span of rows of $M$ indexed by $I$, \ie there exists a set of constants $\{\omega_i\}_{i\in I}$ such that $\omega_iM_i=(1,0,\ldots,0)$. 
-The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
+The set of shares associated with \ClientSet is $\{\mathfrak{s}_i\}_{i\in I}$ and the secret $\mathfrak{s}$ can be reconstructed from it by computing $\mathfrak{s}=\sum_{i\in I}\omega_i\mathfrak{s}_i$.
 
 % \begin{algorithm}
 % \caption{Converting Boolean Formula $F$ to LSSS Matrix $M$}
@@ -972,14 +971,15 @@ The set of shares associated with $C$ is $\{\mathfrak{s}_i\}_{i\in I}$ and the s
 Smooth projective hashing allows to compute a hash value of an element from a set in two different ways:
 either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
 In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
-\aclp{SPHF} are due to \citet{Cramer2002} who used them to construct \ac{CCA}-secure public key encryption schemes and analyse mechanisms from \citet{Cramer1998}.
+\acp{SPHF} are due to \citet{Cramer2002} who used them to construct \ac{CCA}-secure public key encryption schemes and analyse mechanisms from \citet{Cramer1998}.
 While \acp{SPHF} are useful in many areas of cryptography we focus on describing them in the context of \ac{PAKE}, which is where it will be used in this work.
 For a general treatment we refer to \cite{Cramer2002,cryptoeprint:2013:034}.
 The first use of \acp{SPHF} in the construction of a \ac{PAKE} protocol is due to Gennaro and Lindell \cite{Gennaro2003}, who introduced the additional requirement of pseudorandomness to \acp{SPHF} that was later extended by \citet{Katz2011}.
+This is also the setting \acp{SPHF} are used in in this thesis.
 The \ac{SPHF}-based approach taken by \citet{Gennaro2003} was further helpful in the ``explanation'' of the KOY protocol from \citet{KatzOY01}, where those functions were implicitly applied.
 
-First, we recall definitions for classical \ac{SPHF} tailored to the \ac{PAKE} use-case and cyclic groups \GG of prime-order $p$.
-To this end we use languages of ciphertexts with the password as message and the randomness as witness.
+First, we recall definitions for \acp{SPHF} tailored to the \ac{PAKE} use-case and cyclic groups \GG of prime-order $p$.
+To this end we use languages of ciphertexts with the password as message and the encryption randomness as witness.
 An \ac{SPHF} language $L$ for a given password \pwd from dictionary \cD is given by \Lpwd, containing all possible ciphertexts encrypting \pwd. 
 The public parts of the language are given by the \acl{CRS} \crs containing the public key \pk of the used encryption scheme.
 By $\tau$ we denote the \crs trapdoor, the secret key to \pk.
@@ -1002,7 +1002,7 @@ A ciphertext $C$ is in language \Lpwd iff there exists randomness $r$ such that 
 
 \noindent
 Smooth projective hashing for languages of ciphertexts is then defined as follows.
-Note that we describe only KV-SPHF where the projection key does not depend on the word (ciphertext).
+% Note that we describe only KV-SPHF where the projection key does not depend on the word (ciphertext).
 
 \begin{definition}[KV-SPHF]\label{def:sphf}
 Let \Lpwd denote a language of ciphertexts such that $C\in \Lpwd$ if there exists randomness $r$ proving so.
@@ -1015,6 +1015,7 @@ A \emph{\acl{SPHF}} for ciphertext language \Lpwd consists of the following four
 	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. \eod
 \end{itemize}
 \end{definition}
+\mynote{\Hash also used for password hashing?}
 
 \noindent
 An \ac{SPHF} has to fulfil the following three properties:
@@ -1026,8 +1027,8 @@ An \ac{SPHF} has to fulfil the following three properties:
 
 \noindent
 In a nutshell, smoothness ensures that the hash value always looks random in \GG when computed on an element not in the language, while pseudorandomness ensures that it looks random in \GG when computed on an element in the language.
-Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness.
-The corresponding notion of adaptive smoothness with word-independent keys is defined as follows.
+% Note again that we are only concerned with KV-SPHF that have word-independent keys and offer adaptive smoothness.
+Adaptive smoothness with word-independent keys is defined as follows.
 For any function $f:\GG^m \mapsto \Ciphertexts\setminus \Lpwd$ the following distributions are statistically $\varepsilon$-close:
 \begin{align*}
 & \{(\hp,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,f(\hp))\} \\
@@ -1054,13 +1055,13 @@ $\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
 \hspace*{2em} choose $b\rin\bits$\\
 \hspace*{2em} $b'\algout\cA^{\Omega^{\cL}_\pk(\cdot),\Dec^\cL_\pi(\cdot)}(\secpar,\hp_1,\dots,\hp_l)$ \\
 \hspace*{4em}~ with $\hp_i\algout\PKGen(\hk_i,\Lpwd,C)$ and $\hk_i\ralgout\HKGen(\Lpwd)$ for all $i\in 1,\dots,l$ \\
-\hspace*{2em} return $b=b'$.
+\hspace*{2em} return $b\verify b'$.
 
 \begin{description}
 	\item[$\Omega^{\cL}_\pk(\ell,\pwd)$] returns elements $C\in \Laux$ with $C\gets\Enc^\cL_\pk(\Label,\allowbreak\pwd;r)$ using encryption algorithm \cL and label \Label.
-    	It additionally returns $\Hash(\hk_{i},\Lpwd,C)$ if $b=0$ or $h_{i}\rin\GG$ if $b=1$ for all $i\in 1,\dots, l$.
+    	It additionally returns $\Hash(\hk_{i},\Lpwd,C)$ if $b\verify 0$ or $h_{i}\rin\GG$ if $b\verify 1$ for all $i\in 1,\dots, l$.
 	
-	\item[$\Dec^\cL_\pi(\Label,C)$] decrypts the ciphertext $C$ with label \Label if $(\Label,C)$ was not obtained from $\Omega^\cL_\pk$. \eod
+	\item[$\Dec^\cL_\pi(\Label,C)$] decrypts ciphertext $C$ with label \Label if $(\Label,C)$ was not obtained from $\Omega^\cL_\pk$. \eod
 \end{description}
 \end{definition}
 
@@ -1078,7 +1079,7 @@ The \ac{SPHF} is defined as follows, where $(g_1,g_2,h,c,d,\xi,r,e,u_1,u_2,v)$ a
 \subsubsection{Trapdoor Smooth Projective Hashing}\label{sec:tsphf}
 To build efficient one-round UC-secure PAKE protocols \citet{Benhamouda2013} introduce the notion of \acp{T-SPHF}.
 We recall the definition of \ac{T-SPHF} and additional security properties such as $(t,\varepsilon)$-soundness and computational smoothness necessary in this context.
-\ac{T-SPHF} adds three additional functions to the classical \ac{SPHF} definition that allow computation of the hash value knowing only the projection key, ciphertext and a trapdoor $\tau'$.
+\ac{T-SPHF} adds three additional functions to the \ac{SPHF} definition that allow computation of the hash value knowing only the projection key, ciphertext and a trapdoor $\tau'$.
 Note that $\tau'$ is a different trapdoor than the \ac{CRS} trapdoor $\tau$.
 
 \begin{definition}[Trapdoor SPHF]\label{def:tsphf}
@@ -1113,26 +1114,26 @@ As statistical smoothness is impossible for \ac{T-SPHF}, \citet{Benhamouda2013} 
 
 \begin{definition}[Computational Smoothness]
 An \ac{SPHF} is $(t,\varepsilon)$-smooth if for all adversaries $\cA$ running in time at most $t$
-\[ \Adv_{\Pi, \cA}^{\smooth{b}} = \left|\Pr[\Exp^{\smooth{1}}_{\SPHF,\cA}(\secpar)=1] - \Pr[\Exp^{\smooth{0}}_{\SPHF,\cA}(\secpar)=1]\right| \leq \varepsilon(\secpar).\]
+\[ \Adv_{\Pi, \cA}^{\smooth{b}} = \left|\Pr[\Exp^{\smooth{1}}_{\TSPHF,\cA}(\secpar)=1] - \Pr[\Exp^{\smooth{0}}_{\TSPHF,\cA}(\secpar)=1]\right| \leq \varepsilon(\secpar).\]
 
 \noindent
-$\Exp^{\smooth{b}}_{\SPHF,\cA}(\secpar):$ \\
+$\Exp^{\smooth{b}}_{\TSPHF,\cA}(\secpar):$ \\
 \hspace*{2em} generate $(\crs',\tau')\ralgout\TSetup(\crs)$\\
 \hspace*{2em} $b'\gets\cA^{\PKGen^1(\cdot), \Hash_b^1(\cdot)}(\secpar, \crs, \crs', \tau)$ \\
 % The adversary, given $\crs, \crs'$ and $\tau$, is then allowed to query $\cO_{\PKGen}(\cdot)$ and $\cO_{\Hash_b}(\cdot)$ once before returning a bit $b'$.
-\hspace*{2em} return $b=b'$\\
+\hspace*{2em} return $b\verify b'$\\
 
 \noindent
 On input \pwd the \PKGen oracle draws a new hash key \hk for \ac{T-SPHF} on \Lpwd, computes the according projection key \hp using \PKGen, and returns it to the adversary.
-The \Hash oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b=0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b=1$.
+The \Hash oracle returns $h\gets \Hash$ honestly computed on input ciphertext $C$ if $b\verify 0$ or $C\in\Lpwd$, and $h\rin \GG$ if $b\verify 1$.
 \eod
 \end{definition}
 
 
 \paragraph{\ac{T-SPHF} on Cramer-Shoup Ciphertexts}
 \citet{Benhamouda2013} propose a \ac{T-SPHF} for labelled \ac{CS} ciphertexts under the \ac{SXDH} assumption.
-The \ac{T-SPHF} is a straight-forward extension of the previously described \ac{SPHF} in labelled \ac{CS} ciphertexts.
-Let $(q, \GG_1, \GG_2, \GG_T, e)$ denote a bilinear group and replace \GG from the previous \ac{SPHF} with $\GG_1$ and $g_1,g_2$ by $g_{1,1},g_{1,2}$, generators for $\GG_1$.
+The \ac{T-SPHF} is a straight-forward extension of the previously described \ac{SPHF} on labelled \ac{CS} ciphertexts.
+Let $(p, \GG_1, \GG_2, \GG_T, e)$ denote a bilinear group and replace \GG from the previous \ac{SPHF} with $\GG_1$ and $g_1,g_2$ by $g_{1,1},g_{1,2}$, generators for $\GG_1$.
 All other previous parameters are in $\GG_1$ instead of \GG and $g_2$ is generator of $\GG_2$.
 The additional algorithms for \ac{T-SPHF} and changes to the hash functions are defined as follows.
 \begin{itemize}
@@ -1146,8 +1147,8 @@ The additional algorithms for \ac{T-SPHF} and changes to the hash functions are 
       as before and outputs $h=e(h',g_2)$
   \item $\PHash(\hp, \Lpwd, C, r)$ computes $h'=(\hp_1 \hp_2^\xi)^r$ as before and outputs $h=e(h',g_2)$
   \item $\VerHp(\hp, \Lpwd)$ verifies that 
-      \[e(\hp_1, \crs')\stackrel{?}{=} e(g_{1,1}, \chi_{1,1})\cdot e(g_{1,2}, \chi_2)\cdot e(h_1, \chi_3)\cdot e(c, \chi_4)\] and
-      \[e(\hp_2, \crs') \stackrel{?}{=} e(g_{1,1}, \chi_{1,2})\cdot e(d, \chi_4)\]
+      \[e(\hp_1, \crs')\verify e(g_{1,1}, \chi_{1,1})\cdot e(g_{1,2}, \chi_2)\cdot e(h_1, \chi_3)\cdot e(c, \chi_4)\] and
+      \[e(\hp_2, \crs') \verify e(g_{1,1}, \chi_{1,2})\cdot e(d, \chi_4)\]
   \item $\THash(\hp, \Lpwd, C, \tau')$ computes 
   \[\left[ e(u_1, \chi_{1,1} \chi_{1,2}^{\xi})\cdot e(u_2, \chi_2)\cdot e(e/g_{1,1}^{\pwd}, \chi_3)\cdot e(v, \chi_4) \right]^{1/\tau'}\]
 \end{itemize}

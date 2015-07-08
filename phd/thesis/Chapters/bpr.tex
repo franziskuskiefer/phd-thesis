@@ -1,9 +1,10 @@
 \section{Blind Password Registration} \label{sec:bpr}
 
-The previous section on \ac{ZKPPC} gives only an informal discussion on how to use \ac{ZKPPC} in password registration.
+The previous section on \ac{ZKPPC} gives only an informal discussion on how to use \ac{ZKPPC} to register passwords.
 In this section we introduce a formal definition of \ac{BPR} and propose an optimised protocol following the idea used in \ac{ZKPPC}.
-A zero-knowledge property in the context of password verifiers seems an unnecessarily strong requirement since offline dictionary attacks can always be performed on the server side.
-By dropping the zero-knowledge requirement and focusing on the entire registration process we thus obtain a more realistic security model and are able to construct more efficient \ac{BPR} protocols.
+First observe that a zero-knowledge property in the context of password verifiers seems an unnecessarily strong requirement since offline dictionary attacks can always be performed on the server side.
+By dropping the zero-knowledge requirement and focusing on the entire registration process we thus obtain a more reasonable security model and are able to construct more efficient \ac{BPR} protocols.
+It further allows us to drop the maximum password length and thus use simplified policies $f$ here, consisting of policy expression $R$ and minimum password length \pmin
 
 A \ac{BPR} protocol allows a user to register a password verifier at a \ac{VPAKE} server and prove that it contains a password that complies with the server's policy without disclosing the password.
 A \ac{BPR} protocol is thus executed between a client \Client and a server \Server, both holding the server's password policy $f$.
@@ -14,12 +15,12 @@ Blind password registration is formally defined as follows.
 
 \begin{definition}[Blind Password Registration]\label{def:bpr}
 A \ac{BPR} protocol is executed between a client \Client and a server \Server with the server's password policy $f$ as common input. 
-At the end of the protocol the server eventually outputs the password verifier $\ver_C$ for a policy compliant, client chosen password \pwd. %for a suitable \ac{VPAKE} protocol without learning anything about the password in the verifier.
+At the end of the protocol the server eventually outputs the password verifier $\ver$ for a policy compliant, client chosen password \pwd. %for a suitable \ac{VPAKE} protocol without learning anything about the password in the verifier.
 \eod
 \end{definition}
 
 \subsection{Blind Password Registration Model} \label{sec:bpr-model}
-We consider two security properties for \ac{BPR} protocols to capture the requirement that the server \emph{learns nothing about the password in the verifier} and that the password verifier $\ver_C$ belongs to a \emph{policy compliant} password.
+We consider two security properties for \ac{BPR} protocols to capture the requirement that the server \emph{learns nothing about the password in the verifier} and that the password verifier $\ver$ belongs to a \emph{policy compliant} password.
 % Recall that we assume semi-honest servers, where it interacts with the client as specified in the protocol.
 The first security notion regarding the server, called \emph{\ac{DAR}}, considers a passive attack in which the adversary must not be able to retrieve the password from the password verifier faster than with a brute-force attack over the used dictionary.
 The second security notion regarding the client, called \emph{\ac{PC}}, considers an active attack where the adversary plays the role of the client and tries to register a non-compliant password at a server.
@@ -30,23 +31,23 @@ As argued before, this best captures the real world scenario where server \Serve
 Note that security of \ac{BPR} protocols can only be assessed with respect to the used password hashing scheme \HashP since the attackers ability to recover the password from a compromised server depends on the pre-image resistance of the hashing scheme.
 
 \paragraph{Participants and Parameters}
-A \ac{BPR} protocol is executed between a client \Client from a universe of clients $\cC$ and a server $\Server_f$ chosen from the universe of servers $\cS$.
-The universe of servers $\cS$ contains servers $\Server_f$ such that there exists a server $\Server_f$ for every policy $f$.
+A \ac{BPR} protocol is executed between a client \Client from a universe of clients and a server $\Server_f$ chosen from the universe of servers.
+The universe of servers contains servers $\Server_f$ such that there exists a server $\Server_f$ for every policy $f$.
 Note that we usually omit $f$ and write \Server instead.
 Both protocol participants have common inputs, necessary for the execution of the protocol, and password policy $f$.
 Instances of protocol participants \Client or \Server are denoted $\Client_i$ or $\Server_i$. 
 Protocol participants without specified role are denoted by $P$.
-A client can only register one password with one server, but can register passwords at an arbitrary number of servers.
+A client can only register one password with a server, but can register passwords at an arbitrary number of servers.
 Further, a server only allows a single registration from a client such that any attempt to register a password with a server that already stores a verifier from this client is rejected by the server.
-The client \Client is unique and is used as identifier on the server, \ie as \emph{username} to store alongside the password verifier $\ver_C$ for later \ac{VPAKE} executions.
-An entry $(C,\ver_C)$ is only stored on the server if the \ac{BPR} protocol is successful.
+The client \Client is unique and is used as identifier on the server, \ie as \emph{username} to store alongside the password verifier $\ver$ for later \ac{VPAKE} executions.
+An entry $(\Client,\ver)$ is only stored on the server if the \ac{BPR} protocol is successful.
 %
 % We consider further a set of parameters, stored with each protocol participant that allow us to define the security properties later.
 %
 % \begin{itemize}
 %   \item The session identifier $\sid_P^i$ is modelled as ordered, partial protocol transcript of incoming and outgoing messages of a participant.
 %   \item The partner identifier $\pid^i_P$ is defined on initialisation of a participant and points to the intended communication partner such that $\pid^i_P\in\cS$ if $P\in\cC$ and $\pid^i_P\in\cC$ if $P\in\cS$.
-%   \item The password verifier $\ver_C$ for a client identified by the client identifier \Client is stored on the server.
+%   \item The password verifier $\ver$ for a client identified by the client identifier \Client is stored on the server.
 %         It is initialised with $\bot$.
 % \end{itemize}
 %
@@ -54,17 +55,17 @@ An entry $(C,\ver_C)$ is only stored on the server if the \ac{BPR} protocol is s
 To interact with protocol participants, the adversary has access to an \Execute and a \Send oracle.
 
 \begin{itemize}
-  \item $\Execute(C,S)$ models a passive attack and executes a \ac{BPR} protocol between new instances of \Client and \Server.
-        If there exists a verifier $\ver_C$ for client \Client on server \Server, the oracle aborts.
+  \item $\Execute(\Client,\Server)$ models a passive attack and executes a \ac{BPR} protocol between new instances of \Client and \Server.
+        If there exists a verifier $\ver$ for client \Client on server \Server, the oracle aborts.
         Otherwise, it returns the protocol transcript and the internal state of server \Server.
-  \item $\Send(C,S_i,m)$ models an active attack and sends message $m$, allegedly from client $\Client$, to server instance $\Server_i$ (a new server instance with a unique index $i$ is created if it does not exist yet).
-        If there exists a verifier $\ver_C$ for client \Client on server \Server, the oracle aborts.
+  \item $\Send(\Client,\Server_i,m)$ models an active attack and sends message $m$, allegedly from client \Client, to server instance $\Server_i$ (a new server instance with a unique index $i$ is created if it does not exist yet).
+        If there exists a verifier $\ver$ for client \Client on server \Server, the oracle aborts.
         Otherwise, it returns the server's answer $m'$ if there exists any.
 \end{itemize}
 
 \noindent
 % Security of a \ac{BPR} protocol is defined by two properties: \emph{policy compliance} and \emph{dictionary attack resistance}.
-Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client \Client after a successful registration of $(\Client,\ver_C)$ on a server (client identities \Client are unique but not secret and can therefore be used by the adversary).
+Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client \Client after a successful registration of $(\Client,\ver)$ on a server (client identities \Client are unique but not secret and can therefore be used by the adversary).
 
 \paragraph{Policy Compliance}
 Policy compliance is the first natural security property of \ac{BPR} protocols, requiring that a password set up with a \ac{BPR} protocol is compliant with the server's policy $f$.
@@ -72,31 +73,34 @@ The attacker here plays the role of the client and tries to register a password 
 
 \begin{definition}[Policy Compliance]\label{def:pc}
 Let \cA denote a \ac{PPT} adversary with access to \Execute and \Send oracles.
-The probability that a server instance $\Server_i$ exists after \cA terminated that accepted $(C,\ver_C)$ with $\ver_C=\HashP(\pwd;r)$ and $f(\pwd)=\false$ is negligible in $\secpar$.
+The probability that a server instance $\Server_i$ exists after \cA terminated that accepted $(\Client,\ver)$ with $\ver=\HashP(\pwd;r)$ and $f(\pwd)=\false$ is negligible in $\secpar$.
 \eod
 \end{definition}
 
 \paragraph{Dictionary Attack Resistance}
 % \noindent
-To model the second security property, \acl{DAR}, we define another oracle, which models an offline dictionary attack on password verifier $\ver_C$.
-\ac{DAR} models server compromise (honest but curious) and requires that it is impossible for an attacker to recover the client's password from the password verifier $\ver_C$ in a more efficient way than traversing the used dictionary.
-Note that it is always possible for an attacker to brute-force a password verifier such that the defined definition of \ac{DAR} is the strongest possible notion.
+To model the second security property, \acl{DAR}, we define another oracle, which models an offline dictionary attack on password verifier $\ver$.
+\ac{DAR} models server compromise (honest-but-curious server) and requires that it is impossible for an attacker to recover the client's password from the password verifier $\ver$ in a more efficient way than traversing the used dictionary.
+Note that it is always possible for an attacker to brute-force a password verifier such that the defined definition of \ac{DAR} is the strongest possible notion with respect to the used dictionary.
 
 \begin{itemize}
-  \item $\Verify(C,S,\pwd)$ takes a client, server pair $(C,S)$ and a password \pwd as input, and returns $1$ iff there exists a server instance $\Server_i$ that accepted $(C,\ver_C)$ with $\ver_C=(H_1,H_2,s_H)$ and $(H_1,H_2)\algout\HashP(\pwd;r)$, and $\Server_i$ is a passive session, i.e. no \Send was queried for $(C,S)$ on session $\Server_i$.
+  \item $\Verify(\Client,\Server,\pwd)$ takes a client, server pair $(\Client,\Server)$ and a password \pwd as input, and returns $1$ iff there exists a server instance $\Server_i$ that accepted $(\Client,\ver)$ with $\ver=(H_1,H_2,s_H)$ and $(H_1,H_2)\algout\HashP(\pwd;r)$, and $\Server_i$ is a passive session, i.e. no \Send was queried for $(\Client,\Server)$ on session $\Server_i$.
         Otherwise, return $0$.
 \end{itemize}
 
 \noindent
-The adversary in the \ac{DAR} experiment outputs a $(C,S,\pwd)$ triple after interacting with the \Execute and \Send oracle.
-This triple is handed over to \Verify such that the experiment is successful if and only if \Verify returns 1, \ie the adversary is able to compute the password \pwd from a password verifier $\ver_C$ stored on server \Server.
+The adversary in the \ac{DAR} experiment outputs a $(\Client,\Server,\pwd)$ triple after interacting with the \Execute and \Send oracle.
+This triple is handed over to \Verify such that the experiment is successful if and only if \Verify returns $1$, \ie the adversary is able to compute the password \pwd from a password verifier \ver stored on server \Server.
 Since this is always possible, we have to restrict the time the adversary is allowed to take to compute the correct password, \ie he must not be more efficient in computing the password than performing a brute force attack.
 We formalise the notion of dictionary attack resistance in the following definition.
 
 \begin{definition}[Dictionary Attack Resistance]\label{def:dar}
-A \ac{BPR} protocol using password hashing scheme \Hash is \emph{\acl{DAR}} if for all \ac{PPT} adversaries $\cA$ running in time $t$ (excl. time for oracle computations) and all dictionaries $\cD_f$ there exists a negligible function $\varepsilon(\cdot)$ such that:
+A \ac{BPR} protocol using password hashing scheme \HashP is \emph{\acl{DAR}} if for all \ac{PPT} adversaries $\cA$ running in time $t$ (excl. time for oracle computations) and all dictionaries $\cD_f$ there exists a negligible function $\varepsilon(\cdot)$ such that:
 % \begin{center}  
-\[\Pr[(C,S,\pwd)\gets\cA^{\Execute, \Send, \Verify}(\secpar);~ \Verify(C,S,\pwd)=1] \leq \frac{2^{-\beta_{\cD_{f,|\pwd|}}}\cdot t}{t_{\PPreHash}} + \varepsilon(\secpar),\]
+\begin{align*}
+\Pr[(\Client,\Server,\pwd)\gets\cA^{\Execute(\cdot), \Send(\cdot), \Verify(\cdot)}(\secpar);~ \Verify(&\Client,\Server,\pwd)=1] \\
+&  \leq \frac{2^{-\beta_{\cD_{f,|\pwd|}}}\cdot t}{t_{\PPreHash}} + \varepsilon(\secpar),
+\end{align*}
 % \end{center} 
 with $t_\PPreHash$ being the running time of \PPreHash.
 \eod
@@ -106,9 +110,8 @@ with $t_\PPreHash$ being the running time of \PPreHash.
 Note that $t$ used in the above definition measures time that is spent by $\cA$ on the actual computation of \pwd. 
 This time can be estimated as $t=t_\cA-t_{q,E}-t_{q,S}$, where  $t_\cA$ is the overall running time of $\cA$, $t_{q,E}$ is the time for processing $q_E$ \Execute queries, and $t_{q,S}$ is the time for processing $q_S$ \Send queries. 
 
-
-Our definition of \ac{DAR} seems a reasonable compromise between the desired security and efficiency for \ac{BPR} protocols.
-Nonetheless, it is possible to change the balance between security and efficiency by aiming at a stronger form of dictionary attack resistance that would further hide the password length, or at a weaker form of dictionary attack resistance that would disclose the sets of significant characters to the adversary. We discuss both variants in the following.
+Using $\cD_{f,n}$ in the definition of \ac{DAR} seems a reasonable compromise between the desired security and efficiency for \ac{BPR} protocols.
+Nonetheless, it is possible to change the balance between security and efficiency by aiming at a stronger form of dictionary attack resistance using $\cD_f$, \ie hide the password length, or at a weaker form of dictionary attack resistance that would disclose the sets of significant characters to the adversary. We discuss both variants in the following.
 % This leads to the following definition of \ac{BPR} security in the semi-honest server model.
 
 % \begin{definition}[BPR Security]\label{def:bprsecurity}
@@ -116,13 +119,13 @@ Nonetheless, it is possible to change the balance between security and efficienc
 % \end{definition}
 
 \subsubsection{Disclosure of Significant Character Sets} %Leaking Character Positions
-Definition~\ref{def:dar} does \emph{not} leak the significant password character sets to the server and thus makes the \ac{BPR} protocol superior to the \ac{ZKPPC}-based approach proposed in Section \ref{sec:zkppc}, where positions and sets of password characters that are significant for policy $f$ are disclosed. 
+Definition~\ref{def:dar} does \emph{not} leak the significant password character sets to the server and thus makes the \ac{BPR} protocol superior to the \ac{ZKPPC}-based approach proposed from Section \ref{sec:zkppc}, where positions and sets of password characters that are significant for policy $f$ are disclosed. 
 Note that such weaker notion of dictionary attack resistance can be modeled by using dictionaries $\cD_{f}^\ast$ and $\cD_{f,n}^\ast$ in Definition~\ref{def:dar} while assuming that position information of significant password characters is known. 
 That is,
 % Let $\beta_{R_i}=\min_{c\in R_i} \log_2(1/\Pr_{\DD_{R_i}}[c])$ denote the min-entropy of elements in the $i$-th part of the regular expression $R$ where
-let $\DD_{R_j}$ denote the probability distribution of characters in a password \pwd over set $R_j$, the $j$-th set in the regular expression $R$.
+let $\DD_{R_j}$ denote the probability distribution of characters in password \pwd over set $R_j$, the $j$th set in policy expression $R$.
 Further, let $R_S$ be the set of significant character indices $i$.
-The min-entropy of $\cD_{f,n}^\ast$ is then given by
+Min-entropy of $\cD_{f,n}^\ast$ is then given by
 % \[
 % \beta_{\cD_f^\ast} = \min_{\pwd\in \cD_f^\ast} \log_2 \left(\left(\prod_{i=1}^{|\pwd|-m}\Pr_{\DD_{\Sigma}}[c_j|j] \cdot \prod_{i=1}^{m}\Pr_{\DD_{R_i}}[c_j|j]\right)^{-1}\right),
 % \]
@@ -132,7 +135,7 @@ The min-entropy of $\cD_{f,n}^\ast$ is then given by
 % where characters $c_j\in\pwd$ are chosen appropriately and $|R|=m$.
 % The minimum password length is here already given in $f$.
 % We can again specify the upper bound of $\beta_{\cD_f}$ by $\log_2(94^{|\pwd|-m} \cdot \prod_{i=1}^{m} |R_i|)$ for uniformly at random chosen characters.
-The min-entropy of $\cD_{f}^\ast$ can be defined accordingly.
+Min-entropy of $\cD_{f}^\ast$ can be defined accordingly.
 % XXX: Note that additional assumptions such as secure erasures could allow a protocol, secure in this weakened model, to be secure in our model according to Definition \ref{def:dar}.
 
 \subsubsection{Hiding Password Lengths}\label{sec:strongerDAR}
@@ -140,13 +143,13 @@ Definition~\ref{def:dar} allows \ac{BPR} protocols to leak the length of the reg
 While this leakage can be tolerated for uniformly distributed passwords, it can be used to build smaller dictionaries for non-uniform password distributions. 
 We can easily strengthen Definition~\ref{def:dar} to hide password lengths by replacing $\beta_{\cD_{f,n}}$ with $\beta_{\cD_f}$. 
 However, in order to realise this stronger requirement \ac{BPR} protocols would typically require extra computation and communication costs. 
-We discuss in Section \ref{sec:discussion} how efficiency of our \ac{BPR} protocol, which satisfies Definition~\ref{def:dar}, can be traded in order to ensure password-length hiding.
+We discuss in Section \ref{sec:bpr-discussion} how efficiency of our \ac{BPR} protocol, which satisfies Definition~\ref{def:dar}, can be traded in order to ensure password-length hiding.
 
 \subsubsection{A Note on Relation to ZKPPC-based Password Registration}
-The model proposed in this section defines a complete blind password registration procedure for \ac{VPAKE} protocols, in contrast to the protocol given in Section \ref{sec:zkppc} that defines \acp{ZKPPC} and uses them as a building block for a \ac{VPAKE} registration procedure, without modelling the latter. 
-We observe that according to the security definition of \ac{BPR} protocols, \ac{ZKPPC} proofs do not necessarily lead to secure \ac{BPR} constructions. 
+The model proposed in this section defines a complete blind password registration procedure for \ac{VPAKE} protocols, in contrast to the protocol given in Section \ref{sec:zkppc} that defines \acp{ZKPPC} and uses it as a building block for a \ac{VPAKE} registration procedure, without modelling the latter. 
+We observe that according to the security definition of \ac{BPR} protocols, \ac{ZKPPC} does not necessarily lead to secure \ac{BPR} constructions. 
 As mentioned in the previous paragraph the generic blind password registration procedure based on \ac{ZKPPC} leaks positions and sets of significant characters. 
-While this is tolerable in the \ac{ZKPPC}-based protocol where the actual time needed to retrieve the password from the verifier is not restricted, in our model this protocol would not satisfy dictionary attack resistance because an attacker would be able to retrieve passwords from verifiers significantly faster than required by Definition \ref{def:dar}.
+While this is tolerable in the \ac{ZKPPC}-based protocol where the actual time needed to retrieve the password from the verifier is taken before randomness $s_H$ is disclosed, in the \ac{BPR} model this protocol would not satisfy dictionary attack resistance because an attacker would be able to retrieve passwords from verifiers significantly faster than required by Definition \ref{def:dar} with knowledge of $s_H$.
 Definition~\ref{def:dar} models the intrinsic \ac{VPAKE} requirement that a server, holding a password hash and used random salt, must not be able to recover the password faster than by brute-forcing the dictionary. 
 % While this requirement also applies to \ac{ZKPPC}-based \ac{BPR} protocols it was not explicitly modelled.
 
@@ -160,17 +163,17 @@ Definition~\ref{def:dar} models the intrinsic \ac{VPAKE} requirement that a serv
 
 We first give a high-level overview of the proposed \ac{BPR} protocol according to Figure~\ref{fig:bpr-protocol-overview} and then proceed with the detailed specification of its steps. The client starts the registration procedure by choosing an ASCII-based password $\pwd\in_R\cD_f$ of length $n$, which is then mapped to an integer $\pi\gets\pwdint(\pwd)$.
 The client maps each password character $c_i\in\pwd$ to an integer $\pi_i\gets\chrint(c_i)$ and computes Pedersen commitments $C_i$ and $C'_i$ for $\pi_i$. 
-Note that those commitments are independent of the character's position, in contrast to the commitments used in the \ac{ZKPPC}-based approach.
+Note that those commitments are independent of the character's position, in contrast to the commitments used in \ac{ZKPPC}.
 Note that each commitment $C'_i$ is obtained by re-randomising $C_i$. 
 The client builds vector $\bm{C}=\{C_i\}$, shuffles commitments in $\bm{C'}=\{C'_i\}$, and proves that $\bm C'$ contains commitments to ASCII characters, including those that are significant to fulfil password policy $f$. 
 This proof is performed using an appropriate \ac{PoM}.
-The client also computes the randomised password hash $(H_1, H_2)$ using $\pi$, sends $(H_1, H_2)$ with the hash salt $\Server_H$ to the server, and proves that $\pi$ used to compute $(H_1, H_2)$ is the same as in the product of shifted commitments $C^{{b^i}}_i$. 
+The client also computes the randomised password hash $(H_1, H_2)$ using $\pi$, sends $(H_1, H_2)$ with the hash salt $s_H$ to the server, and proves that $\pi$ used to compute $(H_1, H_2)$ is the same as in the product of shifted commitments $C^{{b^i}}_i$. 
 This proof is performed using an appropriate \ac{PoE}.
 The product of $C^{b^i}_i$ used in the verification can be computed by the server using shift base $b$ and the received commitments $C_i\in \bm C$.
 Finally, the client proves to the server that $\bm C'$ is a shuffle of $\bm C$ using an appropriate \ac{PoS}. 
 The purpose of this proof is to link the proof that $\pwd$ contains \ac{ASCII} characters and fulfils policy $f$ (\ac{PoM}) with the proof that $(H_1, H_2)$ is the password hash of $\pi$ (\ac{PoE}) without leaking positions and ASCII subsets of characters that are significant for $f$ (as discussed in Section \ref{sec:bpr-model}). 
-The server, after successful verification of all proofs, stores the client's password verifier $\ver_C = (H_1,H_2,s_H)$ in its protected password database and terminates the registration protocol. 
-For remote registration of the password verifier we assume that the \ac{BPR} protocol is executed over a server-authenticated secure channel in order to protect transmission of $\ver_C$; otherwise an eavesdropping adversary would be able to recover the password by brute-forcing the dictionary. 
+The server, after successful verification of all proofs, stores the client's password verifier $\ver = (H_1,H_2,s_H)$ in its protected password database and terminates the registration protocol. 
+For remote registration of the password verifier we assume that the \ac{BPR} protocol is executed over a server-authenticated secure channel in order to protect transmission of $\ver$; otherwise an eavesdropping adversary would be able to recover the password by brute-forcing the dictionary. 
 For example, on the web our \ac{BPR} protocol can be executed on top of a TLS channel established between the client and the server.
 \begin{figure}[htb]
 \centering
@@ -203,7 +206,7 @@ For example, on the web our \ac{BPR} protocol can be executed on top of a TLS ch
 	\parbox{24em}{\PoS: $\ZKPoK\{\{k_i, r'_{k_i}\}_{i} : ~ C'_{i}=C_{k_i}h^{r'_{k_i}}\}$} \& 
 	  $\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$ \& 
 	  If $\PoM$, $\PoE$, $\PoS$ succeed: \\
-	\& \& \hspace*{2em} store $(C,\ver_C)$ with $\ver_C=(H_1,H_2,s_H)$ \\
+	\& \& \hspace*{2em} store $(\Client,\ver)$ with $\ver=(H_1,H_2,s_H)$ \\
 };
 
 \draw[->] (m-11-2.south west) -- (m-11-2.south east);
@@ -244,7 +247,7 @@ The client chooses some password string $\pwd=(c_0,\ldots$, $c_{n-1})\rin\cD_f$ 
   \item let $l_i\in\NN$ denote the index in $\omega_{k_i}$ such that $c_i=\omega_{k_i}[l_i]$
 \end{itemize}
 Note that values $(C_i, C'_i, \omega_{k_i}, k_{i}, l_i, \pi_i, r_i, r'_i)$ will be used in the proofs of knowledge.
-The client then generates random salts $\Server_P,s_H\rin\ZZ_p$ for the password hashing scheme and computes the password verifier $\ver_C=(H_1, H_2, s_H)$ where $(H_1,H_2)\gets (g^{s_P}, H_1^\pi h^{s_H})$.
+The client then generates random salts $\Server_P,s_H\rin\ZZ_p$ for the password hashing scheme and computes the password verifier $\ver=(H_1, H_2, s_H)$ where $(H_1,H_2)\gets (g^{s_P}, H_1^\pi h^{s_H})$.
 Further, the client combines previously computed values $\bm C = \{C_{i}\}$.
 The shuffled commitments and sets $\omega_{k_i}$ are combined in specific order according to the chosen index $k_i$, \ie $\bm C' = \{C'_{k_{i}}\}$ and $\vect{\omega} = \{\omega_{k_i}\}$.
 With these values the client can start the computation of the three proofs \ac{PoM}, \ac{PoE} and \ac{PoS}.
@@ -281,18 +284,18 @@ This protocol proves that password hash $H_2$ contains the same encoded password
     with 
     $k_{s_P},k_{\pi},k_{r^\ast}\rin\Zrp$.
     
-  \item The server stores received values and sets $\Ch_\PoE=c\rin\ZZ_p$. 
+  \item The server stores received values and sets $\Ch_\PoE=\Ch\rin\ZZ_p$. 
   
   \item After receiving challenge \Client from the server, the client computes the following verification values
     \[
-      s_{s_P}=k_{s_P}-c s_P;~ s_{\pi}=k_\pi - c \pi;~ s_{r^\ast}=k_{r^\ast} - c \sum_{i=0}^{n-1} b^i r_i
+      s_{s_P}=k_{s_P}-\Ch s_P;~ s_{\pi}=k_\pi - \Ch \pi;~ s_{r^\ast}=k_{r^\ast} - \Ch \sum_{i=0}^{n-1} b^i r_i
     \]
     and sets $\Res_\PoE=(s_{s_P}, s_\pi, s_{r^\ast})$ as response.
   
   \item To verify the proof, \ie the product of shifted commitments $C_i^{b_i}$ for $C_i\in\bm C$ contains the same password $\pi$ as the password hash $H_2$, the server verifies the following:
     \[
-      t_{s_P}\stackrel{?}{=}g^{s_{s_P}}H_1^{c};~ t_H\stackrel{?}{=}H_1^{s_\pi}(H_2/h^{s_H})^c;~
-      t_{C^\ast}\stackrel{?}{=}g^{s_\pi}h^{s_{r^\ast}} \left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^c.
+      t_{s_P}\verify g^{s_{s_P}}H_1^{\Ch};~ t_H\verify H_1^{s_\pi}(H_2/h^{s_H})^\Ch;~
+      t_{C^\ast}\verify g^{s_\pi}h^{s_{r^\ast}} \left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^\Ch.
     \]
     The server accepts the proof iff those verifications succeed.
 \end{enumerate}
@@ -309,33 +312,33 @@ Note that $C'_{k_i}\in \bm C'$.
 \begin{enumerate}
   \item To prove that every $C'_{{k_i}}$ commits to a value in the corresponding set $\omega_{{k_i}}$ the client computes the following values for the first move of the proof:
     \[
-      \forall \pi_j\in\omega_{{k_i}} \wedge \pi_j\not=\pi_i :~ s_j\rin\Zrp,~ c_j\rin\Zrp,~ t_j=g^{\pi_j}h^{s_j}(C'_{{k_i}}/g^{\pi_j})^{c_j}
+      \forall \pi_j\in\omega_{{k_i}} \wedge \pi_j\not=\pi_i :~ s_j\rin\Zrp,~ \Ch_j\rin\Zrp,~ t_j=g^{\pi_j}h^{s_j}(C'_{{k_i}}/g^{\pi_j})^{\Ch_j}
     \]
     \[
       k_{\rho_i}\rin\Zrp;~ t_{l_{k_i}}=g^{\pi_i}h^{k_{\rho_i}}
     \]
-    Values $(\bm t_{k_i}, \bm s_{k_i}, \bm c_{k_i}, k_{\rho_i})$, with $\bm t_{k_i}= t_j \cup \{t_{l_{k_i}}\}$, $\bm s_{k_i}=\{s_j\}$, and $\bm c_{k_i}=\{c_j\}$ are stored for future use.
+    Values $(\bm t_{k_i}, \bm s_{k_i}, \bm c_{k_i}, k_{\rho_i})$, with $\bm t_{k_i}= t_j \cup \{t_{l_{k_i}}\}$, $\bm s_{k_i}=\{s_j\}$, and $\bm c_{k_i}=\{\Ch_j\}$ are stored for future use.
     Note that $t_{l_{k_i}}$ has to be added at the correct position ($l_{k_i}$) in $\bm t_{k_i}$.
     After computing the proof for every $C'_{k_i}$ the client sets the message $\Comm_\PoM=\bm t = \{\bm t_{k_i}\}$.
     
-  \item The server stores received values, checks them for group membership, chooses a random challenge $c\rin\ZZ_p$ and sets $\Ch_\PoM=c$.
+  \item The server stores received values, checks them for group membership, chooses a random challenge $\Ch\rin\ZZ_p$ and sets $\Ch_\PoM=\Ch$.
   
-  \item After receiving the challenge \Client from the server, the client computes the following verification values for all commitments $C'_{{k_i}}$ (note that $\Server_j$ and $c_j$ for all $j\not= l_{k_i}$ are chosen already):
+  \item After receiving the challenge \Ch from the server, the client computes the following verification values for all commitments $C'_{{k_i}}$ (note that $\Server_j$ and $\Ch_j$ for all $j\not= l_{k_i}$ are chosen already):
     \[
-      c_{l_{k_i}}=c\oplus \bigoplus_{j=1,j\not=l_{k_i}}^{|\omega_{k_i}|} c_j;~ s_{l_{k_i}}=k_{\rho_{k_i}} - c_{l_{k_i}}(r_{i}+r'_{k_i}),
+      \Ch_{l_{k_i}}=\Ch\oplus \bigoplus_{j=1,j\not=l_{k_i}}^{|\omega_{k_i}|} \Ch_j;~ s_{l_{k_i}}=k_{\rho_{k_i}} - \Ch_{l_{k_i}}(r_{i}+r'_{k_i}),
     \]
     where $i$ is the index of $C'_{k_i}$ before shuffling.
-    The client then combines $\bm s = \bm s_{k_i} \cup \{s_{l_{k_i}}\}$ and $\bm c = \bm c_{k_i} \cup \{c_{l_{k_i}}\}$.
+    The client then combines $\bm s = \bm s_{k_i} \cup \{s_{l_{k_i}}\}$ and $\bm c = \bm c_{k_i} \cup \{\Ch_{l_{k_i}}\}$.
     Note again that the set union has to consider the position of $l_{k_i}$ to add the values at the correct position.
     % and $\bm s_{\pi}=\{s_{\pi_i}\}$
     The response message $\Res_\PoM$ is then set to $(\bm s, \bm c)$.
   
   \item To verify the proof, \ie to verify that every commitment $C'_{k_i}$ in $\bm C'$ commits to a character $c_i$ from either a subset $R_j$ of $\Sigma$ if significant or $\Sigma$ if not, the server verifies the following for every set $\omega_{i} \in \vect{\omega}$ with $i\in[0,n-1]$:
     \begin{itemize}
-      \item~ Let $c_j\in\bm c_i$ for $\bm c_i\in\bm c$ and verify
-            $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}c_j$
+      \item~ Let $\Ch_j\in\bm c_i$ for $\bm c_i\in\bm c$ and verify
+            $c\verify \bigoplus_{j=1}^{|\omega_i|}\Ch_j$
       \item~ Let $\pi_j\in\omega_{i}$, $\bm s_i \in \bm s$, $\bm t_i\in \bm t$, and $\bm c_i \in \bm c$, and verify
-            $\displaystyle \bm t_{i}[j]\stackrel{?}{=}g^{\pi_j}h^{\bm s_i[j]}(C'_i/g^{\pi_j})^{\bm c_i[j]}$
+            $\displaystyle \bm t_{i}[j]\verify g^{\pi_j}h^{\bm s_i[j]}(C'_i/g^{\pi_j})^{\bm c_i[j]}$
             for all $j\in[1,|\omega_{i}|]$
     \end{itemize}
     The verification of the proof is successful iff all verifications above are successful \emph{and} \vect{\omega} contains all significant characters for $f$.
@@ -347,9 +350,9 @@ We use the efficient proof for correct shuffling for ElGamal ciphertexts from \c
 \[
   \ZKPoK\{(\{k_i, r'_{k_i}\}_{i}) : ~ C'_{i}=C_{k_i}h^{r'_{k_i}}\}
 \text{ into }
-  \ZKPoK\{\hat{A}_{ji}:~ C'_i=h^{\hat{A}_{0i}}\cdot\prod_{v=1}^n C_v^{\hat{A}_{vi}}\}
+  \ZKPoK\{A_{ji}:~ C'_i=h^{A_{0i}}\cdot\prod_{v=1}^n C_v^{A_{vi}}\}
 \]
-where the permutation matrix is a $n$-times-$n$ sub-matrix of $\hat{A}_{ji}$.
+where the permutation matrix is a $n$-times-$n$ sub-matrix of $A_{ji}$.
 % First, we describe the zero-knowledge proof of correct shuffling of Pedersen commitments $\bm C$ and $\bm C'$.
 % Then we describe some optimisations we can perform on it due to the fact that we know messages and randomness of $\bm C$ and $\bm C'$.
 % Note that indices for commitments run from $1$ to $n$ and index ranges in the following change frequently.
@@ -397,7 +400,7 @@ The remaining values in $A_{ji}$ are computed as follows for $v\in[1,n]$:
 % \end{figure}
 
 \noindent
-After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(C'_0, \tilde{f}, \bm f', w, \tilde{w})$ for $\bm f'=\{f'_v\}$ with $v\in[0,n]$.
+After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(C'_0$, $\tilde{f}$, $\bm f'$, $w$, $\tilde{w})$ for $\bm f'=\{f'_v\}$ with $v\in[0,n]$.
 \[ 
  f'_v=\prod_{j=-4}^{n} f_j^{A_{jv}};~ \tilde{f}=\prod_{j=-4}^{n} f_j^{A'_{j}}
  C'_0=g^{\sum_{j=1}^{n} \pi_j A_{j0}} h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}
@@ -408,19 +411,19 @@ After generating $A_{ji}$ the client commits to it and sets output $\Comm_\PoS=(
 Note that $C'_0$ has the form $\prod_{j=0}^n C_j^{A_{j0}}=h^{A_{00}}\prod_{j=1}^n C_j^{A_{j0}}$, but computing $g^{\sum_{j=1}^{n} \pi_j A_{j0}}$ $h^{A_{00}+\sum_{j=1}^{n} r_jA_{j0}}$ saves $n-1$ exponentiations.
 
 
-\item The server chooses $\bm c = \{c_v\}$ with $c_v\rin\ZZ_p$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
+\item The server chooses $\bm c = \{\Ch_v\}$ with $\Ch_v\rin\ZZ_p$ for $v\in[1,n]$ and sets $\Ch_\PoS=\bm c$.
 
 \item After receiving challenges $\bm c$ from the server, the client computes the following verification values and sets \allowbreak $\Res_\PoS=(\bm s, \bm s')$ for $\bm s = \{s_v\}$ and $\bm s' = \{s'_v\}$ with $v\in[-4,n]$.
-Let $c_0=1$.
-\[ s_v = \sum_{j=0}^{n} A_{vj}c_j;~ s'_v = A'_v + \sum_{j=1}^{n} A_{vj}c_j^2 \] % \text{ for } v\in[-4,n]
+Let $\Ch_0=1$.
+\[ s_v = \sum_{j=0}^{n} A_{vj}\Ch_j;~ s'_v = A'_v + \sum_{j=1}^{n} A_{vj}\Ch_j^2 \] % \text{ for } v\in[-4,n]
 
 
 \item Finally, the server checks the following equations for a randomly chosen $\alpha\rin\Zrp$ and $C_0=h$:
 
-\[  \prod_{v=-4}^{n} f_v^{s_v+\alpha s'_v} \stackrel{?}{=} f'_0\tilde{f}^\alpha \prod_{j=1}^n {f'_j}^{c_j+\alpha c_j^2};\hspace*{2em}
-    \prod_{v=0}^n C_v^{s_v} \stackrel{?}{=} \prod_{j=0}^n {C'_j}^{c_j} \]
-\[  \sum_{j=1}^n (s_j^3 - c_j^3) \stackrel{?}{=} s_{-2} + s'_{-3} + w;\hspace*{2em}
-    \sum_{j=1}^n (s_j^2 - c_j^2) \stackrel{?}{=} s_{-4} + \tilde{w} \]
+\[  \prod_{v=-4}^{n} f_v^{s_v+\alpha s'_v} \verify f'_0\tilde{f}^\alpha \prod_{j=1}^n {f'_j}^{\Ch_j+\alpha \Ch_j^2};\hspace*{2em}
+    \prod_{v=0}^n C_v^{s_v} \verify \prod_{j=0}^n {C'_j}^{\Ch_j} \]
+\[  \sum_{j=1}^n (s_j^3 - \Ch_j^3) \verify s_{-2} + s'_{-3} + w;\hspace*{2em}
+    \sum_{j=1}^n (s_j^2 - \Ch_j^2) \verify s_{-4} + \tilde{w} \]
 
 \noindent
 The server accepts the \ac{PoS} proof if all verifications succeed.
@@ -446,40 +449,37 @@ We recall the proof here with necessary changes for Pedersen commitments in the 
 \end{lemma}
 
 \begin{proof}
-This proof follows immediately from the proof by \citet{Furukawa05}.
-For completeness we recall the proof here for our construction.
+% This proof follows immediately from the proof by \citet{Furukawa05}.
+% For completeness we recall the proof here for our construction.
 We have to prove soundness and zero-knowledge of the \ac{PoS} protocol in order to prove Lemma \ref{lem:pocs}.
 We start with proving the \emph{zero-knowledge} property.
-To do so, we compute $C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{c_j\}, \{s_j\}$, and $\{s'_j\}$, such that they are indistinguishable from a view of an honest verifier, given $(p,g,h,\bm f, \bm C, \bm C')$:
+To do so, we compute $C'_0, \tilde{f}, \{f'_j\}, w, \tilde{w}, \{\Ch_j\}, \{s_j\}$, and $\{s'_j\}$, such that they are indistinguishable from a view of an honest verifier, given $(p,g,h,\bm f, \bm C, \bm C')$:
   \[
-    f'_j, c_j, s_v, s'_v \rin \Zrp \text{ for } v\in[-4,n], j\in[1,n]
+    f'_j, \Ch_j, s_v, s'_v \rin \Zrp \text{ for } v\in[-4,n], j\in[1,n]
   \]
   \[
-    C'_0 = \frac{\prod_{j=0}^n C_j^{s_j}}{\prod_{j=1}^n {C'_j}^{c_j}};~~
-    f'_0 = \frac{\prod_{v=-4}^n f_v^{s_v}}{\prod_{j=1}^n {f'_j}^{c_j}};~~
+    C'_0 = \frac{\prod_{j=0}^n C_j^{s_j}}{\prod_{j=1}^n {C'_j}^{\Ch_j}};~~
+    f'_0 = \frac{\prod_{v=-4}^n f_v^{s_v}}{\prod_{j=1}^n {f'_j}^{\Ch_j}};~~
     \tilde{f} = \frac{\prod_{v=-4}^n f_v^{s'_v}}{\prod_{j=1}^n {f'_j}^{c^2_j}};
   \]
   \[
-    w = \sum_{j=1}^n (s_j^3 - c_j^3) - s_{-2} - s'_{-3};~~
-    \tilde{w} = \sum_{j=1}^n (s_j^2 - c_j^2) - s_{-4}
+    w = \sum_{j=1}^n (s_j^3 - \Ch_j^3) - s_{-2} - s'_{-3};~~
+    \tilde{w} = \sum_{j=1}^n (s_j^2 - \Ch_j^2) - s_{-4}
   \]
 
 \noindent
-To prove \emph{soundness} of the \ac{PoS} scheme we show how to construct an extractor $E$ that extracts the matrix $A_{vj}$ and $A'_v$ for $v\in[-4,n], j\in[0,n]$.
+To prove \emph{soundness} of the \ac{PoS} scheme we show how to construct an extractor \Ext that extracts the matrix $A_{vj}$ and $A'_v$ for $v\in[-4,n], j\in[0,n]$.
   Note that this includes extraction of the permutation matrix, \ie $\phi$, and the re-randomisation values $r'_j$, but \emph{not} the content, \ie the characters.
-  First, we see that there exists an extractor $E$ using $n+1$ linearly independent challenge sets $\bm c$ that is able to extract $A_{ji}$ from $\Server_v=\sum_{j=0}^n A_{vj}c_j$ that fulfils the equation $\prod_{v=-4}^n f_v^{s_v}=\prod_{j=0}^n {f'_j}^{c_j}$, and $A'_v$ from $\Server'_v=A'_v + \sum_{j=1}^n A_{vj}c_j^2$ that fulfils the equation $\prod_{v=-4}^n f_v^{s'_v}=\prod_{j=1}^n {f'_j}^{c^2_j}$ for $v\in[-4,n]$ and $j\in[0,n]$.
-  In this case we also know that the prover either built $\Server_v$ and $\Server'_v$ correct, or is able to create (non-trivial) integers $\{\beta_v\}$ for $v\in[-4,n]$ as $\sum_{j=0}^n A_{vj}c_j - s_v$ or $\sum_{j=1}^n A_{vj}c^2_j - s'_v$ such that $\prod_{v=-4}^n f_v^{\beta_v} = 1$, which is impossible under the discrete logarithm assumption.
-  Second, equations $\sum_{j=1}^n (s_j^3 - c_j^3)=s_{-2} + s'_{-3} + w$ and $\sum_{j=1}^n (s_j^2 - c_j^2)= s_{-4} + \tilde{w}$ ensure that the $n\times n$ sub-matrix used in $A_{ji}$ is indeed a permutation matrix, using the fact that every $n\times n$ permutation matrix $A_{ab}$ satisfies the following two equations:
+  First, we see that there exists an extractor \Ext using $n+1$ linearly independent challenge sets $\bm c$ that is able to extract $A_{ji}$ from $s_v=\sum_{j=0}^n A_{vj}\Ch_j$ that fulfils the equation $\prod_{v=-4}^n f_v^{s_v}=\prod_{j=0}^n {f'_j}^{\Ch_j}$, and $A'_v$ from $s'_v=A'_v + \sum_{j=1}^n A_{vj}\Ch_j^2$ that fulfils the equation $\prod_{v=-4}^n f_v^{s'_v}=\prod_{j=1}^n {f'_j}^{c^2_j}$ for $v\in[-4,n]$ and $j\in[0,n]$.
+  In this case we also know that the prover either built $s_v$ and $s'_v$ correct, or is able to create (non-trivial) integers $\{\beta_v\}$ for $v\in[-4,n]$ as $\sum_{j=0}^n A_{vj}\Ch_j - s_v$ or $\sum_{j=1}^n A_{vj}c^2_j - s'_v$ such that $\prod_{v=-4}^n f_v^{\beta_v} = 1$, which is impossible under the discrete logarithm assumption.
+  Second, equations $\sum_{j=1}^n (s_j^3 - \Ch_j^3)=s_{-2} + s'_{-3} + w$ and $\sum_{j=1}^n (s_j^2 - \Ch_j^2)= s_{-4} + \tilde{w}$ ensure that the $n\times n$ sub-matrix used in $A_{ji}$ is indeed a permutation matrix, using the fact that every $n\times n$ permutation matrix $A_{ab}$ satisfies the following two equations:
   \[
-    \sum_{j=1}^n A_{jc} A_{jd} A_{je} = 1 \text{ if } (c=d=e) \text{ otherwise } 0; ~
+    \sum_{j=1}^n A_{jc} A_{jd} A_{je} = 1 \text{ if } (c\verify d\verify e) \text{ otherwise } 0; ~
   \]
   \[
-    \sum_{j=1}^n A_{jc} A_{jd} = 1 \text{ if } (c=d) \text{ otherwise } 0.
+    \sum_{j=1}^n A_{jc} A_{jd} = 1 \text{ if } (c\verify d) \text{ otherwise } 0.
   \]
-%   \[
-%     \sum_{j=1}^n A_{jc} A_{jd} = 1 \text{ if } (c=d) \text{ otherwise } 0.
-%   \]
-  Eventually, $\prod_{v=0}^n C_v^{s_v}=\prod_{j=0}^n {C'_j}^{c_j}$ guarantees that, for well-formed $\Server_v$, the prover knows the used randomness to create the shuffled commitments $C'_j$ for $j\in[1,n]$.
+  Eventually, $\prod_{v=0}^n C_v^{s_v}=\prod_{j=0}^n {C'_j}^{\Ch_j}$ guarantees that, for well-formed $s_v$, the prover knows the used randomness to create the shuffled commitments $C'_j$ for $j\in[1,n]$.
 \end{proof}
 
 \begin{proof}[Proof of Theorem \ref{theo:bpr}]
@@ -495,14 +495,14 @@ This allows us to argue that every attacker winning the policy compliance experi
 \begin{proof}
 Soundness of \ac{PoE} holds if the probability is negligible that
 \[ 
-  t_H\verify H_1^{s_\pi}(H_2/h^{s_H})^c \text{ and } t_{C^\ast} \verify g^{s_\pi}h^{s_{r^\ast}}\left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^c 
+  t_H\verify H_1^{s_\pi}(H_2/h^{s_H})^\Ch \text{ and } t_{C^\ast} \verify g^{s_\pi}h^{s_{r^\ast}}\left(\prod_{i=0}^{n-1} C^{b^i}_i \right)^\Ch 
 \]
 holds for $H_2=H_1^{\pi}h^{s_H}$ and $\prod_{i=0}^{n-1} C^{b^i}_i=g^{\pi'}h^{\hat{r}}$ with $\pi\not=\pi'$ and $\hat{r}=\sum_{i=1}^n b^i r_i$.
-To show that this holds we assume w.l.o.g. that $\Server_\pi$ and $\Server_{r^\ast}$ are chosen such that the second equation holds.
-In particular $\Server_\pi=x-c\pi'$ for an appropriate value of $x$.
-However, we see now that for the first equation to hold, the adversary would have to compute $t_H=g^{s_P s_\pi}(H_2h^{-s_H})^c$, which implies computing $y=\log_g(s_P x-s_P c\pi'+\beta c)$ for some $\beta$.
+To show that this holds we assume w.l.o.g. that $s_\pi$ and $s_{r^\ast}$ are chosen such that the second equation holds.
+In particular $s_\pi=x-\Ch\pi'$ for an appropriate value of $x$.
+However, we see now that for the first equation to hold, the adversary would have to compute $t_H=g^{s_P s_\pi}(H_2h^{-s_H})^\Ch$, which implies computing $y=\log_g(s_P x-s_P c\pi'+\beta \Ch)$ for some $\beta$.
 By assumption $\beta\not= s_P\pi'$ such that computation of $y$ is impossible under the discrete logarithm assumption.
-Note that the additional proof for knowledge of $\Server_P$ ensures that the client knows the discrete logarithm to basis $g$ of $H_1$, which allows us to define the equation $t_H$ as $H_1^{s_\pi}(H_2h^{-s_H})^c=g^{s_P s_\pi}(H_2h^{-s_H})^c$.
+Note that the additional proof for knowledge of $s_P$ ensures that the client knows the discrete logarithm to basis $g$ of $H_1$, which allows us to define the equation $t_H$ as $H_1^{s_\pi}(H_2h^{-s_H})^\Ch=g^{s_P s_\pi}(H_2h^{-s_H})^\Ch$.
 
 % \begin{align*}
 %   H_2&=H_1^\pi h^{s'_H}=h^{2\pi + s'_H} \\
@@ -520,18 +520,18 @@ Note that the additional proof for knowledge of $\Server_P$ ensures that the cli
 Note that while \ac{PoM} is a proof of knowledge, we are not actually interested in the knowledge soundness as this comes implicitly under the discrete logarithm assumption.
 Instead it is sufficient in our case that client \Client can not make the server accept \ac{PoM} with a password $\pwd\not\in\cD_f$.
 Soundness of \ac{PoM} implies that if there exists a commitment $C'_{k_i}$ that commits to an encoded character $\pi_i$ \emph{not} in the respective set $\omega_{k_i}$, then
-\[ \bm t_i[j] \stackrel{?}{=} g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
+\[ \bm t_i[j] \verify g^{\pi_j}h^{\bm s_i[j]}(C'_{k_i}/g^{\pi_j})^{\bm c_i[j]} \]
 does not hold with overwhelming probability for given values.
 This holds under the assumption that the discrete logarithm problem is hard in \GG and $\bm c_{k_i}[l] \in \bm c$ is uniformly distributed in $\ZZ_p$.
-The first assumption is clear and the second one holds as long as $c\stackrel{?}{=}\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $c\rin\Zrp$.
-Note that this also holds for our case in which we use the same \Client in all $n$ proofs.
-Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in \GG, \ie the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + c\log_h(C'_{k_i}g^{-\pi_j})$.
+The first assumption is clear and the second one holds as long as $\Ch\verify\bigoplus_{j=1}^{|\omega_i|}\bm c_i[j]$ holds for a uniformly at random chosen $\Ch\rin\Zrp$.
+Note that this also holds for our case in which we use the same \Ch in all $n$ proofs.
+Assuming that the client can convince the server that the equation holds in case $\pi_i$ is not in $\omega_{k_i}$ it is easy to see that this is equivalent to breaking the discrete logarithm problem in \GG, \ie the client can either compute $\hat{r}$ such that $C'_{k_i}=g^{\pi_i}h^{(r+r')}=g^{\pi_j}h^{\hat{r}}$, or he can compute $\bm s_i[j]=\pi_j \log_h(g) - \log_h(t) + \Ch\log_h(C'_{k_i}g^{-\pi_j})$.
 Therefore, the claim follows since the client can not fool the server in accepting a set membership proof for a character $c_i\not\in\omega_{k_i}$ in \pwd and the server additionally verifies that sets $\omega_i$ are necessary and sufficient to fulfil policy $f$.
 
 \end{proof}
 
 \noindent
-Soundness of \ac{PoS} is proven in \cite{FurukawaS01,Furukawa05} (and recalled above).
+Soundness of \ac{PoS} is given in Lemma \ref{lem:pocs}.
 Note that we require that \ac{PoS} is a proof of knowledge for re-randomiser $r'$ and permutation matrix.
 Given soundness of the three proofs it is easy to construct a reduction from the policy compliance adversary to the soundness properties of the proofs.
 Let \cA denote a policy compliance attacker that has non-negligible probability to register a non-compliant password  $\pwd\not\in\cD_f$.
@@ -542,44 +542,43 @@ The second part of \ac{PoM} in the second \Send query of this session is output 
 
 Knowing that the \acl{PoM} is sound we show how to construct a successful extractor $\cB'$ on the permutation \ac{PoS} using a successful attacker \cA on the policy compliance experiment.
 To this end $\cB'$ simulates all \Execute oracles honestly.
-\Send queries are simulated honestly, except for one session, in which $\cB'$ stores the first part of \ac{PoS} in a random \Send query and responds with $n+1$ linearly independent challenges $\bm c$ for \ac{PoS} and a random challenge \Client for \ac{PoM} and \ac{PoE}.
+\Send queries are simulated honestly, except for one session, in which $\cB'$ stores the first part of \ac{PoS} in a random \Send query and responds with $n+1$ linearly independent challenges $\bm c$ for \ac{PoS} and a random challenge \Ch for \ac{PoM} and \ac{PoE}.
 Gathering the $n+1$ messages in the second \Send query from \cA on that session, $\cB'$ can extract $r'_i$ and the permutation matrix.
 Building an attacker on the soundness of \ac{PoE} using a successful attacker \cA on the policy compliance experiment is similar to building \cB on \ac{PoM}.
 Considering claims for \ac{PoM} and \ac{PoE} and the soundness proof of \ac{PoS} \acl{PC} follows.
 
 \smallskip\noindent
 \textbf{Dictionary Attack Resistance}
-First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $\Server_P,s_H\rin\Zrp$ is secure.
+First note that the used password hashing scheme that computes $(H_1,H_2)=(g^{s_P},\allowbreak g^{s_P \pi}h^{s_H})$ with $s_P,s_H\rin\Zrp$ is secure (cf. Section \ref{sec:pwhashped}).
 We show in the following that a successful attacker $\cA$ on the dictionary attack resistance of the \ac{BPR} protocol would be able to distinguish between identical distributions of real and simulated values.
-It is easy to see that \ac{PoM} and \ac{PoE} on its own are zero-knowledge proofs.
-The zero-knowledge property of \ac{PoS} has been shown in Lemma \ref{lem:pocs}.
+It is easy to see that \ac{PoM} and \ac{PoE} on its own are zero-knowledge proofs and the zero-knowledge property of \ac{PoS} has been shown in Lemma \ref{lem:pocs}.
 
-We start by observing that breaking the dictionary attack resistance of the protocol implies that \cA is able to find a password \pwd from a \ac{BPR} transcript and the server's information, \ie the password verifier $\ver_C=(H_1,H_2,s_H)$, using less than $2^{\beta_{\cD_{f,|\pwd|}}}$ exponentiations (pre-hash computations).
+We start by observing that breaking the dictionary attack resistance of the protocol implies that \cA is able to find a password \pwd from a \ac{BPR} transcript and the server's information, \ie the password verifier $\ver=(H_1,H_2,s_H)$, using less than $2^{\beta_{\cD_{f,|\pwd|}}}$ exponentiations (pre-hash computations).
 This implies that there exists at least one index $i$ such that \ac{PoM} leaks the shuffled character $c_j\in\pwd$ for $j=\phi(i)$, or \ac{PoS} exposes the relationship between $C'_j$ and the according $C_i$ and therefore the set $R_j$ from which $c_i$ is chosen.
 Let $i$ denote the index of such a character.
-If \cA can identify index $i$, he can distinguish between $\cX_i=(t_i=g^{\pi_i}h^{k_{\rho_i}}, s_i=k_{\rho_i}-c_i(r_{\phi^{-1}(i)}+r'_i), c_i)$ and $\cX_0=(t_o=g^{\pi_o}h^{s_o}(C'_{\phi(i)}/g^{\pi_o})^{c_o}, s_o, c_o)$ with $c,s_o,c_o\rin\Zrp$ and $c_i=c\oplus \bigoplus c_o$ for $o\in[1,n], o\not=i$.
+If \cA can identify index $i$, he can distinguish between $\cX_i=(t_i=g^{\pi_i}h^{k_{\rho_i}}, s_i=k_{\rho_i}-\Ch_i(r_{\phi^{-1}(i)}+r'_i), \Ch_i)$ and $\cX_0=(t_o=g^{\pi_o}h^{s_o}(C'_{\phi(i)}/g^{\pi_o})^{\Ch_o}, s_o, \Ch_o)$ with $\Ch, s_o, \Ch_o\rin\Zrp$ and $\Ch_i=\Ch\oplus \left(\bigoplus \Ch_o\right)$ for $o\in[1,n], o\not=i$.
 This however is impossible since $\cX_i$ and all $\cX_o$ are identically distributed.
 Similarly, we can argue that distinguishing between a real and a simulated proof of shuffle is impossible.
 Considering that \ac{PoM} and \ac{PoS} do not offer any attack possibilities we see that if \cA is able to win the dictionary attack resistance game, we can distinguish between a real and a simulated \ac{PoE}.
 However, this is impossible due to the zero-knowledge property of \ac{PoE}, \ie values $t_{s_P}, t_H$ and $t_{C^\ast}$ are identically distributed in both cases.
 \end{proof}
 
-\subsection{Discussion}
+\subsection{Discussion} \label{sec:bpr-discussion}
 The proposed \ac{BPR} protocol is proven secure in a strong security model, but does not hide the length of the password from the server.
 Arguably, this is a strong security requirement (cf. Section \ref{sec:bpr-model}) that may not be needed in every practical scenarios since password policies usually aim at offering some minimum password strength such that every password of the required minimum length or longer and all necessary character classes is considered to be secure.
 
 Nonetheless, one may argue that an attacker knowing the password length can perform a dictionary attack by only trying passwords of the given length and thus use the reduced search space to speed up the attack. An initial idea for hiding the password length in our \ac{BPR} protocol could be to combine commitments for \emph{non-significant} password characters into a single commitment and use only \pmin commitments in the proof. This, however, would allow a malicious client to register passwords that do not comply with the policy unless the client can prove that the exponent of the combined commitment is of the form $\sum b^i\pi_j$, which is only possible when the length of the polynomial (and therefore the password length) is known.
-We show that our \ac{BPR} protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
+We can show however that our \ac{BPR} protocol can be modified to hide the password length at the cost of its efficiency. This can be achieved by defining a constant length $l\in\NN$ larger than any practical $n=|\pwd|$, e.g., $l=50$ or $l=100$, and apply the following modifications. First, we change the way shuffling is performed.
 In particular, $\bm C$ is still randomly shuffled to $\bm C'$, but it is ensured that the first $|R|$ commitments $C'_i$ are for characters that are significant for policy $f$.
 All computations in the protocol are now performed over the password $\pi^\ast=\pi||0\dots 0$, where $\pi$ is the original client-chosen, encoded password, and $|\pi^\ast|=l$.
 This allows us to define set $\omega_i$ for character commitment $C'_i$ as either some $R_j$ if significant, or $\Sigma$ if $i\leq\pmin$ and the character in $C'_i$ is not significant, or $\Sigma \cup \{0\}$ otherwise. 
 The remaining protocol steps remain unchanged.
 Note that through these modifications the original password is basically hidden within a longer password and so a stronger flavour of dictionary attack resistance that would also hide password length (cf. discussion in Section~\ref{sec:strongerDAR}) can be proven for the modified \ac{BPR} protocol using min-entropy
 $\beta_{\cD_{f}} = -\max_{\pwd\in \cD_{f}} \sum_{i=0}^{n-1} [\DD_\Sigma(c_i)\lg(\DD_\Sigma(c_i))]$
-for the dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
+for dictionary $\cD_{f}$ that contains all policy-compliant passwords of length \emph{up to} $l$.
 However, it is obvious that this modification trades off stronger security for efficiency due to the use of $l$ for all shorter passwords.
 
 Our \ac{BPR} protocol can also be made more efficient if we are willing to sacrifice privacy of character positions for significant characters and reveal information about corresponding character sets (as in the \ac{ZKPPC}-based \ac{BPR} protocol). 
 In this case the proof \ac{PoS} becomes redundant and all steps related to it can be removed. 
-This would significantly reduce the number of exponentiations to about $2n$ on the client and $4n$ on the server side. 
+This would significantly reduce the number of exponentiations. 
 The resulting \ac{BPR} protocol would still offer a weaker flavour of dictionary attack resistance that does not hide positions and sets of significant password characters as discussed in Section \ref{sec:bpr-model} yet remain more efficient than the \ac{ZKPPC}-based registration protocol, which offer comparable security guarantees.
