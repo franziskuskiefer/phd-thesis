@@ -2,19 +2,18 @@
 
 Password verifiers \ver, set up with one of the three password registration protocols proposed in the previous sections, can be used by the server to authenticate a user based on his password \pwd.
 To this end this section describes \ac{VPAKE} protocols that can be used with each verifier \ver.
-This concludes the password registration and authentication framework, proposed in this chapter.
+This concludes description of the password registration and authentication framework, proposed in this chapter.
 
 % \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
 
 \subsection{Building VPAKE from PAKE}
-Before specifying concrete \ac{VPAKE} protocols we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE}.
-This provides significantly more \ac{VPAKE} protocols due to the large number of \ac{PAKE} protocols than would be available otherwise.
-Note that the approach proposed here is widely used but has never been written down as such to the best of our knowledge.
+Before specifying concrete \ac{VPAKE} protocols we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE} and discuss its security.
+Note that the approach proposed here is used but has never been written down and discussed as such to the best of our knowledge.
 
-Figure \ref{fig:genericVPAKE} gives an overview of the approach.
+Figure \ref{fig:genericVPAKE} gives an overview of this straight forward approach.
 Recall that a verifier \ver contains two parts, some randomness $r$ and some kind of hash value $H$ that can be computed from the client's password \pwd and randomness $r$.
 In order to use verifier \ver for authentication, the client requires randomness $r$.
-After sending $r$ to the client, he can compute \ver, which can then be used any regular \ac{PAKE} protocol instead of the password.
+After sending $r$ to the client, \Client can compute \ver, which can then be used any regular \ac{PAKE} protocol instead of the password.
 
 \begin{figure}[htbp]
 \centering
@@ -24,7 +23,7 @@ After sending $r$ to the client, he can compute \ver, which can then be used any
 \node[party,align=center] (client) at (-0.5,0) {{$\Client~ (\pwd)$}};
 \node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (C, \ver)$};
 
-\node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver\gets f(\pwd, r)$};
+\node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver=(H,r)\gets \phi(\pwd, r)$};
 
 \node[dummyState] (clientR) at (0.75,-0.6){};
 \node[dummyState] (serverR) at (5.5,-0.6){};
@@ -32,7 +31,7 @@ After sending $r$ to the client, he can compute \ver, which can then be used any
 
 \node[dummyState] (clientPAKE) at (0.75,-1.6){};
 \node[dummyState] (serverPAKE) at (5.5,-1.6){};
-\draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on \ver} (serverPAKE);
+\draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on $H$} (serverPAKE);
 
 \end{tikzpicture}}
 \caption{Generic VPAKE construction from PAKE}
@@ -70,7 +69,7 @@ After sending $r$ to the client, he can compute \ver, which can then be used any
 \paragraph{Discussion -- Practical Implications}
 Sending verifier randomness to the client obviously exposes this randomness to an attacker.
 While transport could be secured with another protocol such as \ac{TLS}, this is not desirable in the \ac{PAKE} setting.
-(Would be fine though in the \ac{PACCE} setting.)
+(This is fine though in the \ac{PACCE} setting.)
 Exposing (secret) randomness to an attacker is in general a security risk, as this provides the attacker with leverage.
 However, in terms of dictionary attacks, an attacker does not gain anything by this additional knowledge, as he is always able to either perform an online dictionary attack against the server, or and offline dictionary attack after corrupting the server.
 

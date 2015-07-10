@@ -1,21 +1,21 @@
 \section{Blind Password Registration --- Discussion and Analysis} \label{sec:discussion}
 
-We proposed three password registration protocols with different security guarantees and performance.
+Sections \ref{sec:zkppc}-\ref{sec:spc-bpr} propose three password registration protocols with different security guarantees and performance.
 In this section we compare all three protocols considering security and performance.
 
 \subsection{Security} \label{sec:bpr-security-analysis}
-The \ac{ZKPPC}-based approach has no formal security model for the \ac{BPR} protocol.
-However, it is clear (as discussed before) that it does not fulfil the security model proposed for \ac{BPR} protocols in Section \ref{sec:bpr} but requires a weaker model.
-While the \ac{SPC}-based approach has a formal security model, it differs from the \ac{BPR} security model proposed in Section \ref{sec:bpr}.
+The \ac{ZKPPC}-based approach has no formal security model for the password registration protocol.
+However, it is clear (as discussed before) that it does not fulfil the security model proposed for \ac{BPR} protocols in Section \ref{sec:bpr} but requires a weaker definition.
+While the \ac{SPC}-based approach has a security model, it differs from the \ac{BPR} security model proposed in Section \ref{sec:bpr}.
 It thus remains to compare security guarantees given by the \ac{SPC}-based approach with guarantees from the \ac{BPR} protocol in Section \ref{sec:bpr}.
 We call these protocols BPR1 and BPR2 respectively in the following.
 
 First note that BPR2 seems not provable in the game-based security model BPR1 is proven in.
 This is due to the fact that the reduction to the one-more RSA problem does not work.
 The idea would be to say that the client is only able to register a non-compliant password if he is able to break one-more RSA, \ie by creating an
-element in $\hat{\cC}$ that he did not send to the server in any $u_i$. 
-The problem is that the challenger has to build $\hat{\cS}$ and therefore breaks the ability to actually generate that forgery. 
-Alternatively, using only the requested elements in $\hat{\cS}$ allows the client to create a forgery, but lets the protocol fail because the client uses elements in $\hat{\cC}$ that are not in $\hat{\cS}$.
+element in $\hat{\ClientSet}$ that was not sent to the server in any $u_i$. 
+The problem is that the challenger has to build $\hat{\ServerSet}$ and therefore breaks the ability to actually generate that forgery. 
+Alternatively, using only the requested elements in $\hat{\ServerSet}$ allows the client to create a forgery, but lets the protocol fail because the client uses elements in $\hat{\ClientSet}$ that are not in $\hat{\ServerSet}$.
 
 Further, BPR2 has with the one-more RSA assumption and the random oracle model much stronger assumptions on the model than BPR1.
 This leads to the conclusion that BPR1 is the preferable protocol when strong security guarantees are required.
@@ -28,11 +28,11 @@ This is in contrast to authentication, which is performed regularly and thus has
 
 \subsubsection{Performance}
 We first compare the two zero-knowledge-based \ac{BPR} protocols from Section \ref{sec:zkppc} and \ref{sec:bpr}.
-In the implementation of both protocols we can adopt several tricks aiming to improve its performance. 
-First, we can pre-compute and reuse values $g^{\pi_i}$ on the client and server side.
+In the implementation of both protocols one can adopt several tricks aiming to improve performance. 
+First, we can pre-compute and reuse values $g^{\pi_i}$ on client and server side.
 Further, computation of $b^i$ can be performed in a way that allows to re-use previously calculated values and the implementation of the proof can be optimised allowing the client to use $\pi$.
-Considering this, we can estimate the performance of the \ac{BPR} protocol by counting the number of exponentiations as follows.
-Note that we do not count exponentiations with exponents smaller than $5$.
+Considering this, we can estimate performance of the \ac{BPR} protocol by counting the number of exponentiations as follows.
+Note that we do not count exponentiations with small exponents.
 % Client:
 % \begin{itemize}
 %   \item $94$ exponentiations to compute all $g^{\pi_i}$
@@ -57,9 +57,9 @@ Therefore, the cost of a \ac{ZKPPC}-based password registration protocol is give
 A \ac{ZKPPC}-based password registration protocol is thus much less efficient than the \ac{BPR} protocol from Section \ref{sec:bpr}: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
 
 The \ac{SPC}-based \ac{BPR} protocol from Section \ref{sec:spc-bpr} is based on mainly symmetric primitives, which yields a significant lower complexity.
-In particular, the server in the \ac{SPC}-based \ac{BPR} protocol has to perform $\pmin+|S|$ exponentiations where the size of the server set $|S|$ is $x_i\sum_i |\omega_i|$ for $x_i$ being the number of characters required from subset $\omega_i$.
+In particular, the server in the \ac{SPC}-based \ac{BPR} protocol has to perform $\pmin+|\ServerSet|$ exponentiations where the size of the server set $|\ServerSet|$ is $\sum_i x_i|\omega_i|$ for $x_i$ being the number of characters required from subset $\omega_i$.
 The client performs $n$ exponentiations.
-We omit counting symmetric operations.
+We refrain from counting symmetric operations as they do not have significant impact on the performance.
 
 % \paragraph{Implementation}
 % We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
@@ -73,9 +73,9 @@ We omit counting symmetric operations.
 
 % \subsubsection{Implementation and Evaluation (BPR)}\label{sec:evaluation}
 \subsubsection{Implementation}
-We implemented a prototypes of all three password registration protocols and measured their real performance. 
+We implemented a prototypes of all three password registration protocols and measured their real world performance. 
 The implementations are in C and use OpenSSL 1.0.2.c-1\footnote{\url{https://www.openssl.org}} for underlying cryptographic operations. 
-In the experiments, we set the security parameter to 80-bit and use 1024-bit RSA keys and the \mbox{{SHA-}1} hash function in our protocol. 
+In the experiments, we set the security parameter to 80-bit and use 1024-bit RSA keys and \mbox{{SHA-}1}. 
 The two zero-knowledge-based protocols use the \ac{NIST} P-192 elliptic curve \cite{nistEC}.
 All experiments were run on a laptop with an Intel Core Duo P8600 at 2.40GHz with 8GB RAM.
 
@@ -109,7 +109,7 @@ In the first row of the table, the pairs indicate the policy and the password le
 
 The table shows the total running time as well as the time spent on checking the policies (Pol-ck) in each protocol. 
 As expected, the \ac{ZKPPC} approach is significantly slower than the two \ac{BPR} protocols.
-The main differences in all protocols comes from policy checking time.
+The main differences in all protocols comes from the policy checking time.
 Differences between the general \ac{ZKPPC} approach and \ac{BPR} come from the set membership proofs and therefore differ depending on the password length and its relation to the password policy. 
 The measurements further show that the actual time needed for policy checking in the \ac{SPC}-based \ac{BPR} protocol is indeed independent of the password length (it depends on the password policy as everything else is negligible).
 
@@ -125,10 +125,10 @@ The measurements further show that the actual time needed for policy checking in
 
 \paragraph{Discussion SPC-based BPR}
 % We also show the running time for each step in our protocol (see Fig. \ref{fig::break}). 
-As we can see in the figure, the time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. 
+The time for computing $u_i$ and $u_i'$ is linear in the password length, and the time for computing $\hat{\cS}$ and executing \ac{SPC} is linear in the size of $\hat{\cS}$. 
 The most costly step is in the setup phase when the server computes the encrypted version of the alphabet $\hat{S}$.
 A possible optimisation is to take this step offline. 
-Since the computation of $\hat{S}$ does not depends on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 
+Since the computation of $\hat{S}$ does not depend on the client's password, the server can generate a random RSA key pair and pre-compute $\hat{S}$ before engaging with the client. 
 The keys and pre-computed values can be stored together. 
 Later when a client sends a registration request, the server can retrieve them and run the protocol. 
-If this step is taken offline, then the online computation cost is small, usually no more than 100 milliseconds in a typical setting. 
+If this step is taken offline, then the online computation cost is very small.
