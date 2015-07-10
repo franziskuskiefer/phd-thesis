@@ -4,18 +4,20 @@
 % * server config\\
 % * authentication (tSOKE style)}
 
-To demonstrate real-world usage of the framework proposed in this Chapter we implement a demo application that allows to set password policies, register clients, and use the registered clients to login to a demo web application.
+To demonstrate real-world usage of the framework proposed in this Chapter we implemented a demo application that allows to set password policies, register clients, and use the registered clients to login to a demo web application.
 
 The cryptographic password framework consists of a server and a client component.
 The server is implemented in Python\footnote{\url{https://www.python.org/}} (using the bottle framework\footnote{\url{http://bottlepy.org/docs/dev/index.html}}) with a MariaDB\footnote{\url{https://mariadb.org/}} backend for data storage.
 The client is implemented in JavaScript\footnote{\url{https://en.wikipedia.org/wiki/JavaScript}} as a Firefox\footnote{\url{http://firefox.com/}} extension.
-This approach has the advantage of platform independence, on the cost of efficiency.
+This approach has the advantage of platform independence, but trades some efficiency due to the use of JavaScript.
+(This could be improved using WebCrypto\footnote{\url{http://www.w3.org/TR/WebCryptoAPI/}} once it supports all necessary features.)
+All code is available at \url{https://github.com/franziskuskiefer/???}.
 
 \subsection{Registration}
-The client registration has two different views that are obviously separate in a production environment, but reside on the same website for this demo.
+The client registration has two different views that would require login for server side in a production environment, but reside on the same open website for demonstration purposes here.
 
 \paragraph{Admin Interface}
-To configure the server's password policy the admin interface (shown in Figure \ref{fig:demo-admin}) allows to define a policy expression as well as a minimum password length.
+To configure the server's password policy the admin interface (shown in Figure \ref{fig:demo-admin}) allows the web admin to define a policy expression as well as a minimum password length, prospective client passwords have to comply with.
 Entered values are stored automatically for this session and used for the \ac{BPR} process.
 
 \begin{figure}[tbph]
@@ -27,10 +29,10 @@ Entered values are stored automatically for this session and used for the \ac{BP
 \paragraph{Client Interface}
 Selecting the \emph{Client Registration} link presents the user with a simple website asking the user to register a new user and password.
 To this end the user has to click the registration/login button in the browser toolbar to open the registration form.
-This button is only active for websites that support the \ac{BPR} registration process and provides the user with a trusted path to a trusted registration form \cite{}.
-Note that it is important that the registration form is trusted and \emph{not} provided by the server as it is not trusted with secure handling of the client password.
+This button is only active for websites that support the \ac{BPR} registration process and provides the user with a trusted path to a trusted registration form.
+Note that it is important that the registration form is trusted and \emph{not} provided by the server as the server is not trusted with secure handling of the client password.
 After clicking ``Register Now'' the extension performs the \ac{BPR} protocol from Section \ref{sec:bpr} with the server.
-The JavaScript implementation makes use of cryptographic libraries\footnote{\url{http://www-cs-students.stanford.edu/~tjw/jsbn/}\\\url{https://github.com/bitwiseshiftleft/sjcl}}), while the server uses \cite{charm13}.
+The JavaScript implementation makes use of cryptographic libraries\footnote{\url{http://www-cs-students.stanford.edu/~tjw/jsbn/}, \url{https://github.com/bitwiseshiftleft/sjcl}}), while the server uses the Charm library by \citet{charm13}.
 
 \begin{figure}[tbph]
 \centering
@@ -41,8 +43,8 @@ The JavaScript implementation makes use of cryptographic libraries\footnote{\url
 \subsection{Login}
 Clicking on the ``Client App'' link provides the user with a simple website asking the user to log into the application using the registration/login button in the browser toolbar.
 Similar to the registration process, the user is presented with a trusted login form.
-After clicking ``Login'' the extension performs the tSoke protocol with the server.
-As discussed before, tSoke is a \ac{VPAKE} protocol with additionally using a tag to make it usable in the \ac{PACCE} setting.
+After entering user name and password, and clicking ``Login'', the extension performs the tSoke protocol with the server.
+As discussed before, tSoke is a \ac{VPAKE} protocol that additionally uses a tag to make it usable in the \ac{PACCE} setting.
 Thereby, client and server perform a \ac{PACCE} protocol, which hands the session over to the client application when done.
 
 \begin{figure}[tbph]
