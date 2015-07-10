@@ -7,29 +7,39 @@ This concludes description of the password registration and authentication frame
 % \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
 
 \subsection{Building VPAKE from PAKE}
-Before specifying concrete \ac{VPAKE} protocols we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE} and discuss its security.
-Note that the approach proposed here is used but has never been written down and discussed as such to the best of our knowledge.
+Before specifying a concrete \ac{VPAKE} protocol we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE} and discuss its security.
+Note that the approach discussed here is used but has never been written down and discussed as such to the best of our knowledge.
 
 Figure \ref{fig:genericVPAKE} gives an overview of this straight forward approach.
 Recall that a verifier \ver contains two parts, some randomness $r$ and some kind of hash value $H$ that can be computed from the client's password \pwd and randomness $r$.
-In order to use verifier \ver for authentication, the client requires randomness $r$.
+In order to use verifier \ver for authentication, the client first has to retrieve randomness $r$ from the server.
 After sending $r$ to the client, \Client can compute \ver, which can then be used any regular \ac{PAKE} protocol instead of the password.
+It may also be desirable to use a standard key derivation function such as PBKDF2 \cite{rfc2898} on top of $H$ such that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack more difficult.
+Often it is possible to piggyback the first message to retrieve randomness $r$ on a regular \ac{PAKE} message to avoid increasing communication round. 
+Using the UC-secure \ac{PAKE} protocol by \citet{Benhamouda2013}, the randomness can be piggybacked on the first server message sent in the \ac{PAKE} protocol. 
+Thus we do not increase the round complexity and the protocol remains a one-round protocol.
 
-\begin{figure}[htbp]
+% Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. 
+% At the beginning of the authentication process, for a given client identifier the server retrieves the corresponding verifier $\ver=(h, e, N)$ from the database and returns $(e,N)$ to the client.
+% Using $(e,N)$ and the password \pwd, the client can recompute all $u_i$ values and thus $h'\gets H_3(u_{v+1}^e\cdot\prod_{i=1}^{v}u_i)$ as described earlier.
+% Note that depending on the used PAKE protocol we have to ensure that $H_3$ maps into an algebraic structure, suitable for use with the PAKE protocol.
+% Now client and server run any PAKE protocol on password hash $h$.
+
+\begin{figure}[tbhp]
 \centering
 \scalebox{1.0}{\begin{tikzpicture}
 \draw[] (-3.5,.5) rectangle (9,-2);
 
 \node[party,align=center] (client) at (-0.5,0) {{$\Client~ (\pwd)$}};
-\node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (C, \ver)$};
+\node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (\Client, \ver)$};
 
 \node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver=(H,r)\gets \phi(\pwd, r)$};
 
-\node[dummyState] (clientR) at (0.75,-0.6){};
+\node[dummyState] (clientR) at (1.75,-0.6){};
 \node[dummyState] (serverR) at (5.5,-0.6){};
 \draw[pil] (serverR) -- node[above, align=center] {$r$} (clientR);
 
-\node[dummyState] (clientPAKE) at (0.75,-1.6){};
+\node[dummyState] (clientPAKE) at (1.75,-1.6){};
 \node[dummyState] (serverPAKE) at (5.5,-1.6){};
 \draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on $H$} (serverPAKE);
 
@@ -73,19 +83,29 @@ While transport could be secured with another protocol such as \ac{TLS}, this is
 Exposing (secret) randomness to an attacker is in general a security risk, as this provides the attacker with leverage.
 However, in terms of dictionary attacks, an attacker does not gain anything by this additional knowledge, as he is always able to either perform an online dictionary attack against the server, or and offline dictionary attack after corrupting the server.
 
+\paragraph{Security Discussion}
+The \ac{VPAKE} protocol from Figure \ref{fig:genericVPAKE} resembles a common way of constructing \ac{VPAKE} protocols such as tSoke (described in Section \ref{sec:vpake-model}) and seems in general compatible with the security model for \ac{VPAKE} from Section \ref{sec:vpake-model}.
+However, as discussed earlier, this might not be sufficient to model \ac{VPAKE} security.
+When an attacker corrupts server \Server and retrieves verifier \ver for client \Client, the attacker is able to log on to \Server, \ie perform a successful \ac{VPAKE} execution with \Server.
+While is ok in the \ac{VPAKE} model (looking at \ac{AKE} security the adversary can compute the session key anyway), this might not be in the real world.
+An attacker usually only retrieves the password database of a compromised server but does not have full control over it.
+Using a \ac{VPAKE} protocol for authentication allows an attacker now to authenticate towards the server without breaking the password hash first, \ie rendering the purposed of storing randomised hash values void.
+However, \ac{VPAKE} protocols such as the one proposed by \citet{BenhamoudaP13} as well as the new instantiation proposed in the following section should be secure in this context as well (even though this is not covered by the security definition).
+This is because the client actually has to the password \emph{and} the verifier in order to authenticate (not just the authenticator as in the protocol from Figure \ref{fig:genericVPAKE}.
+
 \subsection{A New VPAKE Protocol} \label{sec:vpake}
 % \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
-We now focus on suitable VPAKE protocols where the server $\bm{S}$ using $(id, H, r)$ stored from the ZKPPC-based registration protocol can authenticate the client $\bm{C}$ that uses only its $\pwd$. 
-Such protocols can be constructed with a general VPAKE framework introduced by Benhamouda and Pointcheval \cite{BenhamoudaP13}. 
-Their framework constructs one-round VPAKE protocols with $\bm{C}$ and $\bm{S}$ sending one message each, independently, using a generic password hashing scheme $\Pi=(\PSetup,\allowbreak\PPHSalt,\allowbreak\PPreHash,\PHSalt,\allowbreak\PHash)$ with deterministic $\PPreHash$, labeled public key encryption scheme $\E = (\KGen,\allowbreak \Enc, \Dec)$, and secure SPHFs $(\HKGen,\allowbreak\PKGen,\allowbreak\Hash,\allowbreak\ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc^\ell(pk, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc^\ell(pk, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
-Their approach can directly be used for our generic scheme $\Pi$ with randomised $\PPreHash$ if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 
-This readily gives us a generic VPAKE protocol that is suitable for our general ZKPPC construction for ASCII-based passwords in Figure~\ref{fig:zkpconeserver} and those security follows from the analysis of the framework in \cite{BenhamoudaP13}.
+We now propose a new \ac{VPAKE} protocol where server \Server uses \ver stored from the \ac{BPR} protocol in Section \ref{sec:bpr} to authenticate client \Client using password \pwd. 
+The protocol is constructed from the general \ac{VPAKE} framework introduced by \citet{BenhamoudaP13}. 
+Their framework constructs one-round \ac{VPAKE} protocols with \Client and \Server sending one message each, independently, using a generic password hashing scheme $(\PSetup, \PPHSalt, \PPreHash,\PHSalt, \PHash)$ with deterministic $\PPreHash$, labelled public key encryption scheme $(\KGen, \Enc, \Dec)$, and secure \acp{SPHF} $(\HKGen, \PKGen, \Hash, \ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc_\pk\ell, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc_\pk(\ell, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
+Their approach can directly be used for the password hashing scheme proposed in Section \ref{sec:strucphash} with randomised \PPreHash if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 
+This readily gives us a generic \ac{VPAKE} protocol that is suitable for \ac{BPR} construction in Section \ref{sec:bpr} such that security follows from the analysis of the framework in \cite{BenhamoudaP13}.
 
-For the concrete VPAKE construction based on our scheme $\Pi$ from Section~\ref{sec:pwhashped} we can use labeled CS encryption scheme for $\E$ from Section~\ref{sec:prelims}. 
-The common input of $\bm{C}$ and $\bm{S}$ contains the CS public key $\pk=(p,g_1,g_2,h,c,d,H_k)$, where generators $g_1=g$ and $h$ must be the same as in the ZKPPC protocol from Section~\ref{sec:instantiation}. 
-Since $H=(H_1,H_2)$ we need to slightly update the language $L_H = \{(\ell, C) | \exists r : C = \Enc^\ell(pk, H_2; r)\}$ by using $H_2$ as an encrypted message. 
-We can still use the SPHF for CS ciphertexts from Section~\ref{sec:pwhashped} to handle this $L_H$. 
-Since the pre-hash salt $s_P$ is not transmitted in the registration phase, i.e. $\bm{S}$ stores $(id, H, s_H)$ where $H=(H_1, H_2)$ with $H_1=g_1^{s_P}$ and $H_2 = H_1^\pi h^{s_H}$, we replace $L_{s,H}$ with the following language $L_{s_H,H} = \{(\ell, C) | \exists \pi, \exists r : C = \Enc^\ell(pk, g_1^\pi; r)\ \wedge\ H_2 = H_1^\pi h^{s_H}\}$ and construct a suitable SPHF for $L_{s_H,H}$ as follows:
+For the concrete \ac{VPAKE} construction based on our password hashing scheme from Section~\ref{sec:strucphash} we can use labelled \ac{CS} encryption scheme. 
+The common input of \Client and \Server contains the \ac{CS} public key $\pk=(p,g_1,g_2,h,c,d,H_k)$, where generators $g_1=g$ and $h$ must be the same as in the \ac{BPR} protocol. 
+Since $H=(H_1,H_2)$ we need to slightly update language $L_H = \{(\ell, C) | \exists r : C = \Enc^\CS_\pk(\ell, H_2; r)\}$ by using $H_2$ as message. 
+We can still use the \ac{SPHF} for \ac{CS} ciphertexts from Section~\ref{sec:prelims-sphf} to handle this $L_H$. 
+Since the pre-hash salt $s_P$ is not transmitted in the registration phase, \ie \Server stores $(id, H, s_H)$ where $H=(H_1, H_2)$ with $H_1=g_1^{s_P}$ and $H_2 = H_1^\pi h^{s_H}$, we replace $L_{s,H}$ with the following language $L_{s_H,H} = \{(\ell, C) | \exists \pi, \exists r : C = \Enc^\EG_\pk(\ell, g_1^\pi; r)\ \wedge\ H_2 = H_1^\pi h^{s_H}\}$ and construct a suitable \ac{SPHF} for $L_{s_H,H}$ as follows:
 \begin{itemize}
 	\item $\HKGen(L_{s_H,H})$ generates $\hk=(\eta_1,\eta_2,\theta,\mu,\nu)\rin\ZZ_p^{1\times 5}$.
 
@@ -95,11 +115,11 @@ Since the pre-hash salt $s_P$ is not transmitted in the registration phase, i.e.
 
 	\item $\ProjHash(\hp,L_{s_H,H},C,\pi,r)$ outputs hash value \[h=(\hpp{1}\hpp{2}^\xi)^r\hpp{3}^{\pi}=g_1^{\eta_1r}g_2^{\theta r}h^{\mu r} c^{\nu r}g_1^{\eta_2\xi r}d^{\nu\xi r}(g_1^\mu H_1^{-\mu})^{\pi}.\]
 \end{itemize}
-Note that projection key $\hp$ depends on $H_1\in G$, which can be seen as a parameter in the definition of $L_{s_H,H}$, but $\hp$ does not depend on $C$. The resulting VPAKE protocol can thus still proceed in one round. 
-The smoothness of our SPHF construction for $L_{s_H,H}$ can be proven as follows. 
+Note that projection key $\hp$ depends on $H_1\in \GG$, which can be seen as a parameter in the definition of $L_{s_H,H}$, but $\hp$ does not depend on $C$. The resulting \ac{VPAKE} protocol can thus still proceed in one round. 
+The smoothness of our \ac{SPHF} construction for $L_{s_H,H}$ can be shown as follows. 
 Let $\pi\gets\pwdint(\pwd)$, $H_2 = H_1^\pi h^{s_H}$, with $H_1=g_1^{s_P}$ for some unknown $s_P$, and $(\ell,C=(u_1,u_2,e,v))\not\in L_{s_H,H}$, i.e. $C\gets\Enc^\ell(pk,g_1^{\pi^\ast};r)$ for some $\pi^\ast\not=\pi$. 
-Assuming the second pre-image resistance of $\Pi$ it follows that $(u_1, u_1^\xi, u_2, e/(H_2h^{-s_H}), v) \not= (g_1^r, g_1^{r\xi}, g_2^r, g_1^{\pi-s_P\pi}h^r,$ $(cd^\xi)^r)$ with overwhelming probability for all $(r,r\xi)\in\ZZ_p^2$. 
-Since $(\hpp{1},\hpp{2},\hpp{3})$ are linearly independent the resulting hash value $h= u_1^{\eta_1} u_1^{\xi\eta_2} u_2^\theta [e/(H_2h^{-s_H})]^\mu v^\nu$ is uniformly distributed in $G$. 
+Assuming the second pre-image resistance of the password hashing scheme it follows that $(u_1, u_1^\xi, u_2, e/(H_2h^{-s_H}), v) \not= (g_1^r, g_1^{r\xi}, g_2^r, g_1^{\pi-s_P\pi}h^r,$ $(cd^\xi)^r)$ with overwhelming probability for all $(r,r\xi)\in\ZZ_p^2$. 
+Since $(\hpp{1},\hpp{2},\hpp{3})$ are linearly independent the resulting hash value $h= u_1^{\eta_1} u_1^{\xi\eta_2} u_2^\theta [e/(H_2h^{-s_H})]^\mu v^\nu$ is uniformly distributed in \GG. 
 %Pseudorandomness of the correctly produced hash value $h$ follows from the pseudorandomness and the CCA2 security of the used Cramer-Shoup encryption scheme.
 
 \begin{figure}[tbp] %tbp
@@ -137,29 +157,23 @@ $K \gets K_1 \cdot K_2$
 
 
 Our concrete VPAKE construction is illustrated in Figure~\ref{fig:vpakeprotocol}. 
-We assume that $\bm{C}$ uses $\pi\gets\pwdint(\pwd)$ as its input and has already sent its login name $id$ to $\bm{S}$ who picked the corresponding tuple $(id,H,s_H)$ from its password database. 
-Note that $\bm{C}$ can also act as initiator and send its $id$ as part of its message, in which case $\bm{S}$ must act as a responder. 
-Which SPHF algorithms $\HKGen$, $\PKGen$, $\Hash$, $\ProjHash$ are used by $\bm{C}$ and $\bm{S}$ is visible from the input language, either $L_H$ or $L_{s_H,H}$. 
-By inspection one can see that if both $\bm{C}$ and $\bm{S}$ follow the protocol and $H$ used on the server side is a password hash of $\pi$ used on the client side then both parties compute the same (secret) group element $K=K_1\cdot K_2$. 
-Note that $\bm{C}$ derives $K_1$ using its own hashing key $\hk$ and received server's CS ciphertext $C'$ that encrypts $H_2$, whereas $\bm{S}$ derives $K_1$ using client's projection key $\hp$, its own $C'$ and $r'$. 
-Similarly, $\bm{S}$ derives $K_2$ using its own hashing key $\hk'$ and received client's CS ciphertext $C$ that encrypts $g_1^\pi$, whereas $\bm{C}$ derives $K_2$ using server's projection key $\hp'$, its own $C$ and $r$. Security of this VPAKE protocol follows from the security of the generic scheme.
+We assume that \Client uses $\pi\gets\pwdint(\pwd)$ as its input and has already sent its login name $id$ to \Server who picked the corresponding tuple $(id,\ver)$ from its password database. 
+Note that \Client can also act as initiator and send its $id$ as part of its message, in which case \Server must act as a responder. 
+Which SPHF algorithms $\HKGen$, $\PKGen$, $\Hash$, $\ProjHash$ are used by \Client and \Server is visible from the input language, either $L_H$ or $L_{s_H,H}$. 
+By inspection one can see that if both \Client and \Server follow the protocol and $H$ used on the server side is a password hash of $\pi$ used on the client side then both parties compute the same (secret) group element $K=K_1\cdot K_2$. 
+Note that \Client derives $K_1$ using its own hashing key $\hk$ and the server's \ac{CS} ciphertext $C'$ that encrypts $H_2$, whereas \Server derives $K_1$ using the client's projection key $\hp$, its own $C'$, and $r'$. 
+Similarly, \Server derives $K_2$ using its own hashing key $\hk'$ and received client's \ac{CS} ciphertext $C$ that encrypts $g_1^\pi$, whereas \Client derives $K_2$ using the server's projection key $\hp'$, its own $C$, and $r$. 
+Security of this \ac{VPAKE} protocol follows from the security of the generic scheme.
 
-\subsection{PAKE for SPC-based BPR}
-In order to use a password registered with our protocol for authentication, we require an appropriate password-based authentication or authenticated key exchange (PAKE) protocol.
-%While verifier-based (aka augmented) key exchange has been proposed \cite{BellovinM93,BenhamoudaP13}, its benefit is marginal.
-In this section we show how to use the verifier $\ver$ in a common PAKE protocol. The approach we describe here is general and can be used with any PAKE protocol.
-
-% The general approach is as follows.
-At the beginning of the authentication process, for a given client identifier the server retrieves the corresponding verifier $\ver=(h, e, N)$ from the database and returns $(e,N)$ to the client.
-Using $(e,N)$ and the password \pwd, the client can recompute all $u_i$ values and thus $h'\gets H_3(u_{v+1}^e\cdot\prod_{i=1}^{v}u_i)$ as described earlier.
-Note that depending on the used PAKE protocol we have to ensure that $H_3$ maps into an algebraic structure, suitable for use with the PAKE protocol.
-Now client and server run any PAKE protocol on password hash $h$. The password hash $h$ retains information about individual characters as well as the order of characters in the password. The first is easy to see since $h$ is computed from the product of blinded characters in the password.  
-To see the second, recall that each $u_i=H_2(c_i)\cdot r_i^e$ where $r_i=f_k(i)$, which is a pseudorandom number generated under a key $k$. 
-The key $k$ is derived from the password string $k\gets H_1(\pwd)$. 
-We must also stress that recomputing the password hash involves public key operations and thus is relatively slow.
-However, this is an advantage rather than a shortcoming. 
-The increased work, necessary to compute verifier \ver, can effectively increase work load for dictionary attack. 
-It is also possible to use a standard key derivation function such as PBKDF2 \cite{rfc2898} as $H_1$ so that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack even more difficult.
-
-Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. Often we can piggyback the messages in the PAKE protocol to avoid increasing communication round. 
-For example, if we use the UC-secure PAKE protocol from \citet{Benhamouda2013}, the RSA public key $(e,N)$ can be piggybacked on the server's message sent in the PAKE protocol. Thus we do not increase the round complexity and the protocol remains a one-round protocol.
+% \subsection{PAKE for SPC-based BPR}
+% In order to use a password registered with our protocol for authentication, we require an appropriate password-based authentication or authenticated key exchange (PAKE) protocol.
+% %While verifier-based (aka augmented) key exchange has been proposed \cite{BellovinM93,BenhamoudaP13}, its benefit is marginal.
+% In this section we show how to use the verifier $\ver$ in a common PAKE protocol. The approach we describe here is general and can be used with any PAKE protocol.
+%
+% The password hash $h$ retains information about individual characters as well as the order of characters in the password. The first is easy to see since $h$ is computed from the product of blinded characters in the password.  
+% To see the second, recall that each $u_i=H_2(c_i)\cdot r_i^e$ where $r_i=f_k(i)$, which is a pseudorandom number generated under a key $k$. 
+% The key $k$ is derived from the password string $k\gets H_1(\pwd)$. 
+% We must also stress that recomputing the password hash involves public key operations and thus is relatively slow.
+% However, this is an advantage rather than a shortcoming. 
+% The increased work, necessary to compute verifier \ver, can effectively increase work load for dictionary attack. 
+%

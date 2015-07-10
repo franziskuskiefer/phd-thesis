@@ -444,9 +444,9 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 \label{fig:pakef}
 \end{figure}
 
-\subsection{Verifier-based PAKE Security}
+\subsection{Verifier-based PAKE Security} \label{sec:vpake-model}
 We recall the related password model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
-It considers client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\PHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
+It considers client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\ProjHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
 Passwords $\pwd_\Client$ and $\pwd_\Server$ are drawn from dictionary \cD with min-entropy $\beta$.
 Adversary \cA has access to the following oracles to interact with protocol participants:
 
@@ -490,7 +490,7 @@ Security is modelled with a real-or-random style $\Test(P_i)$ oracle that, on in
 
 \noindent
 Two protocol participants are \emph{partnered} if they have matching transcripts, \ie the recorded transcript of one participant is a subset of the one recorded by the other party.
-% Two protocol participants $P,P'$ are compatible if w.l.o.g. $P\in\Ciphertexts$ and $P'\in\cS$, and $\PHash(\paramP, \PPreHash(\paramP, \pwd_P, s_P), s_H) = H_{P'}$.
+% Two protocol participants $P,P'$ are compatible if w.l.o.g. $P\in\Ciphertexts$ and $P'\in\cS$, and $\ProjHash(\paramP, \PPreHash(\paramP, \pwd_P, s_P), s_H) = H_{P'}$.
 % To define security we specify a real experiment $\Exp_\REAL$ and ideal experiment $\Exp_\IDEAL$.
 % The real world adversary in $\Exp_\REAL$ has access to the aforementioned oracles and interacts with real participants using passwords chosen according to the dictionary \cD.
 % The ideal world adversary in $\Exp_\IDEAL$ interacts with the aforementioned oracles that are modified as follows:
@@ -967,7 +967,7 @@ The set of shares associated with \ClientSet is $\{\mathfrak{s}_i\}_{i\in I}$ an
 % \end{algorithm}
 
 %----------------------- SPHF---------------------------
-\subsection{Smooth Projective Hashing}
+\subsection{Smooth Projective Hashing} \label{sec:prelims-sphf}
 Smooth projective hashing allows to compute a hash value of an element from a set in two different ways:
 either by using a secret hashing key on the element, or utilising the public projection key and some secret information proving that the particular element is part of a specific subset under consideration.
 In addition, smooth projective hash values guarantee to be uniformly distributed in their domain as long as the input element is not from a specific subset of the input set.
@@ -1012,15 +1012,14 @@ A \emph{\acl{SPHF}} for ciphertext language \Lpwd consists of the following four
 	\item $\HKGen(\Lpwd)$ generates a random hashing key $\hk\in\ZZ_p^n$ for language \Lpwd.
 	\item $\PKGen(\hk,\Lpwd)$ derives the projection key $\hp\in\GG^m$ from hashing key \hk. 
 	\item $\Hash(\hk,\Lpwd,C)$ computes hash value $h$ from hashing key \hk and ciphertext $C$.
-	\item $\PHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. \eod
+	\item $\ProjHash(\hp,\Lpwd,C,r)$ computes hash value $h$ from projection key \hp, ciphertext $C$ and randomness $r$. \eod
 \end{itemize}
 \end{definition}
-\mynote{\Hash also used for password hashing?}
 
 \noindent
 An \ac{SPHF} has to fulfil the following three properties:
 \begin{itemize}
-	\item \emph{Correctness}: If $C\in \Lpwd$, with $r$ proving so, then \[\Hash(\hk,\Lpwd,C)=\PHash(\hp,\Lpwd,C,r).\]
+	\item \emph{Correctness}: If $C\in \Lpwd$, with $r$ proving so, then \[\Hash(\hk,\Lpwd,C)=\ProjHash(\hp,\Lpwd,C,r).\]
 	\item \emph{Smoothness}: If $\{(\Label, C, \pwd^\ast)\}\ni \Ciphertexts\not\in\Lpwd$, the hash value $h$ is (statistically) indistinguishable from a random element. 
 	\item \emph{Pseudorandomness}: If $(\ell, C, \pwd^\ast)\in\Lpwd$, the hash value $h$ is (computationally) indistinguishable from a random element. 
 \end{itemize}
@@ -1036,8 +1035,8 @@ For any function $f:\GG^m \mapsto \Ciphertexts\setminus \Lpwd$ the following dis
 \end{align*}
 
 \noindent
-\citet{Gennaro2003} introduced pseudorandomness of \acp{SPHF} to show that \Hash and \PHash are the only way to compute the hash value even though the adversary knows some triples $(\hp,C,\Hash(\hk,\allowbreak\Lpwd,C))$ for $C\in\Lpwd$.
-An \ac{SPHF} is pseudorandom if the hash values produced by \Hash and \PHash are indistinguishable from random without the knowledge of the uniformly chosen hash key \hk or a witness $w$, \ie for all $C\in\Lpwd$ the following distributions are computationally $\varepsilon$-close:
+\citet{Gennaro2003} introduced pseudorandomness of \acp{SPHF} to show that \Hash and \ProjHash are the only way to compute the hash value even though the adversary knows some triples $(\hp,C,\Hash(\hk,\allowbreak\Lpwd,C))$ for $C\in\Lpwd$.
+An \ac{SPHF} is pseudorandom if the hash values produced by \Hash and \ProjHash are indistinguishable from random without the knowledge of the uniformly chosen hash key \hk or a witness $w$, \ie for all $C\in\Lpwd$ the following distributions are computationally $\varepsilon$-close:
 \begin{align*}
 & \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\algout\Hash(\hk,\Lpwd,C)\} \\
 \stackrel{\varepsilon}{=}~ & \{(\hp,C,h) ~|~ \hk\ralgout\HKGen(\Lpwd); \hp\algout\PKGen(\hk,\Lpwd); h\rin\GG\}
@@ -1073,7 +1072,7 @@ The \ac{SPHF} is defined as follows, where $(g_1,g_2,h,c,d,\xi,r,e,u_1,u_2,v)$ a
   \item $\HKGen(\Lpwd)$ return $\hk=(\eta_1,\eta_2,\theta,\mu,\nu)\rin\ZZ_p^{1\times 5}$
   \item $\PKGen(\hk, \Lpwd)$ returns $\hp=(\hp_1=g_1^{\eta_1} g_2^{\theta} h^\mu c^\nu, \hp_2=g_1^{\eta_2} d^{\nu})$
   \item $\Hash(\hk, \Lpwd, C)$ computes $H=u_1^{\eta_1+\xi\eta_2} u_2^{\theta} (e/g_1^{\pwd})^\mu v^\nu$
-  \item $\PHash(\hp, \Lpwd, C, r)$ computes $H=(\hp_1 \hp_2^\xi)^r$
+  \item $\ProjHash(\hp, \Lpwd, C, r)$ computes $H=(\hp_1 \hp_2^\xi)^r$
 \end{itemize}
 
 \subsubsection{Trapdoor Smooth Projective Hashing}\label{sec:tsphf}
@@ -1087,7 +1086,7 @@ Let \Lpwd denote a language of ciphertexts such that $C\in \Lpwd$ if there exist
 A \acl{T-SPHF} for ciphertext language \Lpwd consists of the following seven algorithms:
 
 \begin{itemize}
-  \item \HKGen, \PKGen, \Hash and \PHash are as given in Definition \ref{def:sphf}
+  \item \HKGen, \PKGen, \Hash and \ProjHash are as given in Definition \ref{def:sphf}
 	\item $\TSetup(\crs)$ generates a second $\crs'$ with trapdoor $\tau'$ on input of \crs
 	\item $\VerHp(\hp, \Lpwd)$ returns $1$ iff \hp is a valid projection key, $0$ otherwise
 	\item $\THash(\hp, \Lpwd, C, \tau')$ computes hash value $h$ of $C$ using  projection key \hp and trapdoor $\tau'$
@@ -1104,7 +1103,7 @@ We assume $\crs'$ is, like \crs, made available to all parties.
 To capture soundness of \acp{T-SPHF} \citet{Benhamouda2013} introduce \emph{$(t,\varepsilon)$-soundness}, complementing the previous correctness extension.
 
 \begin{definition}[$(t,\varepsilon)$-soundness]
-Given \crs, $\crs'$ and $\tau$, no adversary running in time at most $t$ can produce a projection key \hp, a password \pwd, a word $C$, and valid witness $r$ such that \hp is valid, \ie $\VerHp(\hp,\Lpwd)=1$, but $\THash(\hp,\Lpwd,C,\tau')\not=\PHash(\hp,\Lpwd,C,r)$ with probability at least $\varepsilon(\secpar)$.
+Given \crs, $\crs'$ and $\tau$, no adversary running in time at most $t$ can produce a projection key \hp, a password \pwd, a word $C$, and valid witness $r$ such that \hp is valid, \ie $\VerHp(\hp,\Lpwd)=1$, but $\THash(\hp,\Lpwd,C,\tau')\not=\ProjHash(\hp,\Lpwd,C,r)$ with probability at least $\varepsilon(\secpar)$.
 Perfect soundness states that the property holds for any $t$ and any $\varepsilon(\secpar)>0$.
 \eod
 \end{definition} 
@@ -1145,7 +1144,7 @@ The additional algorithms for \ac{T-SPHF} and changes to the hash functions are 
   \item $\Hash(\hk, \Lpwd, C)$ computes 
       \[h'=u_1^{\eta_1+\xi\eta_2} u_2^{\theta} (e/g_1^{\pwd})^\mu v^\nu\] 
       as before and outputs $h=e(h',g_2)$
-  \item $\PHash(\hp, \Lpwd, C, r)$ computes $h'=(\hp_1 \hp_2^\xi)^r$ as before and outputs $h=e(h',g_2)$
+  \item $\ProjHash(\hp, \Lpwd, C, r)$ computes $h'=(\hp_1 \hp_2^\xi)^r$ as before and outputs $h=e(h',g_2)$
   \item $\VerHp(\hp, \Lpwd)$ verifies that 
       \[e(\hp_1, \crs')\verify e(g_{1,1}, \chi_{1,1})\cdot e(g_{1,2}, \chi_2)\cdot e(h_1, \chi_3)\cdot e(c, \chi_4)\] and
       \[e(\hp_2, \crs') \verify e(g_{1,1}, \chi_{1,2})\cdot e(d, \chi_4)\]
