@@ -93,3 +93,14 @@ Section \ref{sec:2pakeConclusion} concludes this chapter by summarising and disc
 This chapter proposed a framework for two-server password registration and authentication.
 The password registration protocol allows the client to securely register password shares on two servers, while the servers can verify that the client's password satisfies a password policy.
 To use the registered password shares in the second step, password-based authentication, we proposed a new \ac{2PAKE} framework, a concrete instantiation, and an enhanced protocol that satisfied the newly defined \ac{2PAKE} \ac{UC} functionality.
+
+This first leg of the framework introduced the notion of \ac{2BPR}.
+\ac{2BPR} is a solution for secure registration of policy-compliant, user-selected passwords for \ac{2PAKE}/\ac{PPSS} protocols where each server is supposed to learn only its own share of the password and whether the combined password is conform with his password policy.
+The proposed \ac{2BPR} protocol can be used to register \ac{2PAKE}/\ac{PPSS} passwords satisfying server-chosen policies over the alphabet of all 94 printable \ac{ASCII} characters.
+
+This second leg of the framework introduced the notion of extended and distributed smooth projective hashing and gave an instantiation using Cramer-Shoup ciphertexts.
+While we focused on \ac{2PAKE} as application of \acp{D-SPHF} in this chapter, \acp{D-SPHF} are an interesting building block for future work on other multi-party and threshold protocols.
+To show how to use \acp{D-SPHF}, we built a \ac{2PAKE} framework using them.
+The framework allows to explain and simplify the two-server PAKE protocol from \cite{Katz2012a} as well as construct \ac{UC}-secure \ac{2PAKE}.
+To this end this chapter introduced \ac{TD-SPHF} and the first definition of \ac{UC} security for \ac{2PAKE} protocols.
+
