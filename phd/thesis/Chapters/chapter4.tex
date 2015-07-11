@@ -1,7 +1,7 @@
-\chapter{Password Authentication Framework for the Two-Server Setting} \label{ch:2pake}
+\chapter{Password Authentication Framework in the Two-Server Setting} \label{ch:2pake}
 
 While \ac{PAKE} and \ac{VPAKE} solve one of the most pressing problems in user authentication they are still vulnerable to offline dictionary attacks once the server is compromised.
-To alleviate the impact of password leaks on the server threshold \ac{PAKE} has been proposed.
+To alleviate the impact of password leaks, threshold \ac{PAKE} has been proposed.
 However, research in this area is rather limited compared to the single-server case.
 This chapter proposes a framework for the two-server setting, similar to the framework from Chapter \ref{ch:vpake}, which uses \ac{2PAKE} for user authentication and a \ac{2BPR} protocol for password share registration.
 We further propose a new security model for two \ac{2PAKE} protocols in the \ac{UC} model.
@@ -11,6 +11,7 @@ This chapter is based on work in \cite{KieferM14b,KieferM15b,KieferM15c}.
 \paragraph{Introduction}
 
 Considering that ``password-cracking tools'' such as Hashcat \cite{hashcat} and John the Ripper \cite{JohnTheRipper} are very efficient, it is reasonable to assume that leaking password hashes is more or less equivalent to leaking passwords \cite{NarayananS05a,WeirAMG09,DellAmicoMR10,Bonneau12}.
+Further, \ac{VPAKE} can have other security issues as discussed in Section \ref{sec:vpakeToPake} Chapter \ref{ch:vpake}.
 The notion of threshold and two-server password authenticated key-exchange \cite{FordK00,MacKenzieSJ02} has been proposed where the password is not stored on a single server but split between a number of servers such that leakage of a password database on a non-qualified subset does not reveal the password.
 The two-server setting is regarded as more practical (in comparison to a more general threshold setting) given that if one server is compromised a notification to change the password can be sent out to the clients.
 \ac{2PAKE} protocols \cite{BrainardJKS03,SzydloK05,Katz2012a} split the client's password $\pwd$ into two shares $\share_1$ and $\share_2$ such that each share is stored on a distinct server.
@@ -29,8 +30,8 @@ The concept of blind password registration for two-server password protocols pro
 This is in contrast to the single-server setting where an attacker is always able to perform offline dictionary attacks on password verifiers after compromising a server. 
 
 The second step in the framework can either be a \ac{2PAKE} or a two-server \ac{PPSS} protocol.
-We show how to use password shares set up with the \ac{2BPR} protocol to authenticate the client.
-Further, we propose a new framework for \ac{2PAKE} protocols that leads to a new security model for \ac{2PAKE} protocols in the \ac{UC} model.
+We show how to use password shares set up with the \ac{2BPR} protocol to authenticate the client in both cases.
+Further, we propose a new framework for \ac{2PAKE} protocols that leads to a new security definition for \ac{2PAKE} protocols in the \ac{UC} model.
 
 %password BPR protocol
 % Our main contribution is the 2BPR security model and the corresponding protocol for secure registration of 2PAKE/2PASS passwords. We show how secure distribution of password shares can be combined with an appropriate policy-compliance proof for the chosen password in a way that does not reveal the password and can still be verified by both servers.
@@ -68,9 +69,9 @@ Further, we propose a new framework for \ac{2PAKE} protocols that leads to a new
 This chapter consists of six sections.
 The first section describes modelling of passwords, policies and password shares for the two-server setting.
 Section \ref{sec:2pake-registration} proposes a \acl{BPR} for the two-server setting, closely related to the approach in Chapter \ref{ch:vpake} Section \ref{sec:bpr}.
-This concludes the registration step of the framework.
 For the authentication step Section \ref{sec:twoserverpake} proposes a \ac{2PAKE} framework using \acp{D-SPHF} that are introduced in Section \ref{sec:dsphf-2pake}.
 To strengthen security guarantees of \ac{2PAKE} protocols we propose a security definition of \ac{2PAKE} in the \ac{UC} framework in Section \ref{sec:uc2pake}.
+Section \ref{sec:2pakeConclusion} concludes this chapter by summarising and discussing results.
 
 \input{Chapters/passwords2}
 
@@ -88,7 +89,7 @@ To strengthen security guarantees of \ac{2PAKE} protocols we propose a security 
 \input{Chapters/uc2pake}
 % \mynote{2PAKE UC ???(ePrint) \cite{KieferM15b}}
 
-\section{Conclusion}
+\section{Conclusion} \label{sec:2pakeConclusion}
 This chapter proposed a framework for two-server password registration and authentication.
 The password registration protocol allows the client to securely register password shares on two servers, while the servers can very that the client's password satisfies a password policy.
 To use the registered password shares in the second step, password-based authentication, we proposed a new \ac{2PAKE} framework, a concrete instantiation, and an enhanced protocol that satisfied the newly defined \ac{2PAKE} \ac{UC} functionality.

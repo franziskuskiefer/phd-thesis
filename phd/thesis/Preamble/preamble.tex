@@ -432,8 +432,6 @@
 
 \renewcommand{\min}{\ensuremath{\mathtt{min}}\xspace}
 
-\newcommand{\game}[1]{\ensuremath{\hfill\\\noindent\bm{\text{\bf Game}_{#1}:}}\xspace}
-
 % Zero-knowledge models
 \newcommand{\PK}{\ensuremath{\mathsf{PoK}}\xspace}
 \newcommand{\ZKPoK}{\ensuremath{\mathsf{ZKPoK}}\xspace}
@@ -539,9 +537,11 @@
 
 \newcounter{game}
 \newcounter{oldgame}
-\renewcommand{\G}[1]{\ensuremath{\mathcal{G}_{#1}}\xspace}
+\renewcommand{\G}[1]{\ensuremath{\bm{\mathcal{G}_{#1}}}\xspace}
 \newcommand{\Gh}{\ensuremath{\setcounter{oldgame}{\thegame}\refstepcounter{game}\hfill\\\noindent\bm{\mathcal{G}_{\thegame}:}}\xspace}
 \newcommand{\ResetGameCounters}{\setcounter{game}{0}\setcounter{oldgame}{0}}
+
+\newcommand{\game}[1]{\ensuremath{\hfill\\\noindent\G{#1}:}\xspace}
 
 % Encryption
 \newcommand{\E}{\ensuremath{\mathtt{E}}\xspace}
