@@ -1,3 +1,10 @@
 \chapter{Conclusion} \label{ch:conclusion}
 
-\mynote{Conclusion ...}
+This thesis proposed two novel frameworks for password registration and authentication.
+The first framework is based in the verifier-based (single-server) setting and allows a client to register a password verifier with a server without disclosing the actual password, while preserving the server's ability to check policy compliance of the password that is hidden in the password verifier.
+We proposed three protocols with according security models to achieve this.
+To use the password together with the registered password verifier we discussed and proposed new \ac{VPAKE} protocols usable with the registered verifiers.
+The second framework is based in the two-server setting and allows a client to register password shares on two servers while preserving the server's ability to verify that the client's password is policy compliant.
+We proposed an efficient protocol with according security model to achieve this.
+To use the registered password shares in a \ac{2PAKE} protocol for authentication we propose the first \ac{2PAKE} framework as well as the first \ac{UC} secure \ac{2PAKE} protocol.
+To this end we introduced new notions for smooth projective hashing, \ie \acl{D-SPHF} and \acl{TD-SPHF}, that allow distributed computation of \acp{SPHF}.

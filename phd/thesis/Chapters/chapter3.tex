@@ -63,3 +63,18 @@ An alternative approach to the problem of \ac{BPR} is proposed in Section \ref{s
 Comparison of the two proposed \ac{BPR} protocols show that the set-based approach is significantly faster due to the use of symmetric primitives, while requiring a different security model.
 The second step in the framework, password-based authentication, is solved by a new \ac{VPAKE} protocol in Section \ref{sec:vpake}.
 Implementation (Section \ref{sec:discussion}) and demonstration (Section \ref{sec:vpake-demo}) showed practicability of the proposed approach.
+
+The first leg of the proposed framework securely registers passwords chosen by the client at a remote server while simultaneously achieving the following properties: (1) registered passwords are never disclosed to the server and the only way for the server or any attacker who compromises the server to recover passwords is by mounting an offline dictionary attack on the stored verifier; (2) each registered password provably satisfies the server's password policy. 
+While the proposed \ac{ZKPPC} approach lays ground for this, \ac{BPR} gives a more appropriate security model and protocol to solve this problem.
+\ac{BPR} in particular formalises the two requirements as dictionary attack resistance and policy compliance .
+The proposed \ac{BPR} protocol for \ac{ASCII}-based password policies makes use of efficient Pedersen commitments and the shuffling proof from \cite{Furukawa05}, and fulfils both security goals under standard assumptions.
+Our discussion on various ways to strengthen or (reasonably) weaken the security requirements implies the possibility of introducing trade-offs between security and efficiency for \ac{BPR} protocols.
+To achieve higher performance we further introduced a different approach to \ac{BPR} based on set theory.
+To this end we introduced a new notion called \acl{SPC}, a new privacy preserving protocol. 
+\ac{SPC} allows a server to check whether a set held by a client is compliant with its policy, which is defined as a monotone access structure. 
+At the end of the protocol, the server learns only a single bit of information, \ie whether the client's set complies with the policy or not, and nothing else. 
+\ac{SPC} is was then used to propose a highly efficient protocol for \ac{BPR}.
+To underline practicality, facilitate adoption, and compare the different \ac{BPR} approaches we gave implementations of all three protocols together with an analysis.
+
+To implement the second leg of the framework proposed in this chapter we discussed general techniques to generate \ac{VPAKE} protocols from known \ac{PAKE} protocols and proposed a new \ac{VPAKE} protocol that allows authentication with verifiers registered with one of the proposed \ac{BPR} protocols.
+We further discussed pros and cons of \ac{VPAKE} protocols and their models.
