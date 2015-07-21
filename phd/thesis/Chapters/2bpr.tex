@@ -148,81 +148,133 @@ While \acl{PoM} and \ac{PoS} are essentially the same, a \ac{PoC} replaces the \
 We further require zero-knowledge proofs that are secure against malicious verifiers (servers) since the attacker is allowed to corrupt one server in the protocol, \ie we do not assume semi-honest servers.
 
 \subsubsection{Protocol Overview}
-% \setlength{\textfloatsep}{10pt}
-% \setlength{\belowcaptionskip}{-2pt}
-\begin{figure}[!b]
-\centering
-\footnotesize
-\scalebox{0.8}{\begin{tikzpicture}%[framed]
-\draw[] (-3.5,1) rectangle (12.3,-13);
-\draw ($(-3,.7)!0.55!(12,.7)$) node[draw] {\textit{I -- Client Preparation}};
+% \begin{figure}[!b]
+% \centering
+% \footnotesize
+% \scalebox{0.8}{\begin{tikzpicture}%[framed]
+% \draw[] (-3.5,1) rectangle (12.3,-13);
+% \draw ($(-3,.7)!0.55!(12,.7)$) node[draw] {\textit{I -- Client Preparation}};
+%
+% \node[party,align=center] (client) at (.5,0) {\uline{$\Client~ (\Server_0,\Server_{1}, f_0, f_1, \pwd, \crs)$}};
+%
+% \node[state, align=left] at (0,-.5) [stateS, align=left]{Encode $\pi\gets\pwdint(\pwd)$;};
+% \node[state, align=left] at (0,-1.2) [stateS, align=left]{Compute password shares: $\share_{0}\rin\ZZ_p$,\\ \hspace*{1em} $\share_{1}=\pi-\share_{0}$};
+%
+% \node[state, align=left] at (0,-2.3) [stateS, align=left]{Commit to shares: \\\hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$\\ \hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$};
+%
+% % PHASE II
+%
+% % \draw[dashed] (-2.5, -3.2) -- (11.5, -3.2);
+% \draw ($(-3,-3.5)!0.55!(12,-3.5)$) node[draw] {\textit{II -- Password Registration}};
+%
+% \node[party,align=center] (client2) at (.5,-4.2) {\uline{$\Client~ (\Server_0,\Server_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
+% \node[align=center,text width=13em] (server) at (9.6,-4.2) {\uline{$\Server_b~ (\Client,\Server_{1-b}, f=f_0\cap f_1, \crs)$}};
+%
+% \node[state, align=left] at (0.0,-4.9) [stateS, align=left]{Commit to all characters in \pwd:\\\hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$};
+%
+% \node[state, align=left] at (0.0,-5.8) [stateS, align=left]{Shuffle $\bm C'$ s.t. each $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ with permutation $\phi$ over $[1,|\pwd|]$;};
+%
+% \node[state, align=left] at (0,-6.8) [stateS, align=left]{For each $c_i\in\pwd$ identify appropriate set $\omega_{\phi(i)}$ and build $\vect{\omega}$ from it;};
+% \node[state, align=left] at (0,-7.6) [stateS, align=left]{Execute ZK proofs with the server};
+%
+% \node[state, align=left] at (9.75,-8.0) [stateSmS, align=left]{choose challenges};
+% \node[state, align=left] at (9.75,-9) [stateSmS, align=left]{Proceed if \\\hfill $|\bm C|=|\bm C'| \geq \pmin$, $\PoM$,\\\hfill $\PoC$ and $\PoS$ all holds};
+%
+% \node[dummyState] (clientCom) at (2.75,-7.6){};
+% \node[dummyState] (clientCh) at (2.75,-8.2){};
+% \node[dummyState] (clientRes) at (2.75,-8.8){};
+% \node[dummyState] (clientResF) at (2.75,-9.4){};
+%
+% \node[dummyState] (serverCom) at (7.5,-7.6){};
+% \node[dummyState] (serverCh) at (7.5,-8.2){};
+% \node[dummyState] (serverRes) at (7.5,-8.8){};
+% \node[dummyState] (serverResF) at (7.5,-9.4){};
+%
+% \draw[pil] (clientCom) -- node[above, align=center] {$\Comm_{\PoM}, \Comm_{\PoC}, \Comm_{\PoS}, n$} (serverCom);
+% \draw[pil] (serverCh) -- node[above, align=center] {$\Ch_\PoC, \Ch_\PoM, \Ch_\PoS$} (clientCh);
+% \draw[pil] (clientRes) -- node[above, align=center] {$\Res_{\PoM}, \Res_{\PoC}, \Res_{\PoS}$} (serverRes);
+%
+% % PHASE III
+%
+% % \draw[dashed] (-2.5, -10.2) -- (11.5, -10.2);
+% \draw ($(-3,-10.5)!0.55!(12,-9.7)$) node[draw] {\textit{III -- Share Verification}};
+%
+% \node[party] (server2) at (.5,-10.7) {\uline{$\Server_0~ (\Client, \Server_{1}, f=f_0\cap f_1, \crs)$}};
+% \node[state, align=left] at (0,-11.4) [stateS, align=left]{$\fD'_{1}=\fC_{1}g^{\share_{0}}$};
+% \node[state, align=left] at (0,-12.2) [stateS, align=left]{If $\fD'_0=\fD_0$\\\hspace*{1em} store $(\Client,\Server_{1},\share_{0})$};
+% \node[dummyState] (server11Ch) at (2.75,-11.4){};
+% \node[dummyState] (server12Ch) at (2.75,-12.2){};
+%
+% \node[party,align=center] (server3) at (9.5,-10.7) {\uline{$\Server_{1}~ (\Client, \Server_0, f=f_0\cap f_1, \crs)$}};
+% \node[state, align=left] at (9.75,-11.4) [stateSmS, align=left]{$\fD'_{0}=\fC_{0}g^{\share_{1}}$};
+% \node[state, align=left] at (9.75,-12.2) [stateSmS, align=left]{If $\fD'_{1}=\fD_{1}$\\\hspace*{1em} store $(\Client,\Server_{0},\share_{1})$};
+%
+% \node[dummyState] (server21Ch) at (7.5,-11.4){};
+% \node[dummyState] (server22Ch) at (7.5,-12.2){};
+%
+% \draw[pil] (server11Ch) -- node[above, align=center] {$\fD'_{1}$} (server21Ch);
+% \draw[pil] (server22Ch) -- node[above, align=center] {$\fD'_{0}$} (server12Ch);
+%
+% \end{tikzpicture}}
+% \caption[Two-Server BPR Protocol]{Two-Server BPR Protocol --- A High-Level Overview\\
+% {\small $\vect{\omega}$ contains character sets of $c_{\phi(i)}$ ordered according to permutation $\phi$, used in \ac{PoM}}}
+% %\linebreak \PoS proves correctness of shuffle according to $\phi$
+% \label{fig:protocol-overview}
+% \end{figure}
 
-\node[party,align=center] (client) at (.5,0) {\uline{$\Client~ (\Server_0,\Server_{1}, f_0, f_1, \pwd, \crs)$}};
-
-\node[state, align=left] at (0,-.5) [stateS, align=left]{Encode $\pi\gets\pwdint(\pwd)$;};
-\node[state, align=left] at (0,-1.2) [stateS, align=left]{Compute password shares: $\share_{0}\rin\ZZ_p$,\\ \hspace*{1em} $\share_{1}=\pi-\share_{0}$};
-
-\node[state, align=left] at (0,-2.3) [stateS, align=left]{Commit to shares: \\\hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$\\ \hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$};
-
-% PHASE II
-
-% \draw[dashed] (-2.5, -3.2) -- (11.5, -3.2);
-\draw ($(-3,-3.5)!0.55!(12,-3.5)$) node[draw] {\textit{II -- Password Registration}};
-
-\node[party,align=center] (client2) at (.5,-4.2) {\uline{$\Client~ (\Server_0,\Server_{1}, f=f_0\cap f_1, \pwd, \crs)$}};
-\node[align=center,text width=13em] (server) at (9.6,-4.2) {\uline{$\Server_b~ (\Client,\Server_{1-b}, f=f_0\cap f_1, \crs)$}};
-
-\node[state, align=left] at (0.0,-4.9) [stateS, align=left]{Commit to all characters in \pwd:\\\hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$};
-
-\node[state, align=left] at (0.0,-5.8) [stateS, align=left]{Shuffle $\bm C'$ s.t. each $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ with permutation $\phi$ over $[1,|\pwd|]$;};
-
-\node[state, align=left] at (0,-6.8) [stateS, align=left]{For each $c_i\in\pwd$ identify appropriate set $\omega_{\phi(i)}$ and build $\vect{\omega}$ from it;};
-\node[state, align=left] at (0,-7.6) [stateS, align=left]{Execute ZK proofs with the server};
-
-\node[state, align=left] at (9.75,-8.0) [stateSmS, align=left]{choose challenges};
-\node[state, align=left] at (9.75,-9) [stateSmS, align=left]{Proceed if \\\hfill $|\bm C|=|\bm C'| \geq \pmin$, $\PoM$,\\\hfill $\PoC$ and $\PoS$ all holds};
-
-\node[dummyState] (clientCom) at (2.75,-7.6){};
-\node[dummyState] (clientCh) at (2.75,-8.2){};
-\node[dummyState] (clientRes) at (2.75,-8.8){};
-\node[dummyState] (clientResF) at (2.75,-9.4){};
-
-\node[dummyState] (serverCom) at (7.5,-7.6){};
-\node[dummyState] (serverCh) at (7.5,-8.2){};
-\node[dummyState] (serverRes) at (7.5,-8.8){};
-\node[dummyState] (serverResF) at (7.5,-9.4){};
-
-\draw[pil] (clientCom) -- node[above, align=center] {$\Comm_{\PoM}, \Comm_{\PoC}, \Comm_{\PoS}, n$} (serverCom);
-\draw[pil] (serverCh) -- node[above, align=center] {$\Ch_\PoC, \Ch_\PoM, \Ch_\PoS$} (clientCh);
-\draw[pil] (clientRes) -- node[above, align=center] {$\Res_{\PoM}, \Res_{\PoC}, \Res_{\PoS}$} (serverRes);
-
-% PHASE III
-
-% \draw[dashed] (-2.5, -10.2) -- (11.5, -10.2);
-\draw ($(-3,-10.5)!0.55!(12,-9.7)$) node[draw] {\textit{III -- Share Verification}};
-
-\node[party] (server2) at (.5,-10.7) {\uline{$\Server_0~ (\Client, \Server_{1}, f=f_0\cap f_1, \crs)$}};
-\node[state, align=left] at (0,-11.4) [stateS, align=left]{$\fD'_{1}=\fC_{1}g^{\share_{0}}$};
-\node[state, align=left] at (0,-12.2) [stateS, align=left]{If $\fD'_0=\fD_0$\\\hspace*{1em} store $(\Client,\Server_{1},\share_{0})$};
-\node[dummyState] (server11Ch) at (2.75,-11.4){};
-\node[dummyState] (server12Ch) at (2.75,-12.2){};
-
-\node[party,align=center] (server3) at (9.5,-10.7) {\uline{$\Server_{1}~ (\Client, \Server_0, f=f_0\cap f_1, \crs)$}};
-\node[state, align=left] at (9.75,-11.4) [stateSmS, align=left]{$\fD'_{0}=\fC_{0}g^{\share_{1}}$};
-\node[state, align=left] at (9.75,-12.2) [stateSmS, align=left]{If $\fD'_{1}=\fD_{1}$\\\hspace*{1em} store $(\Client,\Server_{0},\share_{1})$};
-
-\node[dummyState] (server21Ch) at (7.5,-11.4){};
-\node[dummyState] (server22Ch) at (7.5,-12.2){};
-
-\draw[pil] (server11Ch) -- node[above, align=center] {$\fD'_{1}$} (server21Ch);
-\draw[pil] (server22Ch) -- node[above, align=center] {$\fD'_{0}$} (server12Ch);
-
-\end{tikzpicture}}
+\begin{figure*}[tbhp]
+\begin{center}
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & \\
+Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & &\\
+\hspace*{2.8em} $\pwd, \crs$ & & \\
+\midrule
+& \textit{I -- Client Preparation} & \\
+\cmidrule{2-2}
+encode $\pi\gets\pwdint(\pwd)$ & & \\
+compute password shares: & & \\
+\hspace*{1em} $\share_{0}\rin\ZZ_p$, $\share_{1}=\pi-\share_{0}$ & & \\
+commit to shares: & & \\
+\hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$ & & \\
+\hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$ & & \\
+\midrule
+{\bf Client \Client} & & {\bf Server $\Server_b$} \\
+Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & & Input: $\Client,\Server_{1-b}$ \\
+\hspace*{2.8em} $\pwd, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
+\midrule
+& \textit{II -- Password Registration} & \\
+\cmidrule{2-2}
+commit to all characters: & & \\
+\hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$ & & \\
+shuffle $\bm C'$ s.t. $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ & & \\
+with permutation $\phi$ & & \\
+for $c_i\in\pwd$ identify set $\omega_{\phi(i)}$ & & \\
+execute \PoC, \PoM, \PoS & & \\
+ & $\xrightarrow{\makebox[4cm]{$\Comm_{\PoM}, \Comm_{\PoC}, \Comm_{\PoS}$}}$ & \\
+ & $\xleftarrow{\makebox[4cm]{$\Ch_{\PoM}, \Ch_{\PoC}, \Ch_{\PoS}$}}$ & choose challenges\\
+ & $\xrightarrow{\makebox[4cm]{$\Res_{\PoM}, \Res_{\PoC}, \Res_{\PoS}$}}$ & Proceed if\\
+ & & $|\bm C|=|\bm C'| \geq \pmin, \PoM$\\
+ & & $\PoC$ and $\PoS$ all holds\\
+\midrule
+{\bf Server $\Server_0$} & & {\bf Server $\Server_1$} \\
+Input: $\Client, \Server_{1}$ & & Input: $\Client,\Server_{0}$ \\
+\hspace*{2.8em} $f=f_0\cap f_1, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
+\midrule
+& \textit{III -- Share Verification} & \\
+\cmidrule{2-2}
+$\fD'_{1}=\fC_{1}g^{\share_{0}}$ & $\xrightarrow{\makebox[4cm]{$\fD'_{1}$}}$ & $\fD'_{0}=\fC_{0}g^{\share_{1}}$ \\
+If $\fD'_0=\fD_0$ & $\xleftarrow{\makebox[4cm]{$\fD'_{0}$}}$ & If $\fD'_{1}=\fD_{1}$ \\
+\hspace*{1em} store $(\Client,\Server_{1},\share_{0})$ & & \hspace*{1em} store $(\Client,\Server_{0},\share_{1})$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 \caption[Two-Server BPR Protocol]{Two-Server BPR Protocol --- A High-Level Overview\\
-{\small $\vect{\omega}$ contains character sets of $c_{\phi(i)}$ ordered according to permutation $\phi$, used in \ac{PoM}}}
-%\linebreak \PoS proves correctness of shuffle according to $\phi$
+ {\small $\vect{\omega}$ contains character sets of $c_{\phi(i)}$ ordered according to permutation $\phi$, used in \ac{PoM}}}
 \label{fig:protocol-overview}
-\end{figure}
+\end{figure*}
+
+\noindent
 In Figure \ref{fig:protocol-overview} we give an overview of the \ac{2BPR} protocol involving a client $\Client$ and two servers $\Server_b$, $b\in\bits$.
 The protocol proceeds in three phases.
 In the first phase \emph{(Client Preparation)} the client, encodes the chosen password \pwd to $\pi$, computes shares $\share_{0}$ and $\share_{1}$, and computes commitments $\fC_0, \fC_1, \fD_0, \fD_1$ to the shares and the password.

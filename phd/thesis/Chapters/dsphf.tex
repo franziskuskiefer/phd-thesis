@@ -294,7 +294,8 @@ Using them in the extended \ac{SPHF} Definition \ref{def:symgensphf} yields the 
 % For a detailed description of the resulting \SPHFF see Appendix \ref{app:cssphff}.
 Instead of aiming for absolute generality we describe the Cramer-Shoup \ac{D-SPHF} for $x=2$ such that both participants $P_1$ and $P_2$ compute and broadcast $(\hp_i,C_i)$, while $P_0$ computes and broadcasts $(\hp_0,C_0)$, \ie for the \ac{2PAKE} setting.
 Let $\times$ denote element wise multiplication, \eg for El-Gamal ciphertexts $C_1=(u_1,e_1), C_2=(u_2,e_2)$, $C_1\times C_2$ is defined as $(u_1u_2,e_1e_2)$.
-$\ProjHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fig:dsphf} depicts the entire \ac{D-SPHF} execution):
+$\ProjHash_x^D$ and $\Hash_0^D$ protocols are defined as follows:
+%(Figure \ref{fig:dsphf} depicts the entire \ac{D-SPHF} execution)
 \begin{itemize}
 	\item $\ProjHash_x^D$ is executed between $P_1$ and $P_2$.
 	$P_2$ computes $h_{x,2}=\lambda\odot\hp_0=(\hp_0[1]\cdot \hp_0[2]^{\xi_2})^{r_2}$ and sends it to $P_1$.
@@ -315,69 +316,69 @@ $\ProjHash_x^D$ and $\Hash_0^D$ protocols are defined as follows (Figure \ref{fi
 	\end{itemize}
 \end{itemize}
 
-\begin{figure}
-\centering
-\begin{tikzpicture}[scale=0.55, every node/.style={scale=0.55}]
-\matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 2/.style={nodes={minimum width=4em}},
-		column 3/.style={nodes={minimum width=15em}},
-		column 4/.style={nodes={minimum width=4em}},
-		column 5/.style={nodes={minimum width=15em}}]{
-	{$\bm{P_0}$} & & {$\bm{P_1}$} & & {$\bm{P_2}$}\\ [-1mm]
-	
-	$\aux$ & & $\aux_1$ & & $\aux_2$\\ [2mm]
-	
-	$\hk_0\gets \HKGen$& & $\hk_1\gets \HKGen$ & & $\hk_2\gets \HKGen$ \\
-	
-	$\hp_0\gets \PKGen(\hk_0)$ & &
-	$\hp_1\gets \PKGen(\hk_1)$ & &
-	$\hp_2\gets \PKGen(\hk_2)$ \\
-	
-	$\ell=(P_0,P_1,P_2)$ & & $\ell_1=(P_1,P_0,P_2)$ & & $\ell_2=(P_2,P_0,P_1)$ \\
-	
-	$C_0\gets\Enc_{\pk}^{\CS}(\ell,\aux';r)$ &
-		$C_0,\hp_0$ &
-		$C_1\gets\Enc_{\pk}^{\CS}(\ell_1,\aux'_1;r_1)$ &
-		$C_2,\hp_2$ &
-		$C_2\gets\Enc_{\pk}^{\CS}(\ell_2,\aux'_2;r_2)$ \\
-	
-	& $C_1,\hp_1$ &
-		$m_1\gets\Enc_{\pk_1}^{\EG}(g^{-\mu_1})$ & & \hspace*{1em}\\
-	
-	& & $c'_1\gets\Enc_{\pk_1}^{\EG}(g^{\aux'_1})$ &
-	& $x\gets g_1^{-\mu_2\cdot\aux'_2}u_{1,0}^{\eta_{1,2}+\xi_0\eta_{2,2}}u_{2,0}^{\theta_2}e_0^{\mu_2}v_0^{\nu_2}$ \\
-	
-	& & $t\gets u_{1,0}^{\eta_{1,1}+\xi_0\eta_{2,1}}u_{2,0}^{\theta_1}e_0^{\mu_1}v_0^{\nu_1}$&
-	 	$m_1,c'_1$ &
-	 	$t\gets\Enc_{\pk_1}^{\EG}(x)$\\
-	
-	$h_x\gets\Hash_x(\hk_0,\Laux,C_1,C_2)$ &
-	& $h_0=g_1^{-\mu_1\cdot\aux'_1}\cdot\Dec_{\sk_1}^{\EG}(m_2)\cdot t$ &
-	 	$m_2$ &
-	 	$m_2\gets m_1^{\aux'_2}\times (c'_1)^{-\mu_2}\times t$ \\
-	
-	$h_0\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_0,r)$ & &
-		$h_x=(\hp[1]\cdot \hp[2]^{\xi_1})^{r_1}\cdot h_{x,2}$ &
-		$h_{x,2}$ &
-		$h_{x,2}=(\hp[1]\cdot h_p[2]^{\xi_2})^{r_2}$ \\
-};
-
-\draw[->,dashed] (m-6-2.south west)--(m-6-2.south east);
-\draw[->,dashed] (m-7-2.south east)--(m-7-2.south west);
-\draw[->,dashed] (m-6-4.south east)--(m-6-4.south west);
-\draw[->] (m-9-4.south west)--(m-9-4.south east);
-\draw[->] (m-10-4.south east)--(m-10-4.south west);
-\draw[->] (m-11-4.south east)--(m-11-4.south west);
-
-\draw ([xshift=0pt,yshift=-3.5pt] m-10-3.south west) rectangle ([xshift=0pt,yshift=5pt] m-7-5.north east);
-\coordinate[label=right:$\Hash_0^D$] (hx) at (m-9-5.north east);
-\draw ([xshift=0pt,yshift=-5pt] m-11-3.south west) rectangle (m-11-5.north east);
-\coordinate[label=right:$\ProjHash_x^D$] (hx) at (m-11-5.mid east);
-\end{tikzpicture}
-\caption[Cramer-Shoup D-SPHF]{Cramer-Shoup D-SPHF\\{\small Dashed lines denote broadcast messages.}}
-\label{fig:dsphf}
-\end{figure}
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}[scale=0.55, every node/.style={scale=0.55}]
+% \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 2/.style={nodes={minimum width=4em}},
+% 		column 3/.style={nodes={minimum width=15em}},
+% 		column 4/.style={nodes={minimum width=4em}},
+% 		column 5/.style={nodes={minimum width=15em}}]{
+% 	{$\bm{P_0}$} & & {$\bm{P_1}$} & & {$\bm{P_2}$}\\ [-1mm]
+% 	
+% 	$\aux$ & & $\aux_1$ & & $\aux_2$\\ [2mm]
+% 	
+% 	$\hk_0\gets \HKGen$& & $\hk_1\gets \HKGen$ & & $\hk_2\gets \HKGen$ \\
+% 	
+% 	$\hp_0\gets \PKGen(\hk_0)$ & &
+% 	$\hp_1\gets \PKGen(\hk_1)$ & &
+% 	$\hp_2\gets \PKGen(\hk_2)$ \\
+% 	
+% 	$\ell=(P_0,P_1,P_2)$ & & $\ell_1=(P_1,P_0,P_2)$ & & $\ell_2=(P_2,P_0,P_1)$ \\
+% 	
+% 	$C_0\gets\Enc_{\pk}^{\CS}(\ell,\aux';r)$ &
+% 		$C_0,\hp_0$ &
+% 		$C_1\gets\Enc_{\pk}^{\CS}(\ell_1,\aux'_1;r_1)$ &
+% 		$C_2,\hp_2$ &
+% 		$C_2\gets\Enc_{\pk}^{\CS}(\ell_2,\aux'_2;r_2)$ \\
+% 	
+% 	& $C_1,\hp_1$ &
+% 		$m_1\gets\Enc_{\pk_1}^{\EG}(g^{-\mu_1})$ & & \hspace*{1em}\\
+% 	
+% 	& & $c'_1\gets\Enc_{\pk_1}^{\EG}(g^{\aux'_1})$ &
+% 	& $x\gets g_1^{-\mu_2\cdot\aux'_2}u_{1,0}^{\eta_{1,2}+\xi_0\eta_{2,2}}u_{2,0}^{\theta_2}e_0^{\mu_2}v_0^{\nu_2}$ \\
+% 	
+% 	& & $t\gets u_{1,0}^{\eta_{1,1}+\xi_0\eta_{2,1}}u_{2,0}^{\theta_1}e_0^{\mu_1}v_0^{\nu_1}$&
+% 	 	$m_1,c'_1$ &
+% 	 	$t\gets\Enc_{\pk_1}^{\EG}(x)$\\
+% 	
+% 	$h_x\gets\Hash_x(\hk_0,\Laux,C_1,C_2)$ &
+% 	& $h_0=g_1^{-\mu_1\cdot\aux'_1}\cdot\Dec_{\sk_1}^{\EG}(m_2)\cdot t$ &
+% 	 	$m_2$ &
+% 	 	$m_2\gets m_1^{\aux'_2}\times (c'_1)^{-\mu_2}\times t$ \\
+% 	
+% 	$h_0\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_0,r)$ & &
+% 		$h_x=(\hp[1]\cdot \hp[2]^{\xi_1})^{r_1}\cdot h_{x,2}$ &
+% 		$h_{x,2}$ &
+% 		$h_{x,2}=(\hp[1]\cdot h_p[2]^{\xi_2})^{r_2}$ \\
+% };
+%
+% \draw[->,dashed] (m-6-2.south west)--(m-6-2.south east);
+% \draw[->,dashed] (m-7-2.south east)--(m-7-2.south west);
+% \draw[->,dashed] (m-6-4.south east)--(m-6-4.south west);
+% \draw[->] (m-9-4.south west)--(m-9-4.south east);
+% \draw[->] (m-10-4.south east)--(m-10-4.south west);
+% \draw[->] (m-11-4.south east)--(m-11-4.south west);
+%
+% \draw ([xshift=0pt,yshift=-3.5pt] m-10-3.south west) rectangle ([xshift=0pt,yshift=5pt] m-7-5.north east);
+% \coordinate[label=right:$\Hash_0^D$] (hx) at (m-9-5.north east);
+% \draw ([xshift=0pt,yshift=-5pt] m-11-3.south west) rectangle (m-11-5.north east);
+% \coordinate[label=right:$\ProjHash_x^D$] (hx) at (m-11-5.mid east);
+% \end{tikzpicture}
+% \caption[Cramer-Shoup D-SPHF]{Cramer-Shoup D-SPHF\\{\small Dashed lines denote broadcast messages.}}
+% \label{fig:dsphf}
+% \end{figure}
 
 \subsubsection{Smoothness of extended Cramer-Shoup SPHF}\label{sec:excssmoothness}
 We want to discuss the statistical smoothness of extended \ac{SPHF} from Theorem \ref{theo:smoothnessc} in this section.
@@ -512,7 +513,8 @@ We consider the same setting as \citet{Katz2012a} here, in which the client comp
 \subsection{A Two-Server PAKE Framework}
 % Using \ac{D-SPHF} we can build efficient \ac{2PAKE} protocols.
 Considering the setting from \citet{Katz2012a} means that a client negotiates independent session keys with both servers that hold $\share_1+\share_2=\pwd$.
-We omit the second server in the description of the protocol in Figure \ref{fig:twopake} as the framework is symmetric in the sense that the second server $\Server_2$ performs like $\Server_1$.
+We omit the second server in the description of the protocol as the framework is symmetric in the sense that the second server $\Server_2$ performs like $\Server_1$.
+% in Figure \ref{fig:twopake}
 The framework follows the same principle as the latest \ac{PAKE} frameworks from \acp{SPHF}.
 In particular it can be seen as a two-server variant of the \ac{PAKE} protocol from \citet{Katz2011}.
 
@@ -531,72 +533,72 @@ Eventually, \Client holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\sk_2=h_{0,2}\cdot h
 An instantiation of the framework using labelled Cramer-Shoup encryption and the aforementioned \ac{D-SPHF} yields a secure \ac{2PAKE} protocol.
 Note that this actually requires two \ac{D-SPHF} executions.
 
-\begin{figure}[!t]
-\centering
-\begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
-\matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 2/.style={nodes={minimum width=10em}},
-		column 3/.style={nodes={minimum width=20em}},
-		column 4/.style={nodes={minimum width=5em}}]{
-	{\Client} & & {$\Server_1$} \\ [-1mm]
-	
-	$\pk,\pwd$ & & $\pk,\share_1,\sk_1,\pk_2$ & \\ [2mm]
-	
-	$\hk_{0,1}\gets \HKGen(\Laux), \hk_{0,2}\gets \HKGen(\Laux)$ & &
-	$\hk_{1,1}\gets \HKGen(\Laux), \hk_{1,2}\gets \HKGen(\Laux)$ & \\
-	
-	$\hp_{0,1}\gets \PKGen(\hk_{0,1}), \hp_{0,2}\gets \PKGen(\hk_{0,2})$ & &
-	$\hp_{1,1}\gets \PKGen(\hk_{1,1}), \hp_{1,2}\gets \PKGen(\hk_{1,2})$ & \\
-	
-	$\ell_{0,1}=(C,\Server_1,\Server_2), \ell_{0,2}=(C,\Server_2,\Server_1)$ & & $\ell_1=(\Server_1,C,\Server_2)$ & \\
-	
-	$C_{0,1}\gets\Enc_{\pk}^\cL(\ell_{0,1},\pwd;r_{0,1}), C_{0,2}\gets\Enc_{\pk}^\cL(\ell_{0,2},\pwd;r_{0,2})$ &
-	$\hp_{0,1},C_{0,1},\hp_{0,2},C_{0,2}$ &
-	$C_1\gets\Enc_\pk^\cL(\ell_1,\share_1,r_1)$ &
-	$\hp_{2,1},\hp_{2,2},C_2$ \\
-	
-	 &
-	$\hp_{1,1},\hp_{1,2},C_1$ &
-	 & \\
-	
-	$h_{0,1}\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_{0,1},r_{0,1})$ & &
-	$h_{0,1}\gets\Hash_0^{D}(C_{0,1},\hk_{1,1},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
-
-	$h_{0,2}\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_{0,2},r_{0,2})$ & &
-	$h_{x,1}\gets\ProjHash_x^{D}(\hp_{1,1},C_1,r_1)$ & \hspace*{5em} \\
-	
-	$h_{x,1}\gets\Hash_x(\hk_{0,1},\Laux,C_1,C_2)$ & &
-	$\Hash_0^{D}(C_{0,2},\hk_{1,2},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
-	
-	$h_{x,2}\gets\Hash_x(\hk_{0,2},\Laux,C_1,C_2)$ & &
-	$\ProjHash_x^{D}(\hp_{1,2},C_1,r_1)$ & \hspace*{5em} \\
-	
-	$\sk_1=h_{0,1} h_{x,1},~\sk_2=h_{0,2} h_{x,2}$ &
-	& $\sk_1=h_{0,1} h_{x,1}$ & \hspace*{5em} \\
-};
-
-\draw[->,dashed] (m-6-2.south west)--(m-6-2.south east);
-\draw[<-,dashed] (m-7-2.south west)--(m-7-2.south east);
-\draw[->,dashed] (m-6-4.south east)--(m-6-4.south west);
-
-\draw[<->] (m-8-4.west)--(m-8-4.east);
-\draw[<->] (m-9-4.west)--(m-9-4.east);
-\draw[<->] (m-10-4.west)--(m-10-4.east);
-\draw[<->] (m-11-4.west)--(m-11-4.east);
-
-\draw[dashed] ([xshift=0pt,yshift=5pt] m-8-3.north west) -- ([xshift=0pt,yshift=9pt] m-8-4.north east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-8-3.north west) -- ([xshift=0pt,yshift=0pt] m-11-3.south west);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-8-3.south west) -- ([xshift=0pt,yshift=-4pt] m-8-4.south east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-9-3.south west) -- ([xshift=0pt,yshift=-4pt] m-9-4.south east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.south west) -- ([xshift=0pt,yshift=-4pt] m-10-4.south east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=-4pt] m-11-4.south east);
-
-\end{tikzpicture}
-\caption[Two-Server PAKE framework using D-SPHF]{Two-Server PAKE framework using D-SPHF
-\\{\small Dashed lines denote broadcast messages.}}
-\label{fig:twopake}
-\end{figure}
+% \begin{figure}[!t]
+% \centering
+% \begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
+% \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 2/.style={nodes={minimum width=10em}},
+% 		column 3/.style={nodes={minimum width=20em}},
+% 		column 4/.style={nodes={minimum width=5em}}]{
+% 	{\Client} & & {$\Server_1$} \\ [-1mm]
+% 	
+% 	$\pk,\pwd$ & & $\pk,\share_1,\sk_1,\pk_2$ & \\ [2mm]
+% 	
+% 	$\hk_{0,1}\gets \HKGen(\Laux), \hk_{0,2}\gets \HKGen(\Laux)$ & &
+% 	$\hk_{1,1}\gets \HKGen(\Laux), \hk_{1,2}\gets \HKGen(\Laux)$ & \\
+% 	
+% 	$\hp_{0,1}\gets \PKGen(\hk_{0,1}), \hp_{0,2}\gets \PKGen(\hk_{0,2})$ & &
+% 	$\hp_{1,1}\gets \PKGen(\hk_{1,1}), \hp_{1,2}\gets \PKGen(\hk_{1,2})$ & \\
+% 	
+% 	$\ell_{0,1}=(C,\Server_1,\Server_2), \ell_{0,2}=(C,\Server_2,\Server_1)$ & & $\ell_1=(\Server_1,C,\Server_2)$ & \\
+% 	
+% 	$C_{0,1}\gets\Enc_{\pk}^\cL(\ell_{0,1},\pwd;r_{0,1}), C_{0,2}\gets\Enc_{\pk}^\cL(\ell_{0,2},\pwd;r_{0,2})$ &
+% 	$\hp_{0,1},C_{0,1},\hp_{0,2},C_{0,2}$ &
+% 	$C_1\gets\Enc_\pk^\cL(\ell_1,\share_1,r_1)$ &
+% 	$\hp_{2,1},\hp_{2,2},C_2$ \\
+% 	
+% 	 &
+% 	$\hp_{1,1},\hp_{1,2},C_1$ &
+% 	 & \\
+% 	
+% 	$h_{0,1}\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_{0,1},r_{0,1})$ & &
+% 	$h_{0,1}\gets\Hash_0^{D}(C_{0,1},\hk_{1,1},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
+%
+% 	$h_{0,2}\gets\ProjHash_0(\hp_1,\hp_2,\Laux,C_{0,2},r_{0,2})$ & &
+% 	$h_{x,1}\gets\ProjHash_x^{D}(\hp_{1,1},C_1,r_1)$ & \hspace*{5em} \\
+% 	
+% 	$h_{x,1}\gets\Hash_x(\hk_{0,1},\Laux,C_1,C_2)$ & &
+% 	$\Hash_0^{D}(C_{0,2},\hk_{1,2},\share_1,\sk_1,\pk_2)$ & \hspace*{5em} \\
+% 	
+% 	$h_{x,2}\gets\Hash_x(\hk_{0,2},\Laux,C_1,C_2)$ & &
+% 	$\ProjHash_x^{D}(\hp_{1,2},C_1,r_1)$ & \hspace*{5em} \\
+% 	
+% 	$\sk_1=h_{0,1} h_{x,1},~\sk_2=h_{0,2} h_{x,2}$ &
+% 	& $\sk_1=h_{0,1} h_{x,1}$ & \hspace*{5em} \\
+% };
+%
+% \draw[->,dashed] (m-6-2.south west)--(m-6-2.south east);
+% \draw[<-,dashed] (m-7-2.south west)--(m-7-2.south east);
+% \draw[->,dashed] (m-6-4.south east)--(m-6-4.south west);
+%
+% \draw[<->] (m-8-4.west)--(m-8-4.east);
+% \draw[<->] (m-9-4.west)--(m-9-4.east);
+% \draw[<->] (m-10-4.west)--(m-10-4.east);
+% \draw[<->] (m-11-4.west)--(m-11-4.east);
+%
+% \draw[dashed] ([xshift=0pt,yshift=5pt] m-8-3.north west) -- ([xshift=0pt,yshift=9pt] m-8-4.north east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-8-3.north west) -- ([xshift=0pt,yshift=0pt] m-11-3.south west);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-8-3.south west) -- ([xshift=0pt,yshift=-4pt] m-8-4.south east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-9-3.south west) -- ([xshift=0pt,yshift=-4pt] m-9-4.south east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.south west) -- ([xshift=0pt,yshift=-4pt] m-10-4.south east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=-4pt] m-11-4.south east);
+%
+% \end{tikzpicture}
+% \caption[Two-Server PAKE framework using D-SPHF]{Two-Server PAKE framework using D-SPHF
+% \\{\small Dashed lines denote broadcast messages.}}
+% \label{fig:twopake}
+% \end{figure}
 
 \subsubsection{Security Analysis}
 We use the well-known game based \ac{PAKE} model first introduced by \citet{Bellare2000} in it's two-server variant by \citet{Katz2012a} (cf. Section \ref{sec:2pake-model} Chapter \ref{ch:prelims}).
@@ -604,7 +606,8 @@ We use the well-known game based \ac{PAKE} model first introduced by \citet{Bell
 Security of the \ac{2PAKE} framework follows directly from the \ac{CCA}-security of the used encryption scheme and the security of the used \ac{D-SPHF}.
 
 \begin{theorem}\label{theo:twopake}
-Let $(\HKGen,\allowbreak\PKGen,\allowbreak\ProjHash_0,\allowbreak\Hash_x,\allowbreak\Hash_0^D,\allowbreak\ProjHash_x^D)$ be a secure \ac{D-SPHF} and $(\KGen$, $\Enc$, $\Dec)$ a \ac{CCA}-secure labelled encryption scheme, then the proposed framework in Figure \ref{fig:twopake} is a secure \ac{2PAKE} protocol.
+Let $(\HKGen,\allowbreak\PKGen,\allowbreak\ProjHash_0,\allowbreak\Hash_x,\allowbreak\Hash_0^D,\allowbreak\ProjHash_x^D)$ be a secure \ac{D-SPHF} and $(\KGen$, $\Enc$, $\Dec)$ a \ac{CCA}-secure labelled encryption scheme, then the proposed framework is a secure \ac{2PAKE} protocol.
+% in Figure \ref{fig:twopake}
 \end{theorem}
 
 \begin{proof}[Proof sketch]
@@ -668,78 +671,79 @@ g_1 & g_2 & h & c \\
 
 % \noindent
 The client sends the projection keys in a third round together with a signature on the session transcript to the servers.
-The protocol is depicted in Figure \ref{fig:twokoy}.
-Note that we moved $K^r$ into a separate encryption compared to the original protocol.
+% The protocol is depicted in Figure \ref{fig:twokoy}.
+Note that we have to move $K^r$ into a separate encryption compared to the original protocol.
 The ElGamal encryption of the password of party $P_i$, $\hat{C}_i\gets\Enc^\EG_{\pk_i}(g^{\pwd_i};r_i)$ is precomputed and stored on $S_{j},j\not=i,j\in\{1,2\}$.
 Eventually, the client computes hash values using the $\ProjHash_0$ function of the GL-\ac{D-SPHF} scheme on CS ciphertexts and the $\Hash_x$ function of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
 Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\ac{D-SPHF} scheme on Cramer-Shoup ciphertexts and the $\ProjHash_x^D$ protocol of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
 
-\begin{figure}[tbhp]
-\centering
-\begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
-\matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 2/.style={nodes={minimum width=8em}},
-		column 3/.style={nodes={minimum width=20em}},
-		column 4/.style={nodes={minimum width=8em}}]{
-	{\Client} & & {$\Server_1$} \\ [-1mm]
-	
-	$\crs,\pwd$ & & $\crs,\share_1,\hat{C}_2$ & \\ [2mm]
-	
-	$(\vk,\sk)\gets\Gen,~\ell=(C,\vk)$ & &
-	$(\hk_1,\hk'_1)\gets \HKGen^\CS(\Laux)$ & \\
-	
-	$C_{1,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_1)$ & &
-	 & \\
-	
-	$C_{2,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_2)$ &
-	$C_{1,0},C_{2,0},\vk$ &
-	$(\hp_1,\hp'_1)\gets \PKGen^\CS(\hk_1,\hk'_1, C_{1,0})$ & \\
-	
-	$(\hk_{1,0},\hk_{2,0})\ralgout\HKGen^\EG(\Laux)$  & & & \\
-	
-	$(\hp_{1,0},\hp_{2,0})\gets \PKGen^\EG(\hk_{1,0},\hk_{2,0},\Laux)$
-	& $C_1,\hp_1,\hp'_1$ &
-		$C_1\gets\Enc^{\EG}_{g_3}(g_1^{\share_1};r_1)$
-	& $C_2,\hp_2,\hp'_2$ \\
-	
-	$\sigma\gets\Sign(\trans,\hp_1,\hp_2)$
-	& & & \\
-	
-	$h_{0,1}\gets\ProjHash_0^\CS(\hp_1,\hp_2,\Laux,C_{1,0},r_1)$
-	& $\sigma,\hp_{1,0},\hp_{2,0}$
-	& check $C,G_2,\trans$ & \\
-	
-	$h_{0,2}\gets\ProjHash_0^\CS(\hp'_1,\hp'_2,\Laux,C_{2,0},r_2)$ & & $h_{0,1}\gets\Hash_0^{D-CS}$ & \hspace*{8em} \\
-
-	$h_{x,1}\gets\Hash_x^\EG(\hk_{1,0},\Laux,C_1,C_2)$ & & \hspace*{10em} & \hspace*{8em} \\
-	
-	$h_{x,2}\gets\Hash_x^\EG(\hk_{2,0},\Laux,C_1,C_2)$ & & $h_{x,1}\gets\ProjHash_x^{D-\EG}$ & \hspace*{8em} \\
-	
-	$\sk_1=h_{0,1} h_{x,1}, \sk_2=h_{0,2} h_{x,2}$ &
-	& $\sk_1=h_{0,1} h_{x,1}$ & \hspace*{8em} \\
-};
-
-\draw[->,dashed] (m-5-2.south west)--(m-5-2.south east);
-\draw[->,dashed] (m-7-2.south east)--(m-7-2.south west);
-\draw[->,dashed] (m-7-4.south east)--(m-7-4.south west);
-\draw[->,dashed] (m-9-2.south west)--(m-9-2.south east);
-
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.north west) -- ([xshift=0pt,yshift=4pt] m-10-4.north east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.north west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
-\draw[dashed] ([xshift=0pt,yshift=5pt] m-11-3.south west) -- ([xshift=0pt,yshift=5pt] m-11-4.south east);
-\draw[dashed] ([xshift=0pt,yshift=0pt] m-12-3.south west) -- ([xshift=0pt,yshift=-4pt] m-12-4.south east);
-
-%\draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
-
-\end{tikzpicture}
-\caption[Two-Server KOY using D-SPHF]{Two-Server KOY \cite{Katz2012a} using D-SPHF
-\\{\small Dashed lines denote broadcast messages.}}
-\label{fig:twokoy}
-\end{figure}
+% \begin{figure}[tbhp]
+% \centering
+% \begin{tikzpicture}[scale=0.5, every node/.style={scale=0.5}]
+% \matrix (m)[matrix of nodes, column  sep=.6cm,row  sep=1mm,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 2/.style={nodes={minimum width=8em}},
+% 		column 3/.style={nodes={minimum width=20em}},
+% 		column 4/.style={nodes={minimum width=8em}}]{
+% 	{\Client} & & {$\Server_1$} \\ [-1mm]
+% 	
+% 	$\crs,\pwd$ & & $\crs,\share_1,\hat{C}_2$ & \\ [2mm]
+% 	
+% 	$(\vk,\sk)\gets\Gen,~\ell=(C,\vk)$ & &
+% 	$(\hk_1,\hk'_1)\gets \HKGen^\CS(\Laux)$ & \\
+% 	
+% 	$C_{1,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_1)$ & &
+% 	 & \\
+% 	
+% 	$C_{2,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_2)$ &
+% 	$C_{1,0},C_{2,0},\vk$ &
+% 	$(\hp_1,\hp'_1)\gets \PKGen^\CS(\hk_1,\hk'_1, C_{1,0})$ & \\
+% 	
+% 	$(\hk_{1,0},\hk_{2,0})\ralgout\HKGen^\EG(\Laux)$  & & & \\
+% 	
+% 	$(\hp_{1,0},\hp_{2,0})\gets \PKGen^\EG(\hk_{1,0},\hk_{2,0},\Laux)$
+% 	& $C_1,\hp_1,\hp'_1$ &
+% 		$C_1\gets\Enc^{\EG}_{g_3}(g_1^{\share_1};r_1)$
+% 	& $C_2,\hp_2,\hp'_2$ \\
+% 	
+% 	$\sigma\gets\Sign(\trans,\hp_1,\hp_2)$
+% 	& & & \\
+% 	
+% 	$h_{0,1}\gets\ProjHash_0^\CS(\hp_1,\hp_2,\Laux,C_{1,0},r_1)$
+% 	& $\sigma,\hp_{1,0},\hp_{2,0}$
+% 	& check $C,G_2,\trans$ & \\
+% 	
+% 	$h_{0,2}\gets\ProjHash_0^\CS(\hp'_1,\hp'_2,\Laux,C_{2,0},r_2)$ & & $h_{0,1}\gets\Hash_0^{D-CS}$ & \hspace*{8em} \\
+%
+% 	$h_{x,1}\gets\Hash_x^\EG(\hk_{1,0},\Laux,C_1,C_2)$ & & \hspace*{10em} & \hspace*{8em} \\
+% 	
+% 	$h_{x,2}\gets\Hash_x^\EG(\hk_{2,0},\Laux,C_1,C_2)$ & & $h_{x,1}\gets\ProjHash_x^{D-\EG}$ & \hspace*{8em} \\
+% 	
+% 	$\sk_1=h_{0,1} h_{x,1}, \sk_2=h_{0,2} h_{x,2}$ &
+% 	& $\sk_1=h_{0,1} h_{x,1}$ & \hspace*{8em} \\
+% };
+%
+% \draw[->,dashed] (m-5-2.south west)--(m-5-2.south east);
+% \draw[->,dashed] (m-7-2.south east)--(m-7-2.south west);
+% \draw[->,dashed] (m-7-4.south east)--(m-7-4.south west);
+% \draw[->,dashed] (m-9-2.south west)--(m-9-2.south east);
+%
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.north west) -- ([xshift=0pt,yshift=4pt] m-10-4.north east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-10-3.north west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
+% \draw[dashed] ([xshift=0pt,yshift=5pt] m-11-3.south west) -- ([xshift=0pt,yshift=5pt] m-11-4.south east);
+% \draw[dashed] ([xshift=0pt,yshift=0pt] m-12-3.south west) -- ([xshift=0pt,yshift=-4pt] m-12-4.south east);
+%
+% %\draw[dashed] ([xshift=0pt,yshift=0pt] m-11-3.south west) -- ([xshift=0pt,yshift=0pt] m-12-3.south west);
+%
+% \end{tikzpicture}
+% \caption[Two-Server KOY using D-SPHF]{Two-Server KOY \cite{Katz2012a} using D-SPHF
+% \\{\small Dashed lines denote broadcast messages.}}
+% \label{fig:twokoy}
+% \end{figure}
 
 \paragraph{Security Analysis}
-Security of the protocol in Figure \ref{fig:twokoy} against passive adversaries follows immediately from \cite[Theorem 1]{Katz2012a} as we do not change the protocol.
+Security of the 2KOY protocol against passive adversaries follows immediately from \cite[Theorem 1]{Katz2012a} as we do not change the protocol.
+% in Figure \ref{fig:twokoy}
 However, \citet{Katz2012a} need additional mechanisms to prove their protocol secure against an active adversary.
 They add witness-indistinguishable $\Sigma$-protocols to the $\ProjHash_x^{D}$ and $\Hash_0^{D}$ protocols that prove correctness of their messages.
 Without giving a proof it seems that Theorem \ref{theo:twopake} also holds for the two-server KOY instantiation \emph{without} additional mechanisms.
