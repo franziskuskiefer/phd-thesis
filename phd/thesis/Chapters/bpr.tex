@@ -228,20 +228,22 @@ Input: $(\Client,\Server,f)$ & & Input: $(\Client,\Server,f)$ \\
 choose $\pwd\in_R\cD_f$ & & \\
 compute $\pi\gets\pwdint(\pwd)$ & & \\
 let $n \gets |\pwd|$ & & \\
-for $i\in[0,n-1]$ & & \\ [-.25em]
+for $i\in[0,n-1]$ & & \\
 \hspace*{1em} let $c_i\in\pwd$ & & \\
 \hspace*{1em} $\pi_i\gets\chrint(c_i)$ & & \\
 \hspace*{1em} $C_i=g^{\pi_i}h^{r_i}; C'_i=C_ih^{r'_i}$ & & \\
 shuffle $C'_i \gets C'_{k_i}$ & & \\
 let $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$ & & \\
-\hspace*{1em}$(H_1,H_2)\gets\HashP(\pi; (s_P, s_H))$ & & \\
+$s_P\gets_R\PPHSalt(\paramP)$ & & \\
+$s_H\gets_R\PHSalt(\paramP)$ & & \\
+$(H_1,H_2)\gets\HashP(\pi; (s_P, s_H))$ & & \\
 For $c_i\in\pwd$ identify set $\omega_{k_i}$ & & \\
 Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$: \\
  & $\xrightarrow{\makebox[4cm]{$\Comm_{\PoM}, \Comm_{\PoE}, \Comm_{\PoS}$}}$ & \hspace*{1em} choose $\Ch_\PoM, \Ch_\PoM, \Ch_\PoS$ \\
  & $\xleftarrow{\makebox[4cm]{$\Ch_{\PoM}, \Ch_{\PoE}, \Ch_{\PoS}$}}$ & \\
  & $\xrightarrow{\makebox[4cm]{$\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$}}$ & If $\PoM$, $\PoE$, $\PoS$ succeed\\
  & & \hspace*{1em} store $(\Client,\ver)$ \\
- & & with $\ver=(H_1,H_2,s_H)$\\
+ & & \hspace*{1em} with $\ver=(H_1,H_2,s_H)$\\
 \bottomrule
 \end{tabular}
 }

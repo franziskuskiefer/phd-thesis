@@ -518,21 +518,21 @@ It is recalled in Figure \ref{fig:tSOKE}.
 \midrule
 1. & $x \rin \ZZ_p$ & & \\
 2. & $X = g^x$ & & \\
-3. & & $\stackrel{\Client, X}{\llongrightarrow}$ & \\
+3. & & $\xrightarrow{\makebox[2cm]{$\Client, X$}}$ & \\
 4. & & & Look up \ver for $\Client$. \\
 5. & & & $y \rin \ZZ_p$ \\
 6. & & & $Y = g^y$ \\
 7. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
-8. & & $\stackrel{r, Y^{*}}{\llongleftarrow}$ & \\
+8. & & $\xleftarrow{\makebox[2cm]{$r, Y^{*}$}}$ & \\
 9. & $H \gets \HashP(\pwd, r)$ & & \\
 10. & $Y = Y^{*} / h^H$ & & \\
 11. & $Z = Y^x$ & & $Z' = X^y$ \\
 12. & $K \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ \\
 13. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
-14. & & $\stackrel{A_{1}}{\llongrightarrow}$ & \\
+14. & & $\xrightarrow{\makebox[2cm]{$A_{1}$}}$ & \\
 15. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
 16. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
-17. & & $\stackrel{A_{2}}{\llongleftarrow}$ & \\
+17. & & $\xleftarrow{\makebox[2cm]{$A_{2}$}}$ & \\
 18. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
 19. & Accept & & Accept \\
 \bottomrule
@@ -848,12 +848,12 @@ Input: Set $B_\ClientSet$ & & Input: Set $G_\ServerSet$ \\
 & neg. params & \\
 & $(n, m, k, H, E)$ & \\
 for $i\in[0,m-1]$ & & \\ [-.25em]
-\hspace*{1em} gen.  $r_i\ralgout\{0,1\}^\lambda$ & $\stackrel{\{r_i\}_{i\in[0,m-1]}}{\llongrightarrow}$ & $\sk$ $\ralgout$ $\KGen_E(\lambda)$ \\
+\hspace*{1em} gen.  $r_i\ralgout\{0,1\}^\lambda$ & $\xrightarrow{\makebox[4cm]{$\{r_i\}_{i\in[0,m-1]}$}}$ & $\sk$ $\ralgout$ $\KGen_E(\lambda)$ \\
 & & $\forall i$ $\in$ $[0,m-1]$ \\
 & & \hspace*{1em} $c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
 & & share \sk into $t_0, \dots, t_{m-1}$ ($\oplus$) \\
 & {\bf OT} on& \\
-Recover $t_i$ if $B_\ClientSet[i]=0$ & $\stackrel{B \text{ and } \{(c_i, t_i)\}_{i\in[0,m-1]}}{\lllongleftrightarrow}$ & \\
+Recover $t_i$ if $B_\ClientSet[i]=0$ & $\xleftrightarrow{\makebox[4cm]{$B$ and $\{(c_i, t_i)\}_{i\in[0,m-1]}$}}$ & \\
 Recover \sk from $t_i$ & & \\
 $\forall $ recovered $c_i$ & & \\
 \hspace*{1em} $d_i\gets\Dec_\sk(c_i)$ & & \\

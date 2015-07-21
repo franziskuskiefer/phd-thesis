@@ -105,7 +105,7 @@ Input: $(R,\pmin,\pmax),\paramP,\paramC$ & & Input: $(R,\pmin,\pmax),\paramP,\pa
 Choose $\pwd\in_R\cD_f$ & & \\
 with $f(\pwd)=\true$ & & \\
 Let $n \gets |\pwd|$ & & \\
-for $i\in[0,n-1]$ & & \\ [-.25em]
+for $i\in[0,n-1]$ & & \\
 \hspace*{1em} let $c_i\in\pwd$ & & \\
 \hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ & & \\
 \hspace*{1em} $r_i\rin\SSS_C; C_i\gets\Com(\pi_i;r_i)$ & & \\
@@ -116,7 +116,7 @@ $s_H\gets_R\PHSalt(\paramP)$ & $H,~\{C_i\}$ & \\
 $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\pi_i,r_i,\Omega')$}}$ & Let $n\gets|\{C_i\}|$ \\
  & & If $n \not\in[\pmin,\pmax]$ then ABORT\\
  & $\ZKPoK\{(\pi, s_P, s_H, r):$ & Else $C\gets\prod_{i}C_i$ \\
- & $H=\HashP(\pi; (s_P, s_H))$ & If any $\SMP$ or $\ZKPoK$ is\\
+ & $H=\HashP(\pi; (s_P, s_H))$ & \\
  & $\xrightarrow{\makebox[4cm]{$\wedge ~ C=\Com(\pi;r)\}$}}$ & If any $\SMP$ or $\ZKPoK$ is\\
  & & not successful then ABORT \\
  & & Else ACCEPT and store $H$\\

@@ -25,28 +25,44 @@ Thus we do not increase the round complexity and the protocol remains a one-roun
 % Note that depending on the used PAKE protocol we have to ensure that $H_3$ maps into an algebraic structure, suitable for use with the PAKE protocol.
 % Now client and server run any PAKE protocol on password hash $h$.
 
-\begin{figure}[tbhp]
-\centering
-\scalebox{1.0}{\begin{tikzpicture}
-\draw[] (-3.5,.5) rectangle (9,-2);
+% \begin{figure}[tbhp]
+% \centering
+% \scalebox{1.0}{\begin{tikzpicture}
+% \draw[] (-3.5,.5) rectangle (9,-2);
+%
+% \node[party,align=center] (client) at (-0.5,0) {{$\Client~ (\pwd)$}};
+% \node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (\Client, \ver)$};
+%
+% \node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver=(H,r)\gets \phi(\pwd, r)$};
+%
+% \node[dummyState] (clientR) at (1.75,-0.6){};
+% \node[dummyState] (serverR) at (5.5,-0.6){};
+% \draw[pil] (serverR) -- node[above, align=center] {$r$} (clientR);
+%
+% \node[dummyState] (clientPAKE) at (1.75,-1.6){};
+% \node[dummyState] (serverPAKE) at (5.5,-1.6){};
+% \draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on $H$} (serverPAKE);
+%
+% \end{tikzpicture}}
+% \caption{Generic VPAKE construction from PAKE}
+% \label{fig:genericVPAKE}
+% \end{figure}
 
-\node[party,align=center] (client) at (-0.5,0) {{$\Client~ (\pwd)$}};
-\node[party,align=center,text width=10em] (server) at (7.5,0) {$\Server~ (\Client, \ver)$};
-
-\node[state, align=left] at (0.5,-.5) [stateS, align=left]{$\ver=(H,r)\gets \phi(\pwd, r)$};
-
-\node[dummyState] (clientR) at (1.75,-0.6){};
-\node[dummyState] (serverR) at (5.5,-0.6){};
-\draw[pil] (serverR) -- node[above, align=center] {$r$} (clientR);
-
-\node[dummyState] (clientPAKE) at (1.75,-1.6){};
-\node[dummyState] (serverPAKE) at (5.5,-1.6){};
-\draw[pil,<->] (clientPAKE) -- node[above, align=center] {PAKE on $H$} (serverPAKE);
-
-\end{tikzpicture}}
+\begin{figure*}[t]
+\begin{center}
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: \pwd & & Input: \Client, \ver \\
+\midrule
+$\ver=(H,r)\gets \phi(\pwd, r)$ & $\xleftarrow{\makebox[2.5cm]{$r$}}$ & \\
+ & $\xleftrightarrow{\makebox[2.5cm]{PAKE on $H$}}$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
 \caption{Generic VPAKE construction from PAKE}
 \label{fig:genericVPAKE}
-\end{figure}
+\end{figure*}
 
 % \begin{figure}[htbp]
 % \centering
@@ -122,39 +138,62 @@ Assuming the second pre-image resistance of the password hashing scheme it follo
 Since $(\hpp{1},\hpp{2},\hpp{3})$ are linearly independent the resulting hash value $h= u_1^{\eta_1} u_1^{\xi\eta_2} u_2^\theta [e/(H_2h^{-s_H})]^\mu v^\nu$ is uniformly distributed in \GG. 
 %Pseudorandomness of the correctly produced hash value $h$ follows from the pseudorandomness and the CCA2 security of the used Cramer-Shoup encryption scheme.
 
-\begin{figure}[tbp] %tbp
-\centering
-\begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}, framed]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=19em, align=left}},
-		column 2/.style={nodes={minimum width=8em}},
-		column 3/.style={nodes={minimum width=19em, align=left}}]{
-	\node[align=center](client){$\bm{C}(\pk, (id, \pi))$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); & & \node[align=center](server){$\bm{S}(\pk,(id, H=(H_1,H_2),s_H))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-	\parbox{22em}{$\hk\gets\HKGen(L_{H})$; $\hp\gets\PKGen(\hk,L_{H})$;\\
-$r\rin\ZZ_p$; $\ell=(id,\bm{S},\hp)$;\\ $C\gets \Enc^\ell(\pk,g_1^\pi;r)$;} & & \parbox{22em}{$\hk'\gets\HKGen(L_{s_H,H})$; $\hp'\gets\PKGen(\hk',L_{s_H,H})$;\\  $r' \rin \ZZ_p$; $\ell'=(\bm{S},id,\hp')$;\\ $C'\gets\Enc^{\ell'}(\pk,H_2;r')$;}  \\[1em]
-		
-	\parbox{22em}{} & $\hp,\ C$ & \parbox{22em}{} \\
-	
-	\parbox{22em}{} & $\hp',C', H_1, s_H$ & \parbox{22em}{} \\
+% \begin{figure}[tbp] %tbp
+% \centering
+% \begin{tikzpicture}[scale=0.6, every node/.style={scale=0.6}, framed]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=19em, align=left}},
+% 		column 2/.style={nodes={minimum width=8em}},
+% 		column 3/.style={nodes={minimum width=19em, align=left}}]{
+% 	\node[align=center](client){$\bm{C}(\pk, (id, \pi))$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); & & \node[align=center](server){$\bm{S}(\pk,(id, H=(H_1,H_2),s_H))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% 	\parbox{22em}{$\hk\gets\HKGen(L_{H})$; $\hp\gets\PKGen(\hk,L_{H})$;\\
+% $r\rin\ZZ_p$; $\ell=(id,\bm{S},\hp)$;\\ $C\gets \Enc^\ell(\pk,g_1^\pi;r)$;} & & \parbox{22em}{$\hk'\gets\HKGen(L_{s_H,H})$; $\hp'\gets\PKGen(\hk',L_{s_H,H})$;\\  $r' \rin \ZZ_p$; $\ell'=(\bm{S},id,\hp')$;\\ $C'\gets\Enc^{\ell'}(\pk,H_2;r')$;}  \\[1em]
+% 		
+% 	\parbox{22em}{} & $\hp,\ C$ & \parbox{22em}{} \\
+% 	
+% 	\parbox{22em}{} & $\hp',C', H_1, s_H$ & \parbox{22em}{} \\
+%
+% 	\parbox{22em}{$\ell'=(\bm{S},id,\hp')$; $H_2\gets H_1^\pi h^{s_H}$;\\
+% $K_1\gets\Hash(\hk, L_H, C')$;\\
+% $K_2\gets\ProjHash(\hp', L_{s_H,H}, C, \pi, r)$;\\
+% $K \gets K_1 \cdot K_2$
+% } & & \parbox{22em}{$\ell = (id,\bm{S},\hp)$;\\ $K_1 \gets \ProjHash(\hp, L_H, C', r')$;\\ $K_2 \gets \Hash(\hk', L_{s_H,H}, C)$;\\ $K\gets K_1 \cdot K_2$} \\
+%
+% & & \\
+% };
+%
+% \draw[<-] (m-3-2.south east)--(m-3-2.south west);
+% \draw[->] (m-4-2.south east)--(m-4-2.south west);
+% \end{tikzpicture}
+% \caption{A VPAKE Protocol for Blindly Registered ASCII-based Passwords}
+% \label{fig:vpakeprotocol}
+% \end{figure}
 
-	\parbox{22em}{$\ell'=(\bm{S},id,\hp')$; $H_2\gets H_1^\pi h^{s_H}$;\\
-$K_1\gets\Hash(\hk, L_H, C')$;\\
-$K_2\gets\ProjHash(\hp', L_{s_H,H}, C, \pi, r)$;\\
-$K \gets K_1 \cdot K_2$
-} & & \parbox{22em}{$\ell = (id,\bm{S},\hp)$;\\ $K_1 \gets \ProjHash(\hp, L_H, C', r')$;\\ $K_2 \gets \Hash(\hk', L_{s_H,H}, C)$;\\ $K\gets K_1 \cdot K_2$} \\
-
-& & \\
-};
-
-\draw[<-] (m-3-2.south east)--(m-3-2.south west);
-\draw[->] (m-4-2.south east)--(m-4-2.south west);
-\end{tikzpicture}
-\caption{A VPAKE Protocol for Blindly Registered ASCII-based Passwords}
+\begin{figure*}[t]
+\begin{center}
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: $\pk, \Server, \pi$ & & Input: $\pk,\Client, \ver=(H_1,H_2,s_H)$ \\
+\midrule
+$\hk\gets\HKGen(L_{H})$ & & $\hk'\gets\HKGen(L_{s_H,H})$ \\
+$\hp\gets\PKGen(\hk,L_{H})$ & & $\hp'\gets\PKGen(\hk',L_{s_H,H})$ \\
+$r\rin\ZZ_p$; $\ell=(id,\bm{S},\hp)$ & & $r' \rin \ZZ_p$; $\ell'=(\bm{S},id,\hp')$ \\
+$C\gets \Enc^\ell(\pk,g_1^\pi;r)$ & & $C'\gets\Enc^{\ell'}(\pk,H_2;r')$ \\
+ & $\xrightarrow{\makebox[2.5cm]{$\hp,\ C$}}$ & \\
+ & $\xleftarrow{\makebox[2.5cm]{$\hp',C', H_1, s_H$}}$ & \\
+$\ell'=(\bm{S},id,\hp')$; $H_2\gets H_1^\pi h^{s_H}$ & & $\ell = (id,\bm{S},\hp)$ \\
+$K_1\gets\Hash(\hk, L_H, C')$; & & $K_1 \gets \ProjHash(\hp, L_H, C', r')$ \\
+$K_2\gets\ProjHash(\hp', L_{s_H,H}, C, \pi, r)$ & & $K_2 \gets \Hash(\hk', L_{s_H,H}, C)$\\
+$K \gets K_1 \cdot K_2$ & &  $K\gets K_1 \cdot K_2$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{A VPAKE Protocol for Passwords registered with ZKPPC-based approaches}
 \label{fig:vpakeprotocol}
-\end{figure}
-
+\end{figure*}
 
 Our concrete VPAKE construction is illustrated in Figure~\ref{fig:vpakeprotocol}. 
 We assume that \Client uses $\pi\gets\pwdint(\pwd)$ as its input and has already sent its login name $id$ to \Server who picked the corresponding tuple $(id,\ver)$ from its password database. 

@@ -74,16 +74,16 @@ Functionality $f_\Pi$ outputs $f(\ClientSet)$ to the server and client, \ie $f_{
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\
-Input: \ClientSet & & Input: $(\ServerSet,\Gamma_\ServerSet)$ \\
+Input: \ClientSet & & Input: $f=(\ServerSet,\Gamma_\ServerSet)$ \\
 \midrule
  & & choose a secret \secret $\in_R$ $\mathbb{Z}_p$ \\
  & & generate matrix $M$ \\
  & & and function $\rho$ from $f$ \\
- & $\xrightarrow{\makebox[2cm]{$f, M, \rho$}}$ & generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
-get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$ & \ac{OBI} & \\
+ & $\xleftarrow{\makebox[2cm]{$f, M, \rho$}}$ & generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
+get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$ & $\xleftrightarrow{\makebox[2cm]{\ac{OBI}}}$ & \\
 if possible: recover $\secret$ from the shares & & \\
 else: abort and output $\bot$ & & \\
-$m_\secret\gets H(\secret,\Client,\Server,\trans)$ & $m_\secret$ & accept iff $m_\secret$ \verify $H(\secret,\Client,\Server,\trans)$\\
+$m_\secret\gets H(\secret,\Client,\Server,\trans)$ & $\xrightarrow{\makebox[2cm]{$m_\secret$}}$ & accept if $m_\secret$ \verify $H(\secret,\Client,\Server,\trans)$\\
 \bottomrule
 \end{tabular}
 }
@@ -216,7 +216,7 @@ We can use the algorithm proposed by \citet{LiuC10} to translate such threshold 
 It is also not difficult to see how \ac{SPC} can be applied in the password policy checking setting, since a password can be seen as a set of characters as described in Section \ref{sec:spc-passwords}. 
 
 \subsubsection{The Password Registration Protocol}
-An overview of the proposed password registration protocol is given in Fig. \ref{fig:bpr}. 
+An overview of the proposed password registration protocol is given in Fig. \ref{fig:bpr-spc}. 
 To simplify the presentation, we assume the protocol is run over a secure channel, \eg implemented as a server authenticated \ac{TLS} channel. 
 The secure channel will address common network-based attacks such as replay, eavesdropping and man-in-the-middle. 
 The server publishes its password policy $f=(\ServerSet,\Gamma_\ServerSet)$ where \ServerSet is a set transformed from alphabet $\Sigma$ according to Section \ref{sec:spc-passwords} and $\Gamma_\ServerSet$ is a threshold access structure defined over \ServerSet. 
@@ -240,51 +240,80 @@ At the end of the \ac{SPC} protocol the server learns whether the client's passw
 If the \ac{SPC} execution is successful, the server computes the hash of the product of the client's $u_i$ values $h\gets H_3(\prod_{i=1}^v u_i)$, and stores the password verifier $\ver = (h,e,N,d,\bm{u})$, where $(e,N,d)$ is the RSA key pair from the setup phase and $\bm{u}=\{u_1,\dots,u_v\}$ is the vector of client ``commitments''.
 Note that storing $(d, \bm{u})$ as part of \ver is only a technical necessity in order to prove security.
 
-\begin{figure}[!t]
-\centering
-\scalebox{0.7}{
-\begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
-		column 2/.style={nodes={minimum width=10em}},
-		column 3/.style={nodes={minimum width=17em, align=right, text width=17em}}]{
-	\node[align=center](client){$C\ (f, \pwd)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& {\it Setup Phase} \& \node[align=center](server){$S$ $(f,\ServerSet$ $=$ $\{s_1,\dots,s_w\})$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-	\parbox{18em}{$k\gets H_1(\pwd)$} \& 
-	  $(e,N)$ \& 
-	  $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\  %Define policy $f$
-	\parbox{18em}{$\ClientSet=\{c_1,c_2,\ldots,c_v\}\gets\PwdMap(\pwd)$} \&  \&  \\
-	\parbox{18em}{$\forall i\in[1,v]:~ r_i\gets f_k(i),~ u_i\gets H_2(c_i)\cdot r_i^e$} \& 
-	  $(u_1,\cdots,u_v)$ \& 
-	  abort if $v$ $<$ \pmin \\
-	\parbox{18em}{$\hat{\ClientSet} = \emptyset$} \& 
-	  $(u'_1,\cdots,u'_v)$ \& 
-	  $\forall i$ $\in$ $[1,v]$: $u'_i$ $=$ $u_i^d$;~ $\hat{\ServerSet}$ $=$ $\emptyset$ \\
-	\parbox{18em}{$\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$} \& \&
-	  $\forall i$ $\in$ $[1,w]$: $\hat{\ServerSet}$ $\cup$ $(H_2(s_i))^d$ \\
-\parbox{18em}{} \& \&
-	  $\hat{f}$ $\gets$ $f,\hat{\ServerSet}$ \\
-	\hfill \& \hfill \& \hfill \\
-	\parbox{18em}{} \& {\it Policy Checking Phase} \& \\
-	\parbox{18em}{} \& {$\hat{\ClientSet}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$} \& 
-	  If \ac{SPC} execution is successful \\
-	\parbox{18em}{} \& \hfill \& %$\forall c_i\in\pwd$ but not in \ClientSet:
-	  store $\ver$ $\gets$ $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
-};
+% \begin{figure}[!t]
+% \centering
+% \scalebox{0.7}{
+% \begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
+% 		column 2/.style={nodes={minimum width=10em}},
+% 		column 3/.style={nodes={minimum width=17em, align=right, text width=17em}}]{
+% 	\node[align=center](client){$C\ (f, \pwd)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& {\it Setup Phase} \& \node[align=center](server){$S$ $(f,\ServerSet$ $=$ $\{s_1,\dots,s_w\})$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% 	\parbox{18em}{$k\gets H_1(\pwd)$} \& 
+% 	  $(e,N)$ \& 
+% 	  $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\  %Define policy $f$
+% 	\parbox{18em}{$\ClientSet=\{c_1,c_2,\ldots,c_v\}\gets\PwdMap(\pwd)$} \&  \&  \\
+% 	\parbox{18em}{$\forall i\in[1,v]:~ r_i\gets f_k(i),~ u_i\gets H_2(c_i)\cdot r_i^e$} \& 
+% 	  $(u_1,\cdots,u_v)$ \& 
+% 	  abort if $v$ $<$ \pmin \\
+% 	\parbox{18em}{$\hat{\ClientSet} = \emptyset$} \& 
+% 	  $(u'_1,\cdots,u'_v)$ \& 
+% 	  $\forall i$ $\in$ $[1,v]$: $u'_i$ $=$ $u_i^d$;~ $\hat{\ServerSet}$ $=$ $\emptyset$ \\
+% 	\parbox{18em}{$\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$} \& \&
+% 	  $\forall i$ $\in$ $[1,w]$: $\hat{\ServerSet}$ $\cup$ $(H_2(s_i))^d$ \\
+% \parbox{18em}{} \& \&
+% 	  $\hat{f}$ $\gets$ $f,\hat{\ServerSet}$ \\
+% 	\hfill \& \hfill \& \hfill \\
+% 	\parbox{18em}{} \& {\it Policy Checking Phase} \& \\
+% 	\parbox{18em}{} \& {$\hat{\ClientSet}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$} \& 
+% 	  If \ac{SPC} execution is successful \\
+% 	\parbox{18em}{} \& \hfill \& %$\forall c_i\in\pwd$ but not in \ClientSet:
+% 	  store $\ver$ $\gets$ $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
+% };
+%
+% \draw[<-] (m-2-2.south west) -- (m-2-2.south east);
+% \draw[->] (m-4-2.south west) -- (m-4-2.south east);
+% \draw[<-] (m-5-2.south west) -- (m-5-2.south east);
+% \draw[dashed] (m-8-1.south west) -- (m-8-3.south east);
+% \draw[<->] (m-10-2.south west) -- (m-10-2.south east);
+% \end{tikzpicture}}
+% \caption{Password Registration using secure SPC}%\vspace{-5mm}
+% \label{fig:bpr-spc}
+% \end{figure}
 
-\draw[<-] (m-2-2.south west) -- (m-2-2.south east);
-\draw[->] (m-4-2.south west) -- (m-4-2.south east);
-\draw[<-] (m-5-2.south west) -- (m-5-2.south east);
-\draw[dashed] (m-8-1.south west) -- (m-8-3.south east);
-\draw[<->] (m-10-2.south west) -- (m-10-2.south east);
-\end{tikzpicture}}
-\caption{Password Registration using secure SPC}%\vspace{-5mm}
-\label{fig:bpr}
-\end{figure}
+\begin{figure*}[t]
+\begin{center}
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: $f, \pwd$ & & Input: $f,\ServerSet=\{s_1,\dots,s_w\}$ \\
+\midrule
+ & {\it Setup Phase} & \\
+\cmidrule{2-2}
+$k\gets H_1(\pwd)$ & $\xleftarrow{\makebox[2cm]{$(e,N)$}}$ & $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\
+$\ClientSet\gets\PwdMap(\pwd)$ & & \\
+$\forall i\in[1,v]:~ r_i\gets f_k(i)$ & & \\
+$u_i\gets H_2(c_i)\cdot r_i^e$ & $\xrightarrow{\makebox[2cm]{$(u_1,\cdots,u_v)$}}$ & abort if $v$ $<$ \pmin \\
+$\hat{\ClientSet} = \emptyset$ & $\xleftarrow{\makebox[2cm]{$(u'_1,\cdots,u'_v)$}}$ & $\forall i \in [1,v]: u'_i=u_i^d;~ \hat{\ServerSet}=\emptyset$ \\
+$\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$ & & $\forall i \in [1,w]: \hat{\ServerSet} \cup (H_2(s_i))^d$ \\
+ & & $\hat{f} \gets f,\hat{\ServerSet}$ \\
+ & {\it Policy Checking Phase} & \\
+\cmidrule{2-2}
+ & $\hat{\ClientSet}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$ & \\
+ & & If \ac{SPC} is successful \\
+ & & store $\ver$ \\
+ & & $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Password Registration using secure SPC}
+\label{fig:bpr-spc}
+\end{figure*}
 
 \paragraph{Password Length Hiding (Enhanced Protocol)} 
-The protocol in Figure~\ref{fig:bpr} leaks the password length to the server. By counting the number of blinded characters $u_i$, the server learns the password length $v$. 
+The protocol in Figure~\ref{fig:bpr-spc} leaks the password length to the server. By counting the number of blinded characters $u_i$, the server learns the password length $v$. 
 This is intentional because this peripheral information leakage allows the server to efficiently enforce the minimal password length in the policy. 
 However, in cases where the password length is considered sensitive, it can be hidden from the  server at small additional cost.
 (This is is contrast to the \ac{BPR} protocol proposed in the previous section, where it is expensive to achieve this.)
