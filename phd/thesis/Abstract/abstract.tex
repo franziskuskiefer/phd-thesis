@@ -4,9 +4,14 @@
 Password-based authentication is the most popular authentication mechanisms for humans today, not only on the internet.
 Despite increasing efforts to move to more secure alternatives, password-based authentication is most likely to stay for the foreseeable future due to its user experience and convenience.
 However, although secure cryptographic protocols for password-based authentication and key-exchange exist, they are hardly used in practice.
-Previous work on password-based cryptography include secure password-based key-exchange, authentication, and secret sharing protocols.
+While previous work on password-based cryptography include secure password-based key-exchange, authentication, and secret sharing protocols, this thesis sets out to bring cryptographic password-based protocols closer to real world deployment as well as improving their security guarantees.
+To this end we proposes frameworks for password-based authentication and key-exchange in the verifier-based and two-server setting as a step towards deploying cryptographically secure password-based protocols.
+These frameworks do not only include the authentication/key-exchange step, which has been researched before, but also investigate registration of prospective client passwords, which has not been researched before.
 
-This thesis sets out to bring cryptographic password-based protocols closer to real world deployment as well as improving their security guarantees.
-To this end it proposes frameworks for password-based authentication and key-exchange in the verifier and two-server setting as a step towards deploying cryptographically secure password-based protocols.
-These frameworks do not only include the authentication/key-exchange step, which has been researched before, but also considers password registration, which has not been examined before.
+In particular, the first step of each framework is the secure registration of passwords with limited trust assumptions on server and client that require the server to enforce a password policy for minimum security of client passwords and entails the client to compute the password verifier or shares on the client side.
+While this first essential step for password-based authentication and key-exchange has not been researched before, the second step, the actual authentication and key-exchange protocol enjoys a large body of research in the plain single-server setting.
+In this thesis however we focus on the less well researched verifier-based and two-server settings where we propose new protocols for both settings and the first security model for two-server protocols in the UC framework.
+
+The theoretical work is underpinned by implementations of the password registration phase that allows to compare not only security but also performance of the proposed protocols.
+To further facilitate adoption we show real world usage of the verifier-based framework by implementing a demo application and Firefox extension that allow to use the framework for account registration and login.
 \end{abstract}
