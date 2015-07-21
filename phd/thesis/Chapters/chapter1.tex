@@ -165,9 +165,8 @@ As shown by \citet{MazurekKVBCCKSU13}, password strength is a complex matter (du
 \paragraph{Password Hashing and Storage}
 In order to securely store passwords or use them for encryption, hashing them in some form is essential to make attacks on them more expensive.
 The current state of the art password hashing schemes are the \ac{PBKDF2} \cite{rfc2898}, bcrypt \cite{ProvosM99}, and scrypt \cite{rfcScrypt}.
-This very limited number of possible password hashing schemes should be resolved by the currently running password hashing competition (\url{https://password-hashing.net}).
+This very limited number of possible password hashing schemes should be resolved by the recently concluded password hashing competition (\url{https://password-hashing.net} that proposes a new hashing scheme called Argon2 by \citet{Biryukov15}).
 Other more technical means to avoid stealing stored passwords is to hide them in a huge amount of data that makes it impossible to steal without being detected (a recent implementation is given by Taplink \url{https://taplink.co/technology/}).
-\mynote{check password hashing competition for final version when done pwdcon'15 Vegas}
 
 \subsection{Password-based Cryptography}
 Cryptography research in the area of passwords focuses mainly on \ac{PAKE} protocols and recently \ac{PPSS}.

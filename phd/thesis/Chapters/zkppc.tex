@@ -59,40 +59,74 @@ If this final \ac{ZKPoK} is successful then \Server accepts the hash value $H$.
 %Therefore, the client must further prove in zero-knowledge to the server its knowledge of $\pwd$ and randomness that were   used to generate $H$ and $C$.
 %The server accepts the password verifier $H$ for $A$ if all these proofs are successful.
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[scale=0.64, every node/.style={scale=0.64}, framed]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=17em, align=left}}, %,text width=15em
-		column 2/.style={nodes={minimum width=19em, align=center}},
-		column 3/.style={nodes={minimum width=16em, align=right}}]{
-	\node[align=center](client){$\Client(f=(R,\pmin,\pmax),\paramP,\paramC)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); & & \node[align=center](server){$\Server(f=(R,\pmin,\pmax),\paramP,\paramC)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-\parbox{17em}{Choose $\pwd\in_R\cD$ with $f(\pwd)=\true$;\\ Let $n \gets |\pwd|$; \\
-$\forall i = 0,\dots,n-1$:\\
-    \hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ for $c_i\in\pwd$;\\
-    \hspace*{1em} $r_i\rin\SSS_C$; $C_i\gets\Com(\pi_i;r_i)$;\\
-$\pi\gets\sum_i\pi_i$; $r\gets\sum_ir_i$; $C\gets\prod_{i}C_i$;\\
-$s_P\gets_R\PPHSalt(\paramP)$;\\
-$s_H\gets_R\PHSalt(\paramP)$;\\
-$H\gets \HashP(\pi;(s_P, s_H))$;} & & \hfill \\ [2em]
-	
-	 & \parbox{19em}{\centering$H,~\{C_i\},~\forall i:~\SMP(\pi_i,r_i,\Omega')$\\[1em]} & \parbox{16em}{Let $n\gets|\{C_i\}|$.\\If $n \not\in[\pmin,\pmax]$ then ABORT.\\
-Else $C\gets\prod_{i}C_i$;\\}\\[1em]
-	
-	& \parbox{19em}{\centering$\ZKPoK\{(\pi, s_P, s_H, r):~$\\
-\hspace*{1em}$H=\HashP(\pi; (s_P, s_H)) \wedge%$\\ \hspace*{1em}
-C=\Com(\pi;r)\}$\\[2em]} & \parbox{16em}{If any $\SMP$ or $\ZKPoK$ is not successful then ABORT.\\ Else ACCEPT and store $H$.\\}  \\ [1em]
-};
+% \begin{figure}[t]
+% \centering
+% \begin{tikzpicture}[scale=0.64, every node/.style={scale=0.64}, framed]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=17em, align=left}}, %,text width=15em
+% 		column 2/.style={nodes={minimum width=19em, align=center}},
+% 		column 3/.style={nodes={minimum width=16em, align=right}}]{
+% 	\node[align=center](client){$\Client(f=(R,\pmin,\pmax),\paramP,\paramC)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); & & \node[align=center](server){$\Server(f=(R,\pmin,\pmax),\paramP,\paramC)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% \parbox{17em}{Choose $\pwd\in_R\cD$ with $f(\pwd)=\true$;\\ Let $n \gets |\pwd|$; \\
+% $\forall i = 0,\dots,n-1$:\\
+%     \hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ for $c_i\in\pwd$;\\
+%     \hspace*{1em} $r_i\rin\SSS_C$; $C_i\gets\Com(\pi_i;r_i)$;\\
+% $\pi\gets\sum_i\pi_i$; $r\gets\sum_ir_i$; $C\gets\prod_{i}C_i$;\\
+% $s_P\gets_R\PPHSalt(\paramP)$;\\
+% $s_H\gets_R\PHSalt(\paramP)$;\\
+% $H\gets \HashP(\pi;(s_P, s_H))$;} & & \hfill \\ [2em]
+% 	
+% 	 & \parbox{19em}{\centering$H,~\{C_i\},~\forall i:~\SMP(\pi_i,r_i,\Omega')$\\[1em]} & \parbox{16em}{Let $n\gets|\{C_i\}|$.\\If $n \not\in[\pmin,\pmax]$ then ABORT.\\
+% Else $C\gets\prod_{i}C_i$;\\}\\[1em]
+% 	
+% 	& \parbox{19em}{\centering$\ZKPoK\{(\pi, s_P, s_H, r):~$\\
+% \hspace*{1em}$H=\HashP(\pi; (s_P, s_H)) \wedge%$\\ \hspace*{1em}
+% C=\Com(\pi;r)\}$\\[2em]} & \parbox{16em}{If any $\SMP$ or $\ZKPoK$ is not successful then ABORT.\\ Else ACCEPT and store $H$.\\}  \\ [1em]
+% };
+%
+% \draw[<-] (m-3-2.south east)--(m-3-2.south west);
+% \draw[<-] (m-4-2.south east)--(m-4-2.south west);
+% %\draw[<->] (m-5-2.south east)--(m-5-2.south west);
+% \end{tikzpicture}
+% \caption{General ZKPPC Framework for ASCII-based Passwords}
+% \label{fig:zkpconeserver}
+% \end{figure}
 
-\draw[<-] (m-3-2.south east)--(m-3-2.south west);
-\draw[<-] (m-4-2.south east)--(m-4-2.south west);
-%\draw[<->] (m-5-2.south east)--(m-5-2.south west);
-\end{tikzpicture}
-\caption{General ZKPPC Framework for ASCII-based Passwords}
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: $(R,\pmin,\pmax),\paramP,\paramC$ & & Input: $(R,\pmin,\pmax),\paramP,\paramC$ \\
+\midrule
+Choose $\pwd\in_R\cD_f$ & & \\
+with $f(\pwd)=\true$ & & \\
+Let $n \gets |\pwd|$ & & \\
+for $i\in[0,n-1]$ & & \\ [-.25em]
+\hspace*{1em} let $c_i\in\pwd$ & & \\
+\hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ & & \\
+\hspace*{1em} $r_i\rin\SSS_C; C_i\gets\Com(\pi_i;r_i)$ & & \\
+$\pi\gets\sum_i\pi_i$; $r\gets\sum_ir_i$ & & \\
+$C\gets\prod_{i}C_i$ & & \\
+$s_P\gets_R\PPHSalt(\paramP)$ & & \\
+$s_H\gets_R\PHSalt(\paramP)$ & $H,~\{C_i\}$ & \\
+$H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\pi_i,r_i,\Omega')$}}$ & Let $n\gets|\{C_i\}|$ \\
+ & & If $n \not\in[\pmin,\pmax]$ then ABORT\\
+ & $\ZKPoK\{(\pi, s_P, s_H, r):$ & Else $C\gets\prod_{i}C_i$ \\
+ & $H=\HashP(\pi; (s_P, s_H))$ & If any $\SMP$ or $\ZKPoK$ is\\
+ & $\xrightarrow{\makebox[4cm]{$\wedge ~ C=\Com(\pi;r)\}$}}$ & If any $\SMP$ or $\ZKPoK$ is\\
+ & & not successful then ABORT \\
+ & & Else ACCEPT and store $H$\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\caption{ZKPPC Framework for ASCII-based Passwords}
 \label{fig:zkpconeserver}
-\end{figure}
+\end{figure*}
 
 \noindent
 In reference to Definition \ref{def:pocopas}, our \ac{ZKPPC} framework in Figure~\ref{fig:zkpconeserver} tailors the general statement $f(\pwd)=\true$ to \ac{ASCII}-based policies $f=(R,\pmin,\pmax)$ and corresponding password hashing schemes $\Pi$ so that the resulting \ac{ZKPPC} proof is of the following form:

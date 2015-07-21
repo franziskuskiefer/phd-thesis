@@ -515,6 +515,7 @@ It is recalled in Figure \ref{fig:tSOKE}.
 \toprule
 & {\bf Client \Client} & & {\bf Server \Server} \\
 & Input: $\tg, \pwd$ & & Input: $\tg$ \\
+\midrule
 1. & $x \rin \ZZ_p$ & & \\
 2. & $X = g^x$ & & \\
 3. & & $\stackrel{\Client, X}{\llongrightarrow}$ & \\
@@ -843,6 +844,7 @@ The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\
 Input: Set $B_\ClientSet$ & & Input: Set $G_\ServerSet$ \\
+\midrule
 & neg. params & \\
 & $(n, m, k, H, E)$ & \\
 for $i\in[0,m-1]$ & & \\ [-.25em]
@@ -851,7 +853,7 @@ for $i\in[0,m-1]$ & & \\ [-.25em]
 & & \hspace*{1em} $c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
 & & share \sk into $t_0, \dots, t_{m-1}$ ($\oplus$) \\
 & {\bf OT} on& \\
-Recover $t_i$ if $B_\ClientSet[i]=0$ & $B$ and $\{(c_i, t_i)\}_{i\in[0,m-1]}$ & \\
+Recover $t_i$ if $B_\ClientSet[i]=0$ & $\stackrel{B \text{ and } \{(c_i, t_i)\}_{i\in[0,m-1]}}{\lllongleftrightarrow}$ & \\
 Recover \sk from $t_i$ & & \\
 $\forall $ recovered $c_i$ & & \\
 \hspace*{1em} $d_i\gets\Dec_\sk(c_i)$ & & \\

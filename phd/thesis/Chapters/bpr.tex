@@ -175,48 +175,80 @@ The purpose of this proof is to link the proof that $\pwd$ contains \ac{ASCII} c
 The server, after successful verification of all proofs, stores the client's password verifier $\ver = (H_1,H_2,s_H)$ in its protected password database and terminates the registration protocol. 
 For remote registration of the password verifier we assume that the \ac{BPR} protocol is executed over a server-authenticated secure channel in order to protect transmission of $\ver$; otherwise an eavesdropping adversary would be able to recover the password by brute-forcing the dictionary. 
 For example, on the web our \ac{BPR} protocol can be executed on top of a TLS channel established between the client and the server.
-\begin{figure}[htb]
-\centering
-\scalebox{0.58}{
-\begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=24em, align=left}}, %,text width=15em
-		column 2/.style={nodes={minimum width=14em}},
-		column 3/.style={nodes={minimum width=21em, align=left, text width=21em}}]{
-	\node[align=center](client){Client $(\Client,\Server,f)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& 
-	\node[align=center](server){Server $(\Client,\Server,f)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-	\parbox{24em}{choose $\pwd=(c_0,\dots,c_{n-1})\in\cD_f$} \& \& \\
-	\parbox{24em}{compute $\pi\gets\pwdint(\pwd)$} \& \& \\
-	\parbox{24em}{for all $i\in[0,n-1]$ compute:} \& \& \\
-	\parbox{24em}{\hspace*{2em}$\pi_i\gets\chrint(c_{i})$; $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$;} \& \& \\
-	\parbox{24em}{Shuffle $C'_i \gets C'_{k_i}$ and define sets $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$} \& \& \\
-	\parbox{24em}{Compute the randomised password hash:} \& \& \\
-	\parbox{24em}{\hspace*{2em}$(H_1,H_2)\gets\HashP(\pi)=(g^{s_P}, H_1^{\pi}h^{s_H})$} \& \& \\
-	\parbox{24em}{For each $c_i\in\pwd$ identify appropriate set $\omega_{k_i}$} \& \& \\
-	\parbox{24em}{Execute the following protocols with the server:} \& 
-	  $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ \& 
-	  If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$:   \\
-	\parbox{24em}{\PoE: $\ZKPoK\{(\pi,\hat{r}) : ~ H_2/h^{s_H}=H_1^{\pi} \wedge \prod_{i=0}^{n-1} C_i^{b^i} = g^{\pi}h^{\hat{r}}\}$} \& 
-	  $\Comm_{\PoM}, \Comm_{\PoE}, \Comm_{\PoS}$ \& 
-	  \hspace*{2em} choose $\Ch_\PoM, \Ch_\PoM, \Ch_\PoS$\\
-	\parbox{24em}{\PoM: $\ZKPoK\{\{\pi_i,r_i\}_{i} : ~ C'_{k_i}=g^{\pi_i}h^{r_i} \wedge \pi_i\in \omega_{k_i}\}$} \& 
-	  $\Ch_{\PoM}, \Ch_{\PoE}, \Ch_{\PoS}$ \& \\
-	\parbox{24em}{\PoS: $\ZKPoK\{\{k_i, r'_{k_i}\}_{i} : ~ C'_{i}=C_{k_i}h^{r'_{k_i}}\}$} \& 
-	  $\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$ \& 
-	  If $\PoM$, $\PoE$, $\PoS$ succeed: \\
-	\& \& \hspace*{2em} store $(\Client,\ver)$ with $\ver=(H_1,H_2,s_H)$ \\
-};
+% \begin{figure}[htb]
+% \centering
+% \scalebox{0.58}{
+% \begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=24em, align=left}}, %,text width=15em
+% 		column 2/.style={nodes={minimum width=14em}},
+% 		column 3/.style={nodes={minimum width=21em, align=left, text width=21em}}]{
+% 	\node[align=center](client){Client $(\Client,\Server,f)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& 
+% 	\node[align=center](server){Server $(\Client,\Server,f)$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% 	\parbox{24em}{choose $\pwd=(c_0,\dots,c_{n-1})\in\cD_f$} \& \& \\
+% 	\parbox{24em}{compute $\pi\gets\pwdint(\pwd)$} \& \& \\
+% 	\parbox{24em}{for all $i\in[0,n-1]$ compute:} \& \& \\
+% 	\parbox{24em}{\hspace*{2em}$\pi_i\gets\chrint(c_{i})$; $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$;} \& \& \\
+% 	\parbox{24em}{Shuffle $C'_i \gets C'_{k_i}$ and define sets $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$} \& \& \\
+% 	\parbox{24em}{Compute the randomised password hash:} \& \& \\
+% 	\parbox{24em}{\hspace*{2em}$(H_1,H_2)\gets\HashP(\pi)=(g^{s_P}, H_1^{\pi}h^{s_H})$} \& \& \\
+% 	\parbox{24em}{For each $c_i\in\pwd$ identify appropriate set $\omega_{k_i}$} \& \& \\
+% 	\parbox{24em}{Execute the following protocols with the server:} \& 
+% 	  $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ \& 
+% 	  If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$:   \\
+% 	\parbox{24em}{\PoE: $\ZKPoK\{(\pi,\hat{r}) : ~ H_2/h^{s_H}=H_1^{\pi} \wedge \prod_{i=0}^{n-1} C_i^{b^i} = g^{\pi}h^{\hat{r}}\}$} \& 
+% 	  $\Comm_{\PoM}, \Comm_{\PoE}, \Comm_{\PoS}$ \& 
+% 	  \hspace*{2em} choose $\Ch_\PoM, \Ch_\PoM, \Ch_\PoS$\\
+% 	\parbox{24em}{\PoM: $\ZKPoK\{\{\pi_i,r_i\}_{i} : ~ C'_{k_i}=g^{\pi_i}h^{r_i} \wedge \pi_i\in \omega_{k_i}\}$} \& 
+% 	  $\Ch_{\PoM}, \Ch_{\PoE}, \Ch_{\PoS}$ \& \\
+% 	\parbox{24em}{\PoS: $\ZKPoK\{\{k_i, r'_{k_i}\}_{i} : ~ C'_{i}=C_{k_i}h^{r'_{k_i}}\}$} \& 
+% 	  $\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$ \& 
+% 	  If $\PoM$, $\PoE$, $\PoS$ succeed: \\
+% 	\& \& \hspace*{2em} store $(\Client,\ver)$ with $\ver=(H_1,H_2,s_H)$ \\
+% };
+%
+% \draw[->] (m-11-2.south west) -- (m-11-2.south east);
+% \draw[<-] (m-12-2.south west) -- (m-12-2.south east);
+% \draw[->] (m-13-2.south west) -- (m-13-2.south east);
+% \end{tikzpicture}}
+% \caption{\acl{BPR} --- A High-Level Overview}
+% \label{fig:bpr-protocol-overview}
+% \end{figure}
 
-\draw[->] (m-11-2.south west) -- (m-11-2.south east);
-\draw[<-] (m-12-2.south west) -- (m-12-2.south east);
-\draw[->] (m-13-2.south west) -- (m-13-2.south east);
-\end{tikzpicture}}
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: $(\Client,\Server,f)$ & & Input: $(\Client,\Server,f)$ \\
+\midrule
+choose $\pwd\in_R\cD_f$ & & \\
+compute $\pi\gets\pwdint(\pwd)$ & & \\
+let $n \gets |\pwd|$ & & \\
+for $i\in[0,n-1]$ & & \\ [-.25em]
+\hspace*{1em} let $c_i\in\pwd$ & & \\
+\hspace*{1em} $\pi_i\gets\chrint(c_i)$ & & \\
+\hspace*{1em} $C_i=g^{\pi_i}h^{r_i}; C'_i=C_ih^{r'_i}$ & & \\
+shuffle $C'_i \gets C'_{k_i}$ & & \\
+let $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$ & & \\
+\hspace*{1em}$(H_1,H_2)\gets\HashP(\pi; (s_P, s_H))$ & & \\
+For $c_i\in\pwd$ identify set $\omega_{k_i}$ & & \\
+Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$: \\
+ & $\xrightarrow{\makebox[4cm]{$\Comm_{\PoM}, \Comm_{\PoE}, \Comm_{\PoS}$}}$ & \hspace*{1em} choose $\Ch_\PoM, \Ch_\PoM, \Ch_\PoS$ \\
+ & $\xleftarrow{\makebox[4cm]{$\Ch_{\PoM}, \Ch_{\PoE}, \Ch_{\PoS}$}}$ & \\
+ & $\xrightarrow{\makebox[4cm]{$\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$}}$ & If $\PoM$, $\PoE$, $\PoS$ succeed\\
+ & & \hspace*{1em} store $(\Client,\ver)$ \\
+ & & with $\ver=(H_1,H_2,s_H)$\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
 \caption{\acl{BPR} --- A High-Level Overview}
 \label{fig:bpr-protocol-overview}
-\end{figure}
-
+\end{figure*}
 
 % \subsubsection{Detailed Protocol Specification} \label{sec:protocol}
 While the high-level idea of the protocol is intuitive, the actual specification becomes somewhat technical.

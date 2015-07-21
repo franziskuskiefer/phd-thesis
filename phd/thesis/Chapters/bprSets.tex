@@ -37,36 +37,60 @@ Functionality $f_\Pi$ outputs $f(\ClientSet)$ to the server and client, \ie $f_{
 % \setlength{\belowcaptionskip}{2pt}
 
 \subsubsection{Instantiation}
-\begin{figure}[!b]
-\centering
-\scalebox{0.75}{
-\begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
-\matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
-		nodes={draw=none, anchor=center,text depth=1pt},
-		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
-		column 2/.style={nodes={minimum width=4em}},
-		column 3/.style={nodes={minimum width=20em, align=right, text width=20em}}]{
-	\node[align=center](client){$\Client~ (\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\Server$ $(f$ $=$ $(\ServerSet,\Gamma_\ServerSet))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
-	
-	\& \& choose a secret \secret $\in_R$ $\mathbb{Z}_p$ \\
-	\& \& generate matrix $M$ and function $\rho$ from $f$\\
-	\parbox{18em}{}\&  $f, M, \rho$\& generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
-	\parbox{18em}{get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$} \&
-	  \ac{OBI} \& \\
-	\parbox{18em}{if possible: recover $\secret$ from the shares} \& \& \\
-	\parbox{18em}{else: abort and output $\bot$} \& \& \\
-	\parbox{18em}{$m_\secret\gets H(\secret,\Client,\Server,\trans)$} \& 
-	$m_\secret$ \&
-	accept iff $m_\secret$ \verify $H(\secret,\Client,\Server,\trans)$ \\
-};
+% \begin{figure}[!b]
+% \centering
+% \scalebox{0.75}{
+% \begin{tikzpicture}[framed] %[scale=0.7, every node/.style={scale=0.7}, ]
+% \matrix (m)[matrix of nodes, column  sep=.1cm,row  sep=1mm, ampersand replacement=\&,
+% 		nodes={draw=none, anchor=center,text depth=1pt},
+% 		column 1/.style={nodes={minimum width=18em}}, %,text width=15em
+% 		column 2/.style={nodes={minimum width=4em}},
+% 		column 3/.style={nodes={minimum width=20em, align=right, text width=20em}}]{
+% 	\node[align=center](client){$\Client~ (\ClientSet)$}; \draw[]($(client.south west)+(.5,0)$)--($(client.south east)-(.5,0)$); \& \& \node[align=center](server){$\Server$ $(f$ $=$ $(\ServerSet,\Gamma_\ServerSet))$}; \draw[]($(server.south west)+(.5,0)$)--($(server.south east)-(.5,0)$);\\ [1mm]
+% 	
+% 	\& \& choose a secret \secret $\in_R$ $\mathbb{Z}_p$ \\
+% 	\& \& generate matrix $M$ and function $\rho$ from $f$\\
+% 	\parbox{18em}{}\&  $f, M, \rho$\& generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
+% 	\parbox{18em}{get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$} \&
+% 	  \ac{OBI} \& \\
+% 	\parbox{18em}{if possible: recover $\secret$ from the shares} \& \& \\
+% 	\parbox{18em}{else: abort and output $\bot$} \& \& \\
+% 	\parbox{18em}{$m_\secret\gets H(\secret,\Client,\Server,\trans)$} \& 
+% 	$m_\secret$ \&
+% 	accept iff $m_\secret$ \verify $H(\secret,\Client,\Server,\trans)$ \\
+% };
+%
+% \draw[<-] (m-4-2.south west) -- (m-4-2.south east);
+% \draw[<->] (m-5-2.south west) -- (m-5-2.south east);
+% \draw[->] (m-8-2.south west) -- (m-8-2.south east);
+% \end{tikzpicture}}
+% \caption{Secure Set-based Policy Checking}%\vspace{-5mm}
+% \label{fig:spc}
+% \end{figure}
 
-\draw[<-] (m-4-2.south west) -- (m-4-2.south east);
-\draw[<->] (m-5-2.south west) -- (m-5-2.south east);
-\draw[->] (m-8-2.south west) -- (m-8-2.south east);
-\end{tikzpicture}}
-\caption{Secure Set-based Policy Checking }%\vspace{-5mm}
+\begin{figure*}[t]
+\begin{center}
+\scalebox{1.0}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: \ClientSet & & Input: $(\ServerSet,\Gamma_\ServerSet)$ \\
+\midrule
+ & & choose a secret \secret $\in_R$ $\mathbb{Z}_p$ \\
+ & & generate matrix $M$ \\
+ & & and function $\rho$ from $f$ \\
+ & $\xrightarrow{\makebox[2cm]{$f, M, \rho$}}$ & generate shares $\secret_{i}$ s.t. $\rho(i)$ $\in$ $\ServerSet$ \\
+get shares from $G_{\ClientSet\cap\ServerSet}$: $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$ & \ac{OBI} & \\
+if possible: recover $\secret$ from the shares & & \\
+else: abort and output $\bot$ & & \\
+$m_\secret\gets H(\secret,\Client,\Server,\trans)$ & $m_\secret$ & accept iff $m_\secret$ \verify $H(\secret,\Client,\Server,\trans)$\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\caption{Secure Set-based Policy Checking}
 \label{fig:spc}
-\end{figure}
+\end{figure*}
 
 \noindent
 The high-level idea of this protocol is to use a \ac{PSI} protocol with data transfer and \ac{LSSS} so that the server can check the client's set of password characters using efficient symmetric operations.
