@@ -16,7 +16,7 @@ In order to use verifier \ver for authentication, the client first has to retrie
 After sending $r$ to the client, \Client can compute \ver, which can then be used any regular \ac{PAKE} protocol instead of the password.
 It may also be desirable to use a standard key derivation function such as PBKDF2 \cite{rfc2898} on top of $H$ such that the key is derived by repeatedly applying a pseudorandom function and the added work load makes dictionary attack more difficult.
 Often it is possible to piggyback the first message to retrieve randomness $r$ on a regular \ac{PAKE} message to avoid increasing communication round. 
-Using the UC-secure \ac{PAKE} protocol by \citet{Benhamouda2013}, the randomness can be piggybacked on the first server message sent in the \ac{PAKE} protocol. 
+Using the UC-secure \ac{PAKE} protocol by \citet{Benhamouda2013} for example, the randomness can be piggybacked on the first server message sent in the \ac{PAKE} protocol. 
 Thus we do not increase the round complexity and the protocol remains a one-round protocol.
 
 % Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. 
@@ -53,7 +53,7 @@ Thus we do not increase the round complexity and the protocol remains a one-roun
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\
-Input: \pwd & & Input: \Client, \ver \\
+Input: \pwd & & Input: $\Client, \ver=(H,r)$ \\
 \midrule
 $\ver=(H,r)\gets \phi(\pwd, r)$ & $\xleftarrow{\makebox[2.5cm]{$r$}}$ & \\
  & $\xleftrightarrow{\makebox[2.5cm]{PAKE on $H$}}$ & \\
@@ -107,11 +107,11 @@ While is ok in the \ac{VPAKE} model (looking at \ac{AKE} security the adversary 
 An attacker usually only retrieves the password database of a compromised server but does not have full control over it.
 Using a \ac{VPAKE} protocol for authentication allows an attacker now to authenticate towards the server without breaking the password hash first, \ie rendering the purposed of storing randomised hash values void.
 However, \ac{VPAKE} protocols such as the one proposed by \citet{BenhamoudaP13} as well as the new instantiation proposed in the following section should be secure in this context as well (even though this is not covered by the security definition).
-This is because the client actually has to the password \emph{and} the verifier in order to authenticate (not just the authenticator as in the protocol from Figure \ref{fig:genericVPAKE}.
+This is because the client actually has to know the password \emph{and} the verifier in order to authenticate (not just the authenticator as in the protocol from Figure \ref{fig:genericVPAKE}.
 
 \subsection{A New VPAKE Protocol} \label{sec:vpake}
 % \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
-We now propose a new \ac{VPAKE} protocol where server \Server uses \ver stored from the \ac{BPR} protocol in Section \ref{sec:bpr} to authenticate client \Client using password \pwd. 
+We now propose now a new \ac{VPAKE} protocol where server \Server uses \ver stored from the \ac{BPR} protocol in Section \ref{sec:bpr} to authenticate client \Client using password \pwd. 
 The protocol is constructed from the general \ac{VPAKE} framework introduced by \citet{BenhamoudaP13}. 
 Their framework constructs one-round \ac{VPAKE} protocols with \Client and \Server sending one message each, independently, using a generic password hashing scheme $(\PSetup, \PPHSalt, \PPreHash,\PHSalt, \PHash)$ with deterministic $\PPreHash$, labelled public key encryption scheme $(\KGen, \Enc, \Dec)$, and secure \acp{SPHF} $(\HKGen, \PKGen, \Hash, \ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc_\pk\ell, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc_\pk(\ell, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
 Their approach can directly be used for the password hashing scheme proposed in Section \ref{sec:strucphash} with randomised \PPreHash if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 

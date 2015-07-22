@@ -4,14 +4,14 @@ As discussed in Chapter \ref{ch:intro} using passwords for authentication is it'
 This is usually done with the inherently flawed approach of password-over-\ac{HTML} despite the existence of more secure alternatives such as \ac{PAKE}.
 In this chapter we propose a framework for cryptographic password registration and authentication, comprising a protocol for clients to register passwords in a secure way with a server while still allowing for password policies checks, as well as suitable protocols to use the registered password verifier for password-based authentication.
 
-The first main contribution in this chapter is the definition of \ac{BPR}.
+The first main contribution in this chapter is the definition of \acl{BPR}.
 This protocol class allows a client to register a password verifier with a server without actually disclosing the password, while allowing the server to check the password's policy compliance against a password policy.
 Note that this still requires a secure channel (established using for example \ac{TLS}) between client and server.
 This requirement can not be removed as obtaining the password verifier eventually always leads to password disclosure.
 However, this is not the goal of \ac{BPR}.
 Instead, \ac{BPR} offers a way of removing the trust assumption that the server securely handles client passwords by never revealing the actual password to the server.
 
-Using registered password verifiers to authenticate clients are the second step of the proposed framework, which can be performed using \ac{VPAKE} or \ac{tPAuth} protocols.
+Using registered password verifiers to authenticate clients is the second step of the proposed framework, which can be performed using \ac{VPAKE} or \ac{tPAuth} protocols.
 While \ac{VPAKE} is the first natural way of authenticating using a password on the client side and a password verifier on the server side, \ac{tPAuth} protocols can be used with verifiers as well and are more suitable for password based authentication on the web.
  
 \smallskip
@@ -60,21 +60,21 @@ The chapter is concluded by the description of an online demo for the proposed f
 This chapter proposed a password registration and authentication framework for the single server setting, gave efficient instantiation and a demo application to show its use.
 Using \ac{ZKPPC} as basis, Section \ref{sec:bpr} proposed an efficient \acl{BPR} protocol with security model.
 An alternative approach to the problem of \ac{BPR} is proposed in Section \ref{sec:spc-bpr} using set theory.
-Comparison of the two proposed \ac{BPR} protocols show that the set-based approach is significantly faster due to the use of symmetric primitives, while requiring a different security model.
+Comparison of the two proposed \ac{BPR} protocols show that the set-based approach is significantly faster due to the use of symmetric primitives, while requiring a different security model with stronger assumptions.
 The second step in the framework, password-based authentication, is solved by a new \ac{VPAKE} protocol in Section \ref{sec:vpake}.
 Implementation (Section \ref{sec:discussion}) and demonstration (Section \ref{sec:vpake-demo}) showed practicability of the proposed approach.
 
 The first leg of the proposed framework securely registers passwords chosen by the client at a remote server while simultaneously achieving the following properties: (1) registered passwords are never disclosed to the server and the only way for the server or any attacker who compromises the server to recover passwords is by mounting an offline dictionary attack on the stored verifier; (2) each registered password provably satisfies the server's password policy. 
 While the proposed \ac{ZKPPC} approach lays ground for this, \ac{BPR} gives a more appropriate security model and protocol to solve this problem.
-\ac{BPR} in particular formalises the two requirements as dictionary attack resistance and policy compliance .
+\ac{BPR} in particular formalises the two requirements as dictionary attack resistance and policy compliance.
 The proposed \ac{BPR} protocol for \ac{ASCII}-based password policies makes use of efficient Pedersen commitments and the shuffling proof from \cite{Furukawa05}, and fulfils both security goals under standard assumptions.
-Our discussion on various ways to strengthen or (reasonably) weaken the security requirements implies the possibility of introducing trade-offs between security and efficiency for \ac{BPR} protocols.
+Our discussion on various ways to strengthen or (reasonably) weaken the security requirements implies the possibility of introducing trade-offs between security and efficiency for this type of \ac{BPR} protocol.
 To achieve higher performance we further introduced a different approach to \ac{BPR} based on set theory.
 To this end we introduced a new notion called \acl{SPC}, a new privacy preserving protocol. 
-\ac{SPC} allows a server to check whether a set held by a client is compliant with its policy, which is defined as a monotone access structure. 
+\ac{SPC} allows a server to check whether a set held by a client is compliant with its policy, which is defined as a monotone access structure over a public set. 
 At the end of the protocol, the server learns only a single bit of information, \ie whether the client's set complies with the policy or not, and nothing else. 
-\ac{SPC} is was then used to propose a highly efficient protocol for \ac{BPR}.
+\ac{SPC} was then used to propose a highly efficient protocol for \ac{BPR}.
 To underline practicality, facilitate adoption, and compare the different \ac{BPR} approaches we gave implementations of all three protocols together with an analysis.
 
 To implement the second leg of the framework proposed in this chapter we discussed general techniques to generate \ac{VPAKE} protocols from known \ac{PAKE} protocols and proposed a new \ac{VPAKE} protocol that allows authentication with verifiers registered with one of the proposed \ac{BPR} protocols.
-We further discussed pros and cons of \ac{VPAKE} protocols and their models.
+We further discussed advantages and disadvantages of \ac{VPAKE} protocols and their models.

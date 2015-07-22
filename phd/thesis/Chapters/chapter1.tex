@@ -507,12 +507,24 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 This thesis consists of four more chapters.
 Chapter \ref{ch:prelims} gives prerequisites and building blocks used throughout this work.
 The remainder of the work consists of the two main Chapters \ref{ch:vpake} and \ref{ch:2pake} before concluding the work in Chapter \ref{ch:conclusion}.
-Chapter \ref{ch:vpake} describes a framework for password registration comprising two new password registration protocols with security models and a new password-based authentication protocol in the verifier-based setting.
-To demonstrate practicability of the framework we further implement some of the proposed protocols and give a demo as an example of how a real-world integration could look.
+
+Chapter \ref{ch:vpake} describes a framework for password registration and authentication.
+It comprises the first two password registration protocols with security models that allow to register passwords in a \emph{blind} way that does not reveal the password to the server but only transmits and stores a verifier.
+While being blind, the registration protocols allow the server to impose rules on password strength.
+In particular, the server can verify a password policy on the password that corresponds to the registered verifier.
+To use the registered verifier a new password-based authentication protocol in the verifier-based setting is proposed.
+The proposed protocols were implemented to compare performance of the protocols in addition to their security.
+To demonstrate practicability of the framework, we further give a demo that shows how a real-world deployment of could look like.
+The demo consists of a server necessary to perform registration and authentication, a corresponding client application implemented as Firefox extension, and an application that is accessed after logging in.
+
 Chapter \ref{ch:2pake} describes a framework similar to the one from Chapter \ref{ch:vpake} but for thew two-server setting.
-In particular, it proposes a password registration protocol for the two-server setting with an according security model as well as a new framework for two-server password-based authentication and a new security definition for \ac{2PAKE} in the \ac{UC} framework.
+In particular, it proposes a password registration protocol for the two-server setting with an according security model.
+While being similar to the single-server setting, this involves additional challenges as no single server retrieves an element that is able to verify the client's password on its own.
+The focus in this chapter however is on \ac{2PAKE}.
+It proposes in particular a new framework for \ac{2PAKE} using the new notion of \ac{D-SPHF} that distributes computation of \acp{SPHF} between the two servers.
+Building on \ac{D-SPHF} and the proposed \ac{2PAKE} framework allows us to propose a new \ac{2PAKE} protocol that is secure in the newly proposed security definition for \ac{2PAKE} in the \ac{UC} framework.
 % Chapter \ref{ch:realworld} extends \cite{MSD13} and depicts solutions on how to bring cryptographic password authentication to the web on desktop and mobile browsers.
-Eventually, the thesis is concluded in Chapter \ref{ch:conclusion} summarising results described in the thesis and giving an outlook to potential future work.
+% Eventually, the thesis is concluded in Chapter \ref{ch:conclusion} summarising results described in the thesis and giving an outlook to potential future work.
 
 
 
