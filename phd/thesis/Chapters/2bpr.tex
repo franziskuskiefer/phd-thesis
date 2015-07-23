@@ -231,7 +231,7 @@ Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & &\\
 \hspace*{2.8em} $\pwd, \crs$ & & \\
 \midrule
 & \textit{I -- Client Preparation} & \\
-\cmidrule{2-2}
+% \cmidrule{2-2}
 encode $\pi\gets\pwdint(\pwd)$ & & \\
 compute password shares: & & \\
 \hspace*{1em} $\share_{0}\rin\ZZ_p$, $\share_{1}=\pi-\share_{0}$ & & \\
@@ -244,7 +244,7 @@ Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & & Input: $\Client,\Server_{1-b}$
 \hspace*{2.8em} $\pwd, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
 \midrule
 & \textit{II -- Password Registration} & \\
-\cmidrule{2-2}
+% \cmidrule{2-2}
 commit to all characters: & & \\
 \hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$ & & \\
 shuffle $\bm C'$ s.t. $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ & & \\
@@ -262,7 +262,7 @@ Input: $\Client, \Server_{1}$ & & Input: $\Client,\Server_{0}$ \\
 \hspace*{2.8em} $f=f_0\cap f_1, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
 \midrule
 & \textit{III -- Share Verification} & \\
-\cmidrule{2-2}
+% \cmidrule{2-2}
 $\fD'_{1}=\fC_{1}g^{\share_{0}}$ & $\xrightarrow{\makebox[4cm]{$\fD'_{1}$}}$ & $\fD'_{0}=\fC_{0}g^{\share_{1}}$ \\
 If $\fD'_0=\fD_0$ & $\xleftarrow{\makebox[4cm]{$\fD'_{0}$}}$ & If $\fD'_{1}=\fD_{1}$ \\
 \hspace*{1em} store $(\Client,\Server_{1},\share_{0})$ & & \hspace*{1em} store $(\Client,\Server_{0},\share_{1})$ \\

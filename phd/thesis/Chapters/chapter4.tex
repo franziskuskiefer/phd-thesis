@@ -6,6 +6,8 @@ However, research in this area is rather limited compared to the single-server c
 This chapter proposes a framework for the two-server setting, similar to the framework from Chapter \ref{ch:vpake}, which uses \ac{2PAKE} for user authentication and a \ac{2BPR} protocol for password share registration.
 We further propose a new security model for two \ac{2PAKE} protocols in the \ac{UC} model.
 
+\smallskip
+\noindent
 This chapter is based on work in \cite{KieferM14b,KieferM15b,KieferM15c}.
 
 \paragraph{Introduction}
@@ -20,14 +22,14 @@ Yet, no server alone is supposed to learn the plain password.
 A second, more recent development in two-server (and threshold) password protocols is \ac{PPSS} \cite{Bagherzandi2011,Camenisch2012,JareckiKK14} where a client stores shares of a (high-entropy) secret key on a number of servers and uses a (low-entropy) password to authenticate the retrieval process.
 
 Registering password shares for \ac{2PAKE}/\ac{PPSS} protocols however makes it impossible for the servers to verify their password policies upon registration unless the password is transferred to each of them in plain. 
-This however, would imply that the client trusts both servers to securely handle the password, which contradicts the purpose and trust relationships of multi-server protocols.
-The use of two-server password protocols in a remote authentication setting, therefore, requires a suitable password registration procedure in which none of the servers would receive information enabling it (or an attacker in control of the server) to deliberately or inadvertently recover the client's password.
+Yet, this would imply that the client trusts both servers to securely handle the password, which contradicts the purpose and trust relationships of multi-server protocols.
+The use of two-server password protocols in a remote authentication setting therefore requires a suitable password registration procedure in which none of the servers would receive information enabling it (or an attacker in control of the server) to deliberately or inadvertently recover the client's password.
 This registration procedure must further allow for policy compliance checks to be performed by the servers since secret sharing does not protect against weak passwords.
 A trivial approach of sending $\share_1$ and $\share_2$ to the corresponding servers over secure channels is not helpful here since it is not clear how the two servers can perform the required compliance check.
 
 The concept of blind password registration for two-server password protocols proposed as first step in this chapter shows how to realise secure registration of password shares in a way that protects against at most one malicious server (if both servers are malicious, the attacker obviously gets the password), yet allows both servers to check password compliance against their mutual password policy.
 \ac{2BPR} is not vulnerable to offline dictionary attacks as long as one server remains honest.
-This is in contrast to the single-server setting where an attacker is always able to perform offline dictionary attacks on password verifiers after compromising a server. 
+This is in contrast to the single-server setting from the previous chapter where an attacker is always able to perform offline dictionary attacks on password verifiers after compromising a server. 
 
 The second step in the framework can either be a \ac{2PAKE} or a two-server \ac{PPSS} protocol.
 We show how to use password shares set up with the \ac{2BPR} protocol to authenticate the client in both cases.
@@ -94,12 +96,13 @@ This chapter proposed a framework for two-server password registration and authe
 The password registration protocol allows the client to securely register password shares on two servers, while the servers can verify that the client's password satisfies a password policy.
 To use the registered password shares in the second step, password-based authentication, we proposed a new \ac{2PAKE} framework, a concrete instantiation, and an enhanced protocol that satisfied the newly defined \ac{2PAKE} \ac{UC} functionality.
 
-This first leg of the framework introduced the notion of \ac{2BPR}.
-\ac{2BPR} is a solution for secure registration of policy-compliant, user-selected passwords for \ac{2PAKE}/\ac{PPSS} protocols where each server is supposed to learn only its own share of the password and whether the combined password is conform with his password policy.
+This first leg of the framework introduced the notion of \ac{2BPR}, complementing the \ac{VPAKE} approach from the previous chapter.
+\ac{2BPR} is a solution for secure registration of policy-compliant, user-selected passwords for \ac{2PAKE}/\ac{PPSS} protocols where each server only learns its own share of the password and whether the combined password is conform with his password policy.
 The proposed \ac{2BPR} protocol can be used to register \ac{2PAKE}/\ac{PPSS} passwords satisfying server-chosen policies over the alphabet of all 94 printable \ac{ASCII} characters.
 
 This second leg of the framework introduced the notion of extended and distributed smooth projective hashing and gave an instantiation using Cramer-Shoup ciphertexts.
 While we focused on \ac{2PAKE} as application of \acp{D-SPHF} in this chapter, \acp{D-SPHF} are an interesting building block for future work on other multi-party and threshold protocols.
 To show how to use \acp{D-SPHF}, we built a \ac{2PAKE} framework using them.
 The framework allows to explain and simplify the two-server PAKE protocol from \cite{Katz2012a} as well as construct \ac{UC}-secure \ac{2PAKE}.
-To this end this chapter introduced \ac{TD-SPHF} and the first definition of \ac{UC} security for \ac{2PAKE} protocols.
+To this end this chapter further introduced \ac{TD-SPHF} that introduces a trapdoor for \acp{D-SPHF}.
+\acp{TD-SPHF} allowed us to construct an efficient \ac{2APKE} protocol that can be proven secure in a newly proposed security model for \ac{2PAKE} in the \ac{UC} framework.

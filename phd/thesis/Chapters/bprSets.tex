@@ -291,7 +291,7 @@ Note that storing $(d, \bm{u})$ as part of \ver is only a technical necessity in
 Input: $f, \pwd$ & & Input: $f,\ServerSet=\{s_1,\dots,s_w\}$ \\
 \midrule
  & {\it Setup Phase} & \\
-\cmidrule{2-2}
+% \cmidrule{2-2}
 $k\gets H_1(\pwd)$ & $\xleftarrow{\makebox[2cm]{$(e,N)$}}$ & $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\
 $\ClientSet\gets\PwdMap(\pwd)$ & & \\
 $\forall i\in[1,v]:~ r_i\gets f_k(i)$ & & \\
@@ -300,7 +300,7 @@ $\hat{\ClientSet} = \emptyset$ & $\xleftarrow{\makebox[2cm]{$(u'_1,\cdots,u'_v)$
 $\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$ & & $\forall i \in [1,w]: \hat{\ServerSet} \cup (H_2(s_i))^d$ \\
  & & $\hat{f} \gets f,\hat{\ServerSet}$ \\
  & {\it Policy Checking Phase} & \\
-\cmidrule{2-2}
+% \cmidrule{2-2}
  & $\hat{\ClientSet}\rightarrow$ Run \ac{SPC}$\leftarrow \hat{f}$ & \\
  & & If \ac{SPC} is successful \\
  & & store verifier \\

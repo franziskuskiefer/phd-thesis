@@ -299,9 +299,9 @@ where $r_2$ is the randomness used to create $C_2$, $\xi_2$ and $v_2$ are part o
 The construction of the according $\Sigma$ proof is straight-forward.
 The prover computes commitments
 \begin{align*}
-  & t_{\overline{m}1} = m_{0,1}^{{\share_2}} c_{0,1}^{k_{\mu2}} \overline{m}_{2}^{k_{x}} u_{1,0}^{k_{\eta12} + \xi_0 k_{\eta22}} u_{2,0}^{k_{\theta2}} e_0^{-k_{\mu2}} v_0^{k_{\nu2}}; ~~~
-    t_{\overline{m}2} = g_{1,1}^{k_{\mu2}}; ~~~  t_{e2} = h^{k_{r2}}g_{1,1}^{{\share_2}}; ~~~ t_{v2} = (cd^{\xi_2})^{k_{r2}}; \\
-  & t_{\hp12} = g_{1,1}^{k_{\eta12}} g_{1,2}^{k_{\theta2}} h^{k_{\mu2}} c^{k_{\nu2}}; ~~~ t_{\hp22} = g_{1,1}^{k_{\eta22}} d^{k_{\nu2}}
+  & t_{\overline{m}1} = m_{0,1}^{{\share_2}} c_{0,1}^{k_{\mu2}} \overline{m}_{2}^{k_{x}} u_{1,0}^{k_{\eta12} + \xi_0 k_{\eta22}} u_{2,0}^{k_{\theta2}} e_0^{-k_{\mu2}} v_0^{k_{\nu2}} ~~~
+    t_{\overline{m}2} = g_{1,1}^{k_{\mu2}} ~~~  t_{e2} = h^{k_{r2}}g_{1,1}^{{\share_2}} ~~~ t_{v2} = (cd^{\xi_2})^{k_{r2}} \\
+  & t_{\hp12} = g_{1,1}^{k_{\eta12}} g_{1,2}^{k_{\theta2}} h^{k_{\mu2}} c^{k_{\nu2}} ~~~ t_{\hp22} = g_{1,1}^{k_{\eta22}} d^{k_{\nu2}}
     \text{ ~for~ } k_{\share_2}, k_{\mu2}, k_{\eta12}, k_{\eta22}, k_{\theta2}, k_{\nu2}, k_{r2} \rin \ZZ_p
 \end{align*}
 and responses
