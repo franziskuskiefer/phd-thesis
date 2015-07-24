@@ -1,10 +1,13 @@
 \chapter{Conclusion} \label{ch:conclusion}
 
-This thesis proposed two novel frameworks for password registration and authentication.
-The first framework is based in the verifier-based (single-server) setting and allows a client to register a password verifier with a server without disclosing the actual password, while preserving the server's ability to check policy compliance of the password that is hidden in the password verifier.
-We proposed three protocols with according security models to achieve this.
+This thesis made advancements in the field of password-based cryptography.
+It in particular proposed two novel frameworks for password registration and authentication.
+The first framework is based in the verifier-based (single-server) setting and allows a client to register a password verifier with a server without disclosing the actual password, while preserving the server's ability to check policy compliance of the password that is hidden in the password verifier, and supports client authentication (\ac{VPAKE} and \ac{tPAuth}) with the password and registered verifier.
+We proposed three protocols with according security models to achieve \acl{BPR} and implemented them to compare performance in addition to security.
 To use the password together with the registered password verifier we discussed and proposed new \ac{VPAKE} protocols usable with the registered verifiers.
-The second framework is based in the two-server setting and allows a client to register password shares on two servers while preserving the server's ability to verify that the client's password is policy compliant.
-We proposed an efficient protocol with according security model to achieve this.
-To use the registered password shares in a \ac{2PAKE} protocol for authentication we propose the first \ac{2PAKE} framework as well as the first \ac{UC} secure \ac{2PAKE} protocol.
-To this end we introduced new notions for smooth projective hashing, \ie \acl{D-SPHF} and \acl{TD-SPHF}, that allow distributed computation of \acp{SPHF}.
+In order to show real world usage of the proposed framework we implemented a demo that uses one of the proposed \ac{BPR} protocols to register passwords, an appropriate \ac{tPAuth} protocol to perform \acl{PACCE}, and an application to log into.
+
+The second framework achieves similar goals to the first one but is based in the two-server setting and allows a client to register password shares on two servers while preserving the server's ability to verify that the client's password is policy compliant, and supports client authentication (\ac{2PAKE} and \ac{PPSS}) with the password and registered password shares.
+We proposed an efficient protocol with according security model to achieve \acl{2BPR}.
+To use the registered password shares in a \ac{2PAKE} protocol for authentication we propose the first \ac{2PAKE} framework based on \aclp{D-SPHF}, a new variant of \acp{SPHF}.
+By further extending \acp{D-SPHF} to \acp{TD-SPHF} we were able to introduce the first \ac{2PAKE} protocol that is secure in a newly proposed security definition for \ac{2PAKE} in the \ac{UC} framework.
