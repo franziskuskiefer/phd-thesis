@@ -19,6 +19,8 @@ Often it is possible to piggyback the first message to retrieve randomness $r$ o
 Using the UC-secure \ac{PAKE} protocol by \citet{Benhamouda2013} for example, the randomness can be piggybacked on the first server message sent in the \ac{PAKE} protocol. 
 Thus we do not increase the round complexity and the protocol remains a one-round protocol.
 
+\mynote{check that I mention that the VPAKE models seems to fine afterall}
+
 % Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. 
 % At the beginning of the authentication process, for a given client identifier the server retrieves the corresponding verifier $\ver=(h, e, N)$ from the database and returns $(e,N)$ to the client.
 % Using $(e,N)$ and the password \pwd, the client can recompute all $u_i$ values and thus $h'\gets H_3(u_{v+1}^e\cdot\prod_{i=1}^{v}u_i)$ as described earlier.

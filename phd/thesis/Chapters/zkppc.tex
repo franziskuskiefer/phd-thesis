@@ -159,7 +159,7 @@ Although \ac{ZKPPC} complexity is currently dominated by set membership proofs, 
 Further notice that leakage of password length $n$ to the server is not considered as an attack against the \ac{ZKPPC} protocol. 
 For policies that implicitly define $\pmin$ in policy expression $R$, password length $n$ may be hidden using the homomorphic property the commitment scheme $C$, \ie by combining commitments $C_i$ for $\pi_i$ representing (remaining) password characters that are not needed to satisfy $R$.
 However, complexity of the framework is dominated by the complexity of the set membership proofs $\SMP$, which mainly depends on the upper bound $n$ on the password length.
-See Section \ref{sec:discussion} for further performance discussions with the instantiation from the following section in mind and comparison to the \ac{BPR} protocol of Section \ref{bpr}.
+See Section \ref{sec:discussion} for further performance discussions with the instantiation from the following section in mind and comparison to the \ac{BPR} protocol of Section \ref{sec:bpr}.
 \end{remark}
 
 \subsection{A Concrete ZKPPC Protocol for ASCII-based Passwords}\label{sec:instantiation}

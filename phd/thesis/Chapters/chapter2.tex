@@ -488,7 +488,7 @@ Sometimes an additional \Corrupt oracle is given that allows the attacker to ret
 
 
 \subsubsection{Verifier-based PAKE} \label{sec:vpake-model}
-We recall the related password model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
+We now recall the game-based security model for \ac{VPAKE} protocols proposed by \citet{BenhamoudaP13}.
 It considers client \Client, holding password $\pwd_\Client$, and servers \Server, holding password verifier $\ver=(H,s_H)$ with $H\gets\ProjHash(\paramP, s_H, \pwd_\Server)$ and random salt $s_H\gets\PHSalt(\paramP)$.
 Passwords $\pwd_\Client$ and $\pwd_\Server$ are drawn from dictionary \cD with min-entropy $\beta$.
 Adversary \cA has access to the following oracles to interact with protocol participants:
@@ -544,12 +544,15 @@ Two protocol participants are \emph{partnered} if they have matching transcripts
 A \ac{VPAKE} protocol $\Pi$ is secure if for all \ac{PPT} adversaries \cA running in time $t$ there exists a negligible function $\varepsilon(\cdot)$ such that the advantage of \cA is upper-bounded by
 $2^{-\beta}q_s + \Adv_{\text{OW}}(\cB, \secpar) + \varepsilon(\secpar)$
 for some attacker \cB on the one-wayness of the used password hashing scheme running in time $r$, $q_s$ active sessions, and independently chosen passwords from \cD of min-entropy $\beta$.
-Password hashing and its security if defined in Chapter \ref{sec:vpake} Section \ref{sec:strucphash}.
+Password hashing and its security if defined in Chapter \ref{ch:vpake} Section \ref{sec:strucphash}.
 
 
 \subsubsection{tSoke} \label{sec:tsoke}
-In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol.
+In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol for convenience.
 It is recalled in Figure \ref{fig:tSOKE}.
+Note however that while the described tSOKE protocol is proven to be a secure \ac{PAKE} protocol, it is not a secure \ac{VPAKE} protocol.
+Since it is sufficient for the client to know the password hash (he does not have to know the password), it is straightforward to build a successful attacker against the tSOKE protocol in the \ac{VPAKE} security experiment.
+\ac{VPAKE} protocols built according to the framework from \citet{BenhamoudaP13} (including the one proposed in this thesis) are however secure \ac{VPAKE} protocols.
 
 \begin{figure*}[t]
 \begin{center}
