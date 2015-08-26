@@ -13,7 +13,7 @@
 % \section{Setting things into perspective}
 This work is concerned with cryptography from low-entropy secrets, better known as \emph{passwords}.
 In contrast to conventional cryptographic algorithms and protocols, secrets used here have low-entropy, such that an adversary is able to iterate through all possible secrets in reasonable time.
-This leads directly to the inherent threat to everything we are dealing with in this work: so-called dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}).
+This leads directly to the threats dictionary attacks (cf. Section \ref{sec:introdictionaryattacks}) that are inherent to everything we are dealing with in this work.
 So why do we want to perform cryptography with passwords at all, when they comprise intrinsic attack possibilities?
 
 \begin{quote}
@@ -72,7 +72,7 @@ Despite the fact that many (online) services have password policies in place, hu
 To encourage users to use stronger passwords, password-strength meters are used by many services, which display some measure of password strength entered by the client.
 A recent study by \citet{Ur2012} on password-strength meters shows that this could have a significant impact on user's password-strength.
 We define several other forms of user authentication that are similar to passwords in the following.
-Note however that those terms are usually not used in cryptography research and this thesis (but security research).
+% Note however that those terms are usually not used in cryptography research and this thesis (but security research).
 
 \paragraph{Graphical Passwords}
 Graphical passwords where first proposed by \citet{Blonder96}. 
@@ -503,7 +503,7 @@ This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on to
 % *****************************************************************************
 % Section: Outline & Summary
 % *****************************************************************************
-\section{Outline of this Thesis \& Summary of Results}\label{sec:intro:outline}
+\section{Outline \& Summary of Results}\label{sec:intro:outline}
 This thesis consists of four more chapters.
 Chapter \ref{ch:prelims} gives prerequisites and building blocks used throughout this work.
 The remainder of the work consists of the two main Chapters \ref{ch:vpake} and \ref{ch:2pake} before concluding the work in Chapter \ref{ch:conclusion}.
