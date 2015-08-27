@@ -446,7 +446,7 @@ The functionality $\cF_{\mathrm{PAKE}}$ is parametrised by a security parameter 
 \end{figure}
 
 \subsection{Game-based PAKE and VPAKE}
-We recall game-based \ac{PAKE} and \ac{VPAKE} security models proposed by \citet{Bellare2000} and \citet{Abdalla2005}, and \citet{BenhamoudaP13} respectively.
+We recall game-based \ac{PAKE} and \ac{VPAKE} security models proposed by \citet{Bellare2000} and \citet{Abdalla2005}, and \citet{BenhamoudaP13} respectively, and further describe the tagged \ac{PAKE} protocol tSOKE by \citet{Manulis2014}, which is based on the \ac{PAKE} protocol by \citet{Abdalla2006a}.
 
 \subsubsection{PAKE} \label{sec:pake-model}
 We describe the commonly used game-based \ac{PAKE} model from \citet{Bellare2000} and highlight modifications introduced by \citet{Abdalla2005}.
@@ -553,6 +553,7 @@ It is recalled in Figure \ref{fig:tSOKE}.
 Note however that while the described tSOKE protocol is proven to be a secure \ac{PAKE} protocol, it is not a secure \ac{VPAKE} protocol.
 Since it is sufficient for the client to know the password hash (he does not have to know the password), it is straightforward to build a successful attacker against the tSOKE protocol in the \ac{VPAKE} security experiment.
 \ac{VPAKE} protocols built according to the framework from \citet{BenhamoudaP13} (including the one proposed in this thesis) are however secure \ac{VPAKE} protocols.
+Nonetheless, the protocol has advantages stemming from the use of a verifier such that it is not possible to re-use the verifier on a different server where the client may use the same password.
 
 \begin{figure*}[t]
 \begin{center}

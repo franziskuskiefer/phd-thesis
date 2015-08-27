@@ -7,7 +7,7 @@ This concludes description of the password registration and authentication frame
 % \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
 
 \subsection{Building VPAKE from PAKE} \label{sec:vpakeToPake}
-Before specifying a concrete \ac{VPAKE} protocol we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE} and discuss its security.
+Before specifying a concrete \ac{VPAKE} protocol we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE}, discuss its security, and why it might not be the best approach.
 Note that the approach discussed here is used but has never been written down and discussed as such to the best of our knowledge.
 
 Figure \ref{fig:genericVPAKE} gives an overview of this straight forward approach.
@@ -18,8 +18,6 @@ It may also be desirable to use a standard key derivation function such as PBKDF
 Often it is possible to piggyback the first message to retrieve randomness $r$ on a regular \ac{PAKE} message to avoid increasing communication round. 
 Using the UC-secure \ac{PAKE} protocol by \citet{Benhamouda2013} for example, the randomness can be piggybacked on the first server message sent in the \ac{PAKE} protocol. 
 Thus we do not increase the round complexity and the protocol remains a one-round protocol.
-
-\mynote{check that I mention that the VPAKE models seems to fine afterall}
 
 % Because of the way the verifier is structured, in the authentication the server needs to send an additional message, the RSA public key $(e,N)$, to the client. 
 % At the beginning of the authentication process, for a given client identifier the server retrieves the corresponding verifier $\ver=(h, e, N)$ from the database and returns $(e,N)$ to the client.
@@ -102,13 +100,14 @@ Exposing (secret) randomness to an attacker is in general a security risk, as th
 However, in terms of dictionary attacks, an attacker does not gain anything by this additional knowledge, as he is always able to either perform an online dictionary attack against the server, or and offline dictionary attack after corrupting the server.
 
 \paragraph{Security Discussion}
-The \ac{VPAKE} protocol from Figure \ref{fig:genericVPAKE} resembles a common way of constructing \ac{VPAKE} protocols such as tSoke (described in Section \ref{sec:vpake-model}) and seems in general compatible with the security model for \ac{VPAKE} from Section \ref{sec:vpake-model}.
-However, as discussed earlier, this might not be sufficient to model \ac{VPAKE} security.
-When an attacker corrupts server \Server and retrieves verifier \ver for client \Client, the attacker is able to log on to \Server, \ie perform a successful \ac{VPAKE} execution with \Server.
-While is ok in the \ac{VPAKE} model (looking at \ac{AKE} security the adversary can compute the session key anyway), this might not be in the real world.
-An attacker usually only retrieves the password database of a compromised server but does not have full control over it.
-Using a \ac{VPAKE} protocol for authentication allows an attacker now to authenticate towards the server without breaking the password hash first, \ie rendering the purposed of storing randomised hash values void.
-However, \ac{VPAKE} protocols such as the one proposed by \citet{BenhamoudaP13} as well as the new instantiation proposed in the following section should be secure in this context as well (even though this is not covered by the security definition).
+The \ac{VPAKE} protocol from Figure \ref{fig:genericVPAKE} resembles a common way of constructing what is informally considered a \ac{VPAKE} protocol such as tSoke (described in Section \ref{sec:vpake-model}).
+While it is a secure \ac{PAKE} protocol, it is in general not compatible with the security model for \ac{VPAKE} from Section \ref{sec:vpake-model}.
+% As discussed earlier, this might not be sufficient to model \ac{VPAKE} security.
+When an attacker corrupts server \Server and retrieves verifier \ver for client \Client, the attacker is able to log on to \Server, \ie perform a successful \ac{VPAKE} execution with \Server, and thus win the \ac{VPAKE} security experiment.
+While this would be ok in the \ac{PAKE} setting (looking at \ac{AKE} security the adversary can compute the session key anyway), this renders a protocol insecure in the \ac{VPAKE} model (and the real world).
+% An attacker usually only retrieves the password database of a compromised server but does not have full control over it.
+Using a \ac{VPAKE} protocol for authentication allows an attacker to authenticate towards the server without breaking the password hash first, \ie rendering the purposed of storing randomised hash values void.
+However, \ac{VPAKE} protocols such as the one proposed by \citet{BenhamoudaP13} as well as the new instantiation proposed in the following section are secure in this context as well.
 This is because the client actually has to know the password \emph{and} the verifier in order to authenticate (not just the authenticator as in the protocol from Figure \ref{fig:genericVPAKE}.
 
 \subsection{A New VPAKE Protocol} \label{sec:vpake}

@@ -396,14 +396,14 @@ Adding a small amount of true randomness to the input of the one-way function al
 This additional randomness is commonly referred to as \emph{salt}.
 
 \subsubsection{Discussion}\label{sec:intro:vpake-discusion}
-One reason for the relatively limited interest in \acl{VPAKE} might be the somewhat questionable security benefits of \ac{VPAKE}.
+One reason for the relatively limited interest in \acl{VPAKE} might be the somewhat questionable security benefits of \ac{VPAKE}, depending on its definition.
 Security models for \ac{PAKE} protocols consider security of a key-exchange protocol using a password as authentication mechanism.
 Often however, they do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
 \ac{VPAKE} security models try to capture whether the protocol is secure (in the sense of \acl{PAKE}) \emph{and} if the server securely handles and stores the passwords/verifiers.
 Since those security goals are significantly different and somewhat unrelated, it is difficult to find a meaningful security model for it.
-Instead checking the hardness of retrieving the actual password from a password hash it might be for example more interesting of modelling whether an attacker is able to use the password verifier as authentication credential directly (as is the case for tSoke or other direct transformations of \ac{PAKE} into \ac{VPAKE} protocols).
+Instead of checking the hardness of retrieving the actual password from a password hash it might be for example more interesting to modell whether an attacker is able to use the password verifier as authentication credential directly (as is the case for na{\"i}ve \ac{VPAKE} constructions such as the discussed tSoke).
 
-Another reason for low adoption rate of \ac{VPAKE} in the research community could be its questionable benefit considering efficiently of password cracking tools.
+Another reason for low adoption rate of \ac{VPAKE} in the research community could be its questionable benefit considering efficiency of password cracking tools.
 Nonetheless, \ac{VPAKE} is an interesting primitive that deserves more investigation.
 % While it is arguably that secure handling and storage of passwords is important, \ac{VPAKE} offers little benefit compared to \ac{PAKE}.
 % Since necessary randomness has to be stored on the server (recall that the client is stateless and can only handle human memorable secrets), it has to be transferred to the client at some point in the protocol.
