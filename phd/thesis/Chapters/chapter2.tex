@@ -807,7 +807,6 @@ While we describe labelled \ac{CS} encryption, common \ac{CS} encryption simply 
 
 %----------------------- OBI ---------------------------
 \subsection{Oblivious Bloom Intersection}\label{sec:obi}
-\mynote{check description here, i.e. in fig 6, alg 1, and alg 2}
 The \ac{OBI} protocol by \citet{DongCW13} was designed for \ac{PSI} such that at the end of the protocol, the client learns the intersection $\ClientSet\cap \ServerSet$ and the server learns nothing. 
 % \ac{OBI} by \citet{DongCW13} is executed between a client and a server on the respective sets \ClientSet and \ServerSet. 
 As observed by \citet{WenD14}, \ac{OBI} can be extended to a Private Set Intersection with Data Transfer protocol. 
@@ -818,26 +817,12 @@ The server generates a garbled Bloom filter $G_\ServerSet$ on \ServerSet and $\S
 The garbled Bloom filter encodes both $\ServerSet$ and $\ServerSet_d$ in a way such that querying the key $s_i\in\ServerSet$ against $G_\ServerSet$ returns the data item $d_i$ and querying $s_j\not \in \ServerSet$ returns a random string. 
 Let the client hold a set $\ClientSet$. 
 The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\ClientSet$. 
-Then client and server run an oblivious transfer protocol using the Bloom filter and the garbled Bloom filter as inputs. 
-As result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$. 
+(Note that we assume $B_\ClientSet$ and $G_\ServerSet$ respectively as input to the algorithm in Figure \ref{fig:obi} instead of the plain sets.)
+The protocol starts by choosing $m=2\secpar n$ random bit strings $r_i$, where $n$ is an upper bound on the set size, and sends them to the server.
+After generating a random secret key \sk, the server encrypts $r_i||G_\ServerSet[i]$ in $c_i$ with \sk and shares \sk in $m$ shares $t_i$.
+Then client and server run an oblivious transfer protocol using the Bloom filter and $\{(c_i, t_i)\}_{i\in[0,m-1]}$ as inputs. 
+As result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$ after successfully resembling \sk, decrypting $c_i$ and verifying $r_i$. 
 The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\in\ClientSet$. If $c_i$ is in the intersection then there must be  some $s_j\in \ServerSet$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
-
-\begin{algorithm}[htb]
-\caption{GBFIntesection $(G, B, m, \lambda)$}
-\label{alg:gbfintersection}
-\begin{algorithmic}[1]
-\REQUIRE Garbled bloom filter $G$, Bloom filter $B$, integer $m, \lambda$
-\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_X$
-\STATE GBF$_X = [m]$ \COMMENT{create empty array of size $m$}
-\FOR{$i=0$ \TO $m-1$}
-  \IF{$B[i] == 1$}
-    \STATE GBF$_X[i] = G[i]$
-  \ELSE
-    \STATE GBF$_X[i] \ralgout \{0,1\}^\lambda$
-  \ENDIF
-\ENDFOR
-\end{algorithmic}
-\end{algorithm}
 
 % \begin{figure}[htb]
 % \centering
@@ -885,20 +870,20 @@ The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\
 % \label{fig:obi}
 % \end{figure}
 
-\begin{figure*}[t]
+\begin{figure*}[tbh]
 \begin{center}
 \scalebox{1.0}{\small
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\
-Input: Set $B_\ClientSet$ & & Input: Set $G_\ServerSet$ \\
+Input: BF $B_\ClientSet$, Set \ClientSet & & Input: GBF $G_\ServerSet$ \\
 \midrule
 & neg. params & \\
 & $(n, m, k, H, E)$ & \\
 for $i\in[0,m-1]$ & & \\ [-.25em]
 \hspace*{1em} gen.  $r_i\ralgout\{0,1\}^\lambda$ & $\xrightarrow{\makebox[4cm]{$\{r_i\}_{i\in[0,m-1]}$}}$ & $\sk$ $\ralgout$ $\KGen_E(\lambda)$ \\
 & & $\forall i$ $\in$ $[0,m-1]$ \\
-& & \hspace*{1em} $c_i$ $\gets$ $\Enc_\sk(r_i||G[i])$ \\
+& & \hspace*{1em} $c_i$ $\gets$ $\Enc_\sk(r_i||G_\ServerSet[i])$ \\
 & & share \sk into $t_0, \dots, t_{m-1}$ ($\oplus$) \\
 & {\bf OT} on& \\
 Recover $t_i$ if $B_\ClientSet[i]=0$ & $\xleftrightarrow{\makebox[4cm]{$B$ and $\{(c_i, t_i)\}_{i\in[0,m-1]}$}}$ & \\
@@ -908,9 +893,10 @@ $\forall $ recovered $c_i$ & & \\
 $\forall $ recovered $d_i:$& & \\
 \hspace*{1em} $d_i[0,\lambda-1] \stackrel{?}{=} r_i$ & & \\
 \hspace*{1em} else return with $\bot$ & & \\
-Build $G'$ with Algorithm \ref{alg:gbfintersection} & & \\
-on $(\{d_i\}, B, m, \lambda)$ & & \\
-Return $\{d_i\}$ from $G'$ & & \\
+Build $G_{\ClientSet\cap \ServerSet}$ with Algorithm \ref{alg:gbfintersection} & & \\
+\hspace*{1em} on $(\{d_i\}, B_\ClientSet, m, \lambda)$ & & \\
+Query $G_{\ClientSet\cap \ServerSet}$ with \ClientSet & & \\
+\hspace*{1em} to retrieve $\ClientSet\cap \ServerSet$ & &\\
 \bottomrule
 \end{tabular}
 }
@@ -918,6 +904,23 @@ Return $\{d_i\}$ from $G'$ & & \\
 \caption{Oblivious Bloom Intersection}
 \label{fig:obi}
 \end{figure*}
+
+\begin{algorithm}[htb]
+\caption{GBFIntesection $(G, B, m, \lambda)$}
+\label{alg:gbfintersection}
+\begin{algorithmic}[1]
+\REQUIRE Garbled bloom filter $G$, Bloom filter $B$, integer $m, \lambda$
+\ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_X$
+\STATE GBF$_X = [m]$ \COMMENT{create empty array of size $m$}
+\FOR{$i=0$ \TO $m-1$}
+  \IF{$B[i] == 1$}
+    \STATE GBF$_X[i] = G[i]$
+  \ELSE
+    \STATE GBF$_X[i] \ralgout \{0,1\}^\lambda$
+  \ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
 
 \begin{algorithm}[htb]
 \caption{GBF $(\ServerSet, \ServerSet_d , n, m, k, H, \lambda)$}
