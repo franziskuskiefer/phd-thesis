@@ -930,7 +930,7 @@ Query $G_{\ClientSet\cap \ServerSet}$ with \ClientSet & & \\
 \ENSURE An $(m, n, k, H, \lambda)$-garbled Bloom filter GBF$_\ServerSet$ of \key
 \STATE GBF$_\ServerSet = [m]$ \COMMENT{create empty array of size $m$}
 \FOR{$i=0$ \TO $|\ServerSet|-1$}
-  \STATE emptySlot $= -1$; share $=\ServerSet_d[i]$
+  \STATE emptySlot $= -1$; $\share =\ServerSet_d[i]$
   \FOR{$j=0$ \TO $k-1$}
     \STATE $\alpha=h_i(\ServerSet[i])$
     \IF{GBF$_\ServerSet[\alpha] == \NULL$}
@@ -938,13 +938,13 @@ Query $G_{\ClientSet\cap \ServerSet}$ with \ClientSet & & \\
         \STATE emptySlot $= \alpha$
         \ELSE
           \STATE GBF$_\ServerSet[j] \gets_{\$} \{0,1\}^\lambda$
-          \STATE share $= share \oplus$GBF$_\ServerSet[\alpha]$
+          \STATE $\share = \share \oplus$GBF$_\ServerSet[\alpha]$
       \ENDIF
       \ELSE
-        \STATE share $= share \oplus$GBF$_\ServerSet[\alpha]$
+        \STATE $\share = \share \oplus$GBF$_\ServerSet[\alpha]$
     \ENDIF
   \ENDFOR
-  \STATE GBF$_\ServerSet[\text{emptySlot}]=\text{share}$
+  \STATE GBF$_\ServerSet[\text{emptySlot}]=\share$
 \ENDFOR
 \FOR{$i=0$ \TO $m-1$}
   \IF{GBF$_\ServerSet[i] == \NULL$}
