@@ -4,7 +4,7 @@ The previous section on \ac{ZKPPC} gives only an informal discussion on how to u
 In this section we introduce a formal definition of \ac{BPR} and propose an optimised protocol following the idea used in \ac{ZKPPC}.
 First observe that a zero-knowledge property in the context of password verifiers seems an unnecessarily strong requirement since offline dictionary attacks can always be performed on the server side.
 By dropping the zero-knowledge requirement and focusing on the entire registration process we thus obtain a more reasonable security model and are able to construct more efficient \ac{BPR} protocols.
-It further allows us to drop the maximum password length and thus use simplified policies $f$ here, consisting of policy expression $R$ and minimum password length \pmin
+It further allows us to drop the maximum password length and thus use simplified policies $f$ here, consisting of policy expression $R$ and minimum password length \pmin.
 
 A \ac{BPR} protocol allows a user to register a password verifier at a \ac{VPAKE} server and prove that it contains a password that complies with the server's policy without disclosing the password.
 A \ac{BPR} protocol is thus executed between a client \Client and a server \Server, both holding the server's password policy $f$.
@@ -468,7 +468,7 @@ The server accepts the \ac{PoS} proof if all verifications succeed.
 The security of our \ac{BPR} protocol is established by the following theorem. 
 
 \begin{theorem}[BPR Security]\label{theo:bpr}
-  The protocol from Section \ref{sec:construction} is \ac{BPR}-secure, \ie. policy compliant and dictionary attack resistant, if the discrete logarithm problem is hard in the used group \GG.
+  The protocol from Section \ref{sec:construction} is \ac{BPR}-secure, \ie policy compliant and dictionary attack resistant, if the discrete logarithm problem is hard in the used group \GG.
 \end{theorem}
 
 \noindent

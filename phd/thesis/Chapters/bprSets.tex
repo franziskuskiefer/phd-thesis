@@ -189,6 +189,8 @@ Now it follows directly that any attacker that is able to generate a message $m_
 \subsubsection{Applications}\label{sec:generalisation}
 While \ac{SPC} can be used in many different scenarios, it will be detailed for use in password-policy checks in order to build \ac{BPR} protocols in Section \ref{sec:spc-bpr-protocol}.
 Before that we want to give some ideas of other \ac{SPC} use-cases.
+Note that these applications might have additional requirements on the used sets (such as authorised sets or secret server sets) we do not detail here.
+These are possible applications of \ac{SPC} and would require further rigorous analysis before usage.
 
 \paragraph{Policy checks for Access Control}
 In a role-based access control scenario \cite{FerraioloK09} a user has to have a certain role (or combination of roles) in order to access a resource.
@@ -239,6 +241,9 @@ The policy checking phase is essentially an execution of  the \ac{SPC} protocol 
 At the end of the \ac{SPC} protocol the server learns whether the client's password satisfies the policy or not. 
 If the \ac{SPC} execution is successful, the server computes the hash of the product of the client's $u_i$ values $h\gets H_3(\prod_{i=1}^v u_i)$, and stores the password verifier $\ver = (h,e,N,d,\bm{u})$, where $(e,N,d)$ is the RSA key pair from the setup phase and $\bm{u}=\{u_1,\dots,u_v\}$ is the vector of client ``commitments''.
 Note that storing $(d, \bm{u})$ as part of \ver is only a technical necessity in order to prove security.
+Further note that it is important for $e$ in \KGen is chosen uniformly at random here.
+(Usually $e$ is set $2^{16}+1$ in real world implementation due to efficiency reasons.
+This however would break the protocol as $u_i$ could be pre-computed in this case and thus enable more efficient attacks than brute-force dictionary attacks.)
 
 % \begin{figure}[!t]
 % \centering
@@ -336,7 +341,7 @@ Recall that in the password registration protocol, the two parties have differen
 On the other hand, the server cares about the soundness of the protocol because an unsound protocol would allow a user to register a password that is not policy compliant. 
 For the client, privacy is the main concern while soundness is not. Since the policy is public, the client can check the policy by itself and can detect if the server cheats. 
 We therefore refrain from using an over-complicated security definition and use the following comprehensible security model.
-Note that the \ac{BPR} model from Section \ref{sec:bpr} is not usable for this protocol (cf. Section \ref{sec:bpr-security-analysis}).
+Note that the \ac{BPR} model from Section \ref{sec:bpr} is not usable for this protocol (cf. Section \ref{sec:bpr-security-analysis} for more details).
 Let $\ver\gets\phi(\pwd,r)$ denote a password verifier, computed from a password \pwd and some randomness $r$, and $\PwdMap(\pwd)$ a function to generate set \ClientSet from password \pwd.
 \begin{enumerate}
   \item Privacy: A malicious server must not be able to retrieve more information from the protocol than the password verifier and the result of the policy verification, \ie the protocol must implement the functionality $f_{\Pi}=(f(\ClientSet), (f(\ClientSet), \ver))$. Furthermore, the verifier must not give a malicious server advantage in terms of dictionary attacks. 

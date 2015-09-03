@@ -101,7 +101,7 @@ However, in terms of dictionary attacks, an attacker does not gain anything by t
 
 \paragraph{Security Discussion}
 The \ac{VPAKE} protocol from Figure \ref{fig:genericVPAKE} resembles a common way of constructing what is informally considered a \ac{VPAKE} protocol such as tSoke (described in Section \ref{sec:vpake-model}).
-While it is a secure \ac{PAKE} protocol, it is in general not compatible with the security model for \ac{VPAKE} from Section \ref{sec:vpake-model}.
+While it is a secure \ac{PAKE} protocol, it is in general not compatible with the security model for \ac{VPAKE} from Section \ref{sec:vpake-model} and offers \ac{PAKE} security guarantees instead of \ac{VPAKE}.
 % As discussed earlier, this might not be sufficient to model \ac{VPAKE} security.
 When an attacker corrupts server \Server and retrieves verifier \ver for client \Client, the attacker is able to log on to \Server, \ie perform a successful \ac{VPAKE} execution with \Server, and thus win the \ac{VPAKE} security experiment.
 While this would be ok in the \ac{PAKE} setting (looking at \ac{AKE} security the adversary can compute the session key anyway), this renders a protocol insecure in the \ac{VPAKE} model (and the real world).
@@ -112,8 +112,8 @@ This is because the client actually has to know the password \emph{and} the veri
 
 \subsection{A New VPAKE Protocol} \label{sec:vpake}
 % \section{VPAKE Protocols for ZKPPC-registered Passwords}\label{sec:vpake}
-We now propose now a new \ac{VPAKE} protocol where server \Server uses \ver stored from the \ac{BPR} protocol in Section \ref{sec:bpr} to authenticate client \Client using password \pwd. 
-The protocol is constructed from the general \ac{VPAKE} framework introduced by \citet{BenhamoudaP13}. 
+We now propose a new \ac{VPAKE} protocol where server \Server uses \ver stored from the \ac{BPR} protocol in Section \ref{sec:bpr} to authenticate client \Client using password \pwd. 
+The protocol is constructed from the general \ac{VPAKE} framework introduced by \citet{BenhamoudaP13} rather than the framework from Figure \ref{fig:genericVPAKE}, which results in a secure \ac{VPAKE} protocol. 
 Their framework constructs one-round \ac{VPAKE} protocols with \Client and \Server sending one message each, independently, using a generic password hashing scheme $(\PSetup, \PPHSalt, \PPreHash,\PHSalt, \PHash)$ with deterministic $\PPreHash$, labelled public key encryption scheme $(\KGen, \Enc, \Dec)$, and secure \acp{SPHF} $(\HKGen, \PKGen, \Hash, \ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc_\pk\ell, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc_\pk(\ell, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
 Their approach can directly be used for the password hashing scheme proposed in Section \ref{sec:strucphash} with randomised \PPreHash if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 
 This readily gives us a generic \ac{VPAKE} protocol that is suitable for \ac{BPR} construction in Section \ref{sec:bpr} such that security follows from the analysis of the framework in \cite{BenhamoudaP13}.

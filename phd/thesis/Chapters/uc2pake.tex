@@ -391,7 +391,7 @@ We describe the ideal functionality for \ac{2PAKE} in the following, which can b
 The ideal functionality \FTWOPAKE is given in Figure \ref{fig:2pakef}.
 \FTWOPAKE is very similar to the original \ac{2PAKE} functionality but requires additional functions.
 The \ac{PAKE} functionality is recalled in Chapter \ref{ch:prelims} Section \ref{sec:uc-prelims} for convenience.
-In contrast to other password-related ideal functionalities such as \ac{VPAKE} \cite{Gentry2006} and \ac{PPSS} \cite{Camenisch2012} we consider only the key-exchange functionality without explicit client authentication.
+In contrast to other password-related ideal functionalities such as \ac{VPAKE} \cite{Gentry2006}, \ac{PPSS} \cite{Camenisch2012}, or group \ac{PAKE} \cite{AbdallaCGP11} we consider only the key-exchange functionality without explicit client authentication.
 While it is compelling to model \ac{2PAKE} (as well as \ac{PAKE}) similar to \cite{Camenisch2012} and allow for throttling on wrong password guesses,\footnotemark\ this is only possible if the servers are able to verify validity of the client's password, \ie explicit authentication of the client.
 We want to keep the \ac{2PAKE} functionality simple and it is known that implicit authentication is sufficient for secure channels \cite{CanettiK01} such that we settle for implicit authentication.
 

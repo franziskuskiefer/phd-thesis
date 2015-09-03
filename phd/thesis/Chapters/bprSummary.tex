@@ -7,15 +7,18 @@ In this section we compare all three protocols considering security and performa
 The \ac{ZKPPC}-based approach has no formal security model for the password registration protocol.
 However, it is clear (as discussed before) that it does not fulfil the security model proposed for \ac{BPR} protocols in Section \ref{sec:bpr} but requires a weaker definition.
 While the \ac{SPC}-based approach has a security model, it differs from the \ac{BPR} security model proposed in Section \ref{sec:bpr}.
-It thus remains to compare security guarantees given by the \ac{SPC}-based approach with guarantees from the \ac{BPR} protocol in Section \ref{sec:bpr}.
+It thus remains to compare security guarantees given by the \ac{BPR} protocol in Section \ref{sec:bpr} with guarantees from the \ac{SPC}-based approach.
 We call these protocols BPR1 and BPR2 respectively in the following.
 
 First note that BPR2 seems not provable in the game-based security model BPR1 is proven in.
-This is due to the fact that the reduction to the one-more RSA problem does not work.
-The idea would be to say that the client is only able to register a non-compliant password if he is able to break one-more RSA, \ie by creating an
+This is due to the impression that the reduction to the one-more RSA problem does not work as elaborated in the following.
+The proof idea would be to say that the client is only able to register a non-compliant password if he is able to break one-more RSA, \ie by creating an
 element in $\hat{\ClientSet}$ that was not sent to the server in any $u_i$. 
 The problem is that the challenger has to build $\hat{\ServerSet}$ and therefore breaks the ability to actually generate that forgery. 
 Alternatively, using only the requested elements in $\hat{\ServerSet}$ allows the client to create a forgery, but lets the protocol fail because the client uses elements in $\hat{\ClientSet}$ that are not in $\hat{\ServerSet}$.
+Therefore BPR2 is proven secure in a new simulation-based security model instead of the game-based model from Section \ref{sec:bpr}.
+Proving BPR1 in turn secure in the simulation-based model from the previous section seems feasible using the \ZKP's simulators.
+This is however requires a more thorough analysis and is left open for future work.
 
 Further, BPR2 has with the one-more RSA assumption and the random oracle model much stronger assumptions on the model than BPR1.
 This leads to the conclusion that BPR1 is the preferable protocol when strong security guarantees are required.
