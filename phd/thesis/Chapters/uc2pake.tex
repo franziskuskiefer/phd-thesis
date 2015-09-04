@@ -211,7 +211,7 @@ We further define $\share_0=\pwd$.
 	        \item If $P=\Server_1$, compute
 	          $m_{0} = \Enc_{\pk_1}^\EG(g_{1,1}^{-\mu_1}; r)$ and
 	          $c_{0} = \Enc_{\pk_1}^\EG(g_{1,1}^{\share_1}; r')$
-	          with $r,r'\rin\ZZ_p$ and $(\sk_1,\pk_1)$ retrieved from \Fca, and send $(\sid,\qid,\Hash_0,0,\Server_1,m_0,c_0)$ to $\Server_2$.
+	          with $r,r'\rin\ZZ_p$ and $(\sk_1,\pk_1)$ retrieved from \Fca, and send $(\sid,\qid,\Hash_0,0,\Server_1,$ $m_0,c_0)$ to $\Server_2$.
 	      \end{enumerate}
 	      
 % 	  \end{enumerate}
@@ -252,8 +252,8 @@ We further define $\share_0=\pwd$.
 	    
 	    \item On input $(\sid,\qid,\Hash_{0,2},\Server_1,\fc)$ $\Server_2$ in the correct state computes
 	    $C_{\Res2}=g_{1,1}^{H(\Res_{2})} h^{r_{c4}}$ with $r_{c4}\rin\ZZ_p$ and \ac{ZKP} for correctness,
-	    and sends $(\sid,\qid,\Hash_{0,3},\Server_2,C_{\Res2})$ to $\Server_1$.
-	    Subsequently, it sends $(\sid,\qid,\Hash_{0,4},\Server_2, m_1, m_2, \Comm_2, \Res_2, r_{c3}, r_{c4})$ to $\Server_1$ opening the \ac{ZKP}.
+	    and sends $(\sid,\qid,\Hash_{0,3},$ $\Server_2,C_{\Res2})$ to $\Server_1$.
+	    Subsequently, it sends $(\sid,\qid,\Hash_{0,4},\Server_2, m_1, m_2, \Comm_2, \Res_2, r_{c3},$ $r_{c4})$ to $\Server_1$ opening the \ac{ZKP}.
 	    
 	    \item On input $(\sid,\qid,\Hash_{0,4},\Server_2, m_1, m_2, \Comm_2, \Res_2, r_{c3}, r_{c4})$ $\Server_1$ in the correct state parses $\Comm_{2}$ as $(t_{\overline{m}1}, t_{\overline{m}2}, t_{e2}, t_{v2}, t_{\hp12}, t_{\hp22})$ and $\Res_{2}$ as $(s_{\share_2}, s_{\mu2}, s_{\eta12}, s_{\eta22}, s_{\theta2}, s_{\nu2}, s_{r2})$, verifies correctness of commitments and \ac{ZKP} , and computes
 	      \[h_0 = e\left( g_{1,1}^{-\mu_1\cdot \share_1} \cdot \Dec_{\sk_1}^\EG(m_1) \cdot u_{1,0}^{\eta_{1,1}+\xi_0\eta_{2,1}} \cdot u_{2,0}^{\theta_1} \cdot e_0^{\mu_1} \cdot v_0^{\nu_1}, g_2 \right)\] 

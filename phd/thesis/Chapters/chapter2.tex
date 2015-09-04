@@ -558,30 +558,30 @@ Nonetheless, the protocol has advantages stemming from the use of a verifier suc
 \begin{figure*}[t]
 \begin{center}
 \scalebox{1.0}{\small
-\begin{tabular}{ l l c l }
+\begin{tabular}{ l c l }
 \toprule
-& {\bf Client \Client} & & {\bf Server \Server} \\
-& Input: $\tg, \pwd$ & & Input: $\tg$ \\
+{\bf Client \Client} & & {\bf Server \Server} \\
+Input: $\tg, \pwd$ & & Input: $\tg$ \\
 \midrule
-1. & $x \rin \ZZ_p$ & & \\
-2. & $X = g^x$ & & \\
-3. & & $\xrightarrow{\makebox[2cm]{$\Client, X$}}$ & \\
-4. & & & Look up \ver for $\Client$. \\
-5. & & & $y \rin \ZZ_p$ \\
-6. & & & $Y = g^y$ \\
-7. & & & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
-8. & & $\xleftarrow{\makebox[2cm]{$r, Y^{*}$}}$ & \\
-9. & $H \gets \HashP(\pwd, r)$ & & \\
-10. & $Y = Y^{*} / h^H$ & & \\
-11. & $Z = Y^x$ & & $Z' = X^y$ \\
-12. & $K \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ \\
-13. & $A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
-14. & & $\xrightarrow{\makebox[2cm]{$A_{1}$}}$ & \\
-15. & & & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
-16. & & & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
-17. & & $\xleftarrow{\makebox[2cm]{$A_{2}$}}$ & \\
-18. & Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
-19. & Accept & & Accept \\
+$x \rin \ZZ_p$ & & \\
+$X = g^x$ & & \\
+& $\xrightarrow{\makebox[2cm]{$\Client, X$}}$ & \\
+& & Look up \ver for $\Client$. \\
+& & $y \rin \ZZ_p$ \\
+& & $Y = g^y$ \\
+& & $Y^{*} = Y \cdot h^{H}$ for $\ver=(H,r)$ \\
+& $\xleftarrow{\makebox[2cm]{$r, Y^{*}$}}$ & \\
+$H \gets \HashP(\pwd, r)$ & & \\
+$Y = Y^{*} / h^H$ & & \\
+$Z = Y^x$ & & $Z' = X^y$ \\
+$K \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ & & $K' \gets \SHA(\Client, H, \tg, X, Y^{*}, Z)$ \\
+$A_{1} \gets \SHA(K , \mbox{``auth1''})$ & & \\
+& $\xrightarrow{\makebox[2cm]{$A_{1}$}}$ & \\
+& & Abort if $A_{1} \ne \SHA(K', \mbox{``auth1''})$ \\
+& & $A_{2} \gets \SHA(K' , \mbox{``auth2''})$ \\
+& $\xleftarrow{\makebox[2cm]{$A_{2}$}}$ & \\
+Abort if $A_{2} \ne \SHA(K, \mbox{``auth2''})$ & & \\
+Accept & & Accept \\
 \bottomrule
 \end{tabular}
 }
@@ -712,7 +712,7 @@ A committed $\Sigma$-protocol based on Pedersen commitments is then given by the
   \item The prover computes the second message $\Res\gets P_2(x,w,r,\Ch)$, and 
   \[\widehat{\Res}\gets\Com(H(\Res); r_2)=g^{H(\Res)}h^{r_2},\]
    and sends $\widehat{\Res}$ to the verifier.
-  \item Further, the prover opens the commitments $\widehat{\Comm}$ and $\widehat{\Res}$ by sending $(x,\Comm,\Res,r_1,r_2)$ to the verifier.
+  \item Further, the prover opens the commitments $\widehat{\Comm}$ and $\widehat{\Res}$ by sending $(x,\Comm,\Res,r_1,$ $r_2)$ to the verifier.
   \item The verifier accepts iff both commitments are valid and if the verification of the $\Sigma$-protocol $(x,\Comm,\Ch,\Res)$ is successful.
 \end{enumerate}
 
@@ -872,7 +872,7 @@ The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\
 
 \begin{figure*}[tbh]
 \begin{center}
-\scalebox{1.0}{\small
+\scalebox{0.95}{\small
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\

@@ -168,13 +168,14 @@ An extended \ac{SPHF} $\Pi$ offers concurrent pseudorandomness if for all \ac{PP
 \noindent
 $\Exp_{\Pi,\cA}^{\Pr}(\secpar):$ \\
 \hspace*{2em} $b\rin\bits$, $\overline{\hp_j}=(\hp_0,\dots,\hp_x)$ with \\
-\hspace*{2em} $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ for all $i\in 0,\dots,x$ and $j\in 1,\dots,l$ \\
+\hspace*{2em} $\hp_i\gets\PKGen(\hk_i,\Laux,C_i)$ and $\hk_i\gets\HKGen(\Laux)$ \\
+\hspace*{4em} for all $i\in 0,\dots,x$ and $j\in 1,\dots,l$ \\
 \hspace*{2em} $b'\gets\cA^{\Omega^{\cL}_\pk(\cdot)}(\secpar,\overline{\hp_1},\dots,\overline{\hp_l})$ \\
 \hspace*{2em} return $b=b'$
 
 \begin{description}
 	\item[$\Omega^{\cL}_\pk(\ell,\aux)$] returns elements $C=(C_0,\dots,C_x)\in\Laux$ with $C_0\gets\Enc^\cL_\pk(\ell_0,\allowbreak\aux';r_0)$ and $C_i\gets\Enc^\cL_\pk\allowbreak(\ell_i,\aux_i;r_i)$ for all $i\in1,\dots,x$ and $\pk\in\aux$ using encryption algorithm \cL and according labels $\ell_i$.
-	It additionally returns $\Hash_{0,j}(\hk_{1,j},\dots,\hk_{x,j},\Laux,C_0)$, $\Hash_{x,j}(\hk_{0,j},\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_{0,j},\allowbreak h_{x,j}\in\GG$ if $b=1$ for all $j\in 1,\dots, l$. \eod
+	It additionally returns $\Hash_{0,j}(\hk_{1,j},\dots,\hk_{x,j},\Laux,$ $C_0)$, $\Hash_{x,j}(\hk_{0,j},\allowbreak \Laux,C_1,\dots,C_x)$ if $b=0$ or $h_{0,j},\allowbreak h_{x,j}\in\GG$ if $b=1$ for all $j\in 1,\dots, l$. \eod
 \end{description}
 \end{definition}
 
