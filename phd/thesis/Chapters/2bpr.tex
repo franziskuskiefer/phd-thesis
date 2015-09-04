@@ -28,7 +28,7 @@ For simplicity however we assume direct communication between the two servers in
 \subsection{Model}\label{sec:securitymodel}
 Security of \ac{2BPR} protocols, given according to Eq. (\ref{eq:zkppc-pok}), has to guarantee that the client knows the sum $\pwdint(\pwd)$ of the password shares $\share_0$ and $\share_1$, and that \pwd fulfils both password policies $f_0$ and $f_1$ in case both servers accept the registration.
 This model is related to the \ac{BPR} model from Chapter \ref{ch:vpake} Section \ref{sec:bpr} but requires handling of two servers and server corruption.
-We translate Eq. (\ref{eq:zkppc-pok}) into a game-based security model that captures the equation using two different security definitions.
+We translate Eq. (\ref{eq:zkppc-pok}) into a game-based security model that captures the relation using two different security definitions.
 The first notion, like in \ac{BPR}, can be directly converted from Eq. (\ref{eq:zkppc-pok}) and captures \acl{PC} of the password.
 In particular, if both servers are honest while accepting their password shares in the \ac{2BPR} protocol, the combination $\pi$ of the shares represents a password compliant with the mutual password policy $f=f_0\cap f_1$, \ie $f(\share_b+\share_{1-b})=\true$.
 The second notion relates to the fact that servers should not learn anything about the password and therefore called \ac{PB}, in contrast to \ac{BPR}, where the server is always able to perform offline dictionary attacks on the password verifier.
@@ -90,7 +90,7 @@ To interact with protocol participants, \ac{PPT} adversary \cA has access to \Se
 \noindent
 Note that we allow the adversary to register passwords with servers such that we do not require the existence of a client instance $\Client_i$ after a successful registration (client identities $\Client$ are unique but not secret and can therefore be used by the adversary).
 
-\paragraph{Policy compliance}
+\paragraph{Policy Compliance}
 \ac{PC} is the first natural security property of \ac{2BPR} protocols, requiring that a password set up with a \ac{2BPR} protocol by a client is compliant with the policy of the two servers $f(\pwd)=\true$.
 The attacker here plays the role of the client that tries to register a password \pwd that is \emph{not} policy compliant on two honest servers.
 
@@ -137,7 +137,7 @@ Note that the connection between the two servers is necessary in order to verify
 Server authenticated and confidential channels between each server and the client is a rather weak assumption that can be implemented with a \ac{TLS} channel \cite{rfc5246,JagerKSS12,KrawczykPW13}.
 This essentially prevents the attacker from querying the $\Send_\Server$ or $\Send_{\Server\Server}$ oracle without prior corruption of the according server and further provides an attacker only with encrypted transcripts unless he performs active attacks or corrupts a participating server.
 % We describe the protocols internal functionality in the following paragraph without explicit description of the encrypted channel.
-The protocol further relies on a common setup, given in a \ac{CRS}.
+The protocol further relies on a common setup, given a \ac{CRS}.
 The \ac{CRS} contains all necessary parameters, \ie $\crs=(g, h, p)$ with generators $g$ and $h$ for group of prime-order $p$ where $\log_g(h)$ is not known.
 At the beginning of the registration phase the client commits to the integer representation $\pi$ of the chosen password string \pwd and sends this commitment together with a password share $\share_b$ to the corresponding server $\Server_b$, $b\in\bits$, along with auxiliary information that is needed to perform the \ac{PC} proof.
 For the latter, the client needs to prove the knowledge of $\pi$ in the commitment such that $\pi = \share_0 + \share_1$ and that it fulfils both policies $f_1$ and $f_2$.
@@ -774,7 +774,7 @@ In this last game all proofs are simulated such that an attacker can only guess 
 % =================================================================
 \subsection{Performance Discussion}
 Considering similarities between \ac{2BPR} and \ac{BPR}, performance of the proposed \ac{2BPR} protocol is very similar to the performance of the \ac{BPR} protocol from Section \ref{sec:bpr} Chapter \ref{ch:vpake}.
-We therefore refrain from implementing this protocol and refer to the performance discussion on \ac{BPR} (Section \ref{sec:performance} Chapter \ref{ch:vpake}) for details.
+We therefore refrain from implementing this protocol and refer to the performance discussion on \ac{BPR} (Section \ref{sec:performance} Chapter \ref{ch:vpake}) for details of the \ac{BPR} protocol, which reflects the time between the client and a single server in the \ac{2BPR} case.
 The additional time needed for committed zero-knowledge proofs is negligible compared to the time needed for \ac{PoM}.
 
 % \mynote{redo when implementation is done}

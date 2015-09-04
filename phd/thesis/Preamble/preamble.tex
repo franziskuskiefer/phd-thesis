@@ -276,7 +276,7 @@
 %\SetDraftWMPosition{bottom}
 
 % Draft Version - default is v1.0
-\SetDraftVersion{v0.5}
+\SetDraftVersion{v0.8}
 
 % Draft Text grayscale value (should be between 0-black and 1-white)
 % Default value is 0.75
@@ -287,8 +287,10 @@
 %% Uncomment the following lines to have todonotes.
 
 \ifsetDraft
-	\usepackage[colorinlistoftodos]{todonotes}
-	\newcommand{\mynote}[1]{\todo[size=\small,inline,color=blue!30]{#1}} %author=fk,
+% 	\usepackage[colorinlistoftodos]{todonotes}
+% 	\newcommand{\mynote}[1]{\todo[size=\small,inline,color=blue!30]{#1}} %author=fk,
+	\newcommand{\mynote}[1]{}
+	\newcommand{\listoftodos}{}
 \else
 	\newcommand{\mynote}[1]{}
 	\newcommand{\listoftodos}{}
