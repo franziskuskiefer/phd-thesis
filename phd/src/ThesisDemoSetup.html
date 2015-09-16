@@ -1,0 +1,46 @@
+<html xmlns:tomboy="http://beatniksoftware.com/tomboy" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns:link="http://beatniksoftware.com/tomboy/link"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Thesis Demo Setup</title><style type="text/css">
+	body {  }
+	h1 { font-size: xx-large;
+     	     font-weight: bold;
+     	     border-bottom: 1px solid black; }
+	div.note {
+		   position: relative;
+		   display: block;
+		   padding: 5pt;
+		   margin: 5pt; 
+		   white-space: -moz-pre-wrap; /* Mozilla */
+ 	      	   white-space: -pre-wrap;     /* Opera 4 - 6 */
+ 	      	   white-space: -o-pre-wrap;   /* Opera 7 */
+ 	      	   white-space: pre-wrap;      /* CSS3 */
+ 	      	   word-wrap: break-word;      /* IE 5.5+ */ }
+	</style></head><body><div class="note" id="Thesis Demo Setup"><a name="thesis%20demo%20setup"></a><h1>Thesis Demo Setup</h1>
+<b>Using VM</b>
+<ul><li dir="ltr">make sure that the IP is 192.168.56.101 or perform the steps from below that involve changing the IP
+</li><li dir="ltr">go to <a style="color:#3465A4" href="https://192.168.56.101">https://192.168.56.101</a></li></ul>
+
+
+<b>New Installation</b>
+<ul><li dir="ltr">there are 2 servers (todo-app, website)
+</li><li dir="ltr">install nodejs/npm (todo-app), optionally with forever
+</li><li dir="ltr">make sure python3 is available (website)
+</li><li dir="ltr">install charm for python3 (build from source, required building pbc lib as well)
+</li><li dir="ltr">make sure apache is enabled with ssl
+</li><li dir="ltr">add apache rules for ssl virtual host to the two server (see below)
+</li><li dir="ltr">import schema.sql (requires mysql server)
+</li><li dir="ltr">make sure the mysql server has a user <i>root</i> with pwd <i>root</i>
+</li><li dir="ltr">replace CERT_HASH in tSokeServer.py with the server's cert hash
+</li><li dir="ltr">install mongodb for the todo-app
+</li><li dir="ltr">edit iframe url according to the used url/ip in client-app.html
+</li><li dir="ltr">edit event.origin in main.js of the todo-app according to url/ip
+</li><li dir="ltr">allow mixed content in the browser (the todo app is currently served via http)</li></ul>
+
+<b>Apache vhost config</b>
+SetEnv proxy-sendcl
+ProxyPreserveHost On
+ProxyPass / <a style="color:#3465A4" href="http://127.0.0.1:8080/">http://127.0.0.1:8080/</a>
+ProxyPassReverse / <a style="color:#3465A4" href="http://127.0.0.1:8080/">http://127.0.0.1:8080/</a>
+
+
+<ul><li dir="ltr">add-on can be installed in Firefox 40+
+</li><li dir="ltr">requires disabling add-on signing</li></ul>
+</div></body></html>
