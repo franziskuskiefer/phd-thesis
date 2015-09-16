@@ -83,7 +83,6 @@ tabs.on('ready', function(tab) {
   } else {
   	disableForThisTab();
   }
-//	  console.log(browser.contentDocument.getElementById('24920b44-3a8b-486b-a3f9-8f359bd1fbb2')); //body.innerHTML
 });
 
 function enableForThisTab(aPanel) {
@@ -180,7 +179,6 @@ function handleBprClient(m) {
 function getChallenges(response)  {
 	var result = response.json;
 	w.postMessage({ "args": [1, result.CH] });
-//	console.log(result.CH);
 }
 
 function handleChange(state) {
@@ -193,11 +191,10 @@ function handleChange(state) {
 }
 
 function finalise(response) {
-	// TODO: do UX stuff to finalise this
-//	var result = response.json;
-	console.log("done, hope we're good ...\n"+JSON.stringify(response.json));
+	// TODO: do nicer UX here
 	loadingWindow.hide();
-	tabs.activeTab.url = response.json.goto;
+	// XXX: response.json.goto can't be used if no real url is used on the server -> workaround
+	tabs.activeTab.url = tabs.activeTab.url.match(/(^[^:]*:\/\/[^\/]+)(\/.*)$/)[1]+response.json.goto.match(/(^[^:]*:\/\/[^\/]+)(\/.*)$/)[2];
 }
 
 
@@ -318,10 +315,6 @@ var loadingWindow = require("sdk/panel").Panel({ //XXX: make this 100% and not e
 	focus: false,
   contentURL: self.data.url("loading.html")
 });
-
-//loadingWindow.on("show", function() {
-//  loadingWindow.port.emit("show");
-//});
 
 function handleHide() {
   button.state('window', {checked: false});

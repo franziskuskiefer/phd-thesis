@@ -521,7 +521,7 @@ In particular it can be seen as a two-server variant of the \ac{PAKE} protocol f
 
 You can think of the two-server protocol as the execution of two \ac{D-SPHF} protocols, one between $(\Client,\Server_1,\Server_2)$ and one between $(\Client,\Server_2,\Server_1)$ where servers $\Server_2$ and $\Server_1$ swap roles, such that $(\Client,\Server_1)$ and $(\Client,\Server_2)$ eventually hold common hash values that can be used to generate a shared session key $\sk_1$ and $\sk_2$.
 The only overlap between the two \ac{D-SPHF} executions is the $\Hash_x$ computation.
-The reuse of $C_1,C_2$ in $\Hash_x$ functions is covered by the concurrent pseudorandomness.
+The reuse of ciphertexts $C_1$ and $C_2$ in $\Hash_x$ functions across the two servers is covered by the concurrent pseudorandomness.
 
 \subsubsection{The Framework}
 The servers encrypt their password shares under a public key $\pk$ stored in the \crs using a \ac{CCA}-secure labelled encryption scheme and distribute this ciphertext together with two appropriate projection keys for a secure \ac{D-SPHF}, $(\hp_{1,1},\hp_{1,2},C_1)$ and $(\hp_{2,1},\hp_{2,2},C_2)$.
@@ -529,7 +529,7 @@ The client computes two independent encryptions of the password and generates tw
 The previously described \ac{D-SPHF} allows us to send all $\hp_i,C_i$ in one round and therefore reach optimality for this step.
 Using these values, the client can compute session keys as product of the two hash values $h_{0,1},h_{x,1}$ for $\sk_1$, which is shared with $\Server_1$ and from $h_{0,2},h_{x,2}$ for $\sk_2$ that is shared with $\Server_2$.
 
-Subsequently, the two servers perform the $\Hash_0^D$ and $\ProjHash_x^D$ protocols such that $\Server_1$ and $\Server_2$ eventually hold hash values $h_{0,1}$ and $h_{x,1}$, $h_{0,2}$ and $h_{x,2}$ respectively, to compute $\sk_1$, $\sk_2$ respectively.
+Subsequently, the two servers perform the $\Hash_0^D$ and $\ProjHash_x^D$ protocols such that $\Server_1$ holds hash values $h_{0,1}$ and $h_{x,1}$ to compute $\sk_1$ and $\Server_2$ holds $h_{0,2}$ and $h_{x,2}$ to compute $\sk_2$.
 Eventually, \Client holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\sk_2=h_{0,2}\cdot h_{x,2}$, $\Server_1$ holds $\sk_1=h_{0,1}\cdot h_{x,1}$ and $\Server_2$ holds $\sk_2=h_{0,2}\cdot h_{x,2}$.
 An instantiation of the framework using labelled Cramer-Shoup encryption and the aforementioned \ac{D-SPHF} yields a secure \ac{2PAKE} protocol.
 Note that this actually requires two \ac{D-SPHF} executions.
@@ -671,10 +671,11 @@ g_1 & g_2 & h & c \\
 % \end{itemize}
 
 % \noindent
-The client sends the projection keys in a third round together with a signature on the session transcript to the servers.
-% The protocol is depicted in Figure \ref{fig:twokoy}.
-Note that we have to move $K^r$ into a separate encryption compared to the original protocol.
-The ElGamal encryption of the password of party $P_i$, $\hat{C}_i\gets\Enc^\EG_{\pk_i}(g^{\pwd_i};r_i)$ is precomputed and stored on $S_{j},j\not=i,j\in\{1,2\}$.
+The client sends the projection keys in a third round together with a one-time signature on the session transcript to the servers.
+The protocol is sketched in Figure \ref{fig:twokoy} using our notation for \acp{D-SPHF}.
+Note that we have to move and rename several computations but do not modify the protocol.
+%$K^r$ into a separate encryption compared to the original protocol.
+The ElGamal encryption of the password of server $\Server_i$, $\hat{C}_{i}\gets\Enc^\EG_{\pk_i}(g^{\pwd_i};r_i)$ is precomputed and stored on $\Server_{j},j\not=i,j\in\{1,2\}$.
 Eventually, the client computes hash values using the $\ProjHash_0$ function of the GL-\ac{D-SPHF} scheme on CS ciphertexts and the $\Hash_x$ function of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
 Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\ac{D-SPHF} scheme on Cramer-Shoup ciphertexts and the $\ProjHash_x^D$ protocol of the \ac{D-SPHF} scheme on ElGamal ciphertexts.
 
@@ -742,9 +743,42 @@ Further, the servers execute the $\Hash_0^D$ protocol of the distributed GL-\ac{
 % \label{fig:twokoy}
 % \end{figure}
 
+\begin{figure*}[t]
+\begin{center}
+\scalebox{0.73}{
+\begin{tabular}{ l c l c}
+\toprule
+{\bf Client \Client} & & {\bf Server $\Server_1$} \\
+Input: $\crs, \pwd, \Server_1, \Server_2$ & & Input: $\crs, \share_1, \Client, \Server_2, \hat{C}_2$ \\
+\midrule
+  $(\vk,\sk)\gets\Gen,~\ell=(C,\vk)$ & & $(\hk_1,\hk'_1)\gets \HKGen^\CS(\Laux)$ & \\
+  $C_{1,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_1)$ & & & \\
+  $C_{2,0}\gets\Enc_{\pk}^{\CS}(\ell,\pwd;r_2)$ &
+	  $\xrightarrow{\makebox[2cm]{$C_{1,0},C_{2,0},\vk$}}$ &
+	  $(\hp_1,\hp'_1)\gets \PKGen^\CS(\hk_1,\hk'_1, C_{1,0})$ \\
+	$(\hk_{1,0},\hk_{2,0})\ralgout\HKGen^\EG(\Laux)$  & & & \\
+	$(\hp_{1,0},\hp_{2,0})\gets \PKGen^\EG(\hk_{1,0},\hk_{2,0},\Laux)$
+	  & $\xleftarrow{\makebox[2cm]{$C_1,\hp_1,\hp'_1$}}$ &
+		  $C_1\gets\Enc^{\EG}_{g_3}(g_1^{\share_1};r_1)$
+	  & $\xleftarrow{\makebox[2cm]{$C_2,\hp_2,\hp'_2$}}$ \\
+	$\sigma\gets\Sign(\trans,\hp_1,\hp_2)$ & & & \\
+	$h_{0,1}\gets\ProjHash_0^\CS(\hp_1,\hp_2,\Laux,C_{1,0},r_1)$
+	  & $\xrightarrow{\makebox[2cm]{$\sigma,\hp_{1,0},\hp_{2,0}$}}$
+	  & check $C,G_2,\trans$ & \\
+	$h_{0,2}\gets\ProjHash_0^\CS(\hp'_1,\hp'_2,\Laux,C_{2,0},r_2)$ & & $h_{0,1}\gets\Hash_0^{D-CS}$ & \hspace*{8em} \\
+	$h_{x,1}\gets\Hash_x^\EG(\hk_{1,0},\Laux,C_1,C_2)$ & & \hspace*{10em} & \hspace*{8em} \\
+	$h_{x,2}\gets\Hash_x^\EG(\hk_{2,0},\Laux,C_1,C_2)$ & & $h_{x,1}\gets\ProjHash_x^{D-\EG}$ & \hspace*{8em} \\
+	$\sk_1=h_{0,1} h_{x,1}, \sk_2=h_{0,2} h_{x,2}$ &
+	  & $\sk_1=h_{0,1} h_{x,1}$ & \hspace*{8em} \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\caption[Two-Server KOY using D-SPHF]{Two-Server KOY \cite{Katz2012a} using D-SPHF}
+\label{fig:twokoy}
+\end{figure*}
+
 \paragraph{Security Analysis}
-Security of the 2KOY protocol against passive adversaries follows immediately from \cite[Theorem 1]{Katz2012a} as we do not change the protocol.
-% in Figure \ref{fig:twokoy}
+Security of the 2KOY protocol against passive adversaries follows immediately from \cite[Theorem 1]{Katz2012a} as we do not change the protocol in Figure \ref{fig:twokoy}
 However, \citet{Katz2012a} need additional mechanisms to prove their protocol secure against an active adversary.
 They add witness-indistinguishable $\Sigma$-protocols to the $\ProjHash_x^{D}$ and $\Hash_0^{D}$ protocols that prove correctness of their messages.
 Without giving a proof it seems that Theorem \ref{theo:twopake} also holds for the two-server KOY instantiation \emph{without} additional mechanisms.
