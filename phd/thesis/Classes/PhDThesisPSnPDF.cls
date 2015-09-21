@@ -983,7 +983,10 @@ wish to left align your text}
 \end{minipage}
 } % end-if- college is defined
 \end{singlespace}
+\smallskip
+{\small This document is published under Creative Commons Attribution License BC-NC-SA} %\byncsa
 }
+
 
 
 % ********************************* Dedication *********************************
