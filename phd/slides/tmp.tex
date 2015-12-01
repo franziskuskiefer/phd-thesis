@@ -1,0 +1,72 @@
+\documentclass[crop,tikz,12pt]{standalone}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{pgf}
+\usepackage{color}
+\usepackage{xspace}
+
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{shapes,arrows,positioning,shadows,trees}
+
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    party/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           text width=6.5em,
+           minimum height=2em,
+           text centered},
+    state/.style={
+           inner sep=0,
+           minimum size=0},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
+
+\usepackage[english]{babel}
+\input{macros}
+
+\begin{document}
+\begin{tikzpicture}
+	\node[state] (client) at (0,0) {\pgfimage[width=0.8cm]{os_tux}};
+	
+	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $X'\gets X\cdot M^\pwd$};
+	\node[state] (client1) at (1.5,-1){};
+	
+	\node[state, align=left] at (0,-2) {$K\gets (Y'/N^\pwd)^x$};
+	\node[state] (client2) at (1.5,-2){};	
+	
+	\node[state] at (0,-3) {$SK\gets H(A,B,X',Y',K,\pwd)$};
+	
+	
+	\node[state] (server) at (6,0) {\pgfimage[width=0.8cm]{techie_sailor}};
+	
+	\node[state, align=left] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $Y'\gets Y\cdot N^\pwd$};
+	\node[state] (server1) at (4.5,-1) {};
+	
+	\node[state] at (6,-2) {$K\gets (X'/M^\pwd)^y$};
+	\node[state] (server2) at (4.5,-2) {};
+	
+	\node[state] at (6,-3) {$SK\gets H(A,B,X',Y',K,\pwd)$};
+	
+	\draw[pil] (client1) -- node[above] {$X'$} (server1);
+	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
+\end{tikzpicture}
+
+%\begin{tikzpicture}
+%\node[state, align=left]{$\Exp_{\Pi,\cA}^{\ake}(\secpar):$\\
+%\hspace*{2em}$c\in\NN, b\rin\bits$\\
+%\hspace*{2em}$\forall(P,P')\in\cC\times\cS~:~\pwd_{P,P'}\rin\cD$\\
+%\hspace*{2em}$b'\gets\cA^{\send,\execute,\corrupt,\test}(\secpar, c)$\\
+%\hspace*{2em}return $b\cmp b'$};
+%\node[state, align=left]{$\Adv^{\ake}_{\Pi,\cA}(\secpar)=\left|\prob[\Exp_{\Pi,\cA}^{\ake}(\secpar)=1]-\frac12\right|\leq \varepsilon(\secpar)$};
+%\end{tikzpicture}
+
+\end{document}
