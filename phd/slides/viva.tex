@@ -559,9 +559,50 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 
 \subsection[BPR]{Blind Password Registration}
 
+\begin{frame}{Blind Password Registration (BPR)}
+  A BPR protocol is executed between a client and a server with the server's password policy as common input.
+  At the end of the protocol the server eventually outputs the password verifier for a policy compliant, client chosen password.
+\end{frame}
+
+\begin{frame}{Security Model}
+
+  \begin{description}
+    \item[$m'\gets\mathsf{Send}(C,S,m)$:] \hfill \\ simulates active attack
+    \item[$\mathtt{t}\gets\mathsf{Execute}(C,S)$:] \hfill \\ simulates passive attack
+    \item[$\mathtt{b}\gets\mathsf{Verify}(C,S,\pwd)$:] \hfill \\ verify if $\pwd$ is registered at $S$ for $C$
+  \end{description}
+
+\end{frame}
+
+\begin{frame}{Policy Compliance}
+  Let $A$ denote a PPT adversary with access to Execute and Send oracles. The probability that a server instance exists after the adversary terminated that accepted $(C, v)$ with $v \gets \mathtt{Hash}(\pwd; r)$ and $f(\pwd)=\mathtt{false}$ is negligible in the security parameter.
+\end{frame}
+
+\begin{frame}{Dictionary Attack Resistance}
+  A BPR protocol using password hashing scheme \texttt{H} is Dictionary Attack Resistant if for all PPT adversaries $A$ running in time $t$ (excl. time for oracle computations) and all dictionaries $D_f$ there exists a negligible function $\varepsilon(\cdot)$ such that
+  \[
+    \Pr[(C, S, \pwd) \gets A^{\mathsf{Execute},\mathsf{Send},\mathsf{Verify}}; ~ \mathsf{Verify}(C, S, \pwd)=1]
+  \]
+  \[
+    \leq \frac{2^{-\beta_{D_{f,|\pwd|}}}t}{t_{\mathtt{PPreHash}}} + \varepsilon(\lambda)
+  \]
+\end{frame}
+
+\begin{frame}{Blind Password Registration Protocol}
+  \alert{PROTOCOL FOR BPR (DIFFERENCES TO ZKPPC)}
+\end{frame}
+
 \subsection[SPC]{Secure Set-based Policy Checking}
 
+\begin{frame}{Secure Set-based Policy Checking}
+  \alert{DIFFERENT APPROACH}
+\end{frame}
+
 \subsection[VPAKE]{Verifier-based PAKE}
+
+\begin{frame}{Verifier-based PAKE}
+  \alert{QUICK OVERVIEW}
+\end{frame}
 
 % \begin{frame}[fragile]{Password Based Authentication on the Web}{}
 %
