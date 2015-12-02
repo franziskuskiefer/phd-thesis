@@ -47,8 +47,8 @@
 
 \input{macros}
 
-\title[Password Based Authentication] % (optional, use only with long paper titles)
-{Advancments in Password Based Authentication}
+\title[Password-based Cryptography] % (optional, use only with long paper titles)
+{Advancments in Password-based Cryptography}
 
 \author[F. Kiefer] % (optional, use only with lots of authors)
 {Franziskus Kiefer}
@@ -180,17 +180,21 @@
 	
 \begin{frame}{How to Communicate Securely? (2/2)}
 
-	How can two (or more) parties want to communicate securely?
+\begin{itemize}
+	\item Password over HTML is insufficient for authentication.
+	\item How can two (or more) parties want to communicate securely?
+\end{itemize}
 	
-	\vspace*{2em}
-	\structure{Secure}
-	\begin{itemize}
-		\item Authentic
-		\item Confidential
-	\end{itemize}
+% 	\vspace*{2em}
+% 	\structure{Secure}
+% 	\begin{itemize}
+% 		\item Authentic
+% 		\item Confidential
+% 	\end{itemize}
 
+  \pause
 	\vspace*{2em}
-	\structure{Key-Establishement} rather than expensive asymmetric encryption
+	\structure{Authenticated Key-Establishement} 
 	\begin{itemize}
 		\item Key Transport/Distribution
 		\item<1-| alert@2> Key Exchange/Agreement
@@ -454,9 +458,104 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 \resizebox{\columnwidth}{!}{\setlength\fboxsep{6pt}\fbox{\usebox{\savelisting}}}
 \end{center}}
 
+\begin{frame}{Single-Server Password Authentication Framework}
+  \begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{framework1.pdf}
+  \end{figure}
+\end{frame}
+
 \subsection{Modelling Password Policies}
 
+\begin{frame}{Passwords}
+  
+\structure{Password definition}
+\begin{itemize}
+  \item Using 94 printable ASCII characters ($\Sigma=d\cup u \cup l \cup s$) with four sets
+  \begin{itemize}
+    \item digits ($d$)
+    \item upper case characters ($u$)
+    \item lower case characters ($l$)
+    \item symbols ($s$)
+  \end{itemize}
+  \item password is defined as $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
+\end{itemize}
+
+\structure{Password Mapping}
+\begin{itemize}
+  \item $\pi$ denotes integer mapped from $\pwd$
+  \item $\pi=\sum_{i=1}^n b^{i-1}p(c_i)$
+  \begin{itemize}
+    \item $p(c_i)=\texttt{ASCII}(c_i)-32$
+    \item $b$ is shift base
+  \end{itemize}
+  \item $\pi_i$ denotes the encoded i-th character in $\pwd$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Password Policies}
+  \structure{Policy:} $f=(R, n, m)$
+  \begin{itemize}
+    \item $R$: ``regular expression'' of admissible characters
+    \item $n$: minimum number of characters
+    \item $m$: maximum number of characters (can be ommited)
+  \end{itemize}
+  
+  \vspace*{2em}
+  $f(\pwd)=f(\pi)=\true$ iff:
+  \begin{itemize}
+    \item $\pwd$ satisfies $R$
+    \item $n\leq |\pwd| \leq m$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Password Hashing}
+  extended definition from \cite{Benhamouda13} (added $s_P$)
+  \begin{description}
+    \item[PSetup($\lambda$):] \hfill\\ outputs hashing parameters $p$
+    \item[PPHSalt($p$):] \hfill\\	generates random pre-hash salt $s_P$
+    \item[PPreHash($p, \pwd, s_P$):] \hfill\\	computes a pre-hash value $P$
+    \item[PHSalt($p$):] \hfill\\ generates random hashing salt $s_H$
+    \item[PHash($p, P, s_P, s_H$):]	\hfill\\ computes a (final) hash value $H$
+  \end{description}
+  Let $H\gets\mathtt{Hash}(\pwd, s_P, s_H)=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
+\end{frame}
+
 \subsection[ZKPPC]{Zero-Knowledge Password Policy Checks}
+
+\begin{frame}{Zero-Knowledge Password Policy Checks 1/2}
+  
+  \begin{definition}[Set Membership Proof of Commited Values]\label{def:smp}
+  For Commitment scheme \texttt{Com} and set $L$ a Set Membership Proof (SMP) is defined as
+  \[
+    \mathtt{ZKPoK}\{(c, r): C\gets\mathtt{Com}(c, r) \wedge c\in L\}
+  \]
+  \end{definition}
+  
+  \begin{definition}[Zero-Knowledge Password Policy Check (ZKPPC)]\label{def:zkppc}
+  For password hashing scheme $H$, policy $f$, and password $\pi$ ZKPPC is defined as
+  \[
+    \mathtt{ZKPoK}\{(\pi, r): f(\pi)=\true \wedge H\gets\mathtt{Hash}(\pi, r)\}
+  \]
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Zero-Knowledge Password Policy Checks 2/2}
+  
+  Using commitment \texttt{Com} this can be written as
+  \[
+    \mathtt{ZKPoK}\{(\pi, r, \{r_i\}_{[1,n]}): C_i=\mathtt{Com}(\pi_i, r_i) ~ \wedge 
+  \]
+  \[
+    \pi_i\in\Omega ~ \wedge ~ \sum_i^n C_i=\mathtt{Com}(\pi, \sum_i^n r_i) ~ \wedge ~ H\gets\mathtt{Hash}(\pi, r)\}
+  \]
+  
+\end{frame}
+
+\begin{frame}{ZKPPC}
+  \alert{ADD CONCRETE CONSTRUCTION}
+\end{frame}
 
 \subsection[BPR]{Blind Password Registration}
 
