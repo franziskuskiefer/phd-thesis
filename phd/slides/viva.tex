@@ -22,6 +22,12 @@
 \usepackage{rotating}
 \usepackage{graphicx}
 \usepackage[round]{natbib}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{extarrows}
+
+\newcommand{\vect}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}\xspace}
 
 \mode<presentation>
 {
@@ -549,8 +555,42 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
   
 \end{frame}
 
-\begin{frame}{ZKPPC}
-  \alert{ADD CONCRETE CONSTRUCTION}
+\begin{frame}{The ZKPPC Framework}
+
+\begin{figure}[t]
+\begin{center}
+\scalebox{0.7}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client} & & {\bf Server} \\
+Input: $(R, n,m), p, C_p$ & & Input: $(R, n, m), p, C_p$ \\
+\midrule
+Choose $\pwd\in_R D_f$ & & \\
+with $f(\pwd)=\true$ & & \\
+Let $n \gets |\pwd|$ & & \\
+for $i\in[0,n-1]$ & & \\
+\hspace*{1em} let $c_i\in\pwd$ & & \\
+\hspace*{1em} $\pi_i\gets\mathtt{chr2int}(c_i, i)$ & & \\
+\hspace*{1em} $r_i\rin\mathbb{S}_C; C_i\gets\mathtt{Com}(\pi_i;r_i)$ & & \\
+$\pi\gets\sum_i\pi_i$; $r\gets\sum_ir_i$ & & \\
+$C\gets\prod_{i}C_i$ & & \\
+$s_P\gets_R\mathtt{PPHSalt}(p)$ & & \\
+$s_H\gets_R\mathtt{PHSalt}(p)$ & $H,~\{C_i\}$ & \\
+$H\gets \mathtt{Hash}(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\mathtt{SMP}(\pi_i,r_i,\Omega')$}}$ & Let $n\gets|\{C_i\}|$ \\
+ & & If $n \not\in[n,m]$ then ABORT\\
+ & $\mathtt{ZKPoK}\{(\pi, s_P, s_H, r):$ & Else $C\gets\prod_{i}C_i$ \\
+ & $H=\mathtt{Hash}(\pi; (s_P, s_H))$ & \\
+ & $\xrightarrow{\makebox[4cm]{$\wedge ~ C=\mathtt{Com}(\pi;r)\}$}}$ & If any $\mathtt{SMP}$ or $\mathtt{ZKPoK}$ is\\
+ & & not successful then ABORT \\
+ & & Else ACCEPT and store $H$\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+% \caption{ZKPPC Framework for ASCII-based Passwords}
+% \label{fig:zkpconeserver}
+\end{figure}
+
 \end{frame}
 
 \subsection[BPR]{Blind Password Registration}
@@ -585,19 +625,150 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 \end{frame}
 
 \begin{frame}{Blind Password Registration Protocol}
-  \alert{PROTOCOL FOR BPR (DIFFERENCES TO ZKPPC)}
+\begin{figure}[t]
+\begin{center}
+\scalebox{0.65}{\small
+\begin{tabular}{ l c l }
+\toprule
+{\bf Client} & & {\bf Server} \\
+Input: $(f)$ & & Input: $(f)$ \\
+\midrule
+choose $\pwd\in_R D_f$ & & \\
+compute $\pi\gets\mathtt{pwd2int}(\pwd)$ & & \\
+let $n \gets |\pwd|$ & & \\
+for $i\in[0,n-1]$ & & \\
+\hspace*{1em} let $c_i\in\pwd$ & & \\
+\hspace*{1em} {\color{red}$\pi_i\gets\mathtt{chr2int}(c_i)$} & & \\
+\hspace*{1em} {\color{red}$C_i=g^{\pi_i}h^{r_i}; C'_i=C_ih^{r'_i}$} & & \\
+{\color{red}shuffle} $C'_i \gets C'_{k_i}$ & & \\
+let $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$ & & \\
+$s_P\gets_R\mathtt{PPHSalt}(p)$ & & \\
+$s_H\gets_R\mathtt{PHSalt}(p)$ & & \\
+$(H_1,H_2)\gets\mathtt{HashP}(\pi; (s_P, s_H))$ & & \\
+For $c_i\in\pwd$ identify set $\omega_{k_i}$ & & \\
+Execute $\mathtt{PoE}, \mathtt{PoM}, \mathtt{PoS}$: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $n$: \\
+ & $\xrightarrow{\makebox[4cm]{$\mathsf{Com}_{\mathtt{PoM}}, \mathsf{Com}_{\mathtt{PoE}}, \mathsf{Com}_{\mathtt{PoS}}$}}$ & \hspace*{1em} choose $\mathsf{Ch}_\mathtt{PoM}, \mathsf{Ch}_\mathtt{PoM}, \mathsf{Ch}_\mathtt{PoS}$ \\
+ & $\xleftarrow{\makebox[4cm]{$\mathsf{Ch}_{\mathtt{PoM}}, \mathsf{Ch}_{\mathtt{PoE}}, \mathsf{Ch}_{\mathtt{PoS}}$}}$ & \\
+ & $\xrightarrow{\makebox[4cm]{$\mathsf{Res}_{\mathtt{PoM}}, \mathsf{Res}_{\mathtt{PoE}}, \mathsf{Res}_{\mathtt{PoS}}$}}$ & If $\mathtt{PoM}$, $\mathtt{PoE}$, $\mathtt{PoS}$ succeed\\
+ & & \hspace*{1em} store $(\mathrm{Client},v)$ \\
+ & & \hspace*{1em} with $v=(H_1,H_2,s_H)$\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\end{figure}
 \end{frame}
 
 \subsection[SPC]{Secure Set-based Policy Checking}
 
+\begin{frame}{A Different Approach}
+  \structure{Policies}
+  \begin{itemize}
+    \item Password policy checks as use case of Secure Set-based Policy Checking
+    \item Policy defined as $f=(\mathcal{V}, \Gamma_\mathcal{V})$
+    \begin{itemize}
+      \item $\mathcal{V}$ is a set
+      \item $\Gamma_\mathcal{V}$ access structure over set $\mathcal{V}$
+      \item $f(\mathcal{C})=\true$ iff $\mathcal{C}\in\Gamma_\mathcal{V}$ for set $\mathcal{C}$ (i.e. authorised set)
+    \end{itemize}
+    \item map access structure to Linear Secret Sharing Scheme (LSSS)
+  \end{itemize}
+  
+  \structure{Password Policies \& Mapping}
+  \begin{itemize}
+    \item $\pwd$ as (ordered) multiset set of characters
+    \item multiset $\rightarrow$ set transformation:
+    \begin{itemize}
+      \item let $f$ define $\sigma_i$ subsets and threshold $t_i$
+      \item build $\mathcal{C}$ by appending count to characters in $\pwd$
+      \item example: $\pwd=\text{password}\rightarrow\mathcal{C}=\{p1,a1,s1,s2,o1,r1,d1\}$
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
 \begin{frame}{Secure Set-based Policy Checking}
-  \alert{DIFFERENT APPROACH}
+  \begin{figure}[t]
+  \begin{center}
+  \scalebox{0.65}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client} & & {\bf Server} \\
+  Input: $\mathcal{I}$ & & Input: $f=(\mathcal{V},\Gamma_\mathcal{V})$ \\
+  \midrule
+   & & choose a secret $s\in_R$ $\mathbb{Z}_p$ \\
+   & $\xleftarrow{\makebox[2cm]{$f$}}$ & generate shares $s_{i}$ for $f$ \\
+  get shares $\{s_i\}$ & $\xleftrightarrow{\makebox[2cm]{$\mathtt{PSI-DT}$}}$ & \\
+  if possible: recover $s$ from the shares & & \\
+  else: abort and output $\bot$ & & \\
+  $m_s\gets H(s,C,S,\trans)$ & $\xrightarrow{\makebox[2cm]{$m_s$}}$ & accept if $m_s \stackrel{?}{=} H(s,C,S,\trans)$\\
+  \bottomrule
+  \end{tabular}
+  }
+  \end{center}
+  \end{figure}
+  
+  \vspace*{2em}
+  \structure{Private Set Intersection with Data Transfer (PSI-DT)}
+  \begin{itemize}
+    \item Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$
+  \end{itemize}
 \end{frame}
 
 \subsection[VPAKE]{Verifier-based PAKE}
 
-\begin{frame}{Verifier-based PAKE}
-  \alert{QUICK OVERVIEW}
+\begin{frame}{Verifier-based PAKE}{How NOT to do it}
+  \begin{figure}[thbp]
+  \begin{center}
+  \scalebox{0.85}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client} & & {\bf Server} \\
+  Input: $\pwd$ & & Input: $v=(H,r)$ \\
+  \midrule
+  $v=(H,r)\gets \phi(\pwd, r)$ & $\xleftarrow{\makebox[2.5cm]{$r$}}$ & \\
+   & $\xleftrightarrow{\makebox[2.5cm]{PAKE on $H$}}$ & \\
+  \bottomrule
+  \end{tabular}}
+  \end{center}
+  \end{figure}
+  
+  \begin{center}    
+  \structure{This is a PAKE not a VPAKE}
+  \end{center}
+\end{frame}
+
+\begin{frame}{SPHF-based VPAKE}{Framework by \cite{Benhamouda13}}
+  \begin{figure}[t]
+  \begin{center}
+  \scalebox{0.7}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client} & & {\bf Server} \\
+  Input: $\mathtt{pk}, \pi$ & & Input: $\mathtt{pk}, v=(H_1,H_2,s_H)$ \\
+  \midrule
+  $\mathtt{hk}\gets\mathsf{HKGen}(L_{H})$ & & $\mathtt{hk}'\gets\mathsf{HKGen}(L_{s_H,H})$ \\
+  $\mathtt{hp}\gets\mathsf{PKGen}(\mathtt{hk},L_{H})$ & & $\mathsf{hp}'\gets\mathsf{PKGen}(\mathtt{hk}',L_{s_H,H})$ \\
+  $r\in_R\mathbb{ZZ}_p$; $\ell=(id,\bm{S},\mathtt{hp})$ & & $r' \rin \mathbb{ZZ}_p$; $\ell'=(\bm{S},id,\mathtt{hp}')$ \\
+  $C\gets \mathsf{Enc}^\ell(\mathtt{pk},g_1^\pi;r)$ & & $C'\gets\mathsf{Enc}^{\ell'}(\mathtt{pk},H_2;r')$ \\
+   & $\xrightarrow{\makebox[2.5cm]{$\mathtt{hp},\ C$}}$ & \\
+   & $\xleftarrow{\makebox[2.5cm]{$\mathtt{hp}',C', H_1, s_H$}}$ & \\
+  $\ell'=(\bm{S},id,\mathtt{hp}')$; $H_2\gets H_1^\pi h^{s_H}$ & & $\ell = (id,\bm{S},\mathtt{hp})$ \\
+  $K_1\gets\mathsf{Hash}(\mathtt{hk}, L_H, C')$; & & $K_1 \gets \mathsf{ProjHash}(\mathtt{hp}, L_H, C', r')$ \\
+  $K_2\gets\mathsf{ProjHash}(\mathtt{hp}', L_{s_H,H}, C, \pi, r)$ & & $K_2 \gets \mathsf{Hash}(\mathtt{hk}', L_{s_H,H}, C)$\\
+  $K \gets K_1 \cdot K_2$ & &  $K\gets K_1 \cdot K_2$\\
+  \bottomrule
+  \end{tabular}}
+  \end{center}
+  \end{figure}
+  
+  \vspace*{1em}
+  \begin{center}
+    \structure{Adapted to our Hash function}
+    \begin{itemize}
+      \item new Smooth Projective Hash Function proposed
+    \end{itemize}
+  \end{center}
 \end{frame}
 
 % \begin{frame}[fragile]{Password Based Authentication on the Web}{}
