@@ -1,164 +1,327 @@
 \newcommand{\parspace}{}
 %\newcommand{\parspace}{\vspace{-\baselineskip}}
-\newcommand{\NN}{\mathbb{N}}
-\newcommand{\PP}{\mathbb{P}}
-\newcommand{\ZZ}{\mathbb{Z}}
-\newcommand{\FF}{\mathbb{F}}           %% for finite fields
-\newcommand{\GG}{\mathbb{G}}
+% Generel Model Variables
+\newcommand{\A}{\ensuremath{\mathcal{A}}\xspace}
 
-\newcommand{\Zrq}{\mathbb{Z}^\ast_q}
-\newcommand{\ZN}{\mathbb{Z}_N}
+% Simulation based proofs
+\newcommand{\IDEAL}{\ensuremath{\textlcsc{IDEAL}}\xspace}
+\newcommand{\REAL}{\ensuremath{\textlcsc{REAL}}\xspace}
+\newcommand{\HYBRID}{\ensuremath{\textlcsc{HYBRID}}\xspace}
+\newcommand{\poly}{\ensuremath{\text{poly}}\xspace}
 
-\newcommand{\cA}{\ensuremath{\mathcal{A}}\xspace}
-\newcommand{\cB}{\ensuremath{\mathcal{B}}\xspace}
-\newcommand{\cC}{\mathcal{C}}
-\newcommand{\cD}{\mathcal{D}}
-\newcommand{\cE}{\mathcal{E}}
-\newcommand{\cF}{\mathcal{F}}
-\newcommand{\cG}{\mathcal{G}}
-\newcommand{\cH}{\mathcal{H}}
-\newcommand{\cI}{\mathcal{I}}
-\newcommand{\cK}{\mathcal{K}}
-\newcommand{\cL}{\mathcal{L}}
-\newcommand{\cM}{\mathcal{M}}
-\newcommand{\cO}{\mathcal{O}}
-\newcommand{\cP}{\mathcal{P}}
-\newcommand{\cQ}{\mathcal{Q}}
-\newcommand{\cR}{\mathcal{R}}
-\newcommand{\cS}{\mathcal{S}}
-\newcommand{\cT}{\mathcal{T}}
-\newcommand{\cU}{\mathcal{U}}
-\newcommand{\cX}{\mathcal{X}}
+% UC variables
+\newcommand{\UCZ}{\ensuremath{\mathcal{Z}}\xspace}
+\newcommand{\UCS}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\UCF}{\ensuremath{\mathcal{F}}\xspace}
 
-\newcommand{\secpar}{\lambda{}}
+% Numbers
+\newcommand{\NN}{\ensuremath{\mathbb{N}}\xspace}
+\newcommand{\PP}{\ensuremath{\mathbb{P}}\xspace}
+\newcommand{\ZZ}{\ensuremath{\mathbb{Z}}\xspace}
+\newcommand{\RR}{\ensuremath{\mathbb{R}}\xspace}
+\newcommand{\FF}{\ensuremath{\mathbb{F}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbb{G}}\xspace}
+\newcommand{\CC}{\ensuremath{\mathbb{C}}\xspace}
+\newcommand{\DD}{\ensuremath{\mathbb{D}}\xspace}
+\newcommand{\SSS}{\ensuremath{\mathbb{S}}\xspace}
 
-% assigment, random-choice, etc.
-\newcommand{\asgn}{:=}          % assigment \sigma := (a,b,c)
-\newcommand{\algout}{\gets}     % algorithm output (sk,pk) <-- KGen(...), hash- and pr-functions too
-\newcommand{\ralgout}{\stackrel{R}{\gets}}     % output of random algorithm
-\newcommand{\cmp}{=}            % comparison a = b
-\newcommand{\rch}{\in_R}        % random choice x \in_R {0,1}^m
+\newcommand{\Zrp}{\ensuremath{\mathbb{Z}^\ast_p}}
+\newcommand{\Zrq}{\ensuremath{\mathbb{Z}^\ast_q}}
+\newcommand{\ZN}{\ensuremath{\mathbb{Z}_N}}
 
-\newcommand{\bits}{\{0,1\}}
-\newcommand{\rin}{\in_R}
-\newcommand{\rinb}{\rin\bits}
-\newcommand{\concat}{\!\parallel\!}
-%\newcommand{\bitlength}[1]{\lvert{#1}\rvert_{_2}}
+% General notation
+\newcommand{\algout}{\ensuremath{\gets}\xspace}
+\newcommand{\ralgout}{\ensuremath{\stackrel{\$}{\gets}}\xspace}
+\newcommand{\rin}{\ensuremath{\in_R}\xspace}
 
-\DeclareMathOperator{\ord}{ord}
-\DeclareMathOperator{\mymod}{mod}
-\newcommand{\MYMOD}[1]{\;(\mymod {#1})}
-\DeclareMathOperator{\lcm}{lcm}
-\DeclareMathOperator{\dom}{dom}
-\newcommand{\legen}[2]{\bigl(\tfrac{#1}{#2}\bigr)}
-\newcommand{\jacob}[2]{\bigl(\tfrac{#1}{#2}\bigr)}
+\newcommand{\id}{\ensuremath{\mathtt{id}}\xspace}
 
-\newcommand{\writtenby}[1]{~\mbox{\normalsize\normalfont{(#1)}}}
+\newcommand{\bits}{\ensuremath{\{0,1\}}\xspace}
+\newcommand{\bigo}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\secpar}{\ensuremath{\lambda}\xspace}
 
-% new commands
-\newcommand{\pwd}{\mathrm{pw}}
-\newcommand{\pwdv}{\ensuremath{\mathbf{pw}}}
-\newcommand{\msg}{\mathrm{m}}
-\newcommand{\mout}{m_{\mathrm{out}}}
-\renewcommand{\min}{m_{\mathrm{in}}}
-\newcommand{\pake}{\mathrm{PAKE}}
-\newcommand{\iencode}{\ensuremath{\mathtt{iEncode}}\xspace}
-\newcommand{\idecode}{\ensuremath{\mathtt{iDecode}}\xspace}
-\newcommand{\ihme}{\mathrm{IHME}}
-\newcommand{\IHME}{\mathtt{IHME}}
-\newcommand{\map}{\mathtt{map}}
-\newcommand{\mapinv}{\mathtt{mapinv}}
-\newcommand{\para}{\mathtt{par}}
-\newcommand{\client}{\ensuremath{\mathtt{client}}\xspace}
-\newcommand{\server}{\ensuremath{\mathtt{server}}\xspace}
-\newcommand{\role}{\mathtt{role}}
 \newcommand{\pk}{\ensuremath{\mathtt{pk}}\xspace}
 \newcommand{\sk}{\ensuremath{\mathtt{sk}}\xspace}
-\newcommand{\Label}{\ensuremath{\mathtt{label}}\xspace}
+\newcommand{\dk}{\ensuremath{\mathtt{dk}}\xspace}
+\newcommand{\vk}{\ensuremath{\mathtt{vk}}\xspace}
 
-\newcommand{\comp}{\ensuremath{\mathcal{C}}\xspace}
-\newcommand{\round}{\ensuremath{\mathcal{R}}\xspace}
-\newcommand{\com}{\ensuremath{\mathcal{E}}\xspace}
 
-\newcommand{\FKV}{$\mathcal{O}$'KV\xspace}
-\newcommand{\FBKV}{$\mathcal{O}$'BKV\xspace}
-\newcommand{\FSPAKE}{\ensuremath{\mathcal{O}\mathrm{'SPAKE}}\xspace}
-\newcommand{\FGMR}{\ensuremath{\mathcal{O}\mathrm{'GMR}}\xspace}
+\newcommand{\Gen}{\ensuremath{\mathtt{Gen}}\xspace}
+\newcommand{\Sign}{\ensuremath{\mathtt{Sign}}\xspace}
 
-%\newcommand{\mpake}{\mathbb{F}\textnormal{-}\mathrm{PAKE}}
-\newcommand{\mpake}{{\ensuremath{\text{O-PAKE}}}\xspace}
-\newcommand{\mpakei}{\mathtt{O\text{-}PAKE}}
-\newcommand{\D}{\mathcal{D}}
-\newcommand{\pgen}{\ensuremath{\mathtt{PGen}}\xspace}
-\newcommand{\init}{\ensuremath{\mathtt{init}}\xspace}
-\newcommand{\nextm}{\ensuremath{\mathtt{next}}\xspace}
-\newcommand{\conf}{\ensuremath{\mathtt{confirm}}\xspace}
-\newcommand{\checks}{\ensuremath{\mathtt{check}}\xspace}
-\newcommand{\m}{\mathbf{m}}
+\newcommand{\share}{\ensuremath{\mathfrak{s}}\xspace}
+\newcommand{\secret}{\ensuremath{\mathfrak{s}}\xspace}
 
-\newcommand{\sid}{\mathtt{sid}}
-\newcommand{\sids}{\pmb{\mathtt{sid}}}
-\newcommand{\trans}{\mathtt{trans}}
-\newcommand{\NULL}{\mathtt{null}}
-\newcommand{\pid}{\mathtt{pid}}
-\newcommand{\key}{\ensuremath{\mathtt{k}}\xspace}
-\newcommand{\keys}{\ensuremath{\pmb{\mathtt{k}}}\xspace}
-\newcommand{\acc}{\mathtt{acc}}
-\newcommand{\term}{\mathtt{term}}
-\newcommand{\state}{\ensuremath{\mathtt{state}}}
-\newcommand{\states}{\pmb{\mathtt{state}}}
-\newcommand{\used}{\mathtt{used}}
-\newcommand{\send}{\ensuremath{\mathsf{Send}}\xspace}
-\newcommand{\execute}{\ensuremath{\mathsf{Execute}}\xspace}
-\newcommand{\reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
-\newcommand{\test}{\ensuremath{\mathsf{Test}}\xspace}
-\newcommand{\corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
-\newcommand{\create}{\ensuremath{\mathtt{Create}}\xspace}
-\newcommand{\INIT}{\ensuremath{\mathsf{Init}}\xspace}
+% \newcommand{\vect}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}\xspace}
+\newcommand{\fC}{\ensuremath{\mathfrak{C}}\xspace}
+\newcommand{\fD}{\ensuremath{\mathfrak{D}}\xspace}
 
-\newcommand{\MYIF}{\mathtt{If}}
-\newcommand{\MYELSE}{\mathtt{Else}}
-\newcommand{\MYTHEN}{\mathsf{Then}}
+\newcommand{\genG}[1][]{\ensuremath{\langle g_{#1} \rangle}\xspace}
 
-\newcommand{\advo}{\cA_1(\secpar)}
-\newcommand{\advt}{\cA_2(\secpar)}
+\newcommand{\verify}{\ensuremath{\stackrel{?}{=}}\xspace}
 
-\newcommand{\true}{\mathtt{true}}
-\newcommand{\Adv}{\mathsf{Adv}}
-\newcommand{\Succ}{\mathsf{Succ}}
-\newcommand{\prob}{\ensuremath{\mathrm{Pr}}\xspace}
+\newcommand{\true}{\ensuremath{\mathtt{true}}\xspace}
+\newcommand{\false}{\ensuremath{\mathtt{false}}\xspace}
+
+
+\newcommand{\Client}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\Server}{\ensuremath{\mathcal{S}}\xspace}
+
+\newcommand{\Challenger}{\ensuremath{\mathcal{Q}}\xspace}
+
+\newcommand{\ServerSet}{\ensuremath{\mathcal{V}}\xspace}
+\newcommand{\ClientSet}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\Ciphertexts}{\ensuremath{\mathcal{E}}\xspace}
+
+\newcommand{\RO}{\cH}
+
+% Security defs
+\newcommand{\DLog}{\ensuremath{\mathtt{DLog}}\xspace}
+\newcommand{\DDH}{\ensuremath{\mathtt{DDH}}\xspace}
+\newcommand{\SXDH}{\ensuremath{\mathtt{SXDH}}\xspace}
+\newcommand{\RSA}{\ensuremath{\mathtt{RSA}}\xspace}
+\newcommand{\OMRSA}{\ensuremath{\mathtt{OM-RSA}}\xspace}
+
+
+% Caligraphic Letters
+\newcommand{\cA}{\ensuremath{\mathcal{A}}\xspace}
+\newcommand{\cB}{\ensuremath{\mathcal{B}}\xspace}
+\newcommand{\cC}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\cD}{\ensuremath{\mathcal{D}}\xspace}
+\newcommand{\cF}{\ensuremath{\mathcal{F}}\xspace}
+\newcommand{\cH}{\ensuremath{\mathcal{H}}\xspace}
+\newcommand{\cI}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\cK}{\ensuremath{\mathcal{K}}\xspace}
+\newcommand{\cL}{\ensuremath{\mathcal{L}}\xspace}
+\newcommand{\cM}{\ensuremath{\mathcal{M}}\xspace}
+\newcommand{\cO}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\cP}{\ensuremath{\mathcal{P}}\xspace}
+\newcommand{\cS}{\ensuremath{\mathcal{S}}\xspace}
+\newcommand{\cT}{\ensuremath{\mathcal{T}}\xspace}
+\newcommand{\cU}{\ensuremath{\mathcal{U}}\xspace}
+\newcommand{\cX}{\ensuremath{\mathcal{X}}\xspace}
+\newcommand{\cZ}{\ensuremath{\mathcal{Z}}\xspace}
+
+% Passwords
+\newcommand{\pwd}{\ensuremath{\mathtt{pwd}}\xspace}
+%FIXME: wrong font
+\newcommand{\pwdv}{\ensuremath{\mathtt{{\bf pwd}}}\xspace}
+
+% crs
+\newcommand{\crs}{\ensuremath{\mathtt{crs}}\xspace}
+
+% functions
+\newcommand{\KGen}{\ensuremath{\mathsf{KGen}}\xspace}
 \newcommand{\Exp}{\ensuremath{\mathsf{Exp}}\xspace}
-\newcommand{\Expi}[1]{\ensuremath{\mathsf{Exp}_{#1}}\xspace}
-\newcommand{\Expbm}[1]{\ensuremath{\bm{\mathsf{Exp}_{#1}}}\xspace}
-\newcommand{\ake}{\mathsf{AKE\text{-}Sec}}
-\newcommand{\AKE}{\mathsf{AKE}}
-\newcommand{\ROR}{\mathrm{ROR}}
-\newcommand{\FTG}{\mathrm{FTG}}
-\newcommand{\cauth}{\mathsf{CAuth}}
-\newcommand{\sauth}{\mathsf{SAuth}}
-\newcommand{\pwhide}{\mathsf{PW\text{-}Hid}}
-\newcommand{\npwhide}{n\mathsf{\text{-}PW\text{-}Hid}}
-\newcommand{\akefull}{\mathsf{AKE\text{-}FSec}}
-\newcommand{\akecpa}{\mathsf{AKE\text{-}CPWA}}
-\newcommand{\simul}{\mathsf{Sim}}
-\newcommand{\Sim}{\ensuremath{\mathsf{Sim}}\xspace}
-\newcommand{\ext}{\mathsf{Ext}}
-\newcommand{\calls}{\textnormal{ calls }}
-\newcommand{\refalgo}[2]{Algorithm \ref{#1}, Line \ref{#2}}
-\newcommand{\refline}[1]{Line \ref{#1}}
-\newcommand{\ihide}{\mathsf{ihide}}
-\newcommand{\dlin}{\ensuremath{\mathsf{DLIN}}}
-\newcommand{\genbg}{{\ensuremath{\mathsf{GenBG}}}}
-\newcommand{\cca}{\ensuremath{\mathsf{CCA}}\xspace}
-\newcommand{\St}{\mathtt{St}}
+\newcommand{\PRF}{\ensuremath{\mathsf{PRF}}\xspace}
+\newcommand{\SHA}{\ensuremath{\mathsf{SHA}}\xspace}
 
-\newcommand{\KDF}{\ensuremath{\mathtt{KDF}}\xspace}
-\newcommand{\PRF}{\ensuremath{\mathrm{PRF}}\xspace}
-\newcommand{\prf}{\ensuremath{\mathtt{prf}}\xspace}
+\newcommand{\Adv}{\ensuremath{\mathsf{Adv}}\xspace}
+\newcommand{\AKESEC}{\ensuremath{\mathsf{AKE-SEC}}\xspace}
+
+
+\newcommand{\AKE}{\ensuremath{\mathsf{AKE}}\xspace}
+
+\newcommand{\Succ}{\ensuremath{\mathsf{Succ}}\xspace}
+
+\renewcommand{\min}{\ensuremath{\mathtt{min}}\xspace}
+
+% Zero-knowledge models
+\newcommand{\PK}{\ensuremath{\mathsf{PoK}}\xspace}
+\newcommand{\ZKPoK}{\ensuremath{\mathsf{ZKPoK}}\xspace}
+\newcommand{\ZKP}{\ensuremath{\mathsf{ZKP}}\xspace}
+\newcommand{\PoK}{\ensuremath{\mathsf{PoK}}\xspace}
+\newcommand{\NIZKPoK}{\ensuremath{\mathtt{ASCII}}\xspace}
+\newcommand{\Ext}{\ensuremath{\mathsf{Ext}}\xspace}
+\newcommand{\Sim}{\ensuremath{\mathsf{Sim}}\xspace}
+
+% Commitments
+\newcommand{\SetupC}{\ensuremath{\mathtt{Setup_C}}\xspace}
+\newcommand{\Com}{\ensuremath{\mathtt{Com}}\xspace}
+\newcommand{\Open}{\ensuremath{\mathtt{Open}}\xspace}
+\newcommand{\Commitment}{\ensuremath{\mathtt{C}}\xspace}
+\newcommand{\Pedersen}{\ensuremath{\mathtt{C_P}}\xspace}
+
+% PAKE model
+\newcommand{\pid}{\ensuremath{\mathtt{pid}}\xspace}
+\newcommand{\sid}{\ensuremath{\mathtt{sid}}\xspace}
+\newcommand{\ssid}{\ensuremath{\mathtt{ssid}}\xspace}
+\newcommand{\trans}{\ensuremath{\mathtt{trans}}\xspace}
+\newcommand{\key}{\ensuremath{\mathtt{k}}\xspace}
+\newcommand{\mIn}{\ensuremath{\mathtt{m}_{\mathrm{in}}}\xspace}
+\newcommand{\mOut}{\ensuremath{\mathtt{m}_{\mathrm{out}}}\xspace}
+\newcommand{\state}{\ensuremath{\mathtt{state}}\xspace}
+\newcommand{\used}{\ensuremath{\mathtt{used}}\xspace}
+\newcommand{\role}{\ensuremath{\mathtt{role}}\xspace}
+\newcommand{\client}{\ensuremath{\mathtt{client}}\xspace}
+\newcommand{\server}{\ensuremath{\mathtt{server}}\xspace}
+\newcommand{\NULL}{\ensuremath{\mathtt{NULL}}\xspace}
+
+\newcommand{\term}{\ensuremath{\mathtt{term}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathtt{acc}}\xspace}
+
+\newcommand{\cFPAKE}{\ensuremath{\cF_{\mathrm{PAKE}}}\xspace}
+\newcommand{\NS}{\ensuremath{\mathtt{NS}}\xspace}
+\newcommand{\TP}{\ensuremath{\mathtt{TP}}\xspace}
+\newcommand{\NK}{\ensuremath{\mathtt{NK}}\xspace}
+
+\newcommand{\tg}{\ensuremath{\mathtt{tg}}\xspace}
+
+\newcommand{\Setup}{\ensuremath{\mathsf{Setup}}\xspace}
+\newcommand{\Send}{\ensuremath{\mathsf{Send}}\xspace}
+\newcommand{\Execute}{\ensuremath{\mathsf{Execute}}\xspace}
+\newcommand{\Reveal}{\ensuremath{\mathsf{Reveal}}\xspace}
+\newcommand{\Test}{\ensuremath{\mathsf{Test}}\xspace}
+\newcommand{\Corrupt}{\ensuremath{\mathsf{Corrupt}}\xspace}
+\newcommand{\Extract}{\ensuremath{\mathsf{Extract}}\xspace}
+
+% UC 2PAKE
+\newcommand{\FTWOPAKE}{\ensuremath{\cF_{\mathrm{2PAKE}}}\xspace}
+\newcommand{\FTWOPAKEM}{\ensuremath{\widehat{\cF}_{\mathrm{2PAKE}}}\xspace}
+\newcommand{\Fca}{\ensuremath{\cF_{\mathrm{ca}}}\xspace}
+\newcommand{\Finit}{\ensuremath{\cF_{\mathrm{init}}}\xspace}
+\newcommand{\Fcrs}{\ensuremath{\cF_{\mathrm{crs}}}\xspace}
+
+\newcommand{\NH}{\ensuremath{\mathtt{NH}}\xspace}
+\newcommand{\FA}{\ensuremath{\mathtt{FA}}\xspace}
+\newcommand{\NW}{\ensuremath{\mathtt{NW}}\xspace}
+\newcommand{\NV}{\ensuremath{\mathtt{NV}}\xspace}
+\newcommand{\NPH}{\ensuremath{\mathtt{NPH}}\xspace}
+
+\newcommand{\Register}{\ensuremath{\mathtt{Register}}\xspace}
+\newcommand{\Registered}{\ensuremath{\mathtt{Registered}}\xspace}
+\newcommand{\Retrieve}{\ensuremath{\mathtt{Retrieve}}\xspace}
+
+\newcommand{\ok}{\ensuremath{\mathtt{ok}}\xspace}
+
+\newcommand{\init}{\ensuremath{\mathtt{init}}\xspace}
+\newcommand{\Hist}{\ensuremath{\mathtt{Hist}}\xspace}
+\newcommand{\setId}{\ensuremath{\mathtt{setId}}\xspace}
+\newcommand{\invoke}{\ensuremath{\mathtt{invoke}}\xspace}
+\newcommand{\sendoutput}{\ensuremath{\mathtt{sendoutput}}\xspace}
+
+\newcommand{\DSPHF}{\ensuremath{\text{D-SPHF}}\xspace}
+\newcommand{\TDSPHF}{\ensuremath{\text{TD-SPHF}}\xspace}
+
+\newcommand{\qid}{\ensuremath{\mathtt{qid}}\xspace}
+
+\newcommand{\CA}{\ensuremath{\mathrm{CA}}\xspace}
+
+\newcommand{\fa}{\ensuremath{\mathfrak{a}}\xspace}
+\newcommand{\fb}{\ensuremath{\mathfrak{b}}\xspace}
+\newcommand{\fc}{\ensuremath{\mathfrak{c}}\xspace}
+\newcommand{\fd}{\ensuremath{\mathfrak{d}}\xspace}
+
+\newcommand{\KEXinit}{\ensuremath{\mathtt{KEXinit}}\xspace}
+\newcommand{\KEX}{\ensuremath{\mathtt{KEX}}\xspace}
+\newcommand{\KEXhijack}{\ensuremath{\mathtt{KEXhijack}}\xspace}
+\newcommand{\KEXnotify}{\ensuremath{\mathtt{KEXnotify}}\xspace}
+\newcommand{\KEXthrottle}{\ensuremath{\mathtt{KEXthrottle}}\xspace}
+\newcommand{\TestPwd}{\ensuremath{\mathtt{TestPwd}}\xspace}
+\newcommand{\hijacked}{\ensuremath{\mathtt{hijacked}}\xspace}
+
+\newcommand{\compromised}{\ensuremath{\mathtt{compromised}}\xspace}
+\newcommand{\interrupted}{\ensuremath{\mathtt{interrupted}}\xspace}
+\newcommand{\success}{\ensuremath{\mathtt{success}}\xspace}
+\newcommand{\failed}{\ensuremath{\mathtt{failed}}\xspace}
+\newcommand{\completed}{\ensuremath{\mathtt{completed}}\xspace}
+
+\newcommand{\FPAKE}{\ensuremath{\cF_{\mathrm{PAKE}}}\xspace}
+\newcommand{\FDSPHF}{\ensuremath{\cF_\DSPHF}\xspace}
+
+\newcounter{game}
+\newcounter{oldgame}
+% \renewcommand{\G}[1]{\ensuremath{\bm{\mathcal{G}_{#1}}}\xspace}
+\newcommand{\Gh}{\ensuremath{\setcounter{oldgame}{\thegame}\refstepcounter{game}\hfill\\\noindent\bm{\mathcal{G}_{\thegame}:}}\xspace}
+\newcommand{\ResetGameCounters}{\setcounter{game}{0}\setcounter{oldgame}{0}}
+
+\newcommand{\game}[1]{\ensuremath{\hfill\\\noindent\G{#1}:}\xspace}
+
+% Encryption
+\newcommand{\E}{\ensuremath{\mathtt{E}}\xspace}
+\newcommand{\CS}{\ensuremath{\mathrm{CS}}\xspace}
+\newcommand{\EG}{\ensuremath{\mathrm{EG}}\xspace}
+\newcommand{\Label}{\ensuremath{\ell}\xspace}
+\newcommand{\PKE}{\ensuremath{\mathsf{PKE}}\xspace}
+\newcommand{\cca}{\ensuremath{\mathsf{IND-CCA}}\xspace}
+\newcommand{\cpa}{\ensuremath{\mathsf{IND-CPA}}\xspace}
+
+% Public Key Encryption
+\newcommand{\PKEGen}{\ensuremath{\mathtt{KGen_{PK}}}\xspace}
 \newcommand{\Enc}{\ensuremath{\mathtt{Enc}}\xspace}
 \newcommand{\Dec}{\ensuremath{\mathtt{Dec}}\xspace}
-\newcommand{\Gen}{\ensuremath{\mathtt{Gen}}\xspace}
-\newcommand{\Mac}{\ensuremath{\mathtt{MAC}}\xspace}
+
+% SPHF
+\newcommand{\SPHF}{\ensuremath{\text{SPHF}}\xspace}
+\newcommand{\SPHFF}{\ensuremath{\text{SPHF}^x}\xspace}
+\newcommand{\aux}{\ensuremath{\mathtt{aux}}\xspace}
+
+\newcommand{\hk}{\ensuremath{\mathtt{k_h}}\xspace}
+\newcommand{\hp}{\ensuremath{\mathtt{k_p}}\xspace}
+\newcommand{\hpp}[1]{\ensuremath{\mathtt{hp_{#1}}}\xspace}
+
+\newcommand{\HKGen}{\ensuremath{\mathtt{KGen_H}}\xspace}
+\newcommand{\PKGen}{\ensuremath{\mathtt{KGen_P}}\xspace}
+\newcommand{\Hash}{\ensuremath{\mathtt{Hash}}\xspace}
+\newcommand{\ProjHash}{\ensuremath{\mathtt{PHash}}\xspace}
+
+\newcommand{\Lpwd}{\ensuremath{L_\pwd}\xspace}
+\newcommand{\Laux}{\ensuremath{L_\aux}\xspace}
+
+\newcommand{\smooth}[1]{\ensuremath{\mathtt{smooth-#1}}\xspace}
+
+\newcommand{\TSPHF}{\ensuremath{\text{T-SPHF}}\xspace}
+\newcommand{\TSetup}{\ensuremath{\mathtt{TSetup}}\xspace}
+\newcommand{\VerHp}{\ensuremath{\mathtt{VerKp}}\xspace}
+\newcommand{\THash}{\ensuremath{\mathtt{THash}}\xspace}
+
+% registration
+\newcommand{\pmin}{\ensuremath{{n_\mathtt{min}}}\xspace}
+\newcommand{\pmax}{\ensuremath{{n_\mathtt{max}}}\xspace}
+
+\newcommand{\PoM}{\ensuremath{\mathsf{\bf PoM}}\xspace}
+\newcommand{\PoE}{\ensuremath{\mathsf{\bf PoE}}\xspace}
+\newcommand{\PoS}{\ensuremath{\mathsf{\bf PoS}}\xspace}
+\newcommand{\PoC}{\ensuremath{\mathsf{\bf PoC}}\xspace}
+
+\newcommand{\Comm}{\ensuremath{\mathfrak{m1}}\xspace}
+\newcommand{\Ch}{\ensuremath{\mathfrak{c}}\xspace}
+\newcommand{\Cc}{\ensuremath{\mathtt{Cc}}\xspace}
+\newcommand{\Cd}{\ensuremath{\mathtt{Cd}}\xspace}
+\newcommand{\Res}{\ensuremath{\mathfrak{m2}}\xspace}
+
+\newcommand{\ver}{\ensuremath{\mathtt{ver}}\xspace}
+
+\newcommand{\Finalise}{\ensuremath{\mathtt{Finalise}}\xspace}
+\newcommand{\Verify}{\ensuremath{\mathtt{Verify}}\xspace}
+\newcommand{\ichrint}{\ensuremath{\texttt{CHRtoINT}_\texttt{i}}\xspace}
+\newcommand{\chrint}{\ensuremath{\texttt{CHRtoINT}}\xspace}
+\newcommand{\pwdint}{\ensuremath{\texttt{PWDtoINT}}\xspace}
+\newcommand{\ASCII}{\ensuremath{\mathtt{ASCII}}\xspace}
+
+\newcommand{\PwdMap}{\ensuremath{\mathtt{PwdMap}}\xspace}
+
+\newcommand{\HashP}{\ensuremath{\mathtt{Hash_P}}\xspace}
+\newcommand{\PSetup}{\ensuremath{\mathtt{PSetup}}\xspace}
+\newcommand{\PHSalt}{\ensuremath{\mathtt{PHSalt}}\xspace}
+\newcommand{\PPHSalt}{\ensuremath{\mathtt{PPHSalt}}\xspace}
+\newcommand{\PPreHash}{\ensuremath{\mathtt{PPreHash}}\xspace}
+\newcommand{\PFullHash}{\ensuremath{\mathtt{PFullHash}}\xspace}
+\newcommand{\HashPO}{\ensuremath{\mathtt{Hash_P}}\xspace}
+\newcommand{\PHash}{\ensuremath{\mathtt{PHash_P}}\xspace}
+
+\newcommand{\param}{\ensuremath{\mathtt{par}}\xspace}
+\newcommand{\paramC}{\ensuremath{\mathtt{p_C}}\xspace}
+\newcommand{\paramP}{\ensuremath{\mathtt{p_P}}\xspace}
+
+\newcommand{\SMP}{\ensuremath{\mathsf{SMP}}}
+
+% SPC
+\newcommand{\SPC}{\ensuremath{\mathtt{SPC}}\xspace}
+\newcommand{\OBI}{\ensuremath{\mathtt{OBI}}\xspace}
+
+\newcommand{\SIM}{\ensuremath{\mathtt{SIM}}\xspace}
+\newcommand{\view}{\ensuremath{\mathtt{view}}\xspace}
 
 \newcommand{\tbf}[1]{\\\textbf{#1}}
 

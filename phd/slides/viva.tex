@@ -786,8 +786,8 @@ Execute $\mathtt{PoE}, \mathtt{PoM}, \mathtt{PoS}$: & $\bm C, \bm C', \vect{\ome
 	  \node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
 	  \node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
 	  \node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
-	  \draw[pil,<->] ($(client.west)+(1.3,0)$) -- (server1);
-	  \draw[pil,<->] ($(client.west)+(1.3,0)$) -- (server2);
+	  \draw[pil,<->] ($(client.west)+(1.3,0.01)$) -- (server1);
+	  \draw[pil,<->] ($(client.west)+(1.3,-0.01)$) -- (server2);
   \end{tikzpicture}
   \end{figure}
 \end{frame}
@@ -821,7 +821,46 @@ Execute $\mathtt{PoE}, \mathtt{PoM}, \mathtt{PoS}$: & $\bm C, \bm C', \vect{\ome
 \end{frame}
 
 \begin{frame}{Security Model}
-  
+    \begin{description}
+      \item[$\mathsf{Setup}(C,S_{0},S_1,\pwd')$:] \hfill \\ register a new client
+      \item[$m'\gets\mathsf{Send}_C(C,S_{b},m)$:] \hfill \\ simulates active attack
+      \item[$m'\gets\mathsf{Send}_S(S_b,C,m)$:] \hfill \\ simulates active attack
+      \item[$m'\gets\mathsf{Send}_{SS}(S_b,S_{1-b},m)$:] \hfill \\ simulates active attack
+      \item[$\mathtt{t}\gets\mathsf{Execute}(C,S_b)$:] \hfill \\ simulates passive attack
+      \item[$\{(C,S_{1-b},s_b)\}\gets\mathsf{Corrupt}(S_b)$:] \hfill \\ simulates a server breach
+    \end{description}
+\end{frame}
+
+\begin{frame}{Security Model}
+  \begin{definition}[Policy Compliance]\label{def:pc}
+  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $A$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $A$ stopped that accepted $(C,S_{1-b},s_b)$, $(C,S_{b},s_{1-b})$ respectively, with $f(s_b+s_{1-b})=\mathtt{false}$ is negligible.
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Security Model}
+  \begin{definition}[Password Blindness]\label{def:zk}
+%   The Password Blindness property of a Two-Server BPR protocol $\Pi$ holds if for every PPT adversary $A$ there exists a negligible function $\varepsilon(\cdot)$ such that
+  \[ \Adv_{\Pi, A}^{\mathrm{PB}}=\left|\Pr[\Exp_{\Pi, A}^{\mathrm{PB}}=1]-\frac{1}{2}\right|\leq\varepsilon(\secpar). \]
+
+  \structure{$\Exp_{\Pi, A}^{\mathrm{PB}}$}
+  \begin{itemize}
+    \item $(C_0, C_1, S_0, S_1,\pwd_0,\pwd_1)$ output by $A$ with access to $\mathsf{Setup},\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ $(\secpar,D,\{C\},\{S\})$ 
+%     \item check $\pwd_0,\pwd_1\in D_{f_0\cap f_1}$, $|\pwd_0|=|\pwd_1|$, $C_0,C_1\in\{C\}$ and $S_0,S_1\in\{S\}$\\
+    \item $A$ with access to $\mathsf{Setup}',\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ guesses $b'$
+    \item if $S_0$ or $S_1$ is not corrupted, return $b=b'$; otherwise return $0$ 
+  \end{itemize}
+
+%   \noindent
+%   $\mathsf{Setup}'$ (in contrast to $\mathsf{Setup}$) uses $\pwd_b$ for client $C_0$ and $\pwd_{1-b}$ for $C_1$ with $b\rin\{0,1\}$ instead of choosing a random password or using the provided one.
+  \end{definition}
+\end{frame}
+
+\begin{frame}{A BPR Protocol}{is too long for this slide ...}
+  \begin{itemize}
+    \item similar to single-server BPR
+    \item proofs are done over \textit{shares}
+    \item additional proof that shares combine to $\pwd$
+  \end{itemize}
 \end{frame}
 
 % \subsection{Distributed Smooth Projective Hashing}
@@ -852,34 +891,34 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 
 \end{frame}
 
-\begin{frame}{PAKE from SPHF}
-\begin{figure}
-\centering
-\begin{tikzpicture}
-	\node[state, align=center] (client) at (0,1) {\pgfimage[width=0.8cm]{os_tux}\\ $\pwd$};
-	
-	\node[state, align=left] at (0,-1) {$k_h\gets\mathsf{KGen_H}(L_x)$\\  $k_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C\gets\mathsf{Enc}_\pk(\pwd;r)$};
-	\node[state] (client1) at (2,-1){};
-	
-	\node[state] (client2) at (2,-2){};	
-	\node[state, align=left] at (0,-3) {$k\gets\mathsf{Hash}(k_h,L_x,C')$\\$\cdot\mathsf{PHash}(k'_p,L_x,C,r)$};
-	
-	\node[state, align=center] (server) at (6,1) {\pgfimage[width=0.8cm]{techie_sailor}\\ $\pwd$};
-	
-	\node[state, align=right] at (6,-1) {$k'_h\gets\mathsf{KGen_H}(L_x)$\\  $k'_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C'\gets\mathsf{Enc}_\pk(\pwd;r')$};
-	\node[state] (server1) at (4,-1) {};
-	
-	\node[state] (server2) at (4,-2) {};
-	\node[state, align=right] at (6,-3) {$k\gets\mathsf{Hash}(k'_h,L_x,C)$\\$\cdot\mathsf{PHash}(k_p,L_x,C',r')$};
-	
-	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-	
-	\draw[pil] (client1) -- node[above] {$C,k_p$} (server1);
-	\draw[pil] (server2) -- node[above] {$C',k'_p$} (client2);
-\end{tikzpicture}
-\label{fig:eke}
-\end{figure}
-\end{frame}
+% \begin{frame}{PAKE from SPHF}
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}
+% 	\node[state, align=center] (client) at (0,1) {\pgfimage[width=0.8cm]{os_tux}\\ $\pwd$};
+% 	
+% 	\node[state, align=left] at (0,-1) {$k_h\gets\mathsf{KGen_H}(L_x)$\\  $k_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C\gets\mathsf{Enc}_\pk(\pwd;r)$};
+% 	\node[state] (client1) at (2,-1){};
+% 	
+% 	\node[state] (client2) at (2,-2){};	
+% 	\node[state, align=left] at (0,-3) {$k\gets\mathsf{Hash}(k_h,L_x,C')$\\$\cdot\mathsf{PHash}(k'_p,L_x,C,r)$};
+% 	
+% 	\node[state, align=center] (server) at (6,1) {\pgfimage[width=0.8cm]{techie_sailor}\\ $\pwd$};
+% 	
+% 	\node[state, align=right] at (6,-1) {$k'_h\gets\mathsf{KGen_H}(L_x)$\\  $k'_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C'\gets\mathsf{Enc}_\pk(\pwd;r')$};
+% 	\node[state] (server1) at (4,-1) {};
+% 	
+% 	\node[state] (server2) at (4,-2) {};
+% 	\node[state, align=right] at (6,-3) {$k\gets\mathsf{Hash}(k'_h,L_x,C)$\\$\cdot\mathsf{PHash}(k_p,L_x,C',r')$};
+% 	
+% 	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+% 	
+% 	\draw[pil] (client1) -- node[above] {$C,k_p$} (server1);
+% 	\draw[pil] (server2) -- node[above] {$C',k'_p$} (client2);
+% \end{tikzpicture}
+% \label{fig:eke}
+% \end{figure}
+% \end{frame}
 
 \begin{frame}{Extended Smooth Projective Hashing 1/2}
 
@@ -961,6 +1000,63 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \end{frame}
 
 \subsection{UC 2Server PAKE}
+
+\begin{frame}{UC Security for 2Server PAKE}
+  \structure{Trapdoor Distributed Smooth Projective Hash Function}
+  \begin{itemize}
+    \item extending D-SPHF further
+    \item trapdoor SPHF introduced in \cite{Benhamouda??}
+    \item necessary for efficient UC-secure protocol
+    \item $\mathsf{THash}$ can compute hash without hashing key, uses trapdoor instead
+    \item $\mathsf{VerKp}$ verifies that $k_p$ is a valid projection key
+    \item Using previous 2PAKE framework with TD-SPHF yields UC-secure 2PAKE
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{UC 2PAKE Funcitonality}{Overview}
+  \begin{description}
+
+    \item[KEX Init$_\Client$:] \hfill\\ initialise client
+    \item[KEX Init$_\Server$:] \hfill\\ initialise server
+    \item[TestPwd:] \hfill\\ check if a password is used by a client
+    \item[Failed:] \hfill\\ mark protocol run as failed
+	  \item[NewKey:] \hfill\\ compute a new session key as result
+	
+  \end{description}
+\end{frame}
+
+\begin{frame}{UC 2PAKE Funcitonality}{KEX Init$_\Client$}
+    Upon input $(\KEXinit, \sid, \qid, \pwd)$ from client \Client, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Server_{1}, \share_{1})$ or $(\KEX, \sid, \qid, \Server_{2}, \share_{2})$ may exist) and send $(\KEX, \sid, \qid, C)$ to \SIM.
+        If this is a valid request, create a \emph{fresh} record $(\KEX, \sid, \qid, \Client, \pwd)$.
+\end{frame}
+
+\begin{frame}{UC 2PAKE Funcitonality}{KEX Init$_\Server$}
+  
+Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $\Server_b$, $b\in\{1,2\}$, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, \Server_{3-b}, \share_{3-b})$ may exist) and send $(\KEX, \sid, \qid, \Server_b)$ to \SIM.
+        If this is a valid request, create a fresh record $(\KEX, \sid, \qid, \Server_b, \share_b)$.
+\end{frame}
+
+\begin{frame}{UC 2PAKE Funcitonality}{TestPwd}  
+    Upon input $(\TP, \sid, \qid, \pwd')$ from \SIM check that a fresh record $(\KEX, \sid, \qid, \Client, \pwd)$ exists. 
+        If this is the case, mark $(\KEX, \sid, \qid, \Server_1, \share_1)$ as \compromised and reply with ``correct guess'' if $\pwd=\pwd'$, and mark it as \interrupted and reply with ``wrong guess'' if $\pwd\not=\pwd'$.
+\end{frame}
+      
+\begin{frame}{UC 2PAKE Funcitonality}{Failed}
+  Upon input $(\FA, \sid, \qid)$ from \SIM check that records $(\KEX, \sid, \qid, \Client, \pwd)$ and $(\KEX, \sid, \qid, \Server_1, \share_1)$ exist that are not marked \completed. 
+        If this is the case, mark both as \failed.
+\end{frame}
+  
+\begin{frame}{UC 2PAKE Funcitonality}{NewKey}
+	  Upon input $(\NK, \sid,\qid, P, \sk')$ from \SIM with $P\in\{\Client,\Server_1\}$, check that a respective $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, S, \share_1)$ record exists, $\sid=(\Client, \Server_1, \Server_2)$, $|\sk'|=\secpar$, then: %and the session is not marked for $P$ yet,
+	  \begin{itemize}
+		  \item If the session is \compromised, or either \Client or $\Server_1$ and $\Server_2$ are corrupted, then output $(\NK, \sid,\qid,\sk')$ to $P$; else
+		
+		  \item if the session is \emph{fresh} and a key $\sk$ was sent to $P'$ with $\sid=(P, P', \Server_2)$ or $\sid=(P', P, \Server_2)$ while $(\KEX, \sid, \qid, P', \cdot)$ was fresh, then output $(\NK, \sid, \qid, \sk)$ to $P$.
+		
+		  \item In any other case, pick a new random key $\sk$ of length $\secpar$, and send $(\NK, \sid, \qid, \sk)$ to $P$.
+	  \end{itemize}
+	  In any case, mark \qid as \completed for $P$.
+\end{frame}  
 
 %===============================================================================
 % Future Work
