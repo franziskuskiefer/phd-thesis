@@ -631,7 +631,7 @@ $H\gets \mathtt{Hash}(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client} & & {\bf Server} \\
-Input: $(f)$ & & Input: $(f)$ \\
+Input: $f=(R,n)$ & & Input: $f=(R,n)$ \\
 \midrule
 choose $\pwd\in_R D_f$ & & \\
 compute $\pi\gets\mathtt{pwd2int}(\pwd)$ & & \\
@@ -771,575 +771,58 @@ Execute $\mathtt{PoE}, \mathtt{PoM}, \mathtt{PoS}$: & $\bm C, \bm C', \vect{\ome
   \end{center}
 \end{frame}
 
-% \begin{frame}[fragile]{Password Based Authentication on the Web}{}
-%
-% \renewcommand{\figurename}{}
-% \begin{figure}
-% 	\centering
-% 	\caption{TLS Channel}
-% 	\includegraphics[width=.6\textwidth]{loginForm2.png}
-% \end{figure}
-%
-% \begin{figure}
-% \centering
-% \caption{HTML Form}
-% \begin{subfigure}[t]{0.5\textwidth}
-% 	\centering
-% 	\includegraphics[width=\textwidth]{loginForm.png}
-% \end{subfigure}%
-% ~
-% \begin{subfigure}[t]{0.5\textwidth}
-% \centering
-% \vspace*{-9.75em}
-% \begin{listing}
-% \begin{spverbatim}
-% <h2>Sign in <strong></strong></h2>
-% <form novalidate id="gaia_loginform" action="https://accounts.google.com/ServiceLoginAuth" method="post">
-%
-%
-% <div class="email-div">
-%   <label for="Email"><strong class="email-label"> Username</strong></label>
-%   <input type="email" spellcheck="false" name="Email" id="Email" value="">
-% </div>
-%   
-% <div class="passwd-div">
-%   <label for="Passwd"><strong class="passwd-label"> Password</strong></label>
-%   <input type="password" name="Passwd" id="Passwd">
-% </div>
-% <input type="submit" class="g-button g-button-submit" name="signIn" id="signIn" value="Sign in">
-% \end{spverbatim}
-% \end{listing}
-% \end{subfigure}
-%
-% \end{figure}
-%
-% \end{frame}
-%
-% %\begin{frame}{Password Based Authentication on the Web}{Drawbacks}
-% %	\begin{itemize}
-% %		\item Requires \structure{PKI}
-% %		\item Server receives \structure{passwords in clear}
-% %		\item User has to \structure{remember} passwords \& password-username-server mapping
-% %	\end{itemize}
-% %	\pause 
-% %	\vspace*{2em}	
-% %	
-% %	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-% %	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-% %	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering }\centering
-% %		...Not the best way to do it...
-% %	\end{beamerboxesrounded}
-% %	
-% %	\pause 
-% %	\vspace*{2em}	
-% %	
-% %	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-% %	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-% %	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Better Solution}\centering
-% %		Password Based Authenticated Key Exchange
-% %	\end{beamerboxesrounded}
-% %	
-% %\end{frame}
-%
-% \begin{frame}{PAKE on the Web}{}
-%
-% 	\begin{figure}
-% \centering
-% \begin{tikzpicture}
-% 	\node[state, align=left] at (-0.5,-2) {\pgfimage[width=2cm]{browser}};
-% 		
-% 	\node[state] (client1) at (1.5,-1){};
-% 	\node[state] (client4) at (1.5,-2.5){};
-% 	
-% 	\node[state, align=right] at (7.5,-2) {\pgfimage[width=2cm]{web_server}};
-%
-% 	\node[state] (server1) at (4.75,-1) {};
-% 	\node[state] (server4) at (4.75,-2.5) {};
-% 	
-% 	\draw[pil,<->] (client1) -- node[above] {\texttt{PAKE}} (server1);
-%
-% 	\node[state, align=left] at (3,-1.5) {\structure{Secured$_K$}};	
-% 	\node[cylinder, blue, draw,minimum height=1.5cm, minimum width=1.5cm,aspect=.5, inner xsep=2cm, inner ysep=0.5cm] at (3,-2.5) {};
-% 	\draw[pil,<->] (client4) -- node[above] {} (server4);
-% \end{tikzpicture}
-%
-% \end{figure}
-%
-% \vspace*{1em}
-%
-% 	\begin{itemize}
-% 		\item No server certificates (PKI) needed
-% 		\item Passwords are \structure{not transmitted} at all
-% 	\end{itemize}	
-%
-% \vspace*{1em}
-%
-% 	\structure{However}, PAKE protocols are \structure{hardly used} in practice (missing standards / incompatibility may be a reason)
-%
-% \end{frame}
-%
-% \subsection{Oblivious PAKE}
-%
-% \begin{frame}{The Problem of Failed Logins}{}
-%
-% 	Users still struggle with passwords (cf. \cite{Florencio2007,Gaw2006a}):
-% 	
-% 	\begin{itemize}
-% 		\item 2.4 failed login attempts on average
-% 		\item 6.5 different passwords in use\\ (on approx. 25 accounts)
-% 		\item \structure{Password disclosure} with current practice
-% 	\end{itemize}
-% 	\pause\vspace*{1em}
-%
-% 	\begin{columns}[t]
-%     \begin{column}{.475\linewidth}
-% 	    	{\centering\structure{PAKE}}\\
-% 	    	\begin{itemize}
-% 	    		\setlength{\itemindent}{-1em}
-% 	    		\item Run $n$ PAKE protocols
-% 		    \item Linear amount of work
-% %	    		\item Communication overhead
-% 	    	\end{itemize}
-%     \end{column}
-% 	\vspace*{2em}
-%     \begin{column}{.475\linewidth}
-%     		{\centering\structure{TLS-based}}\\
-%     		\begin{itemize}
-% 	    		\setlength{\itemindent}{-1em}
-% 	    		\item Establish 1 TLS channel
-% 	    		\item Send $n$ forms
-%     		\end{itemize}
-%     \end{column}
-%   \end{columns}
-% %	SPAKE execution for $3$ passwords: $3\times4$ Exponentiations%, $3\times2$ Multiplications, $3$ Inversions, $3$ Hashes
-% \end{frame}
-%
-% \begin{frame}{Oblivious PAKE}{Contribution}
-%
-% 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-% 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{}\centering
-% 		Efficient PAKE with multiple client input passwords
-% 	\end{beamerboxesrounded}
-%
-% 	
-% 	\pause	
-% 	\vspace*{2em}	
-% 	
-% 	\structure{Goals}	
-% 	
-% 	\begin{itemize}
-% 		\item \structure{Efficient} handling of password trials
-% 		\item \structure{No leakage} of non-matching passwords to the server
-% 		\item Ease user's password handling
-% 	\end{itemize}
-% 	
-% \end{frame}
-%
-% \subsection{Setting}
-%
-% \begin{frame}{Oblivious PAKE}{Setting}
-%
-% 	\begin{itemize}
-% 		\item Client and server share password $\pwd$
-% 		\item Client inputs a list of up to $c$ passwords $\pwdv$
-% 		\item Server can restrict $c$ due to online dictionary attacks
-% 	\end{itemize}
-%
-% \centering\structure{Successful iff $\pwd\in\pwdv$}	
-% \begin{figure}
-% \centering
-% \begin{tikzpicture}
-% 	\node[state] (client) at (0,0.5) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client};
-% 	
-% 	\node[state, align=left] at (0,-1) {$\pwdv$,  $|\pwdv|\leq c$};
-% 	\node[state] (client1) at (1.2,-1){};
-% 	\node[state] (client2) at (1.2,-2){};
-% 	
-% 	\node[state] (server) at (6,0.5) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server};
-% 	
-% 	\node[state, align=center] at (6,-1) {$\pwd$};
-% 	\node[state] (server1) at (5.6,-1) {};
-% 	\node[state] (server2) at (5.6,-2) {};
-% 	
-% 	\node[state] (middle1) at (3.7,-1.2) {};
-% 	\node[state] (middle2) at (3.7,-1.0) {};
-%
-% 	\node[box] (box) at (3.2,-1)[align=center]{\large O-PAKE};
-% 	
-% 	\draw[pil] (client1) -- (box);
-% 	\draw[pil] (server1) -- (box);
-% 	
-% 	\draw[pil] ($(box.south)-(0.7,0)$) |- node[below] {\hspace*{-2em}$k_C$}(client2);
-% 	\draw[pil] ($(box.south)-(-0.7,0)$) |- node[below] {\hspace*{3em}$k_S$}(server2);
-% 	
-% 	%\draw[pil,<->] (client1) -- node[above] {$\mathrm{PAKE}_{\pwd}$} (server1);
-% 	%\draw[pil] (middle2) edge [loop above, ->,out=70,in=320,distance=1cm] (middle1);
-% 	
-% \end{tikzpicture}
-% %\caption{Encrypted Key Exchange (EKE)}
-% %\label{fig:eke}
-% \end{figure}		
-% 	
-% \end{frame}
-%
-% %\begin{frame}{Oblivious PAKE}{Setting}
-% %\begin{figure}
-% %	\includegraphics[width=\textwidth]{loginForm2.png} %FIXME
-% %\end{figure}
-% %\end{frame}
-%
-% %\begin{frame}{Oblivious PAKE}{Security Model}
-% %	Game based security model from \cite{Bellare2000,Abdalla2005a}: %[BPR 2001, AFP 2005]:
-% %	\begin{itemize}
-% %		\item Real-or-Random (multiple Test queries)
-% %		\item Forward Secrecy (Corrupt oracle)
-% %		\item Extended to allow multiple input passwords
-% %	\end{itemize}
-% %	
-% %	\begin{figure}
-% %		\fbox{
-% %		\begin{tikzpicture}
-% %			\node[state, align=left] at (3,-1) {$c\in\NN, b\rin\bits$\\
-% %				$\forall(P,P')\in\cC\times\cS$, pick $\pwd_{P,P'}\rin\cD$\\
-% %				$b'\gets\cA^{\send,\execute,\corrupt,\test}(\secpar, c)$\\
-% %				return $b\cmp b'$};
-% %		\end{tikzpicture}}
-% %	\end{figure}
-%
-% %\end{frame}
-%
-% \begin{frame}{Oblivious PAKE}{Na{\"i}ve Solution}
-%
-% \setblockcolor{blue!10}
-% \setbordercolor{blue!15}
-%
-% \begin{dynblock}
-% % First block
-% \opaqueblock<1>{\vspace*{-1em}
-% \begin{figure}
-% \centering
-% \includegraphics[width=\textwidth]{npake.pdf}
-% \end{figure}
-% }
-% \invblock<2->
-%
-% % Second block
-% \opaqueblock<2>[0.6\textwidth]{
-% Run $c$ sessions of the same PAKE
-% 	\begin{itemize}
-% 		\item \structure{Client:}\\\hspace*{2em}
-% 		linear amount of work
-% 		\item \structure{Server:}\\\hspace*{2em}
-% 		linear amount of work
-% 	\end{itemize}
-% \vspace*{1em}
-% Successful iff 1 session successful
-% }
-%
-% \end{dynblock}
-%
-% \end{frame}
-%
-% % ------------------------------
-% \newcommand{\drawoverlays}{%
-% \node[rectangle,draw=black,rounded corners, fill=black!20, text width=5.25em, minimum height=12em] (client) at (2.95,-2.5){}; %draw=black, very thick,
-% \node[rectangle,draw=black,rounded corners, fill=black!20, text width=5.25em, minimum height=12em] (client) at (6.2,-2.5){};
-% \node[rectangle,draw=black,rounded corners, fill=black!20, text width=26em, minimum height=2.2em] (client) at (3,-7.1){};
-% }
-%
-% \newcommand{\drawoverlay}{%
-% \node[rectangle,draw=black,rounded corners, fill=black!20, text width=26em, minimum height=2.2em] (client) at (3,-7.1){};
-% }
-%
-% \newcommand{\drawopake}[6]{%
-% \begin{frame}{Oblivious PAKE}{#5}
-% \begin{figure}
-% \vspace*{-1em}
-% \centering
-% \scalebox{0.8}{%
-% \begin{tikzpicture}%,text width=0em
-% 	\node[state] at (1,1.2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client};	
-% %
-% 	\node[state, align=left] at (-1.5,-1) {$\mathbf{pw}[1]$};
-% 	\node[state, align=left] at (-1.5,-4) {$\mathbf{pw}[c]$};
-% 	\node[state] (client1) at (-1,-1){};
-% 	\node[state] (client2) at (-1,-2.5){};
-% 	\node[state] (client25) at (-1,-4){};
-% 	\node[state] (client3) at (-1,-4.5){};
-% %	
-% 	\node[state] at (6.5,1.2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server};
-% %	
-% 	\node[state, align=right] at (8.2,-1) {pw};
-% 	\node[state] (server1) at (8.1,-2.5) {};
-% 	\node[state] (server2) at (8,-1) {};
-% 	\node[state] (server25) at (8.4,-4) {};
-% 	\node[state] (server3) at (8.4,-4.5) {};
-% %	
-% 	\node[box, text width=3.5em] (box1) at (.5,-1)[align=center]{\large PAKE};
-% 	\node[box, text width=3.5em] (box2) at (.5,-4)[align=center]{\large PAKE};
-% %	
-% 	\node[bigbox, text width=1.5em] (box3) at (2.25,-2.5)[align=center]{\large #1};
-% 	\node[bigbox, text width=1.5em] (box4) at (3.65,-2.5)[align=center]{\large #2};
-% 	\node[bigbox, text width=1.5em] (box5) at (5.5,-2.5)[align=center]{\large #3};
-% 	\node[bigbox, text width=1.5em] (box52) at (6.9,-2.5)[align=center]{\large #4};
-% %	
-% 	\node[box, text width=3.5em] (box6) at (7.3,-5.75)[align=center]{\large PAKE};
-% %	
-% 	\draw[pil] (box1.east) -- node[above] {$m_1$}(box1-|box3.west);
-% 	\draw[pil] (box2.east) -- node[above] {$m_c$}(box2-|box3.west);
-% 	\draw[pil] ([yshift=1.5cm]box3.east) -- ([yshift=1.5cm]box4.west);
-% 	\draw[pil] ([yshift=-1.5cm]box3.east) -- ([yshift=-1.5cm]box4.west);
-% 	\draw[pil] (box4.east) -- (box4-|box5.west);
-% 	\draw[pil] (box5.east) -- (box5-|box52.west);
-% %	
-% 	\draw[line width = .5mm,circle dotted] ($(client1)-(0.5,0.5)$) -- ($(client2)-(0.5,1)$);
-% 	\draw[line width = .5mm,circle dotted] ($(box1)-(0,0.5)$) -- ($(box2)-(0,-0.5)$);
-% %	
-% 	\draw[pil] (client1) -- (box1);
-% 	\draw[pil] (client25) -- (box2);
-% 	\draw[pil] (server2) -- (server2-|box5.east); % -- +(0,.7)
-% 	\draw[pil] (box52.east) -| node[right]{$m$}($(box6.north)+(0.5,0)$);
-% 	\draw[pil] ($(server2)+(0.5,0.1)$) |- (box6.east);
-% %	
-% 	\node[rectangle,draw=black,rounded corners, draw=black, very thick, text width=17em, minimum height=20em] (client) at (1,-3.75){};
-% 	\node[rectangle,draw=black,rounded corners, draw=black, very thick, text width=9.6em, minimum height=20em] (server) at (6.7,-3.75){};
-% 	\node[rectangle,draw=black,rounded corners, draw=black, very thick, text width=16em, minimum height=13em] (clientpake) at (1.05,-2.5){};
-% %	
-% 	\draw[pil] (box6.west) -| node[below] {$m$}(clientpake.south);
-% %
-% 	\node[box, text width=6.5em] (box7) at (6.5,-7)[align=center]{\large Confirmation};
-% 	\node[box, text width=8em] (box8) at (0,-7)[align=center]{\large Key Derivation};
-% %
-% 	\draw[pil] (box6.south) -- node[auto] {$k$}(box6|-box7.north);
-% 	\draw[pil] (box7) -- node[auto] {$k_f$}($(box7)-(0,1.2)$);
-% 	\draw[pil] ([xshift=-1cm]clientpake.south) -- node[left] {$(k_1,\dots,k_c)$}([xshift=-1cm]clientpake|-box8.north);
-% 	\draw[pil] (box7.west) -- node[auto] {conf}(box8.east);
-% 	\draw[pil] (box8) -- node[auto] {$k_f$}($(box8)-(0,1.2)$);
-% % Gray overlays %
-% 	#6
-% \end{tikzpicture}}
-% \end{figure}
-% \end{frame}
-% }
-%
-% %\subsection{Idea}
-%
-% \drawopake{?}{?}{?}{?}{Idea}{\drawoverlays}
-%
-%
-% \subsection{Building Blocks}
-%
-% \begin{frame}{Building Blocks}{Index-Hiding Message Encoding (IHME)}
-%
-% 	IHME, introduced by \cite{Manulis2010}, is a message encoding with following properties: %[MPP 2010]
-% 	%\vspace*{1em}
-% 	\begin{itemize}
-% 		\item Encodes set of index, message pairs $(i,m)$
-% 		\item Ensures hiding of index $i$
-% 		\item Length preserving
-% 	\end{itemize}
-%
-% 	\vspace*{1em}
-%
-% 	\setbeamercolor{uppercol}{fg=white,bg=blue!40}%
-% 	\setbeamercolor{lowercol}{fg=black,bg=blue!20}%
-% 	\pause
-% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{$S\gets\iencode(P)$}
-% 		$P=\{(\pwdv[1],m_{1}),\dots,(\pwdv[c],m_{c})\}\rightarrow S=(a_{c-1},\dots,a_0)$\\\\
-% 		$f=\sum^{c-1}_{k=0}a_kx^k$ s.t. $f(\pwdv[i])=m_{i}~~\forall(\pwdv[i],m_{i})\in P$
-% 	\end{beamerboxesrounded}
-% 	
-% 	\vspace*{1em}
-%
-% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{$m\gets\idecode(S, \pwd)$}
-% 		$(S=(a_{c-1},\dots,a_0), \pwd)\rightarrow m$ with	$m=f(\pwd)$
-% 	\end{beamerboxesrounded}
-% 	
-% \end{frame}
-%
-% %\begin{frame}{Building Blocks}{Index-Hiding Message Encoding (IHME)}
-% %
-% %	\setbeamercolor{uppercol}{fg=white,bg=blue!40}%
-% %	\setbeamercolor{lowercol}{fg=black,bg=blue!20}%
-% %	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{$S\gets\iencode(P)$}
-% %		$P=\{(\pwdv[1],m_{1}),\dots,(\pwdv[c],m_{c})\}\rightarrow S=(a_{c-1},\dots,a_0)$\\\\
-% %		$f=\sum^{c-1}_{k=0}a_kx^k$ s.t. $f(\pwdv[i])=m_{i}~~\forall(\pwdv[i],m_{i})\in P$
-% %	\end{beamerboxesrounded}
-% %	
-% %	\vspace*{2em}
-% %
-% %	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{$m\gets\idecode(S, \pwd)$}
-% %		$(S=\sum^{c-1}_{k=0}a_kx^k, \pwd)\rightarrow m$\\\\
-% %		$m=f(\pwd)$
-% %	\end{beamerboxesrounded}
-% %
-% %
-% %\end{frame}
-%
-% \drawopake{?}{\begin{sideways}\alert{IHME.iEncode}\end{sideways}}{\begin{sideways}\alert{IHME.iDecode}\end{sideways}}{?}{IHME}{\drawoverlay}
-%
-% \begin{frame}{Building Blocks}{Admissible Encodings}
-% 	Admissible Encodings $F:S\rightarrow R, \cI_F:R\rightarrow S$, introduced by \cite{BonehF01} encodes elements from set $S$ to $R$ such that: %[BF 2001, FGKMP 2013] ,BrierCIMRT10,pseudorandomSignatures
-% 	\begin{itemize}
-% 		\item $\cI_F(r)$ is statistically indistinguishable from uniform distribution over $S$
-% 		\item Efficient computable
-% 	\end{itemize}
-% 	
-% 	\pause\vspace*{1em}
-% 	%SPAKE uses the following Admissible Encodings to map $G_q\mapsto \ZZ_N$
-% 	
-% %	\begin{itemize}
-% %		\item 
-% 		SPAKE uses Admissible Encoding to map arbitrary subgroups $G_q \subseteq \ZZ_N^\ast \mapsto \ZZ_N$ of prime order $q$\\  ~\cite[Lemma~12]{pseudorandomSignatures} %p^\times
-% %		\item Set $R=\{0,\dots,N-1\}=\ZZ_N$ of natural numbers, for arbitrary $N\in\NN$. (cf. ~\cite[Lemma~12]{pseudorandomSignatures})
-% %	\end{itemize}		
-% 	
-% \end{frame}
-%
-% %\begin{frame}{Building Blocks}{Admissible Encodings}
-% %Further admissible encodings:
-% %\begin{itemize}
-% %	\item The set of quadratic residues modulo safe primes~$p$, i.e.\ $R=QR(p)\subseteq\ZZ_p^\times$. (cf. ~\cite[Lemma~12]{pseudorandomSignatures})   
-% %    \item The set $R=E(\FF)$ of rational points on (certain) elliptic curves, defined over a finite field (cf. ~\cite{BrierCIMRT10}).
-% %\end{itemize}
-% %
-% %\end{frame}
-%
-% \drawopake{\begin{sideways}\alert{Admissible Encoding$^{-1}$}\end{sideways}}{\begin{sideways}IHME.iEncode\end{sideways}}{\begin{sideways}IHME.iDecode\end{sideways}}{\begin{sideways}\alert{Admissible Encoding}\end{sideways}}{Admissible Encodings}{\drawoverlay}
-%
-% \drawopake{\begin{sideways}\alert{Admissible Encoding$^{-1}$}\end{sideways}}{\begin{sideways}IHME.iEncode\end{sideways}}{\begin{sideways}IHME.iDecode\end{sideways}}{\begin{sideways}\alert{Admissible Encoding}\end{sideways}}{Key Confirmation}{}
-%
-% %\subsection{O-PAKE Compiler}
-%
-% %\begin{frame}{O-PAKE Compiler}{On the example of SPAKE}
-% %	
-% %\begin{figure}
-% %\centering
-% %\resizebox{\textwidth}{!}{%
-% %\begin{tikzpicture}
-% %	\node[state, align=center, text width=6cm] (client) at (0,1.25) {\pgfimage[width=0.8cm]{os_tux}\\ Client, $\pwdv$};
-% %	
-% %	\node[state, align=left, text width=6cm] at (0,-1) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $x\rin\ZZ_p, X\gets g^x$\\\hspace*{1em}  $X'_i\gets X\cdot M^{\pwd_i}$\\\hspace*{1em} \alert{$P=P\bigcup(\pwd_i,\cI_F(X'_i))$} \\ \alert{$S\gets$IHME.encode$(P)$}};
-% %	\node[state, text width=6cm] (client1) at (6,-1){};
-% %	
-% %	\node[state, text width=6cm, align=left] at (0,-5) {\setlength{\baselineskip}{20pt}\alert{For $\pwd_i\in\pwdv$}\\\hspace*{1em} $K'_A\gets (Y'/N^\pwd)^x$\\\hspace*{1em} $K_A^i\gets H(A,B,X',Y',K'_A,\pwd)$\\\hspace*{1em}\alert{$C'\gets\PRF_{K_A^i}(S,Y',0)$}\\\hspace*{1em}\alert{IF $C\cmp C'$}\\\hspace*{2em} \alert{$K_{A_F}\gets\PRF_{K_A}(S,Y',1)$}\\\hspace*{2em}\alert{break}};
-% %	\node[state, text width=6cm] (client2) at (0,-3){};
-% %	
-% %	\node[state, text width=6cm] (client3) at (0,-4.5){};
-% %	
-% %	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
-% %	
-% %	
-% %	\node[state, text width=6cm, align=center] (server) at (6,1.25) {\pgfimage[width=0.8cm]{techie_sailor}\\ Server, $\pwd$};
-% %	
-% %	\node[state, text width=6cm, align=left] at (7.5,-1) {\setlength{\baselineskip}{20pt}\alert{$X^\ast\gets$IHME.decode$(\pwd,S)$\\ $X'\gets F(X^\ast)$}\\$y\rin\ZZ_p, Y\gets g^y$\\ $Y\gets Y\cdot N^\pwd$};
-% %	\node[state, text width=6cm] (server1) at (7,-1) {};
-% %	
-% %	\node[state, text width=6cm, align=left] at (7.5,-4) {\setlength{\baselineskip}{20pt}$K'_B\gets (X'/M^\pwd)^y$\\ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$\\\alert{$C\gets\PRF_{K_B}(S,Y',0)$}\\\alert{$K_{B_F}\gets\PRF_{K_B}(S,Y',1)$}};
-% %	\node[state, text width=6cm] (server2) at (1,-3) {};
-% %	
-% %	\node[state, text width=6cm] (server3) at (1,-4.5) {};
-% %	
-% %	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-% %	
-% %	\draw[pil] (client1) -- node[above] {\alert{$S$}} (server1);
-% %	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
-% %	\draw[red,pil] (server3) -- node[above] {\alert{$C$}} (client3);
-% %\end{tikzpicture}}
-% %\end{figure}
-%
-% %\end{frame}
-%
-% %\subsection{Implementation \& Performance}
-%
-% %\begin{frame}{OPAKE Implementation}{}
-% %	\structure{Modular} implementation
-% %	\begin{itemize}
-% %		\item Generic Oblivious PAKE Protocol, including
-% %		\begin{itemize}
-% %			\item IHME
-% %			\item Admissible Encodings for $G_q\mapsto\ZZ_N$
-% %		\end{itemize}
-% %	\end{itemize}
-%
-% %	\pause
-% %	\vspace*{2em}
-% %	Implementing an O-PAKE instance includes:
-% %	\begin{itemize}
-% %		\item Implementation of suitable PAKE protocols
-% %		\item Poss. implementation of an admissible encoding
-% %	\end{itemize}
-% %	
-% %\end{frame}
-%
-% %\begin{frame}[fragile]{OPAKE Performance}{Oblivious SPAKE Implementation}
-% %\begin{figure}[tbp]
-% %\centering
-% %%	\begin{subfigure}[b]{0.5\textwidth}
-% %%		\begin{tikzpicture}[scale=0.85]
-% %%		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=1200,ymin=0]
-% %%			\addplot+[mark=square,black] table[x index=0,y index=6,col sep=space] {measurements.txt};
-% %%			\addlegendentry{O-RG-PAKE}		
-% %%			\addplot+[mark=triangle,black] table[x index=0,y index=8,col sep=space] {measurements.txt};
-% %%			\addlegendentry{N-RG-PAKE}
-% %%		\end{axis}
-% %%		\end{tikzpicture}
-% %%		%\caption{Oblivious RG-PAKE}
-% %%		%\label{fig:orgpake}
-% %%	\end{subfigure}\hspace*{0.5cm}
-% %%	\begin{subfigure}[b]{0.5\textwidth}
-% %		\begin{tikzpicture}[scale=0.85]
-% %		\begin{axis}[xlabel={Number of used Passwords $n$},ylabel={Time [ms]},legend pos= north west,ymax=50,ymin=0]
-% %			\addplot+[mark=square*] table[x index=0,y index=2,col sep=space] {measurements.txt};
-% %			\addlegendentry{O-SPAKE}
-% %			\addplot+[mark=triangle*] table[x index=0,y index=4,col sep=space] {measurements.txt};
-% %			\addlegendentry{N-SPAKE}
-% %		\end{axis}
-% %		\end{tikzpicture}
-% %		%\caption{Oblivious SPAKE}
-% %		%\label{fig:ospake}
-% %%	\end{subfigure}
-% %%	\caption{Server-side Timings for Oblivious RG-PAKE (left) and SPAKE (right) Protocols}\label{fig:orgpake}
-% %\end{figure}
-% %\end{frame}
-%
-% \subsection{Summary (Oblivious PAKE)}
-%
-% \begin{frame}{Summary (Oblivious PAKE)}
-%
-%   \begin{itemize}
-%   \item We proposed \alert{Oblivious PAKE} with multiple client passwords
-%   \item \alert{Constant server runtime} even on failed login attempts
-%   \item \alert{Modular implementation} of the compiler
-%   \item Compiler implementation using SPAKE by \cite{Abdalla2005} and RG-PAKE by \cite{Gennaro2008}
-%   \end{itemize}
-%   
-%   \vskip0pt plus.5fill
-%   \begin{itemize}
-%   \item
-%     Outlook
-%     \begin{itemize}
-% %    \item Real world application (e.g. browser integration)
-%     \item Reduce Communication overhead
-%     \item ...
-%     \end{itemize}
-%   \end{itemize}
-% \end{frame}
-
-
 %===============================================================================
 % Password Authentication Framework in the Two-Server Setting
 %===============================================================================
-\section{2Server Password Framework}%{Password Authentication Framework in the Two-Server Setting}
-
-% \subsection{Distributed Smooth Projective Hashing \& 2-Server PAKE}
+\section{Two-Server Password Framework}%{Password Authentication Framework in the Two-Server Setting}
 
 \begin{frame}{Table of Content}
 \tableofcontents[currentsection]
 \end{frame}
 
-\subsection{2Server BPR}
+\begin{frame}{The Setting}
+  \begin{figure}
+  \begin{tikzpicture}
+	  \node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
+	  \node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
+	  \node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	  \draw[pil,<->] ($(client.west)+(1.3,0)$) -- (server1);
+	  \draw[pil,<->] ($(client.west)+(1.3,0)$) -- (server2);
+  \end{tikzpicture}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Modelling Passwords}
+  \begin{itemize}
+    \item Recall single-server setting:
+    \begin{itemize}
+      \item $f=(R,\mathrm{min})$
+      \item $\Sigma=(d,u,l,s)$
+      \item $\pwd=c_1,\cdots,c_n$
+    \end{itemize}
+  \end{itemize}
+  \vspace*{1em}
+  \begin{itemize}
+    \item Each server has its own $f_i$ now
+    \item $f=f_1\cap f_2=(\max(R_1, R_2), \max(\mathrm{min}_1, \mathrm{min}_2))$
+  \end{itemize}
+\end{frame}
+
+% \subsection{Distributed Smooth Projective Hashing \& 2-Server PAKE}
+
+\subsection{Two-Server BPR}
+
+\begin{frame}{Blind Password Registration for Two Servers}
+  \structure{The Proof}
+  \begin{align*}
+    \mathtt{ZKPoK}\{(\pwd, s_0, s_1):~ &\mathtt{pwd2int}(\pwd)=s_0 + s_1 \\
+    & \wedge ~ f(\pwd)=\true\}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Security Model}
+  
+\end{frame}
 
 % \subsection{Distributed Smooth Projective Hashing}
 \subsection{DSPHF \& A 2-Server PAKE Framework}
