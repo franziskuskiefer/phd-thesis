@@ -182,7 +182,7 @@
 \begin{frame}{How to Communicate Securely? (2/2)}
 
 \begin{itemize}
-	\item Password over HTML is insufficient for authentication.
+	\item Password over HTML is insufficient for authentication
 	\item How can two (or more) parties want to communicate securely?
 \end{itemize}
 	
@@ -244,21 +244,21 @@
 
 \subsection{Password Authenticated Key Exchange}
 
-\begin{frame}{Password Authenticated Key Exchange}{PAKE 1/2}
-	\begin{quote}
-	``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\cite{Kaufmann02}
-	\end{quote}
-	
-	\vspace*{2em}
-	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
-		Common secret with low entropy
-	\end{beamerboxesrounded}
-	
-\end{frame}
-
-\begin{frame}{Password Authenticated Key Exchange}{PAKE 2/2}
+% \begin{frame}{Password Authenticated Key Exchange}{PAKE 1/2}
+% 	\begin{quote}
+% 	``Humans are incapable of securely storing high-quality cryptographic keys, and they have unacceptable speed and accuracy when performing cryptographic operations.''~\cite{Kaufmann02}
+% 	\end{quote}
+% 	
+% 	\vspace*{2em}
+% 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+% 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
+% 		Common secret with low entropy
+% 	\end{beamerboxesrounded}
+% 	
+% \end{frame}
+%
+\begin{frame}{Password Authenticated Key Exchange}{PAKE}
 	Inherent threat of dictionary attacks
 	\begin{itemize}
 		\item Can not prevent online dicionary attacks
@@ -334,7 +334,7 @@ The PPT adversary $\mathcal{A}$ has access to the following oracles:
 \begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE) 2/2}
 \begin{definition}[AKE-Security]\label{def:ake}
 A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ active attacks there exists a negligible function $\varepsilon(\cdot)$ such that:
-\[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\varepsilon)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
+\[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
 
 \noindent$\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda):$ \\
 \hspace*{2em} $b\in_R\{0,1\}$\\
@@ -347,10 +347,10 @@ $\mathsf{Test}$ may only be asked on \emph{fresh} session.
 \begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC) 1/2}
 The following entities are involved:
 \begin{description}
-    \item[$\mathcal{Z}$:] \hfill \\ environmnet/distinguisher
+    \item[$\mathcal{Z}$:] \hfill \\ environment/distinguisher
     \item[$\Pi$:] \hfill \\ a real-world PAKE protocol
     \item[$\mathcal{A}$:] \hfill \\ real-world adversary on $\Pi$
-    \item[$\mathcal{F}_{\text{PAKE}}$:] \hfill \\ ideal funcitonality for PAKE protocols
+    \item[$\mathcal{F}_{\text{PAKE}}$:] \hfill \\ ideal functionality for PAKE protocols
     \item[$\mathcal{S}$:] \hfill \\ ideal-world adversary
 \end{description}
 \end{frame}
@@ -865,11 +865,18 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \begin{figure}
   \begin{tikzpicture}
 	  \node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
-	  \node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
-	  \node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	  \node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\share_1)$};
+	  \node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\share_2)$};
 	  \draw[pil,<->] ($(client.west)+(1.3,0.01)$) -- (server1);
 	  \draw[pil,<->] ($(client.west)+(1.3,-0.01)$) -- (server2);
   \end{tikzpicture}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Two-Server Password Authentication Framework}
+  \begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{framework2.pdf}
   \end{figure}
 \end{frame}
 
@@ -877,7 +884,7 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \begin{itemize}
     \item Recall single-server setting:
     \begin{itemize}
-      \item $f=(R,\mathrm{min})$
+      \item $f=(R,\pmin)$
       \item $\Sigma=(d,u,l,s)$
       \item $\pwd=c_1,\cdots,c_n$
     \end{itemize}
@@ -885,7 +892,7 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \vspace*{1em}
   \begin{itemize}
     \item Each server has its own $f_i$ now
-    \item $f=f_1\cap f_2=(\max(R_1, R_2), \max(\mathrm{min}_1, \mathrm{min}_2))$
+    \item $f=f_1\cap f_2=(\max(R_1, R_2), \max(\pmin_1, \pmin_2))$
   \end{itemize}
 \end{frame}
 
@@ -896,8 +903,7 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 \begin{frame}{Blind Password Registration for Two Servers}
   \structure{The Proof}
   \begin{align*}
-    \mathtt{ZKPoK}\{(\pwd, s_0, s_1):~ &\mathtt{pwd2int}(\pwd)=s_0 + s_1 \\
-    & \wedge ~ f(\pwd)=\true\}
+    (\pwd, \share_0, \share_1):~ &\pwdint(\pwd)=\share_0 + \share_1 ~ \wedge ~ f(\pwd)=\true
   \end{align*}
 \end{frame}
 
@@ -908,13 +914,13 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
       \item[$m'\gets\mathsf{Send}_S(S_b,C,m)$:] \hfill \\ simulates active attack
       \item[$m'\gets\mathsf{Send}_{SS}(S_b,S_{1-b},m)$:] \hfill \\ simulates active attack
       \item[$\mathtt{t}\gets\mathsf{Execute}(C,S_b)$:] \hfill \\ simulates passive attack
-      \item[$\{(C,S_{1-b},s_b)\}\gets\mathsf{Corrupt}(S_b)$:] \hfill \\ simulates a server breach
+      \item[$\{(C,S_{1-b},\share_b)\}\gets\mathsf{Corrupt}(S_b)$:] \hfill \\ simulates a server breach
     \end{description}
 \end{frame}
 
 \begin{frame}{Security Model}
   \begin{definition}[Policy Compliance]\label{def:pc}
-  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $A$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $A$ stopped that accepted $(C,S_{1-b},s_b)$, $(C,S_{b},s_{1-b})$ respectively, with $f(s_b+s_{1-b})=\mathtt{false}$ is negligible.
+  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $A$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $A$ stopped that accepted $(C,S_{1-b},\share_b)$, $(C,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\mathtt{false}$ is negligible.
   \end{definition}
 \end{frame}
 
@@ -925,14 +931,14 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 
   \structure{$\Exp_{\Pi, A}^{\mathrm{PB}}$}
   \begin{itemize}
-    \item $(C_0, C_1, S_0, S_1,\pwd_0,\pwd_1)$ output by $A$ with access to $\mathsf{Setup},\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ $(\secpar,D,\{C\},\{S\})$ 
-%     \item check $\pwd_0,\pwd_1\in D_{f_0\cap f_1}$, $|\pwd_0|=|\pwd_1|$, $C_0,C_1\in\{C\}$ and $S_0,S_1\in\{S\}$\\
+    \item $(C_0, C_1, S_0, S_1,\share_0,\share_1)$ output by $A$ with access to $\mathsf{Setup},\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ $(\secpar,D,\{C\},\{S\})$ 
+%     \item check $\share_0,\share_1\in D_{f_0\cap f_1}$, $|\share_0|=|\share_1|$, $C_0,C_1\in\{C\}$ and $S_0,S_1\in\{S\}$\\
     \item $A$ with access to $\mathsf{Setup}',\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ guesses $b'$
     \item if $S_0$ or $S_1$ is not corrupted, return $b=b'$; otherwise return $0$ 
   \end{itemize}
 
 %   \noindent
-%   $\mathsf{Setup}'$ (in contrast to $\mathsf{Setup}$) uses $\pwd_b$ for client $C_0$ and $\pwd_{1-b}$ for $C_1$ with $b\rin\{0,1\}$ instead of choosing a random password or using the provided one.
+%   $\mathsf{Setup}'$ (in contrast to $\mathsf{Setup}$) uses $\share_b$ for client $C_0$ and $\share_{1-b}$ for $C_1$ with $b\rin\{0,1\}$ instead of choosing a random password or using the provided one.
   \end{definition}
 \end{frame}
 
@@ -944,6 +950,58 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \begin{figure}[tbhp]
+  \begin{center}
+  \scalebox{0.45}{
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client \Client} & & \\
+  Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & &\\
+  \hspace*{2.8em} $\pwd, \crs$ & & \\
+  \midrule
+  & \textit{I -- Client Preparation} & \\
+  % \cmidrule{2-2}
+  encode $\pi\gets\pwdint(\pwd)$ & & \\
+  compute password shares: & & \\
+  \hspace*{1em} $\share_{0}\rin\ZZ_p$, $\share_{1}=\pi-\share_{0}$ & & \\
+  commit to shares: & & \\
+  \hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$ & & \\
+  \hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$ & & \\
+  \midrule
+  {\bf Client \Client} & & {\bf Server $\Server_b$} \\
+  Input: $\Server_0,\Server_{1}, f=f_0\cap f_1$ & & Input: $\Client,\Server_{1-b}$ \\
+  \hspace*{2.8em} $\pwd, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
+  \midrule
+  & \textit{II -- Password Registration} & \\
+  % \cmidrule{2-2}
+  commit to all characters: & & \\
+  \hspace*{1em} $C_i=g^{\pi_i}h^{r_i};~ C'_i=C_ih^{r'_i}$ & & \\
+  shuffle $\bm C'$ s.t. $C'_i=C_{\phi(i)}h^{r'_{\phi(i)}}$ & & \\
+  with permutation $\phi$ & & \\
+  for $c_i\in\pwd$ identify set $\omega_{\phi(i)}$ & & \\
+  execute \PoC, \PoM, \PoS & & \\
+   & $\xrightarrow{\makebox[4cm]{$\Comm_{\PoM}, \Comm_{\PoC}, \Comm_{\PoS}$}}$ & \\
+   & $\xleftarrow{\makebox[4cm]{$\Ch_{\PoM}, \Ch_{\PoC}, \Ch_{\PoS}$}}$ & choose challenges\\
+   & $\xrightarrow{\makebox[4cm]{$\Res_{\PoM}, \Res_{\PoC}, \Res_{\PoS}$}}$ & Proceed if\\
+   & & $|\bm C|=|\bm C'| \geq \pmin, \PoM$\\
+   & & $\PoC$ and $\PoS$ all holds\\
+  \midrule
+  {\bf Server $\Server_0$} & & {\bf Server $\Server_1$} \\
+  Input: $\Client, \Server_{1}$ & & Input: $\Client,\Server_{0}$ \\
+  \hspace*{2.8em} $f=f_0\cap f_1, \crs$ & & \hspace*{2.8em} $f=f_0\cap f_1, \crs$ \\
+  \midrule
+  & \textit{III -- Share Verification} & \\
+  % \cmidrule{2-2}
+  $\fD'_{1}=\fC_{1}g^{\share_{0}}$ & $\xrightarrow{\makebox[4cm]{$\fD'_{1}$}}$ & $\fD'_{0}=\fC_{0}g^{\share_{1}}$ \\
+  If $\fD'_0=\fD_0$ & $\xleftarrow{\makebox[4cm]{$\fD'_{0}$}}$ & If $\fD'_{1}=\fD_{1}$ \\
+  \hspace*{1em} store $(\Client,\Server_{1},\share_{0})$ & & \hspace*{1em} store $(\Client,\Server_{0},\share_{1})$ \\
+  \bottomrule
+  \end{tabular}}
+  \end{center}
+  \end{figure}
+\end{frame}
+
 % \subsection{Distributed Smooth Projective Hashing}
 \subsection{DSPHF \& A 2-Server PAKE Framework}
 
@@ -953,17 +1011,17 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 \opaqueblock<1>{\hspace*{1em}
 Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.
 \begin{description}
-	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
-	\item[$\mathsf{KGen_P}(k_h,L_x,C)$]\hfill\\ derives the projection key $k_p$, possibly depending on $C$.
-	\item[$\mathsf{Hash}(k_h,L_x,C)$] \hfill\\ outputs the hash value $h$.
-	\item[$\mathsf{PHash}(k_p,L_x,C,w)$] \hfill\\ returns the hash value $h$.
+	\item[$\HKGen(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
+	\item[$\PKGen(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
+	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
+	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
 \end{description}
 }
 \invblock<2->
 
 \opaqueblock<2>{\hspace*{1em}
 	\begin{description}
-		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(k_h,L_x,C)=\mathsf{PHash}(k_p,L_x,C,w)$.
+		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
 		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
 		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
 	\end{description}
@@ -1004,13 +1062,13 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \begin{frame}{Extended Smooth Projective Hashing 1/2}
 
 %Languages of ciphertexts: $C\gets\mathsf{Enc}_{\pk}(x)$
-%2-Server PAKE between \begin{center} Client$(\pwd)$, Server$_1(\pwd_1)$, Server$_2(\pwd_2)$\end{center}
+%2-Server PAKE between \begin{center} Client$(\pwd)$, Server$_1(\share_1)$, Server$_2(\share_2)$\end{center}
 
 \begin{figure}
 \begin{tikzpicture}
 	\node[state] (client) at (0,-1) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$};
-	\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
-	\node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+	\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\share_1)$};
+	\node[state] (server2) at (6,-2) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\share_2)$};
 	\draw[pil] ($(client.west)+(1.2,0)$) -- (server1);
 	\draw[pil] ($(client.west)+(1.2,0)$) -- (server2);
 \end{tikzpicture}
@@ -1019,7 +1077,7 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \setbeamercolor{uppercol}{fg=white,bg=blue!40}%
 \setbeamercolor{lowercol}{fg=black,bg=blue!20}%
 \begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Idea}
-	Encrypt $\pwd$, $\pwd_1$ and $\pwd_2$ $\rightarrow$ Use extended SPHF to compute keys
+	Encrypt $\pwd$, $\share_1$ and $\share_2$ $\rightarrow$ Use extended SPHF to compute keys
 \end{beamerboxesrounded}
 
 \end{frame}
@@ -1044,7 +1102,7 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 	
 	\vspace*{2em}
 \structure{$\mathsf{Hash}_0^D$} between $S_1$ and $S_2$.\\
-	\hspace*{2em} Each $S_i$ performs $\mathsf{Hash}_0^D$ on input $$(\pwd_i,k_{h,i}, C_0)$$\hspace*{2em} such that $S_1$ eventually holds $h_0$.
+	\hspace*{2em} Each $S_i$ performs $\mathsf{Hash}_0^D$ on input $$(\share_i,k_{h,i}, C_0)$$\hspace*{2em} such that $S_1$ eventually holds $h_0$.
 
 \end{frame}
 
@@ -1053,8 +1111,8 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 		\begin{figure}
 		\begin{tikzpicture}
 			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\\hspace*{0cm}\\};
-			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$};
-			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\share_1)$};
+			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\share_2)$};
 	
 			\draw[pil,->] ($(client.west)+(2,0.2)$) -| node[above,anchor=center,xshift=-1.5cm,yshift=-0.8cm]{$k_p,C$} (server1);
 			\draw[pil,->] ($(client.west)+(2,-0.2)$) -| node[below,anchor=center,xshift=-1.5cm,yshift=0.8cm]{$k_p,C$} (server2);
@@ -1070,8 +1128,8 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 		\begin{figure}
 		\begin{tikzpicture}
 			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\ $\mathsf{PHash}_0\cdot\mathsf{Hash}_x$\\ $\rightarrow \sk$};
-			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\pwd_1)$\\ $h_x\cdot h_0\rightarrow \sk$};
-			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\pwd_2)$};
+			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\share_1)$\\ $h_x\cdot h_0\rightarrow \sk$};
+			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\share_2)$};
 	
 			\draw[pil,<->] (server1) -- node[anchor=center,xshift=-0.1cm]{$\mathsf{PHash}_x^D$~~~~$\mathsf{Hash}_0^D$} (server2);
 %			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[below,anchor=center]{$k_{p,2},C_2$} (server2);
