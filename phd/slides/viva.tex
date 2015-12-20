@@ -258,7 +258,7 @@
 % 	
 % \end{frame}
 %
-\begin{frame}{Password Authenticated Key Exchange}{PAKE}
+\begin{frame}{Password Authenticated Key Exchange}{PAKE (s $:=$ password)}
 	Inherent threat of dictionary attacks
 	\begin{itemize}
 		\item Can not prevent online dicionary attacks
@@ -300,7 +300,7 @@
 	
 	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
 	
-	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $\color{red} Y\gets Y\cdot N^\pwd$};
+	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $\color{red} Y'\gets Y\cdot N^\pwd$};
 	\node[state] (server1) at (4,-1) {};
 	
 	\node[state, align=right] at (6,-2) {$K'_B\gets {\color{red} (X'/M^\pwd)}^y$};
@@ -458,6 +458,20 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 \resizebox{\columnwidth}{!}{\setlength\fboxsep{6pt}\fbox{\usebox{\savelisting}}}
 \end{center}}
 
+\begin{frame}{Password Registration}{Motivation}
+  \begin{itemize}
+    \item Don't trust servers
+    \begin{itemize}
+      \item ... to handle passwords properly
+    \end{itemize}
+    \vspace*{2em}\pause
+    \item Don't trust clients
+    \begin{itemize}
+      \item ... to choose secure passwords
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Single-Server Password Authentication Framework}
   \begin{figure}
   \centering
@@ -495,18 +509,18 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 \end{frame}
 
 \begin{frame}{Password Policies}
-  \structure{Policy:} $f=(R, n, m)$
+  \structure{Policy:} $f=(R, \pmin, \pmax)$
   \begin{itemize}
-    \item $R$: ``regular expression'' of admissible characters
-    \item $n$: minimum number of characters
-    \item $m$: maximum number of characters (can be ommited)
+    \item $R$: policy expression of admissible characters
+    \item $\pmin$: minimum number of characters
+    \item $\pmax$: maximum number of characters (can be ommited)
   \end{itemize}
   
   \vspace*{2em}
   $f(\pwd)=f(\pi)=\true$ iff:
   \begin{itemize}
     \item $\pwd$ satisfies $R$
-    \item $n\leq |\pwd| \leq m$
+    \item $\pmin\leq |\pwd| \leq \pmax$
   \end{itemize}
 \end{frame}
 
@@ -536,34 +550,22 @@ A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not 
 
 \subsection[ZKPPC]{Zero-Knowledge Password Policy Checks}
 
-\begin{frame}{Zero-Knowledge Password Policy Checks 1/2}
-  
-  \begin{definition}[Set Membership Proof of Commitment]\label{def:smp}
-  \Com is a commitment scheme, $L$ a set
-  \[
-    \mathtt{ZKPoK}\{(c, r): C\gets\Com(c, r) \wedge c\in L\}
-  \]
-  \end{definition}
-  
-  \begin{definition}[Zero-Knowledge Password Policy Check]\label{def:zkppc}
-  For password hashing scheme $H$, policy $f$, and password $\pi$ ZKPPC is defined as
-  \[
-    \mathtt{ZKPoK}\{(\pi, r): f(\pi)=\true \wedge H\gets\PHash(\pi, r)\}
-  \]
-  \end{definition}
-\end{frame}
-
-\begin{frame}{Zero-Knowledge Password Policy Checks 2/2}
-  
-  Using commitment \texttt{Com} this can be written as
-  \begin{align*}    
-    \mathtt{ZKPoK}\{(\pi, r, \{r_i\}_{[1,n]}): & C_i=\mathtt{Com}(\pi_i, r_i) ~ \wedge \\
-    & \pi_i\in\Omega ~ \wedge \\
-    & \sum_i^n C_i=\mathtt{Com}(\pi, \sum_i^n r_i) ~ \wedge \\
-    & H\gets\PHash(\pi, r)\}
-  \end{align*}
-  
-\end{frame}
+% \begin{frame}{Zero-Knowledge Password Policy Checks 1/2}
+%   
+%   \begin{definition}[Set Membership Proof of Commitment]\label{def:smp}
+%   \Com is a commitment scheme, $L$ a set
+%   \[
+%     \mathtt{ZKPoK}\{(c, r): C\gets\Com(c, r) \wedge c\in L\}
+%   \]
+%   \end{definition}
+%   
+%   \begin{definition}[Zero-Knowledge Password Policy Check]\label{def:zkppc}
+%   For password hashing scheme $H$, policy $f$, and password $\pi$ ZKPPC is defined as
+%   \[
+%     \mathtt{ZKPoK}\{(\pi, r): f(\pi)=\true \wedge H\gets\PHash(\pi, r)\}
+%   \]
+%   \end{definition}
+% \end{frame}
 
 \begin{frame}{The ZKPPC Framework}
 
@@ -633,6 +635,18 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
 \end{center}
 \end{figure}
 
+\end{frame}
+
+\begin{frame}{Zero-Knowledge Password Policy Checks}
+  
+  Committed ZKPPC
+  \begin{align*}    
+    \mathtt{ZKPoK}\{(\pi, r, \{r_i\}_{[1,n]}): & C_i=\mathtt{Com}(\pi_i, r_i) ~ \wedge \\
+    & \pi_i\in\Omega_j ~ \wedge \\
+    & \prod_i^n C_i=\mathtt{Com}(\pi, \sum_i^n r_i) ~ \wedge \\
+    & H\gets\PHash(\pi, r)\}
+  \end{align*}
+  
 \end{frame}
 
 \subsection[BPR]{Blind Password Registration}
@@ -733,6 +747,26 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 % \end{figure}
 \end{frame}
 
+\begin{frame}{BPR Proofs}
+  \begin{itemize}
+    \item \textbf{P}roof \textbf{o}f \textbf{M}embership
+    \begin{itemize}
+      \item characters fulfil $R$
+    \end{itemize}
+    \vspace*{2em}
+    \item \textbf{P}roof \textbf{o}f \textbf{E}quivalence
+    \begin{itemize}
+      \item $H_2$ and $C$ contain the same $\pi$
+    \end{itemize}
+    \vspace*{2em}
+    \item \textbf{P}roof \textbf{o}f \textbf{S}huffle
+    \begin{itemize}
+      \item $\bm C'$ is a shuffle of $\bm C$ 
+    \end{itemize}
+    \vspace*{2em}
+  \end{itemize}
+\end{frame}
+
 \subsection[SPC]{Secure Set-based Policy Checking}
 
 \begin{frame}{A Different Approach}
@@ -787,6 +821,37 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \begin{itemize}
     \item Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$
   \end{itemize}
+\end{frame}
+
+\begin{frame}{BPR from SPC}
+  \begin{figure}[t]
+  \begin{center}
+  \scalebox{0.7}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client \Client} & & {\bf Server \Server} \\
+  Input: $f, \pwd$ & & Input: $f,\ServerSet=\{s_1,\dots,s_w\}$ \\
+  \midrule
+   & {\it Setup Phase} & \\
+  % \cmidrule{2-2}
+  $k\gets H_1(\pwd)$ & $\xleftarrow{\makebox[2cm]{$(e,N)$}}$ & $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\
+  $\ClientSet\gets\PwdMap(\pwd)$ & & \\
+  $\forall i\in[1,v]:~ r_i\gets f_k(i)$ & & \\
+  $u_i\gets H_2(c_i)\cdot r_i^e$ & $\xrightarrow{\makebox[2cm]{$(u_1,\cdots,u_v)$}}$ & abort if $v$ $<$ \pmin \\
+  $\hat{\ClientSet} = \emptyset$ & $\xleftarrow{\makebox[2cm]{$(u'_1,\cdots,u'_v)$}}$ & $\forall i \in [1,v]: u'_i=u_i^d;~ \hat{\ServerSet}=\emptyset$ \\
+  $\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$ & & $\forall i \in [1,w]: \hat{\ServerSet} \cup (H_2(s_i))^d$ \\
+   & & $\hat{f} \gets f,\hat{\ServerSet}$ \\
+   & {\it Policy Checking Phase} & \\
+  % \cmidrule{2-2}
+   & $\hat{\ClientSet}\rightarrow$ Run SPC$\leftarrow \hat{f}$ & \\
+   & & If SPC is successful \\
+   & & store verifier \\
+   & & $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
+  \bottomrule
+  \end{tabular}}
+  \end{center}
+  \end{figure}
+
 \end{frame}
 
 \subsection[VPAKE]{Verifier-based PAKE}
@@ -920,18 +985,18 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 
 \begin{frame}{Security Model}
   \begin{definition}[Policy Compliance]\label{def:pc}
-  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $A$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $A$ stopped that accepted $(C,S_{1-b},\share_b)$, $(C,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\mathtt{false}$ is negligible.
+  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $\cA$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $\cA$ stopped that accepted $(C,S_{1-b},\share_b)$, $(C,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\mathtt{false}$ is negligible.
   \end{definition}
 \end{frame}
 
 \begin{frame}{Security Model}
   \begin{definition}[Password Blindness]\label{def:zk}
 %   The Password Blindness property of a Two-Server BPR protocol $\Pi$ holds if for every PPT adversary $A$ there exists a negligible function $\varepsilon(\cdot)$ such that
-  \[ \Adv_{\Pi, A}^{\mathrm{PB}}=\left|\Pr[\Exp_{\Pi, A}^{\mathrm{PB}}=1]-\frac{1}{2}\right|\leq\varepsilon(\secpar). \]
+  \[ \Adv_{\Pi, \cA}^{\mathrm{PB}}=\left|\Pr[\Exp_{\Pi, \cA}^{\mathrm{PB}}=1]-\frac{1}{2}\right|\leq\varepsilon(\secpar). \]
 
-  \structure{$\Exp_{\Pi, A}^{\mathrm{PB}}$}
+  \structure{$\Exp_{\Pi, \cA}^{\mathrm{PB}}$}
   \begin{itemize}
-    \item $(C_0, C_1, S_0, S_1,\share_0,\share_1)$ output by $A$ with access to $\mathsf{Setup},\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ $(\secpar,D,\{C\},\{S\})$ 
+    \item $(C_0, C_1, S_0, S_1,\share_0,\share_1)$ output by $\cA$ with access to $\mathsf{Setup},\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ $(\secpar,D,\{C\},\{S\})$ 
 %     \item check $\share_0,\share_1\in D_{f_0\cap f_1}$, $|\share_0|=|\share_1|$, $C_0,C_1\in\{C\}$ and $S_0,S_1\in\{S\}$\\
     \item $A$ with access to $\mathsf{Setup}',\mathsf{Send}_S,\mathsf{Send}_{SS}, \mathsf{Execute},\mathsf{Corrupt}$ guesses $b'$
     \item if $S_0$ or $S_1$ is not corrupted, return $b=b'$; otherwise return $0$ 
@@ -1127,11 +1192,11 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 
 		\begin{figure}
 		\begin{tikzpicture}
-			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\ $\mathsf{PHash}_0\cdot\mathsf{Hash}_x$\\ $\rightarrow \sk$};
+			\node[state] (client) at (0,-2) [align=center]{\pgfimage[width=0.8cm]{os_tux}\\ Client $(\pwd)$\\ $\PHash_0\cdot\Hash_x$\\ $\rightarrow \sk$};
 			\node[state] (server1) at (6,0) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 1 $(\share_1)$\\ $h_x\cdot h_0\rightarrow \sk$};
 			\node[state] (server2) at (6,-4) [align=center]{\pgfimage[width=0.8cm]{techie_sailor}\\ Server 2 $(\share_2)$};
 	
-			\draw[pil,<->] (server1) -- node[anchor=center,xshift=-0.1cm]{$\mathsf{PHash}_x^D$~~~~$\mathsf{Hash}_0^D$} (server2);
+			\draw[pil,<->] (server1) -- node[anchor=center,xshift=-0.1cm]{$\PHash_x^D$~~~~$\Hash_0^D$} (server2);
 %			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[below,anchor=center]{$k_{p,2},C_2$} (server2);
 		\end{tikzpicture}
 		\end{figure}
@@ -1144,8 +1209,8 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
   \structure{Trapdoor Distributed Smooth Projective Hash Function}
   \begin{itemize}
     \item extending D-SPHF further
-    \item trapdoor SPHF introduced in \cite{Benhamouda2013}
-    \item necessary for efficient UC-secure protocol
+    \item trapdoor SPHF introduced by \cite{Benhamouda2013}
+    \item necessary for \emph{efficient} UC-secure protocol
     \item $\mathsf{THash}$ can compute hash without hashing key, uses trapdoor instead
     \item $\mathsf{VerKp}$ verifies that $k_p$ is a valid projection key
     \item Using previous 2PAKE framework with TD-SPHF yields UC-secure 2PAKE
@@ -1213,7 +1278,7 @@ Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $\Server_b$, $b\in\{1,
 \begin{itemize}\itemsep1em
 	\item Modelling of Password Policies
 	\item Blind Password Registration protocols and model (single and two-server setting)
-	\item Distributed SPHF
+	\item (Trapdoor) Distributed SPHF
 	\item 2-Server PAKE framework
 	\item 2-Server UC PAKE security
 \end{itemize}
