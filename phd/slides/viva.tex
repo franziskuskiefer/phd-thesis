@@ -495,21 +495,61 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 
 \subsection{Modelling Password Policies}
 
-\begin{frame}{Passwords}
+\begin{frame}{Passwords}{Definition and Mapping}
   
-\structure{Password definition}
-\begin{itemize}
-  \item Using 94 printable ASCII characters ($\Sigma=d\cup u \cup l \cup s$) with four sets
-  \begin{itemize}
-    \item digits ($d$)
-    \item upper case characters ($u$)
-    \item lower case characters ($l$)
-    \item symbols ($s$)
-  \end{itemize}
-  \item password is defined as $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
-\end{itemize}
+% \structure{Password definition}
 
-\structure{Password Mapping}
+\def\angle{0}
+\def\radius{1}
+\def\cyclelist{{"orange","blue","red","green"}}
+\newcount\cyclecount \cyclecount=-1
+\newcount\ind \ind=-1
+\begin{center}
+\scalebox{0.8}{\small
+\begin{tikzpicture}[nodes = {font=\sffamily}]
+  \foreach \percent/\name in {
+      10/\textbf{d}igits,
+      46/\textbf{s}ymbols,
+      22/\textbf{u}pper case,
+      22/\textbf{l}ower case,
+    } {
+      \ifx\percent\empty\else               % If \percent is empty, do nothing
+        \global\advance\cyclecount by 1     % Advance cyclecount
+        \global\advance\ind by 1            % Advance list index
+        \ifnum3<\cyclecount                 % If cyclecount is larger than list
+          \global\cyclecount=0              %   reset cyclecount and
+          \global\ind=0                     %   reset list index
+        \fi
+        \pgfmathparse{\cyclelist[\the\ind]} % Get color from cycle list
+        \edef\color{\pgfmathresult}         %   and store as \color
+        % Draw angle and set labels
+        \draw[fill={\color!50},draw={\color}] (0,0) -- (\angle:\radius)
+          arc (\angle:\angle+\percent*3.6:\radius) -- cycle;
+%         \node at (\angle+0.5*\percent*3.6:0.7*\radius) {\name};
+        \node[pin=\angle+0.5*\percent*3.6:\name]
+          at (\angle+0.5*\percent*3.6:\radius) {};
+        \pgfmathparse{\angle+\percent*3.6}  % Advance angle
+        \xdef\angle{\pgfmathresult}         %   and store in \angle
+      \fi
+      \node at (0,0) {$\Sigma$ (ASCII)};
+    };
+\end{tikzpicture}}
+
+$\pwd=c_1 || \cdots || c_n\in\Sigma^n$
+
+% \begin{itemize}
+%   \item Using 94 printable ASCII characters ($\Sigma=d\cup u \cup l \cup s$) with four sets
+%   \begin{itemize}
+%     \item digits ($d$)
+%     \item upper case characters ($u$)
+%     \item lower case characters ($l$)
+%     \item symbols ($s$)
+%   \end{itemize}
+%   \item password is defined as $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
+% \end{itemize}
+\end{center}
+
+% \structure{Password Mapping}
 \begin{itemize}
   \item $\pi$ denotes integer mapped from $\pwd$
   \item $\pi=\sum_{i=1}^n b^{i-1}p(c_i)$
@@ -517,7 +557,7 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
     \item $p(c_i)=\texttt{ASCII}(c_i)-32$
     \item $b$ is shift base
   \end{itemize}
-  \item $\pi_i$ denotes the encoded i-th character in $\pwd$
+%   \item $\pi_i$ denotes the encoded i-th character in $\pwd$
 \end{itemize}
 
 \end{frame}
@@ -539,7 +579,7 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 \end{frame}
 
 \begin{frame}{Password Hashing}
-  extended definition from \cite{BenhamoudaP13} (added $s_P$)
+  extended \cite{BenhamoudaP13}
 %   \begin{tabular}{ll}
 %     \structure{PSetup($\lambda$):} & \\
 %     & outputs hashing parameters $p$ \\
@@ -559,7 +599,7 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
     \item[\PHSalt($p$):] \hfill\\ generates random hashing salt $s_H$
     \item[\PHash($p, P, s_P, s_H$):]	\hfill\\ computes a (final) hash value $H$
   \end{description}
-  Let $H\gets\mathtt{Hash}(\pwd, s_P, s_H)=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
+  $H\gets\mathtt{Hash}(\pwd, s_P, s_H)$ %$=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
 \end{frame}
 
 \subsection[ZKPPC]{Zero-Knowledge Password Policy Checks}
