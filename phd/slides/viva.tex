@@ -321,46 +321,60 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
 
 \subsection{PAKE Security Models}
 
-\begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE) 1/2}
-The PPT adversary $\mathcal{A}$ has access to the following oracles:
-\begin{description}
-    \item[$m'\gets\mathsf{Send}(P,P',m)$:] \hfill \\ simulates active attack.
-    \item[$\mathtt{t}\gets\mathsf{Execute}(P,P')$:] \hfill \\ simulates passive attack
-    \item[$\pwd\gets\mathsf{Corrupt}(P, P')$:] \hfill \\ simulates password leakage
-    \item[$\mathtt{k}_\mathcal{A}\gets\mathsf{Test}(P)$:] \hfill \\ returns real or random key (security definition)
-\end{description}
+\begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE)}
+  \begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{pakeGame.pdf}
+  \end{figure}
 \end{frame}
 
-\begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE) 2/2}
-\begin{definition}[AKE-Security]\label{def:ake}
-A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ active attacks there exists a negligible function $\varepsilon(\cdot)$ such that:
-\[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
+% \begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE) 1/2}
+% The PPT adversary $\mathcal{A}$ has access to the following oracles:
+% \begin{description}
+%     \item[$m'\gets\mathsf{Send}(P,P',m)$:] \hfill \\ simulates active attack.
+%     \item[$\mathtt{t}\gets\mathsf{Execute}(P,P')$:] \hfill \\ simulates passive attack
+%     \item[$\pwd\gets\mathsf{Corrupt}(P, P')$:] \hfill \\ simulates password leakage
+%     \item[$\mathtt{k}_\mathcal{A}\gets\mathsf{Test}(P)$:] \hfill \\ returns real or random key (security definition)
+% \end{description}
+% \end{frame}
+%
+% \begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE) 2/2}
+% \begin{definition}[AKE-Security]\label{def:ake}
+% A PAKE protocol $\Pi$ is \emph{AKE-secure} if for all dictionaries $\mathcal{D}$ and for all PPT adversaries $\mathcal{A}$ using at most $t$ active attacks there exists a negligible function $\varepsilon(\cdot)$ such that:
+% \[\left|\Pr[\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda)=1]-\frac12\right|\leq \frac{\mathcal{O}(t)}{|\mathcal{D}|}+\varepsilon(\lambda).\]
+%
+% \noindent$\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda):$ \\
+% \hspace*{2em} $b\in_R\{0,1\}$\\
+% \hspace*{2em} $b'\gets\mathcal{A}^{\mathsf{Send},\mathsf{Execute},\mathsf{Corrupt},\mathsf{Test}}(\lambda)$\\
+% \hspace*{2em} return $b=b'$
+% \end{definition}
+% $\mathsf{Test}$ may only be asked on \emph{fresh} session.
+% \end{frame}
 
-\noindent$\mathsf{Exp}_{\Pi,\mathcal{A}}^{\mathsf{AKE-SEC}}(\lambda):$ \\
-\hspace*{2em} $b\in_R\{0,1\}$\\
-\hspace*{2em} $b'\gets\mathcal{A}^{\mathsf{Send},\mathsf{Execute},\mathsf{Corrupt},\mathsf{Test}}(\lambda)$\\
-\hspace*{2em} return $b=b'$
-\end{definition}
-$\mathsf{Test}$ may only be asked on \emph{fresh} session.
+\begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC)}
+  \begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{uc.pdf}
+  \end{figure}
 \end{frame}
 
-\begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC) 1/2}
-The following entities are involved:
-\begin{description}
-    \item[$\mathcal{Z}$:] \hfill \\ environment/distinguisher
-    \item[$\Pi$:] \hfill \\ a real-world PAKE protocol
-    \item[$\mathcal{A}$:] \hfill \\ real-world adversary on $\Pi$
-    \item[$\mathcal{F}_{\text{PAKE}}$:] \hfill \\ ideal functionality for PAKE protocols
-    \item[$\mathcal{S}$:] \hfill \\ ideal-world adversary
-\end{description}
-\end{frame}
-
-\begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC) 2/2}
-\begin{definition}[UC-Security]\label{def:uc}
-A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not able to decide whether it is interacting with the real world protocol $\Pi$ and the real world adversary $\mathcal{A}$ or the ideal functionality $\mathcal{F}$ and ideal-world adversary $\mathcal{S}$.
-\end{definition}
-
-\end{frame}
+% \begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC) 1/2}
+% The following entities are involved:
+% \begin{description}
+%     \item[$\mathcal{Z}$:] \hfill \\ environment/distinguisher
+%     \item[$\Pi$:] \hfill \\ a real-world PAKE protocol
+%     \item[$\mathcal{A}$:] \hfill \\ real-world adversary on $\Pi$
+%     \item[$\mathcal{F}_{\text{PAKE}}$:] \hfill \\ ideal functionality for PAKE protocols
+%     \item[$\mathcal{S}$:] \hfill \\ ideal-world adversary
+% \end{description}
+% \end{frame}
+%
+% \begin{frame}{PAKE Security Model 2/2}{Universal Composability (UC) 2/2}
+% \begin{definition}[UC-Security]\label{def:uc}
+% A PAKE protocol $\Pi$ is \emph{UC-secure} if distinguisher $\mathcal{Z}$ is not able to decide whether it is interacting with the real world protocol $\Pi$ and the real world adversary $\mathcal{A}$ or the ideal functionality $\mathcal{F}$ and ideal-world adversary $\mathcal{S}$.
+% \end{definition}
+%
+% \end{frame}
 
 % \begin{frame}{Forward-Secrecy in PAKE 1/4}{}
 %
