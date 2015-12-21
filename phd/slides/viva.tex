@@ -579,7 +579,9 @@ $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
 \end{frame}
 
 \begin{frame}{Password Hashing}
-  extended \cite{BenhamoudaP13}
+  \begin{center}
+    \structure{$H\gets\mathtt{Hash}(\pwd, s_P, s_H)$} %$=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
+  \end{center}
 %   \begin{tabular}{ll}
 %     \structure{PSetup($\lambda$):} & \\
 %     & outputs hashing parameters $p$ \\
@@ -599,7 +601,7 @@ $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
     \item[\PHSalt($p$):] \hfill\\ generates random hashing salt $s_H$
     \item[\PHash($p, P, s_P, s_H$):]	\hfill\\ computes a (final) hash value $H$
   \end{description}
-  $H\gets\mathtt{Hash}(\pwd, s_P, s_H)$ %$=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
+  extended \cite{BenhamoudaP13}
 \end{frame}
 
 \subsection[ZKPPC]{Zero-Knowledge Password Policy Checks}
@@ -691,17 +693,48 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
 
 \end{frame}
 
-\begin{frame}{Zero-Knowledge Password Policy Checks}
-  
-  Committed ZKPPC
-  \begin{align*}    
-    \mathtt{ZKPoK}\{(\pi, r, \{r_i\}_{[1,n]}): & C_i=\mathtt{Com}(\pi_i, r_i) ~ \wedge \\
-    & \pi_i\in\Omega_j ~ \wedge \\
-    & \prod_i^n C_i=\mathtt{Com}(\pi, \sum_i^n r_i) ~ \wedge \\
-    & H\gets\PHash(\pi, r)\}
-  \end{align*}
-  
+\begin{frame}{The ZKPPC Framework}
+
+\begin{dynblock}
+\opaqueblock<1>{\hspace*{0em}
+\begin{center}
+  \structure{Client}
+\end{center}
+for $i\in[0,n-1]$ \\
+\hspace*{1em} let $c_i\in\pwd$ \\
+\hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ \\
+\hspace*{1em} $r_i\rin\SSS_C; C_i\gets\Com(\pi_i;r_i)$ \\
+$H\gets \HashP(\pi;(s_P, s_H))$\\\hfill\\
+$\longrightarrow H,~\{C_i\}$
+\vspace*{1em}
+}
+\invblock<2->
+
+\opaqueblock<2>{
+\begin{center}
+  \structure{Proofs}
+\end{center}
+$\forall i:~\SMP(\pi_i,r_i,\Omega')$ \\\hfill\\
+$\ZKPoK\{(\pi, s_P, s_H, r):$ \\
+\hspace*{1em} $H=\HashP(\pi; (s_P, s_H))$ \\
+\hspace*{1em} $\wedge ~ C=\Com(\pi;r)\}$
+\vspace*{1em}
+}
+\end{dynblock}
+
 \end{frame}
+
+% \begin{frame}{Zero-Knowledge Password Policy Checks}
+%   
+%   Committed ZKPPC
+%   \begin{align*}    
+%     \mathtt{ZKPoK}\{(\pi, r, \{r_i\}_{[1,n]}): & C_i=\mathtt{Com}(\pi_i, r_i) ~ \wedge \\
+%     & \pi_i\in\Omega_j ~ \wedge \\
+%     & \prod_i^n C_i=\mathtt{Com}(\pi, \sum_i^n r_i) ~ \wedge \\
+%     & H\gets\PHash(\pi, r)\}
+%   \end{align*}
+%   
+% \end{frame}
 
 \subsection[BPR]{Blind Password Registration}
 
@@ -748,15 +781,15 @@ compute $\pi\gets\pwdint(\pwd)$ & & \\
 let $n \gets |\pwd|$ & & \\
 for $i\in[0,n-1]$ & & \\
 \hspace*{1em} let $c_i\in\pwd$ & & \\
-\hspace*{1em} $\pi_i\gets\chrint(c_i)$ & & \\
-\hspace*{1em} $C_i=g^{\pi_i}h^{r_i}; C'_i=C_ih^{r'_i}$ & & \\
-shuffle $C'_i \gets C'_{k_i}$ & & \\
+\hspace*{1em} \alert{$\pi_i\gets\chrint(c_i)$} & & \\
+\hspace*{1em} \alert{$C_i=g^{\pi_i}h^{r_i}; C'_i=C_ih^{r'_i}$} & & \\
+\alert{shuffle $C'_i \gets C'_{k_i}$} & & \\
 let $\bm C = \{C_i\}$, $\bm C' = \{C'_i\}$ & & \\
 $s_P\gets_R\PPHSalt(\paramP)$ & & \\
 $s_H\gets_R\PHSalt(\paramP)$ & & \\
 $(H_1,H_2)\gets\HashP(\pi; (s_P, s_H))$ & & \\
 For $c_i\in\pwd$ identify set $\omega_{k_i}$ & & \\
-Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$: \\
+Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$} & If $|\bm C|$ $=$ $|\bm C'|$ $\geq$ $\pmin$: \\
  & $\xrightarrow{\makebox[4cm]{$\Comm_{\PoM}, \Comm_{\PoE}, \Comm_{\PoS}$}}$ & \hspace*{1em} choose $\Ch_\PoM, \Ch_\PoM, \Ch_\PoS$ \\
  & $\xleftarrow{\makebox[4cm]{$\Ch_{\PoM}, \Ch_{\PoE}, \Ch_{\PoS}$}}$ & \\
  & $\xrightarrow{\makebox[4cm]{$\Res_{\PoM}, \Res_{\PoE}, \Res_{\PoS}$}}$ & If $\PoM$, $\PoE$, $\PoS$ succeed\\
@@ -823,7 +856,7 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
 
 \subsection[SPC]{Secure Set-based Policy Checking}
 
-\begin{frame}{A Different Approach}
+\begin{frame}{A Different Approach 1/2}
   \structure{Policies}
   \begin{itemize}
     \item Password policy checks as use case of Secure Set-based Policy Checking
@@ -835,6 +868,9 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
     \end{itemize}
     \item map access structure to Linear Secret Sharing Scheme (LSSS)
   \end{itemize}
+\end{frame}
+
+\begin{frame}{A Different Approach 2/2}
   
   \structure{Password Policies \& Mapping}
   \begin{itemize}
@@ -848,6 +884,7 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
   \end{itemize}
   
 \end{frame}
+
 
 \begin{frame}{Secure Set-based Policy Checking}
   \begin{figure}[t]
@@ -969,6 +1006,17 @@ Execute \PoE, \PoM, \PoS: & $\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$ & If $
       \item new Smooth Projective Hash Function proposed
     \end{itemize}
   \end{center}
+\end{frame}
+
+\begin{frame}{Summary}{Blind Password Registration \& VPAKE}
+  \begin{itemize}
+    \item ZKPPC, BPR and SPC approaches
+    \item Security models for BPR and SPC
+    \item SPC is most efficient
+    \item BPR offers best security
+    \item new VPAKE protocol
+    \item Demo
+  \end{itemize}
 \end{frame}
 
 %===============================================================================
