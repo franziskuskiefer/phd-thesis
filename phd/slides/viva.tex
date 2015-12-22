@@ -866,7 +866,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
       \item $\Gamma_\mathcal{V}$ access structure over set $\mathcal{V}$
       \item $f(\mathcal{C})=\true$ iff $\mathcal{C}\in\Gamma_\mathcal{V}$ for set $\mathcal{C}$ (i.e. authorised set)
     \end{itemize}
-    \item map access structure to Linear Secret Sharing Scheme (LSSS)
+    \item map access structure to \alert{Linear Secret Sharing Scheme (LSSS)}
   \end{itemize}
 \end{frame}
 
@@ -879,7 +879,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
     \begin{itemize}
       \item let $f$ define $\sigma_i$ subsets and threshold $t_i$
       \item build $\mathcal{C}$ by appending count to characters in $\pwd$
-      \item example: $\pwd=\text{password}\rightarrow\mathcal{C}=\{p1,a1,s1,s2,o1,r1,d1\}$
+      \item example: \\\vspace*{1em}{\Large $\text{password}$\\$\rightarrow\mathcal{C}=\{p1,a1,s1,s2,o1,r1,d1\}$}
     \end{itemize}
   \end{itemize}
   
@@ -1012,10 +1012,19 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \begin{itemize}
     \item ZKPPC, BPR and SPC approaches
     \item Security models for BPR and SPC
-    \item SPC is most efficient
-    \item BPR offers best security
+    \begin{itemize}
+      \item BPR offers best security
+    \end{itemize}
+    \item Implementation and performance comparison
+    \begin{itemize}
+      \item SPC is most efficient
+    \end{itemize}
     \item new VPAKE protocol
-    \item Demo
+    \item Demo application
+    \begin{itemize}
+      \item Server
+      \item Firefox Add-on
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -1040,10 +1049,10 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{figure}
 \end{frame}
 
-\begin{frame}{Two-Server Password Authentication Framework}
+\begin{frame}{Two-Server Password Authentication Framework}{2BPR}
   \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{framework2.pdf}
+  \includegraphics[width=0.95\textwidth]{framework2.pdf}
   \end{figure}
 \end{frame}
 
@@ -1068,10 +1077,10 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 \subsection{Two-Server BPR}
 
 \begin{frame}{Blind Password Registration for Two Servers}
-  \structure{The Proof}
-  \begin{align*}
-    (\pwd, \share_0, \share_1):~ &\pwdint(\pwd)=\share_0 + \share_1 ~ \wedge ~ f(\pwd)=\true
-  \end{align*}
+  \structure{The Proof $(\pwd, \share_0, \share_1)$}
+  \[
+    \pwdint(\pwd)=\share_0 + \share_1 ~ \wedge ~ f(\pwd)=\true
+  \]
 \end{frame}
 
 \begin{frame}{Security Model}
@@ -1161,32 +1170,39 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{figure}
 \end{frame}
 
-\begin{frame}{A Two-Server BPR Protocol}
-  \begin{itemize}
-    \item similar to single-server BPR
-    \item proofs are done over \textit{shares}
-    \item additional proof that shares combine to $\pwd$
-  \end{itemize}
-\end{frame}
+% \begin{frame}{A Two-Server BPR Protocol}
+%   \begin{itemize}
+%     \item similar to single-server BPR
+%     \item proofs are done over \textit{shares}
+%     \item additional proof that shares combine to $\pwd$
+%   \end{itemize}
+% \end{frame}
 
 % \subsection{Distributed Smooth Projective Hashing}
 \subsection{DSPHF \& A 2-Server PAKE Framework}
 
+\begin{frame}{Two-Server Password Authentication Framework}{2PAKE/2PASS}
+  \begin{figure}
+  \centering
+  \includegraphics[width=0.95\textwidth]{framework2.pdf}
+  \end{figure}
+\end{frame}
+
 \begin{frame}{Smooth Projective Hashing}
 
 \begin{dynblock}
-\opaqueblock<1>{\hspace*{1em}
-Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.
+\opaqueblock<1>{\hspace*{0em}
+Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.\\
 \begin{description}
-	\item[$\HKGen(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
-	\item[$\PKGen(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
+	\item[\HKGen$(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
+	\item[\PKGen$(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
 	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
 	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
 \end{description}
 }
 \invblock<2->
 
-\opaqueblock<2>{\hspace*{1em}
+\opaqueblock<2>{\hspace*{0em}
 	\begin{description}
 		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
 		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
@@ -1310,11 +1326,10 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \begin{frame}{UC Security for 2Server PAKE}
   \structure{Trapdoor Distributed Smooth Projective Hash Function}
   \begin{itemize}
-    \item extending D-SPHF further
-    \item trapdoor SPHF introduced by \cite{Benhamouda2013}
+    \item \structure{trapdoor SPHF} introduced by \cite{Benhamouda2013}
     \item necessary for \emph{efficient} UC-secure protocol
-    \item $\mathsf{THash}$ can compute hash without hashing key, uses trapdoor instead
-    \item $\mathsf{VerKp}$ verifies that $k_p$ is a valid projection key
+    \item \structure{$\mathsf{THash}$} can compute hash without hashing key, uses trapdoor instead
+    \item \structure{$\mathsf{VerKp}$} verifies that $k_p$ is a valid projection key
     \item Using previous 2PAKE framework with TD-SPHF yields UC-secure 2PAKE
   \end{itemize}
 \end{frame}
