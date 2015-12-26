@@ -52,7 +52,7 @@
 \input{macros}
 
 \title[Password-based Cryptography] % (optional, use only with long paper titles)
-{Advancments in Password-based Cryptography}
+{Advancements in Password-based Cryptography}
 
 \author[F. Kiefer] % (optional, use only with lots of authors)
 {Franziskus Kiefer}
@@ -157,50 +157,50 @@
 
 \subsection{Authentication and Key Exchange}
 
-\begin{frame}{How to Communicate Securely? (1/2)}
-
-	How can I communicate securely with a website?
-	
-	\vspace*{2em}
-	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering TLS}\centering
-		TLS and HTTPS 
-	\end{beamerboxesrounded}
-
-	\vspace*{2em}
-  How to securely communicate individualised content from a website?
-
-	\vspace*{2em}
-	\setbeamercolor{uppercol}{fg=white,bg=blue}%
-	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
-	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
-		Password over HTML
-	\end{beamerboxesrounded}
-\end{frame}
-	
-\begin{frame}{How to Communicate Securely? (2/2)}
-
-\begin{itemize}
-	\item Password over HTML is insufficient for authentication
-	\item How can two (or more) parties want to communicate securely?
-\end{itemize}
-	
+% \begin{frame}{How to Communicate Securely? (1/2)}
+%
+% 	How can I communicate securely with a website?
+% 	
 % 	\vspace*{2em}
-% 	\structure{Secure}
-% 	\begin{itemize}
-% 		\item Authentic
-% 		\item Confidential
-% 	\end{itemize}
-
-  \pause
-	\vspace*{2em}
-	\structure{Authenticated Key-Establishement} 
-	\begin{itemize}
-		\item Key Transport/Distribution
-		\item<1-| alert@2> Key Exchange/Agreement
-	\end{itemize}
-\end{frame}
+% 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+% 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering TLS}\centering
+% 		TLS and HTTPS 
+% 	\end{beamerboxesrounded}
+%
+% 	\vspace*{2em}
+%   How to securely communicate individualised content from a website?
+%
+% 	\vspace*{2em}
+% 	\setbeamercolor{uppercol}{fg=white,bg=blue}%
+% 	\setbeamercolor{lowercol}{fg=black,bg=lblue}%
+% 	\begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Passwords}\centering
+% 		Password over HTML
+% 	\end{beamerboxesrounded}
+% \end{frame}
+% 	
+% \begin{frame}{How to Communicate Securely? (2/2)}
+%
+% \begin{itemize}
+% 	\item Password over HTML has many shortcomings
+% 	\item How can two (or more) parties want to communicate securely?
+% \end{itemize}
+% 	
+% % 	\vspace*{2em}
+% % 	\structure{Secure}
+% % 	\begin{itemize}
+% % 		\item Authentic
+% % 		\item Confidential
+% % 	\end{itemize}
+%
+% %   \pause
+% % 	\vspace*{2em}
+% % 	\structure{Authenticated Key-Establishement} 
+% % 	\begin{itemize}
+% % 		\item Key Transport/Distribution
+% % 		\item<1-| alert@2> Key Exchange/Agreement
+% % 	\end{itemize}
+% \end{frame}
 	
 \begin{frame}{Authenticated Key Exchange}
 
@@ -694,7 +694,6 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
 \end{frame}
 
 \begin{frame}{The ZKPPC Framework}
-
 \begin{dynblock}
 \opaqueblock<1>{\hspace*{0em}
 \begin{center}
@@ -740,7 +739,7 @@ $\ZKPoK\{(\pi, s_P, s_H, r):$ \\
 
 \begin{frame}{Blind Password Registration (BPR)}
   A BPR protocol is executed between a client and a server with the server's password policy as common input.
-  At the end of the protocol the server eventually outputs the password verifier for a policy compliant, client chosen password.
+  At the end of the protocol the server eventually receives a password verifier for a policy compliant, client chosen password.
 \end{frame}
 
 \begin{frame}{Security Model}
@@ -748,7 +747,7 @@ $\ZKPoK\{(\pi, s_P, s_H, r):$ \\
   \begin{description}
     \item[$m'\gets\mathsf{Send}(C,S,m)$:] \hfill \\ simulates active attack
     \item[$\mathtt{t}\gets\mathsf{Execute}(C,S)$:] \hfill \\ simulates passive attack
-    \item[$\mathtt{b}\gets\mathsf{Verify}(C,S,\pwd)$:] \hfill \\ verify if $\pwd$ is registered at $S$ for $C$
+    \item[$\mathtt{b}\gets\mathsf{Verify}(C,S,\pwd)$:] \hfill \\ verifies if $\pwd$ is registered at $S$ for $C$
   \end{description}
 
 \end{frame}
@@ -770,7 +769,7 @@ $\ZKPoK\{(\pi, s_P, s_H, r):$ \\
 \begin{frame}{Blind Password Registration Protocol}
 \begin{figure}
 \begin{center}
-\scalebox{0.65}{\small
+\scalebox{0.7}{\small
 \begin{tabular}{ l c l }
 \toprule
 {\bf Client \Client} & & {\bf Server \Server} \\
@@ -868,18 +867,24 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
     \end{itemize}
     \item map access structure to \alert{Linear Secret Sharing Scheme (LSSS)}
   \end{itemize}
+  
+  \vspace*{2em}
+  \structure{Security}
+  \begin{itemize}
+    \item New simulation based security model
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{A Different Approach 2/2}
   
   \structure{Password Policies \& Mapping}
   \begin{itemize}
-    \item $\pwd$ as (ordered) multiset set of characters
+    \item $\pwd$ as (ordered) multiset of characters
     \item multiset $\rightarrow$ set transformation:
     \begin{itemize}
       \item let $f$ define $\sigma_i$ subsets and threshold $t_i$
       \item build $\mathcal{C}$ by appending count to characters in $\pwd$
-      \item example: \\\vspace*{1em}{\Large $\text{password}$\\$\rightarrow\mathcal{C}=\{p1,a1,s1,s2,o1,r1,d1\}$}
+      \item example: \\\vspace*{1em}\begin{center}{\Large $\text{'password'}$\\[1em]becomes\\[1em]$\{p1,a1,s1,s2,o1,r1,d1\}$}\end{center}
     \end{itemize}
   \end{itemize}
   
@@ -910,14 +915,14 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \vspace*{2em}
   \structure{Private Set Intersection with Data Transfer (PSI-DT)}
   \begin{itemize}
-    \item Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$
+    \item \alert{Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$}
   \end{itemize}
 \end{frame}
 
 \begin{frame}{BPR from SPC}
   \begin{figure}[t]
   \begin{center}
-  \scalebox{0.7}{\small
+  \scalebox{0.8}{\small
   \begin{tabular}{ l c l }
   \toprule
   {\bf Client \Client} & & {\bf Server \Server} \\
@@ -971,7 +976,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{figure}
   
   \begin{center}    
-  \structure{This is a PAKE not a VPAKE}
+  \structure{This is a \emph{PAKE} not a \emph{VPAKE}}
   \end{center}
 \end{frame}
 
@@ -1085,7 +1090,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 
 \begin{frame}{Security Model}
     \begin{description}
-      \item[$\mathsf{Setup}(C,S_{0},S_1,\pwd')$:] \hfill \\ register a new client
+      \item[$\mathsf{Setup}(C,S_{0},S_1,\pwd')$:] \hfill \\ registers a new client
       \item[$m'\gets\mathsf{Send}_C(C,S_{b},m)$:] \hfill \\ simulates active attack
       \item[$m'\gets\mathsf{Send}_S(S_b,C,m)$:] \hfill \\ simulates active attack
       \item[$m'\gets\mathsf{Send}_{SS}(S_b,S_{1-b},m)$:] \hfill \\ simulates active attack
