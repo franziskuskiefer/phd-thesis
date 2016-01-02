@@ -282,7 +282,7 @@
 
 \begin{frame}{Password Authenticated Key Exchange}{SPAKE}
 
- \cite{Abdalla2005}: SPAKE uses DL-hard group $G$ and public $M,N\in G$; hash function $H$ as random oracle
+ \cite{Abdalla2005}: SPAKE uses DL-hard group $G$ and public $M,N\in G$; random oracle $H$
 
 \begin{figure}
 \centering
@@ -855,7 +855,24 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 
 \subsection[SPC]{Secure Set-based Policy Checking}
 
-\begin{frame}{A Different Approach 1/2}
+
+\begin{frame}{A Different Approach 1/3}
+  
+  \structure{Password Policies \& Mapping}
+  \begin{itemize}
+    \item $\pwd$ as (ordered) multiset of characters
+    \item multiset $\rightarrow$ set transformation:
+    \begin{itemize}
+      \item let $f$ define $\sigma_i$ subsets and threshold $t_i$
+      \item build $\mathcal{C}$ by appending count to characters in $\pwd$
+      \item example:
+    \end{itemize}
+  \end{itemize}
+  \begin{center}{\Large $\text{'password'}$\\[1em]becomes\\[1em]$\{p1,a1,s1,s2,o1,r1,d1\}$}\end{center}
+  
+\end{frame}
+
+\begin{frame}{A Different Approach 2/3}
   \structure{Policies}
   \begin{itemize}
     \item Password policy checks as use case of Secure Set-based Policy Checking
@@ -868,28 +885,16 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
     \item map access structure to \alert{Linear Secret Sharing Scheme (LSSS)}
   \end{itemize}
   
-  \vspace*{2em}
-  \structure{Security}
-  \begin{itemize}
-    \item New simulation based security model
-  \end{itemize}
 \end{frame}
 
-\begin{frame}{A Different Approach 2/2}
-  
-  \structure{Password Policies \& Mapping}
-  \begin{itemize}
-    \item $\pwd$ as (ordered) multiset of characters
-    \item multiset $\rightarrow$ set transformation:
-    \begin{itemize}
-      \item let $f$ define $\sigma_i$ subsets and threshold $t_i$
-      \item build $\mathcal{C}$ by appending count to characters in $\pwd$
-      \item example: \\\vspace*{1em}\begin{center}{\Large $\text{'password'}$\\[1em]becomes\\[1em]$\{p1,a1,s1,s2,o1,r1,d1\}$}\end{center}
-    \end{itemize}
-  \end{itemize}
-  
-\end{frame}
+\begin{frame}{A Different Approach 3/3}
 
+  \structure{Security:} New simulation based security model
+  \begin{itemize}
+      \item \textbf{Privacy:} A malicious server must not be able to retrieve more information from the protocol than the password verifier and the result of the policy verification
+      \item \textbf{Soundness:} The server accepts a password verifier iff (i) the password is compliant with the server's policy and (ii) the verifier is uniquely defined by the password and some server known randomness
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Secure Set-based Policy Checking}
   \begin{figure}[t]
@@ -1062,6 +1067,22 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 \end{frame}
 
 \begin{frame}{Modelling Passwords}
+  
+\def\firstcircle{(0,0) circle (1.5cm)}
+\def\secondcircle{(45:2cm) circle (1.5cm)}
+
+% Now we can draw the sets:
+\makebox[\textwidth][c]{\begin{tikzpicture}[overlay, remember picture]
+    % The last trick is to cheat and use transparency
+    \begin{scope}[shift={(2cm,-2cm)}, fill opacity=0.5]
+        \fill[red] \firstcircle;
+        \fill[green] \secondcircle;
+        \draw \firstcircle node[below] {$f_1$};
+        \draw \secondcircle node [above] {$f_2$};
+        \node at (0.7,0.7) {$f$};
+    \end{scope}
+\end{tikzpicture}}
+
   \begin{itemize}
     \item Recall single-server setting:
     \begin{itemize}
@@ -1070,12 +1091,13 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
       \item $\pwd=c_1,\cdots,c_n$
     \end{itemize}
   \end{itemize}
-  \vspace*{1em}
+  \vspace*{2em}
   \begin{itemize}
     \item Each server has its own $f_i$ now
     \item $f=f_1\cap f_2=(\max(R_1, R_2), \max(\pmin_1, \pmin_2))$
   \end{itemize}
 \end{frame}
+
 
 % \subsection{Distributed Smooth Projective Hashing \& 2-Server PAKE}
 
@@ -1304,8 +1326,8 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 	
 			\draw[pil,->] ($(client.west)+(2,0.2)$) -| node[above,anchor=center,xshift=-1.5cm,yshift=-0.8cm]{$k_p,C$} (server1);
 			\draw[pil,->] ($(client.west)+(2,-0.2)$) -| node[below,anchor=center,xshift=-1.5cm,yshift=0.8cm]{$k_p,C$} (server2);
-			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[above,anchor=center]{$k_{p,1},C_1$} (server1);
-			\draw[pil,<-] ($(client.west)+(1.2,0)$) -- node[below,anchor=center]{$k_{p,2},C_2$} (server2);
+			\draw[pil,<-] ($(client.west)+(1.3,0.4)$) -- node[above=0.5cm,anchor=center,rotate=18]{$k_{p,1},C_1$} (server1);
+			\draw[pil,<-] ($(client.west)+(1.3,-0.4)$) -- node[below=0.5cm,anchor=center,rotate=-18]{$k_{p,2},C_2$} (server2);
 		\end{tikzpicture}
 		\end{figure}
 
