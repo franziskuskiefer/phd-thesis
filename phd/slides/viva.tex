@@ -280,45 +280,6 @@
 %	\end{itemize}
 \end{frame}
 
-\begin{frame}{Password Authenticated Key Exchange}{SPAKE}
-
- \cite{Abdalla2005}: SPAKE uses DL-hard group $G$ and public $M,N\in G$; random oracle $H$
-
-\begin{figure}
-\centering
-\begin{tikzpicture}
-	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
-	
-	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $\color{red} X'\gets X\cdot M^\pwd$};
-	\node[state] (client1) at (2,-1){};
-	
-	\node[state, align=left] at (0,-2) {$K'_A\gets {\color{red} (Y'/N^\pwd)}^x$};
-	\node[state] (client2) at (2,-2){};	
-	
-	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
-	
-	
-	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
-	
-	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $\color{red} Y'\gets Y\cdot N^\pwd$};
-	\node[state] (server1) at (4,-1) {};
-	
-	\node[state, align=right] at (6,-2) {$K'_B\gets {\color{red} (X'/M^\pwd)}^y$};
-	\node[state] (server2) at (4,-2) {};
-	
-	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-	
-	\draw[pil] (client1) -- node[above] {$X'$} (server1);
-	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
-\end{tikzpicture}
-\label{fig:eke}
-\end{figure}
-Key derivation:\\
-$K_A\gets H(A,B,X',Y',K'_A,\pwd)$\\
-$K_B\gets H(A,B,X',Y',K'_B,\pwd)$
-
-\end{frame}
-
 \subsection{PAKE Security Models}
 
 \begin{frame}{PAKE Security Model 1/2}{Authenticated Key Exchange (AKE)}
@@ -578,32 +539,6 @@ $\pwd=c_1 || \cdots || c_n\in\Sigma^n$
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Password Hashing}
-  \begin{center}
-    \structure{$H\gets\mathtt{Hash}(\pwd, s_P, s_H)$} %$=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
-  \end{center}
-%   \begin{tabular}{ll}
-%     \structure{PSetup($\lambda$):} & \\
-%     & outputs hashing parameters $p$ \\
-%     \structure{PPHSalt($p$):} & \\
-%     & generates random pre-hash salt $s_P$ \\
-%     \structure{PPreHash($p, \pwd, s_P$):} & \\
-%     & computes a pre-hash value $P$ \\
-%     \structure{PHSalt($p$):} & \\
-%     & generates random hashing salt $s_H$ \\
-%     \structure{PHash($p, P, s_P, s_H$):} & \\
-%     & computes a (final) hash value $H$ \\
-%   \end{tabular}
-  \begin{description}
-    \item[\PSetup($\lambda$):] \hfill\\ outputs hashing parameters $p$
-    \item[\PPHSalt($p$):] \hfill\\	generates random pre-hash salt $s_P$
-    \item[\PPreHash($p, \pwd, s_P$):] \hfill\\	computes a pre-hash value $P$
-    \item[\PHSalt($p$):] \hfill\\ generates random hashing salt $s_H$
-    \item[\PHash($p, P, s_P, s_H$):]	\hfill\\ computes a (final) hash value $H$
-  \end{description}
-  extended \cite{BenhamoudaP13}
-\end{frame}
-
 \subsection[ZKPPC]{Zero-Knowledge Password Policy Checks}
 
 % \begin{frame}{Zero-Knowledge Password Policy Checks 1/2}
@@ -693,35 +628,35 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
 
 \end{frame}
 
-\begin{frame}{The ZKPPC Framework}
-\begin{dynblock}
-\opaqueblock<1>{\hspace*{0em}
-\begin{center}
-  \structure{Client}
-\end{center}
-for $i\in[0,n-1]$ \\
-\hspace*{1em} let $c_i\in\pwd$ \\
-\hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ \\
-\hspace*{1em} $r_i\rin\SSS_C; C_i\gets\Com(\pi_i;r_i)$ \\
-$H\gets \HashP(\pi;(s_P, s_H))$\\\hfill\\
-$\longrightarrow H,~\{C_i\}$
-\vspace*{1em}
-}
-\invblock<2->
-
-\opaqueblock<2>{
-\begin{center}
-  \structure{Proofs}
-\end{center}
-$\forall i:~\SMP(\pi_i,r_i,\Omega')$ \\\hfill\\
-$\ZKPoK\{(\pi, s_P, s_H, r):$ \\
-\hspace*{1em} $H=\HashP(\pi; (s_P, s_H))$ \\
-\hspace*{1em} $\wedge ~ C=\Com(\pi;r)\}$
-\vspace*{1em}
-}
-\end{dynblock}
-
-\end{frame}
+% \begin{frame}{The ZKPPC Framework}
+% \begin{dynblock}
+% \opaqueblock<1>{\hspace*{0em}
+% \begin{center}
+%   \structure{Client}
+% \end{center}
+% for $i\in[0,n-1]$ \\
+% \hspace*{1em} let $c_i\in\pwd$ \\
+% \hspace*{1em} $\pi_i\gets\ichrint(c_i, i)$ \\
+% \hspace*{1em} $r_i\rin\SSS_C; C_i\gets\Com(\pi_i;r_i)$ \\
+% $H\gets \HashP(\pi;(s_P, s_H))$\\\hfill\\
+% $\longrightarrow H,~\{C_i\}$
+% \vspace*{1em}
+% }
+% \invblock<2->
+%
+% \opaqueblock<2>{
+% \begin{center}
+%   \structure{Proofs}
+% \end{center}
+% $\forall i:~\SMP(\pi_i,r_i,\Omega')$ \\\hfill\\
+% $\ZKPoK\{(\pi, s_P, s_H, r):$ \\
+% \hspace*{1em} $H=\HashP(\pi; (s_P, s_H))$ \\
+% \hspace*{1em} $\wedge ~ C=\Com(\pi;r)\}$
+% \vspace*{1em}
+% }
+% \end{dynblock}
+%
+% \end{frame}
 
 % \begin{frame}{Zero-Knowledge Password Policy Checks}
 %   
@@ -924,37 +859,6 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{itemize}
 \end{frame}
 
-\begin{frame}{BPR from SPC}
-  \begin{figure}[t]
-  \begin{center}
-  \scalebox{0.8}{\small
-  \begin{tabular}{ l c l }
-  \toprule
-  {\bf Client \Client} & & {\bf Server \Server} \\
-  Input: $f, \pwd$ & & Input: $f,\ServerSet=\{s_1,\dots,s_w\}$ \\
-  \midrule
-   & {\it Setup Phase} & \\
-  % \cmidrule{2-2}
-  $k\gets H_1(\pwd)$ & $\xleftarrow{\makebox[2cm]{$(e,N)$}}$ & $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\
-  $\ClientSet\gets\PwdMap(\pwd)$ & & \\
-  $\forall i\in[1,v]:~ r_i\gets f_k(i)$ & & \\
-  $u_i\gets H_2(c_i)\cdot r_i^e$ & $\xrightarrow{\makebox[2cm]{$(u_1,\cdots,u_v)$}}$ & abort if $v$ $<$ \pmin \\
-  $\hat{\ClientSet} = \emptyset$ & $\xleftarrow{\makebox[2cm]{$(u'_1,\cdots,u'_v)$}}$ & $\forall i \in [1,v]: u'_i=u_i^d;~ \hat{\ServerSet}=\emptyset$ \\
-  $\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$ & & $\forall i \in [1,w]: \hat{\ServerSet} \cup (H_2(s_i))^d$ \\
-   & & $\hat{f} \gets f,\hat{\ServerSet}$ \\
-   & {\it Policy Checking Phase} & \\
-  % \cmidrule{2-2}
-   & $\hat{\ClientSet}\rightarrow$ Run SPC$\leftarrow \hat{f}$ & \\
-   & & If SPC is successful \\
-   & & store verifier \\
-   & & $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
-  \bottomrule
-  \end{tabular}}
-  \end{center}
-  \end{figure}
-
-\end{frame}
-
 \subsection[VPAKE]{Verifier-based PAKE}
 
 \begin{frame}{Single-Server Password Authentication Framework}
@@ -1066,7 +970,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{figure}
 \end{frame}
 
-\begin{frame}{Modelling Passwords}
+\begin{frame}{Modelling Passwords and Policies}
   
 \def\firstcircle{(0,0) circle (1.5cm)}
 \def\secondcircle{(45:2cm) circle (1.5cm)}
@@ -1106,7 +1010,7 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 \begin{frame}{Blind Password Registration for Two Servers}
   \structure{The Proof $(\pwd, \share_0, \share_1)$}
   \[
-    \pwdint(\pwd)=\share_0 + \share_1 ~ \wedge ~ f(\pwd)=\true
+    f(\pwd)=\true ~ \wedge ~ \pwdint(\pwd)=\share_0 + \share_1
   \]
 \end{frame}
 
@@ -1373,39 +1277,6 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
   \end{description}
 \end{frame}
 
-\begin{frame}{UC 2PAKE Funcitonality}{KEX Init$_\Client$}
-    Upon input $(\KEXinit, \sid, \qid, \pwd)$ from client \Client, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Server_{1}, \share_{1})$ or $(\KEX, \sid, \qid, \Server_{2}, \share_{2})$ may exist) and send $(\KEX, \sid, \qid, C)$ to \SIM.
-        If this is a valid request, create a \emph{fresh} record $(\KEX, \sid, \qid, \Client, \pwd)$.
-\end{frame}
-
-\begin{frame}{UC 2PAKE Funcitonality}{KEX Init$_\Server$}
-  
-Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $\Server_b$, $b\in\{1,2\}$, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, \Server_{3-b}, \share_{3-b})$ may exist) and send $(\KEX, \sid, \qid, \Server_b)$ to \SIM.
-        If this is a valid request, create a fresh record $(\KEX, \sid, \qid, \Server_b, \share_b)$.
-\end{frame}
-
-\begin{frame}{UC 2PAKE Funcitonality}{TestPwd}  
-    Upon input $(\TP, \sid, \qid, \pwd')$ from \SIM check that a fresh record $(\KEX, \sid, \qid, \Client, \pwd)$ exists. 
-        If this is the case, mark $(\KEX, \sid, \qid, \Server_1, \share_1)$ as \compromised and reply with ``correct guess'' if $\pwd=\pwd'$, and mark it as \interrupted and reply with ``wrong guess'' if $\pwd\not=\pwd'$.
-\end{frame}
-      
-\begin{frame}{UC 2PAKE Funcitonality}{Failed}
-  Upon input $(\FA, \sid, \qid)$ from \SIM check that records $(\KEX, \sid, \qid, \Client, \pwd)$ and $(\KEX, \sid, \qid, \Server_1, \share_1)$ exist that are not marked \completed. 
-        If this is the case, mark both as \failed.
-\end{frame}
-  
-\begin{frame}{UC 2PAKE Funcitonality}{NewKey}
-	  Upon input $(\NK, \sid,\qid, P, \sk')$ from \SIM with $P\in\{\Client,\Server_1\}$, check that a respective $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, S, \share_1)$ record exists, $\sid=(\Client, \Server_1, \Server_2)$, $|\sk'|=\secpar$, then: %and the session is not marked for $P$ yet,
-	  \begin{itemize}
-		  \item If the session is \compromised, or either \Client or $\Server_1$ and $\Server_2$ are corrupted, then output $(\NK, \sid,\qid,\sk')$ to $P$; else
-		
-		  \item if the session is \emph{fresh} and a key $\sk$ was sent to $P'$ with $\sid=(P, P', \Server_2)$ or $\sid=(P', P, \Server_2)$ while $(\KEX, \sid, \qid, P', \cdot)$ was fresh, then output $(\NK, \sid, \qid, \sk)$ to $P$.
-		
-		  \item In any other case, pick a new random key $\sk$ of length $\secpar$, and send $(\NK, \sid, \qid, \sk)$ to $P$.
-	  \end{itemize}
-	  In any case, mark \qid as \completed for $P$.
-\end{frame}  
-
 %===============================================================================
 % Future Work
 %===============================================================================
@@ -1464,8 +1335,141 @@ Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $\Server_b$, $b\in\{1,
 
 \beginbackup
 \appendix
-\section<presentation>*{\appendixname}
-\subsection<presentation>*{References}
+\section{Backup}
+
+\begin{frame}{Password Authenticated Key Exchange}{SPAKE}
+
+ \cite{Abdalla2005}: SPAKE uses DL-hard group $G$ and public $M,N\in G$; random oracle $H$
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\node[state] (client) at (0,0.25) {\pgfimage[width=0.8cm]{os_tux}};
+	
+	\node[state, align=left] at (0,-1) {$x\rin\ZZ_p, X\gets g^x$\\  $\color{red} X'\gets X\cdot M^\pwd$};
+	\node[state] (client1) at (2,-1){};
+	
+	\node[state, align=left] at (0,-2) {$K'_A\gets {\color{red} (Y'/N^\pwd)}^x$};
+	\node[state] (client2) at (2,-2){};	
+	
+	%\node[state, align=center] at (0,-3) {$K\gets H(A,B,X',Y',K_A,\pwd)$};
+	
+	
+	\node[state] (server) at (6,0.25) {\pgfimage[width=0.8cm]{techie_sailor}};
+	
+	\node[state, align=right] at (6,-1) {$y\rin\ZZ_p, Y\gets g^y$\\ $\color{red} Y'\gets Y\cdot N^\pwd$};
+	\node[state] (server1) at (4,-1) {};
+	
+	\node[state, align=right] at (6,-2) {$K'_B\gets {\color{red} (X'/M^\pwd)}^y$};
+	\node[state] (server2) at (4,-2) {};
+	
+	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+	
+	\draw[pil] (client1) -- node[above] {$X'$} (server1);
+	\draw[pil] (server2) -- node[above] {$Y'$} (client2);
+\end{tikzpicture}
+\label{fig:eke}
+\end{figure}
+Key derivation:\\
+$K_A\gets H(A,B,X',Y',K'_A,\pwd)$\\
+$K_B\gets H(A,B,X',Y',K'_B,\pwd)$
+
+\end{frame}
+
+\begin{frame}{Password Hashing}
+  \begin{center}
+    \structure{$H\gets\mathtt{Hash}(\pwd, s_P, s_H)$} %$=\text{PHash}(p, P, s_P, s_H)$ with $P\gets\text{PPreHash}(p, \pwd, s_P)$
+  \end{center}
+%   \begin{tabular}{ll}
+%     \structure{PSetup($\lambda$):} & \\
+%     & outputs hashing parameters $p$ \\
+%     \structure{PPHSalt($p$):} & \\
+%     & generates random pre-hash salt $s_P$ \\
+%     \structure{PPreHash($p, \pwd, s_P$):} & \\
+%     & computes a pre-hash value $P$ \\
+%     \structure{PHSalt($p$):} & \\
+%     & generates random hashing salt $s_H$ \\
+%     \structure{PHash($p, P, s_P, s_H$):} & \\
+%     & computes a (final) hash value $H$ \\
+%   \end{tabular}
+  \begin{description}
+    \item[\PSetup($\lambda$):] \hfill\\ outputs hashing parameters $p$
+    \item[\PPHSalt($p$):] \hfill\\	generates random pre-hash salt $s_P$
+    \item[\PPreHash($p, \pwd, s_P$):] \hfill\\	computes a pre-hash value $P$
+    \item[\PHSalt($p$):] \hfill\\ generates random hashing salt $s_H$
+    \item[\PHash($p, P, s_P, s_H$):]	\hfill\\ computes a (final) hash value $H$
+  \end{description}
+  extended \cite{BenhamoudaP13}
+\end{frame}
+
+\begin{frame}{BPR from SPC}
+  \begin{figure}[t]
+  \begin{center}
+  \scalebox{0.8}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client \Client} & & {\bf Server \Server} \\
+  Input: $f, \pwd$ & & Input: $f,\ServerSet=\{s_1,\dots,s_w\}$ \\
+  \midrule
+   & {\it Setup Phase} & \\
+  % \cmidrule{2-2}
+  $k\gets H_1(\pwd)$ & $\xleftarrow{\makebox[2cm]{$(e,N)$}}$ & $(e,d,N)$ $\ralgout$ $\KGen(\lambda)$ \\
+  $\ClientSet\gets\PwdMap(\pwd)$ & & \\
+  $\forall i\in[1,v]:~ r_i\gets f_k(i)$ & & \\
+  $u_i\gets H_2(c_i)\cdot r_i^e$ & $\xrightarrow{\makebox[2cm]{$(u_1,\cdots,u_v)$}}$ & abort if $v$ $<$ \pmin \\
+  $\hat{\ClientSet} = \emptyset$ & $\xleftarrow{\makebox[2cm]{$(u'_1,\cdots,u'_v)$}}$ & $\forall i \in [1,v]: u'_i=u_i^d;~ \hat{\ServerSet}=\emptyset$ \\
+  $\forall i\in[1,v]:~ \hat{\ClientSet}\cup u'_i\cdot r_i^{-1}$ & & $\forall i \in [1,w]: \hat{\ServerSet} \cup (H_2(s_i))^d$ \\
+   & & $\hat{f} \gets f,\hat{\ServerSet}$ \\
+   & {\it Policy Checking Phase} & \\
+  % \cmidrule{2-2}
+   & $\hat{\ClientSet}\rightarrow$ Run SPC$\leftarrow \hat{f}$ & \\
+   & & If SPC is successful \\
+   & & store verifier \\
+   & & $(H_3(\prod_{i=1}^v u_i), e, N, d, \bm{u})$ \\
+  \bottomrule
+  \end{tabular}}
+  \end{center}
+  \end{figure}
+
+\end{frame}
+
+\section{UC 2PAKE Backup}
+
+\begin{frame}{UC 2PAKE Functionality}{KEX Init$_\Client$}
+    Upon input $(\KEXinit, \sid, \qid, \pwd)$ from client \Client, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Server_{1}, \share_{1})$ or $(\KEX, \sid, \qid, \Server_{2}, \share_{2})$ may exist) and send $(\KEX, \sid, \qid, C)$ to \SIM.
+        If this is a valid request, create a \emph{fresh} record $(\KEX, \sid, \qid, \Client, \pwd)$.
+\end{frame}
+
+\begin{frame}{UC 2PAKE Functionality}{KEX Init$_\Server$}
+  
+Upon input $(\KEXinit, \sid, \qid, \share_b)$ from server $\Server_b$, $b\in\{1,2\}$, check that \sid is $(\Client, \Server_1, \Server_2)$ and that \qid is unique (entries $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, \Server_{3-b}, \share_{3-b})$ may exist) and send $(\KEX, \sid, \qid, \Server_b)$ to \SIM.
+        If this is a valid request, create a fresh record $(\KEX, \sid, \qid, \Server_b, \share_b)$.
+\end{frame}
+
+\begin{frame}{UC 2PAKE Functionality}{TestPwd}  
+    Upon input $(\TP, \sid, \qid, \pwd')$ from \SIM check that a fresh record $(\KEX, \sid, \qid, \Client, \pwd)$ exists. 
+        If this is the case, mark $(\KEX, \sid, \qid, \Server_1, \share_1)$ as \compromised and reply with ``correct guess'' if $\pwd=\pwd'$, and mark it as \interrupted and reply with ``wrong guess'' if $\pwd\not=\pwd'$.
+\end{frame}
+      
+\begin{frame}{UC 2PAKE Functionality}{Failed}
+  Upon input $(\FA, \sid, \qid)$ from \SIM check that records $(\KEX, \sid, \qid, \Client, \pwd)$ and $(\KEX, \sid, \qid, \Server_1, \share_1)$ exist that are not marked \completed. 
+        If this is the case, mark both as \failed.
+\end{frame}
+  
+\begin{frame}{UC 2PAKE Functionality}{NewKey}
+	  Upon input $(\NK, \sid,\qid, P, \sk')$ from \SIM with $P\in\{\Client,\Server_1\}$, check that a respective $(\KEX, \sid, \qid, \Client, \pwd)$ or $(\KEX, \sid, \qid, S, \share_1)$ record exists, $\sid=(\Client, \Server_1, \Server_2)$, $|\sk'|=\secpar$, then: %and the session is not marked for $P$ yet,
+	  \begin{itemize}
+		  \item If the session is \compromised, or either \Client or $\Server_1$ and $\Server_2$ are corrupted, then output $(\NK, \sid,\qid,\sk')$ to $P$; else
+		
+		  \item if the session is \emph{fresh} and a key $\sk$ was sent to $P'$ with $\sid=(P, P', \Server_2)$ or $\sid=(P', P, \Server_2)$ while $(\KEX, \sid, \qid, P', \cdot)$ was fresh, then output $(\NK, \sid, \qid, \sk)$ to $P$.
+		
+		  \item In any other case, pick a new random key $\sk$ of length $\secpar$, and send $(\NK, \sid, \qid, \sk)$ to $P$.
+	  \end{itemize}
+	  In any case, mark \qid as \completed for $P$.
+\end{frame}  
+
+% \section<presentation>*{\appendixname}
+% \subsection<presentation>*{References}
 
 \begin{frame}[allowframebreaks]
   \frametitle<presentation>{References}
