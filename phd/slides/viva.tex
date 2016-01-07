@@ -687,10 +687,6 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
 
 \end{frame}
 
-\begin{frame}{Policy Compliance}
-  Let $A$ denote a PPT adversary with access to Execute and Send oracles. The probability that a server instance exists after the adversary terminated that accepted $(C, v)$ with $v \gets \mathtt{Hash}(\pwd; r)$ and $f(\pwd)=\mathtt{false}$ is negligible in the security parameter.
-\end{frame}
-
 \begin{frame}{Dictionary Attack Resistance}
   A BPR protocol using password hashing scheme \texttt{H} is Dictionary Attack Resistant if for all PPT adversaries $A$ running in time $t$ (excl. time for oracle computations) and all dictionaries $D_f$ there exists a negligible function $\varepsilon(\cdot)$ such that
   \[
@@ -699,6 +695,10 @@ $H\gets \HashP(\pi;(s_P, s_H))$ & $\xrightarrow{\makebox[4cm]{$\forall i:~\SMP(\
   \[
     \leq \frac{2^{-\beta_{D_{f,|\pwd|}}}t}{t_{\mathtt{PPreHash}}} + \varepsilon(\lambda)
   \]
+\end{frame}
+
+\begin{frame}{Policy Compliance}
+  Let $A$ denote a PPT adversary with access to Execute and Send oracles. The probability that a server instance exists after the adversary terminated that accepted $(C, v)$ with $v \gets \mathtt{Hash}(\pwd; r)$ and $f(\pwd)=\mathtt{false}$ is negligible in the security parameter.
 \end{frame}
 
 \begin{frame}{Blind Password Registration Protocol}
@@ -768,25 +768,25 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 % \end{figure}
 \end{frame}
 
-\begin{frame}{BPR Proofs}
-  \begin{itemize}
-    \item \textbf{P}roof \textbf{o}f \textbf{M}embership
-    \begin{itemize}
-      \item characters fulfil $R$
-    \end{itemize}
-    \vspace*{2em}
-    \item \textbf{P}roof \textbf{o}f \textbf{E}quivalence
-    \begin{itemize}
-      \item $H_2$ and $C$ contain the same $\pi$
-    \end{itemize}
-    \vspace*{2em}
-    \item \textbf{P}roof \textbf{o}f \textbf{S}huffle
-    \begin{itemize}
-      \item $\bm C'$ is a shuffle of $\bm C$ 
-    \end{itemize}
-    \vspace*{2em}
-  \end{itemize}
-\end{frame}
+% \begin{frame}{BPR Proofs}
+%   \begin{itemize}
+%     \item \textbf{P}roof \textbf{o}f \textbf{M}embership
+%     \begin{itemize}
+%       \item characters fulfil $R$
+%     \end{itemize}
+%     \vspace*{2em}
+%     \item \textbf{P}roof \textbf{o}f \textbf{E}quivalence
+%     \begin{itemize}
+%       \item $H_2$ and $C$ contain the same $\pi$
+%     \end{itemize}
+%     \vspace*{2em}
+%     \item \textbf{P}roof \textbf{o}f \textbf{S}huffle
+%     \begin{itemize}
+%       \item $\bm C'$ is a shuffle of $\bm C$ 
+%     \end{itemize}
+%     \vspace*{2em}
+%   \end{itemize}
+% \end{frame}
 
 \subsection[SPC]{Secure Set-based Policy Checking}
 
@@ -828,34 +828,6 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \begin{itemize}
       \item \textbf{Privacy:} A malicious server must not be able to retrieve more information from the protocol than the password verifier and the result of the policy verification
       \item \textbf{Soundness:} The server accepts a password verifier iff (i) the password is compliant with the server's policy and (ii) the verifier is uniquely defined by the password and some server known randomness
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Secure Set-based Policy Checking}
-  \begin{figure}[t]
-  \begin{center}
-  \scalebox{0.65}{\small
-  \begin{tabular}{ l c l }
-  \toprule
-  {\bf Client} & & {\bf Server} \\
-  Input: $\mathcal{I}$ & & Input: $f=(\mathcal{V},\Gamma_\mathcal{V})$ \\
-  \midrule
-   & & choose a secret $s\in_R$ $\mathbb{Z}_p$ \\
-   & $\xleftarrow{\makebox[2cm]{$f$}}$ & generate shares $s_{i}$ for $f$ \\
-  get shares $\{s_i\}$ & $\xleftrightarrow{\makebox[2cm]{$\mathtt{PSI-DT}$}}$ & \\
-  if possible: recover $s$ from the shares & & \\
-  else: abort and output $\bot$ & & \\
-  $m_s\gets H(s,C,S,\trans)$ & $\xrightarrow{\makebox[2cm]{$m_s$}}$ & accept if $m_s \stackrel{?}{=} H(s,C,S,\trans)$\\
-  \bottomrule
-  \end{tabular}
-  }
-  \end{center}
-  \end{figure}
-  
-  \vspace*{2em}
-  \structure{Private Set Intersection with Data Transfer (PSI-DT)}
-  \begin{itemize}
-    \item \alert{Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$}
   \end{itemize}
 \end{frame}
 
@@ -1119,30 +1091,30 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \end{figure}
 \end{frame}
 
-\begin{frame}{Smooth Projective Hashing}
-
-\begin{dynblock}
-\opaqueblock<1>{\hspace*{0em}
-Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.\\
-\begin{description}
-	\item[\HKGen$(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
-	\item[\PKGen$(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
-	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
-	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
-\end{description}
-}
-\invblock<2->
-
-\opaqueblock<2>{\hspace*{0em}
-	\begin{description}
-		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
-		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
-		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
-	\end{description}
-}
-\end{dynblock}
-
-\end{frame}
+% \begin{frame}{Smooth Projective Hashing}
+%
+% \begin{dynblock}
+% \opaqueblock<1>{\hspace*{0em}
+% Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.\\
+% \begin{description}
+% 	\item[\HKGen$(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
+% 	\item[\PKGen$(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
+% 	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
+% 	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
+% \end{description}
+% }
+% \invblock<2->
+%
+% \opaqueblock<2>{\hspace*{0em}
+% 	\begin{description}
+% 		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
+% 		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
+% 		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
+% 	\end{description}
+% }
+% \end{dynblock}
+%
+% \end{frame}
 
 % \begin{frame}{PAKE from SPHF}
 % \begin{figure}
@@ -1173,7 +1145,15 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 % \end{figure}
 % \end{frame}
 
-\begin{frame}{Extended Smooth Projective Hashing 1/2}
+\begin{frame}{SPHF Security}
+	\begin{description}
+		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
+		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
+		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
+	\end{description}
+\end{frame}
+
+\begin{frame}{Distributed Smooth Projective Hashing}
 
 %Languages of ciphertexts: $C\gets\mathsf{Enc}_{\pk}(x)$
 %2-Server PAKE between \begin{center} Client$(\pwd)$, Server$_1(\share_1)$, Server$_2(\share_2)$\end{center}
@@ -1191,32 +1171,8 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \setbeamercolor{uppercol}{fg=white,bg=blue!40}%
 \setbeamercolor{lowercol}{fg=black,bg=blue!20}%
 \begin{beamerboxesrounded}[upper=uppercol,lower=lowercol,shadow=true]{\centering Idea}
-	Encrypt $\pwd$, $\share_1$ and $\share_2$ $\rightarrow$ Use extended SPHF to compute keys
+	Encrypt $\pwd$, $\share_1$ and $\share_2$ $\rightarrow$ Use Distributed SPHF to compute keys
 \end{beamerboxesrounded}
-
-\end{frame}
-
-\begin{frame}{Extended Smooth Projective Hashing 2/2}
-
-\begin{description}
-	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
-	\item[$\mathsf{KGen_P}(k_h,L_x)$]\hfill\\ derives the projection key $k_h$.
-	\item[$\mathsf{Hash}_x (k_{h,0},L_x,C_1,C_2)$]\hfill\\ outputs the hash value $h_x$.
-	\item[$\mathsf{PHash}_x (k_{p,0},L_x,C_1,C_2,w_1,w_2)$]\hfill\\ returns the hash value $h_x$.
-	\item[$\mathsf{Hash}_0(k_{h,1},k_{h,2},L_x,C_0)$]\hfill\\ outputs the hash value $h_0$.
-	\item[$\mathsf{PHash}_0(k_{p,1},k_{p,2},L_x,C_0,w_0)$]\hfill\\ returns the hash value $h_0$.
-\end{description}
-
-\end{frame}
-
-\begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
-
-\structure{$\mathsf{PHash}_x^D$} between $S_1$ and $S_2$.\\
-	\hspace*{2em} Each $S_i$ performs $\mathsf{PHash}_x^D$ on input $$(k_{p,0},C_1,C_2,w_i)$$\hspace*{2em} such that $S_1$ eventually holds $h_x$.
-	
-	\vspace*{2em}
-\structure{$\mathsf{Hash}_0^D$} between $S_1$ and $S_2$.\\
-	\hspace*{2em} Each $S_i$ performs $\mathsf{Hash}_0^D$ on input $$(\share_i,k_{h,i}, C_0)$$\hspace*{2em} such that $S_1$ eventually holds $h_0$.
 
 \end{frame}
 
@@ -1293,6 +1249,7 @@ Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ p
 \begin{itemize}\itemsep1em
 	\item Modelling of Password Policies
 	\item Blind Password Registration protocols and model (single and two-server setting)
+	\item Implementation and demo of BPR frameworks
 	\item (Trapdoor) Distributed SPHF
 	\item 2-Server PAKE framework
 	\item 2-Server UC PAKE security
@@ -1402,6 +1359,34 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
   extended \cite{BenhamoudaP13}
 \end{frame}
 
+\begin{frame}{Secure Set-based Policy Checking}
+  \begin{figure}[t]
+  \begin{center}
+  \scalebox{0.65}{\small
+  \begin{tabular}{ l c l }
+  \toprule
+  {\bf Client} & & {\bf Server} \\
+  Input: $\mathcal{I}$ & & Input: $f=(\mathcal{V},\Gamma_\mathcal{V})$ \\
+  \midrule
+   & & choose a secret $s\in_R$ $\mathbb{Z}_p$ \\
+   & $\xleftarrow{\makebox[2cm]{$f$}}$ & generate shares $s_{i}$ for $f$ \\
+  get shares $\{s_i\}$ & $\xleftrightarrow{\makebox[2cm]{$\mathtt{PSI-DT}$}}$ & \\
+  if possible: recover $s$ from the shares & & \\
+  else: abort and output $\bot$ & & \\
+  $m_s\gets H(s,C,S,\trans)$ & $\xrightarrow{\makebox[2cm]{$m_s$}}$ & accept if $m_s \stackrel{?}{=} H(s,C,S,\trans)$\\
+  \bottomrule
+  \end{tabular}
+  }
+  \end{center}
+  \end{figure}
+  
+  \vspace*{2em}
+  \structure{Private Set Intersection with Data Transfer (PSI-DT)}
+  \begin{itemize}
+    \item \alert{Client with set $\mathcal{I}$ gets $s_i$ iff $i\in\mathcal{I}\cap\mathcal{V}$}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{BPR from SPC}
   \begin{figure}[t]
   \begin{center}
@@ -1430,6 +1415,30 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
   \end{tabular}}
   \end{center}
   \end{figure}
+
+\end{frame}
+
+\begin{frame}{Extended Smooth Projective Hashing}
+
+\begin{description}
+	\item[$\mathsf{KGen_H}(L_x)$]\hfill\\ generates a hashing key $k_h$ for language $L_x$.
+	\item[$\mathsf{KGen_P}(k_h,L_x)$]\hfill\\ derives the projection key $k_h$.
+	\item[$\mathsf{Hash}_x (k_{h,0},L_x,C_1,C_2)$]\hfill\\ outputs the hash value $h_x$.
+	\item[$\mathsf{PHash}_x (k_{p,0},L_x,C_1,C_2,w_1,w_2)$]\hfill\\ returns the hash value $h_x$.
+	\item[$\mathsf{Hash}_0(k_{h,1},k_{h,2},L_x,C_0)$]\hfill\\ outputs the hash value $h_0$.
+	\item[$\mathsf{PHash}_0(k_{p,1},k_{p,2},L_x,C_0,w_0)$]\hfill\\ returns the hash value $h_0$.
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Distributed (Extended) Smooth Projective Hashing}{DSPHF}
+
+\structure{$\mathsf{PHash}_x^D$} between $S_1$ and $S_2$.\\
+	\hspace*{2em} Each $S_i$ performs $\mathsf{PHash}_x^D$ on input $$(k_{p,0},C_1,C_2,w_i)$$\hspace*{2em} such that $S_1$ eventually holds $h_x$.
+	
+	\vspace*{2em}
+\structure{$\mathsf{Hash}_0^D$} between $S_1$ and $S_2$.\\
+	\hspace*{2em} Each $S_i$ performs $\mathsf{Hash}_0^D$ on input $$(\share_i,k_{h,i}, C_0)$$\hspace*{2em} such that $S_1$ eventually holds $h_0$.
 
 \end{frame}
 
