@@ -31,7 +31,7 @@ In general we distinguish between three major categories of authentication data 
 \end{itemize}
 But since everything someone has or is may be stolen or duplicated, knowledge (of a password) is a very important factor in authenticating a human (as long as it is not written down).
 To perform cryptography with humans entering a secret/authentication token, those have to be human-memorable.
-This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has little entropy.
+This leads to the necessity of password-based cryptography as everything humans are able to remember correctly is rather short and has limited entropy.
 
 \paragraph{Outline of this Chapter}
 This chapter gives a broad overview of password-based security mechanisms, security research, and cryptography research.
@@ -157,10 +157,12 @@ Since this thesis is primarily concerned with cryptographic treatment of passwor
 \paragraph{Password Strength}
 One of the most difficult topics in password research is the question of how to measure the strength of a password.
 While cryptography research usually assumes uniform or some other idealised distribution of passwords, this is clearly not the case in reality with humans choosing them.
-Measuring password strength is rather non technical and focuses on user studies and analysis of password database leaks \cite{ShayKKLMBCC10,KomanduriSKMBCCE11,MazurekKVBCCKSU13} in order to come up with a good model to predict min-entropy of passwords.
+Measuring password strength involves many non technical tasks (such as research into how humans choose passwords) and focuses on user studies and analysis of password database leaks \cite{ShayKKLMBCC10,KomanduriSKMBCCE11,MazurekKVBCCKSU13} in order to come up with a good model to predict min-entropy of passwords.
 Min-entropy can capture many realistic password creation models and has been standardised by \citet{nist800}.
 However, although min-entropy seems a reasonable measure for modelling dictionary attack resistance of passwords we stress that min-entropy alone is not sufficient to estimate the real password strength. 
 As shown by \citet{MazurekKVBCCKSU13}, password strength is a complex matter (due to a variety of real-world attacks) and can hardly be captured through a single metric like min-entropy.
+While min-entropy is the most practical way to model password strength, \citet{MazurekKVBCCKSU13} also use other metrics such as password length, number of characters from specific \ac{ASCII} subsets, substituting characters with numbers, placement of digits, and so on.
+For a full overview of other metrics we refer to \citet{MazurekKVBCCKSU13}.
 
 \paragraph{Password Hashing and Storage}
 In order to securely store passwords or use them for encryption, hashing them in some form is essential to make attacks on them more expensive.
@@ -254,7 +256,7 @@ The \ac{UC} framework proposed by \citet{Canetti2001a} is a popular general purp
 It overcomes an inherent shortcoming of most game-based security models and improves on general simulation-based techniques as it allows for secure arbitrary concurrent composition with other primitives once a primitive is proven secure, which is stronger than the general simulation-based approach from \citet{Canetti00}.
 The main difference between the general simulation-based security by \citet{Canetti00} and the \ac{UC} framework by \citet{Canetti2001a} is that the composition theorems from \citet{Canetti00} only hold in a non-concurrent setting.
 The \ac{UC} framework uses ``distinguisher'' \UCZ, the environment, that generates all inputs for all parties, and reads their outputs.
-A protocol is secure in \ac{UC} when it realises a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with \SIM and the ideal functionality \UCF.
+A protocol is secure in \ac{UC} when it realises a given ideal functionality \UCF, such that for any real-world adversary \A, interacting with the protocol, there exists an ideal-world adversary \UCS, such that no environment \UCZ can decide whether it interacts with \A and the real-world protocol, or with the ideal world attacker \SIM and the ideal functionality \UCF.
 
 
 % *****************************************************************************
@@ -330,7 +332,7 @@ Like key exchange protocols with high entropy secrets, \ac{PAKE} protocols can b
 \subsubsection{Game-Based PAKE-Security}
 The original game-based \ac{PAKE} models in \citet{Bellare2000} (denoted \ac{BPR-M} here) and \citet{Boyko2000} specify the \ac{FtG} approach where the semantic security of the session key is considered with respect to one particular session, referred to as a \emph{test session}, determined by the adversary through one call to a \Test oracle.
 (Semantic security states that no \ac{PPT} adversary exists that has non-negligible probability of winning the experiment, in this case the \ac{PAKE} experiment.)
-The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take actively part in executions and corrupt protocol participants to retrieve private information from a party.
+The adversary has furthermore access to oracles that allow him to eavesdrop on protocol executions, take active part in executions and corrupt protocol participants to retrieve private information from a party.
 \citet{Abdalla2005} proposed the stronger notion in the \ac{RoR} setting to model semantic security of PAKE protocols by allowing polynomially-many queries to the \Test oracle.
 They showed not only that their \ac{RoR} approach leads to stronger security but were also able to simplify the model by removing the reveal oracle.
 The models in~\citet{Bellare2000} and \citet{Abdalla2005} remain the most popular game-based PAKE models, adopted in the analysis of many protocols, including the random oracle-based protocols by \citet{Abdalla2006} and \citet{Abdalla2005b} and protocols requiring a \ac{CRS} (\citet{KatzOY01,Gennaro2003,Gennaro2008,Katz2009a}).
@@ -387,7 +389,7 @@ While this might sound compelling, the research community never picked up on \ac
 
 
 \subsubsection{On Rainbow Tables}
-The reason for protecting passwords on a server are rather simple.
+The reason for protecting passwords on a server is rather simple.
 Computing a verifier from a password using only a one-way function allows an attacker to precompute a list of verifiers such that inverting the one-way function can be performed rather efficiently considering human password choice.
 Those lists that can further be shared and re-used are commonly called \emph{rainbow tables}.
 Note that actual rainbow tables usually build hash chains to reduce their size.
@@ -401,10 +403,10 @@ Security models for \ac{PAKE} protocols consider security of a key-exchange prot
 Often however, they do \emph{not} consider any malicious server or attacker that tries to steal the authentication information, i.e. the password.
 \ac{VPAKE} security models try to capture whether the protocol is secure (in the sense of \acl{PAKE}) \emph{and} if the server securely handles and stores the passwords/verifiers.
 Since those security goals are significantly different and somewhat unrelated, it is difficult to find a meaningful security model for it.
-Instead of checking the hardness of retrieving the actual password from a password hash it might be for example more interesting to modell whether an attacker is able to use the password verifier as authentication credential directly (as is the case for na{\"i}ve \ac{VPAKE} constructions such as the discussed tSoke).
+Instead of checking the hardness of retrieving the actual password from a password hash it might be for example more interesting to model whether an attacker is able to use the password verifier as authentication credential directly (as is the case for na{\"i}ve \ac{VPAKE} constructions such as the discussed tSoke, see Section \ref{sec:tsoke} in Chapter \ref{ch:prelims}).
 
 Another reason for low adoption rate of \ac{VPAKE} in the research community could be its questionable benefit considering efficiency of password cracking tools.
-Nonetheless, \ac{VPAKE} is an interesting primitive that deserves more investigation.
+Nonetheless, \ac{VPAKE} is an interesting primitive that deserves more investigation because it gives stronger security guarantees than \ac{PAKE} and models a real-world need where servers store only password verifiers.
 % While it is arguably that secure handling and storage of passwords is important, \ac{VPAKE} offers little benefit compared to \ac{PAKE}.
 % Since necessary randomness has to be stored on the server (recall that the client is stateless and can only handle human memorable secrets), it has to be transferred to the client at some point in the protocol.
 % However, when the randomness has to be transmitted from the server to the client, there is no reason not to do this as early in the protocol as possible and then use the verifier for authentication rather than the password in a common \ac{PAKE} protocol.
@@ -420,7 +422,7 @@ In contrast to \ac{PAKE} protocols two-server and threshold \ac{PAKE} protocols 
 \subsubsection{Threshold PAKE}
 \citet{FordK00} first suggested to split the client's password among multiple servers to protect against server compromise.
 \citet{RaimondoG03} and \citet{MacKenzieSJ02} were the first to propose t-out-of-n threshold \ac{PAKE} protocols, where the protocol remains secure as long as $t$ out of $n$ servers, participating in the protocol and holding a password share, are honest.
-But not all of them, such as the protocol from \citet{MacKenzieSJ02} are password-only and require additional cryptography such as a \ac{PKI} in addition to the password.
+But not all of them, such as the protocol from \citet{MacKenzieSJ02} are password-only and they require additional cryptography such as a \ac{PKI} in addition to the password.
 
 \subsubsection{Two-Server PAKE}
 \ac{2PAKE} can be seen as a special case of threshold PAKE for $t=n=2$.
@@ -462,9 +464,6 @@ Combining several authentication techniques leads to \emph{multi-factor} authent
 The most commonly used reference for (multi-factor) authentication is the aforementioned \ac{NIST} standard \cite{Burr11} that defines four security levels for authentication.
 Starting from level three at least two authentication factors are necessary.
 Research in the area of multi-factor authentication \cite{PointchevalZ08,SUC10,LiuWM10,HaoC12} proposes protocols and security models for two-party and three-party scenarios.
-Real world implementations include the popular Google authenticator \cite{GAuthenticator} amongst others.
-However, implementations usually combine only passwords with \acp{OTP}.
-Using biometric factors is rarely seen in practice so far.
 
 \paragraph{Password Protected Secret Sharing}
 The notion of \acl{PPSS} was recently introduced by \citet{Bagherzandi2011} (improved by \citet{JareckiKK14}).
@@ -482,21 +481,26 @@ As discussed in the beginning, the scenario where cryptographic password-based a
 However, due to the Internet's architecture the use of protocols like \ac{PAKE} on the internet involves several challenges.
 To understand the challenges one first has to understand how \ac{HTTPS} and thus \ac{TLS} works.
 
-\ac{TLS} is, in it's current version $1.2$ \cite{rfc5246,rfc6176,rfc4492}, the successor of the \ac{SSL} protocol \cite{rfc6101}, a suite of cryptographic protocols for secure and authenticated communication.
+\ac{TLS} is, in its current version $1.2$ \cite{rfc5246,rfc6176,rfc4492}, the successor of the \ac{SSL} protocol \cite{rfc6101}, a suite of cryptographic protocols for secure and authenticated communication.
 It is standardised by the \ac{IETF} (\url{https://www.ietf.org/}) and, while called \emph{transport layer} security, is implemented on the presentation layer and is initialised on the session layer.
 In order to secure network traffic however, it can be seen as the transport layer while all lower layers only transport the encrypted content.
 When accessing a website via \ac{HTTPS} a \ac{TLS} session is first established between the client and the server (authenticated by the server's public key, usually wrapped in an X.509 certificate \cite{rfc5280}), which is then used to transport the content via \ac{HTTP}.
 Thus, when the user is presented with a website to log on, the secure channel has been established already such that executing a \ac{PAKE} protocol for authentication and subsequent exchange of \ac{TLS} keys with the newly created key from the \ac{PAKE} protocol is rather impractical (and not supported by any common browser).
 The place to use \ac{PAKE} is actually \emph{before} the \ac{TLS} channels is set up, such that it can be used as key exchange in the \ac{TLS} handshake protocol.
-This approach has been followed by \citet{rfc5054}, which uses the Secure Remote Password (SRP) protocol by \citet{Wu98} and is implement in major \ac{TLS} implementations such as OpenSSL (\url{https://www.openssl.org/}).
+This approach has been followed by \citet{rfc5054}, which uses the Secure Remote Password (SRP) protocol by \citet{Wu98} and is implemented in major \ac{TLS} implementations such as OpenSSL (\url{https://www.openssl.org/}).
 The problem with such an approach however is that it requires the user to login before the actual website is sent, besides other problems, including the logout problem.
 Most problems are transferable from the scenario where clients use X.509 certificates for authentication to the case where the client uses a password for authentication.
 See \citet{Parsovs14} for a discussion of these problems.
 
+Real world implementations of multi-factor authentication protocols include the popular Google authenticator \cite{GAuthenticator} amongst others.
+However, implementations usually combine only passwords with \acp{OTP} or push notifications.
+Using biometric factors is rarely seen in practice so far.
+
 Looking at the current state of the Internet and the used tools and protocols it is simply not reasonable to use \ac{PAKE} as \ac{TLS} authentication.
-The challenge is therefore to deploy cryptographic password-based authentication on top of \ac{TLS}, \ie on the the application level, in order to secure user logins on the Internet.
-While this might sound straight-forward, one has to consider that executing for example \ac{PAKE} with mutual authentication via an \ac{HTTPS} channel does \emph{not} necessarily yield an authenticated and confidential channel between client and server.
-To achieve this the password-based authentication protocol has to be bound to the \ac{TLS} channel.
+The challenge is therefore to deploy cryptographic password-based authentication on top of \ac{TLS}, \ie on the application level, in order to secure user logins on the Internet.
+While this might sound straight-forward, one has to consider that executing for example \ac{PAKE} with mutual authentication via an \ac{HTTPS} channel does \emph{not} necessarily yield an authenticated and confidential channel between client and server, depending on the composition of the \ac{TLS} and \ac{PAKE} protocols.
+In particular, the security guarantees in the case where the \ac{TLS} session keys are \emph{not} replaced with the \ac{PAKE} keys are not clear.
+To achieve security in this case the password-based authentication protocol has to be bound to the \ac{TLS} channel by other means.
 This has been recently achieved by \citet{MSD13} by introducing \ac{PACCE} on top of \ac{TLS}.
 
 
@@ -517,7 +521,7 @@ The proposed protocols were implemented to compare performance of the protocols 
 To demonstrate practicability of the framework, we further give a demo that shows how a real-world deployment of could look like.
 The demo consists of a server necessary to perform registration and authentication, a corresponding client application implemented as Firefox extension, and an application that is accessed after logging in.
 
-Chapter \ref{ch:2pake} describes a framework similar to the one from Chapter \ref{ch:vpake} but for thew two-server setting.
+Chapter \ref{ch:2pake} describes a framework similar to the one from Chapter \ref{ch:vpake} but for the two-server setting.
 In particular, it proposes a password registration protocol for the two-server setting with an according security model.
 While being similar to the single-server setting, this involves additional challenges as no single server retrieves an element that is able to verify the client's password on its own.
 The focus in this chapter however is on \ac{2PAKE}.
