@@ -898,13 +898,13 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \begin{itemize}
     \item ZKPPC, BPR and SPC approaches
     \item Security models for BPR and SPC
-    \begin{itemize}
-      \item BPR offers best security
-    \end{itemize}
+%     \begin{itemize}
+%       \item BPR offers best security
+%     \end{itemize}
     \item Implementation and performance comparison
-    \begin{itemize}
-      \item SPC is most efficient
-    \end{itemize}
+%     \begin{itemize}
+%       \item SPC is most efficient
+%     \end{itemize}
     \item new VPAKE protocol
     \item Demo application
     \begin{itemize}
@@ -998,12 +998,6 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 \end{frame}
 
 \begin{frame}{Security Model}
-  \begin{definition}[Policy Compliance]\label{def:pc}
-  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $\cA$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $\cA$ stopped that accepted $(C,S_{1-b},\share_b)$, $(C,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\mathtt{false}$ is negligible.
-  \end{definition}
-\end{frame}
-
-\begin{frame}{Security Model}
   \begin{definition}[Password Blindness]\label{def:zk}
 %   The Password Blindness property of a Two-Server BPR protocol $\Pi$ holds if for every PPT adversary $A$ there exists a negligible function $\varepsilon(\cdot)$ such that
   \[ \Adv_{\Pi, \cA}^{\mathrm{PB}}=\left|\Pr[\Exp_{\Pi, \cA}^{\mathrm{PB}}=1]-\frac{1}{2}\right|\leq\varepsilon(\secpar). \]
@@ -1018,6 +1012,12 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 
 %   \noindent
 %   $\mathsf{Setup}'$ (in contrast to $\mathsf{Setup}$) uses $\share_b$ for client $C_0$ and $\share_{1-b}$ for $C_1$ with $b\rin\{0,1\}$ instead of choosing a random password or using the provided one.
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Security Model}
+  \begin{definition}[Policy Compliance]\label{def:pc}
+  Policy Compliance of a 2BPR protocol holds if for every PPT adversary $\cA$ with access to $\mathsf{Setup}$ and $\mathsf{Send}_C$ oracles the probability that two server instances $S_{b,i}$ and $S_{1-b,j}$ exist after $\cA$ stopped that accepted $(C,S_{1-b},\share_b)$, $(C,S_{b},\share_{1-b})$ respectively, with $f(\share_b+\share_{1-b})=\mathtt{false}$ is negligible.
   \end{definition}
 \end{frame}
 
@@ -1090,60 +1090,6 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
   \includegraphics[width=0.95\textwidth]{framework2.pdf}
   \end{figure}
 \end{frame}
-
-% \begin{frame}{Smooth Projective Hashing}
-%
-% \begin{dynblock}
-% \opaqueblock<1>{\hspace*{0em}
-% Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.\\
-% \begin{description}
-% 	\item[\HKGen$(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
-% 	\item[\PKGen$(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
-% 	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
-% 	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
-% \end{description}
-% }
-% \invblock<2->
-%
-% \opaqueblock<2>{\hspace*{0em}
-% 	\begin{description}
-% 		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
-% 		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
-% 		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
-% 	\end{description}
-% }
-% \end{dynblock}
-%
-% \end{frame}
-
-% \begin{frame}{PAKE from SPHF}
-% \begin{figure}
-% \centering
-% \begin{tikzpicture}
-% 	\node[state, align=center] (client) at (0,1) {\pgfimage[width=0.8cm]{os_tux}\\ $\pwd$};
-% 	
-% 	\node[state, align=left] at (0,-1) {$k_h\gets\mathsf{KGen_H}(L_x)$\\  $k_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C\gets\mathsf{Enc}_\pk(\pwd;r)$};
-% 	\node[state] (client1) at (2,-1){};
-% 	
-% 	\node[state] (client2) at (2,-2){};	
-% 	\node[state, align=left] at (0,-3) {$k\gets\mathsf{Hash}(k_h,L_x,C')$\\$\cdot\mathsf{PHash}(k'_p,L_x,C,r)$};
-% 	
-% 	\node[state, align=center] (server) at (6,1) {\pgfimage[width=0.8cm]{techie_sailor}\\ $\pwd$};
-% 	
-% 	\node[state, align=right] at (6,-1) {$k'_h\gets\mathsf{KGen_H}(L_x)$\\  $k'_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C'\gets\mathsf{Enc}_\pk(\pwd;r')$};
-% 	\node[state] (server1) at (4,-1) {};
-% 	
-% 	\node[state] (server2) at (4,-2) {};
-% 	\node[state, align=right] at (6,-3) {$k\gets\mathsf{Hash}(k'_h,L_x,C)$\\$\cdot\mathsf{PHash}(k_p,L_x,C',r')$};
-% 	
-% 	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
-% 	
-% 	\draw[pil] (client1) -- node[above] {$C,k_p$} (server1);
-% 	\draw[pil] (server2) -- node[above] {$C',k'_p$} (client2);
-% \end{tikzpicture}
-% \label{fig:eke}
-% \end{figure}
-% \end{frame}
 
 \begin{frame}{SPHF Security}
 	\begin{description}
@@ -1255,6 +1201,12 @@ Execute \PoE, \PoM, \PoS: & \alert{$\bm C, \bm C', \vect{\omega}, H_1,H_2, s_H,$
 	\item 2-Server UC PAKE security
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}[c]
+  \begin{center}
+    \Huge \structure{Thanks}
+  \end{center}
 \end{frame}
 
 % \subsection{Future Work}
@@ -1416,6 +1368,60 @@ $K_B\gets H(A,B,X',Y',K'_B,\pwd)$
   \end{center}
   \end{figure}
 
+\end{frame}
+
+\begin{frame}{Smooth Projective Hashing}
+
+\begin{dynblock}
+\opaqueblock<1>{\hspace*{0em}
+Let $L_x$ denote a language such that $C\in L_x$ if there exists a witness $w$ proving so.\\
+\begin{description}
+	\item[\HKGen$(L_x)$]\hfill\\ generates a hashing key \hk for language $L_x$.
+	\item[\PKGen$(\hk,L_x,C)$]\hfill\\ derives the projection key \hp, possibly depending on $C$.
+	\item[$\Hash(\hk,L_x,C)$] \hfill\\ outputs the hash value $h$.
+	\item[$\PHash(\hp,L_x,C,w)$] \hfill\\ returns the hash value $h$.
+\end{description}
+}
+\invblock<2->
+
+\opaqueblock<2>{\hspace*{0em}
+	\begin{description}
+		\item[Correctness]\hfill\\ If $C\in L_x$, with $w$ proving so, then $\mathsf{Hash}(\hk,L_x,C)=\mathsf{PHash}(\hp,L_x,C,w)$.
+		\item[Smoothness]\hfill\\ If $C\not\in L_x$, the hash value $h$ is statistically indistinguishable from a random element.
+		\item[Pseudorandomness]\hfill\\ If $C\in L_x$, the hash value $h$ is indistinguishable from a random element.
+	\end{description}
+}
+\end{dynblock}
+
+\end{frame}
+
+\begin{frame}{PAKE from SPHF}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+	\node[state, align=center] (client) at (0,1) {\pgfimage[width=0.8cm]{os_tux}\\ $\pwd$};
+	
+	\node[state, align=left] at (0,-1) {$k_h\gets\mathsf{KGen_H}(L_x)$\\  $k_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C\gets\mathsf{Enc}_\pk(\pwd;r)$};
+	\node[state] (client1) at (2,-1){};
+	
+	\node[state] (client2) at (2,-2){};	
+	\node[state, align=left] at (0,-3) {$k\gets\mathsf{Hash}(k_h,L_x,C')$\\$\cdot\mathsf{PHash}(k'_p,L_x,C,r)$};
+	
+	\node[state, align=center] (server) at (6,1) {\pgfimage[width=0.8cm]{techie_sailor}\\ $\pwd$};
+	
+	\node[state, align=right] at (6,-1) {$k'_h\gets\mathsf{KGen_H}(L_x)$\\  $k'_p\gets\mathsf{KGen_P}(k_h,L_x)$\\  $C'\gets\mathsf{Enc}_\pk(\pwd;r')$};
+	\node[state] (server1) at (4,-1) {};
+	
+	\node[state] (server2) at (4,-2) {};
+	\node[state, align=right] at (6,-3) {$k\gets\mathsf{Hash}(k'_h,L_x,C)$\\$\cdot\mathsf{PHash}(k_p,L_x,C',r')$};
+	
+	%\node[state, align=center] at (6,-3) {$K\gets H(A,B,X',Y',K_B,\pwd)$};
+	
+	\draw[pil] (client1) -- node[above] {$C,k_p$} (server1);
+	\draw[pil] (server2) -- node[above] {$C',k'_p$} (client2);
+\end{tikzpicture}
+\label{fig:eke}
+\end{figure}
 \end{frame}
 
 \begin{frame}{Extended Smooth Projective Hashing}
