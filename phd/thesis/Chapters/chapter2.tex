@@ -75,7 +75,7 @@ In cryptography we usually distinguish between three different types of pairings
 
 \begin{itemize}
   \item Type I: $\GG_1 = \GG_2$;
-  \item Type II: $\GG_1 \not= \GG_2$ and there exists an efficiently computable homomorphism $\phi: \GG_2 \mapsto \GG_1$ (bot not for $\GG_1 \mapsto \GG_2$);
+  \item Type II: $\GG_1 \not= \GG_2$ and there exists an efficiently computable homomorphism $\phi: \GG_2 \mapsto \GG_1$ (but not for $\GG_1 \mapsto \GG_2$);
   \item Type III: $\GG_1 \not= \GG_2$, without any efficiently computable homomorphism between $\GG_1$ and $\GG_2$.
 \end{itemize}
 
@@ -84,7 +84,7 @@ In this section we recall computational assumptions used in the remainder of thi
 We distinguish between assumptions on cyclic groups and assumptions on composite order groups.
 When saying something is hard with respect to the security parameter \secpar, this means that there exists no algorithm that can solve the problem in polynomial time in \secpar.
 
-Asymptotic notation allows us to describe the behaviour of a function when its arguments converging towards some limit.
+Asymptotic notation allows us to describe the behaviour of a function when its arguments converge towards some limit.
 As mentioned earlier, security models used in this work are from the computational world.
 In particular, running time and success or advantage probabilities of algorithms, \ie adversaries, are modelled as functions of security parameter \secpar.
 Security is therefore only given for \emph{reasonable} security parameters.
@@ -550,7 +550,8 @@ Password hashing and its security if defined in Chapter \ref{ch:vpake} Section \
 \subsubsection{tSoke} \label{sec:tsoke}
 In our demo we use the tSoke protocol proposed by \citet{Manulis2014} as authentication (\ac{VPAKE}) protocol for convenience.
 It is recalled in Figure \ref{fig:tSOKE}.
-Note however that while the described tSOKE protocol is proven to be a secure \ac{PAKE} protocol, it is not a secure \ac{VPAKE} protocol.
+First note that the description in Figure \ref{fig:tSOKE} omits session key generation and describes a \ac{tPAuth} protocol.
+Further note that while the original tSOKE protocol is proven to be a secure \ac{PAKE} protocol, it is not a secure \ac{VPAKE} protocol.
 Since it is sufficient for the client to know the password hash (he does not have to know the password), it is straightforward to build a successful attacker against the tSOKE protocol in the \ac{VPAKE} security experiment.
 \ac{VPAKE} protocols built according to the framework from \citet{BenhamoudaP13} (including the one proposed in this thesis) are however secure \ac{VPAKE} protocols.
 Nonetheless, the protocol has advantages stemming from the use of a verifier such that it is not possible to re-use the verifier on a different server where the client may use the same password.
@@ -638,7 +639,7 @@ This section describes building blocks used throughout this work.
 \subsection{Hash Functions}
 Hash functions, denoted $H$, take arbitrary long strings as input and output a compressed string of shorter length than the input.
 While originally used in data structures to store and retrieve data in constant time, they are an important cryptographic building block.
-A main goal of (cryptographic) hash functions is to yield as few collisions as possible.
+A main goal of (cryptographic) hash functions is to be as collision-resistant as possible.
 Informally speaking, a collision is a pair of distinct input elements $x$ and $x'$ to hash function $H$ such that $H(x)=H(x')$.
 
 In cryptography families of functions are used, indexed by a key $s$, such that a hash function is given by $H_s(x)=H(s, x)$.
@@ -666,7 +667,7 @@ A commitment scheme is further homomorph if there exist functions $\circ$ and $\
 \subsubsection{Pedersen commitments}
 \citet{Pedersen91} commitments are perfectly hiding, computationally binding, homomorphic commitments, defined as follows.
 Let $\Pedersen=(\SetupC$, $\Com)$ with $(g,h,p,\secpar)\gets\SetupC(\secpar)$ and $C\gets\Com=(x;r)=g^x h^r$ denote the Pedersen commitment scheme where $g$ and $h$ are generators of a cyclic group \GG of prime order $p$ with bit-length in the security parameter $\secpar$ and the discrete logarithm of $h$ with respect to base $g$ is not known.
-Pedersen commitments are \emph{additively homomorph}, i.e. for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in 1,\dots,n$ it holds that $\prod_{i=1}^{n}C_i=\Com(\sum_{i=1}^{n}x_i$; $\sum_{i=1}^{n}r_i)$.
+Pedersen commitments are \emph{additively homomorphic}, \ie for all $(C_i,d_i) \gets \Com(x_i;r_i)$ for $i\in 1,\dots,n$ it holds that $\prod_{i=1}^{n}C_i=\Com(\sum_{i=1}^{n}x_i$; $\sum_{i=1}^{n}r_i)$.
 
 \paragraph{Trapdoor commitments}
 In some scenarios such as zero-knowledge proofs of knowledge with malicious verifiers we require trapdoor commitments, which allow a party knowing the correct trapdoor to open a commitment to any value (equivocable commitment).
@@ -674,7 +675,7 @@ Pedersen commitments are trapdoor commitments as they can be opened to any eleme
 
 %----------------------------------- Zero Knowledge Proofs-----------------------
 \subsection{Zero-Knowledge Proofs}
-A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so, \ie there exist $w$ such that $(x,w)\in R$ for relation $R$.
+A zero-knowledge proof is executed between a prover and a verifier, proving that a word $x$ is in a language $L$, using a witness $w$ proving so, \ie there exists $w$ such that $(x,w)\in R$ for relation $R$.
 An interactive protocol $\Pi$ for a language $L$ between prover $P$ and verifier $V$ is a zero knowledge proof if the following holds:
 \begin{itemize}
 	\item Completeness: If $x\in L$, $V$ accepts if $P$ holds a witness proving so.
@@ -821,7 +822,7 @@ The client encodes the set into a conventional Bloom filter~\cite{blo70} $B_\Cli
 The protocol starts by choosing $m=2\secpar n$ random bit strings $r_i$, where $n$ is an upper bound on the set size, and sends them to the server.
 After generating a random secret key \sk, the server encrypts $r_i||G_\ServerSet[i]$ in $c_i$ with \sk and shares \sk in $m$ shares $t_i$.
 Then client and server run an oblivious transfer protocol using the Bloom filter and $\{(c_i, t_i)\}_{i\in[0,m-1]}$ as inputs. 
-As result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$ after successfully resembling \sk, decrypting $c_i$ and verifying $r_i$. 
+As a result, the client receives a garbled Bloom filter $G_{\ClientSet\cap\ServerSet}$ that encodes the intersection $\ClientSet\cap \ServerSet$ and the data items associated with the elements in $\ClientSet\cap \ServerSet$ after successfully resembling \sk, decrypting $c_i$ and verifying $r_i$. 
 The client can then query $G_{\ClientSet\cap\ServerSet}$ with each element $c_i\in\ClientSet$. If $c_i$ is in the intersection then there must be  some $s_j\in \ServerSet$ such that $c_i=s_j$ and the query result is $d_j$, the data item associated with $s_j$, otherwise the client gets a random string. 
 
 % \begin{figure}[htb]
