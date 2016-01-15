@@ -4,19 +4,19 @@ As discussed in Chapter \ref{ch:intro} using passwords for authentication is its
 This is usually done with the inherently flawed approach of password-over-\ac{HTML} despite the existence of more secure alternatives such as \ac{PAKE}.
 In this chapter we propose a framework for cryptographic password registration and authentication, comprising a protocol for clients to register passwords in a secure way with a server while still allowing for password policies checks, as well as suitable protocols to use the registered password verifier for password-based authentication.
 
-The first main contribution in this chapter is the definition of \acl{BPR}.
+The first main contribution in this chapter is the definition of \acl{BPR} (\ac{BPR}).
 This protocol class allows a client to register a password verifier with a server without actually disclosing the password, while allowing the server to check the password's policy compliance against a password policy.
 Note that this still requires a secure channel (established using for example \ac{TLS}) between client and server.
 This requirement can not be removed as obtaining the password verifier eventually always leads to password disclosure.
 However, it is not the goal of \ac{BPR} to eliminate the necessity of secure channels for password registration.
 Instead, \ac{BPR} offers a way of removing the trust assumption that the server securely handles client passwords by never revealing the actual password to the server.
 
-Using registered password verifiers to authenticate clients is the second step of the proposed framework, which can be performed using \ac{VPAKE} or \ac{tPAuth} protocols.
+Using registered password verifiers to authenticate clients is the second step of the proposed framework, which can be performed using \ac{VPAKE} or \ac{tPAuth} protocols (see Section \ref{sec:intro:verifier-basedPAKE} and \ref{sec:other-pake} in Chapter \ref{ch:intro} for details).
 While \ac{VPAKE} is the first natural way of authenticating using a password on the client side and a password verifier on the server side, \ac{tPAuth} protocols can be used with verifiers as well and are more suitable for password based authentication on the web.
  
 \smallskip
 \noindent
-This chapter is based on the series of works in \cite{KieferM14b,KieferM15a,DongK15a}\footnote{This chapter contains the products of joint research between myself, Changyu Dong, and Mark Manulis.}.
+This chapter is based on the series of works in \cite{KieferM14b,KieferM15a,DongK15a}\footnote{This chapter contains the products of joint research between myself, Changyu Dong, and Mark Manulis. Contributions from \cite{KieferM14b} and \cite{KieferM15a} are mainly my own while contributions from \cite{DongK15a} are shared between Changy Dong and myself.}.
  
 \paragraph{Outline \& Summary of Results}
 This chapter comprises 9 sections organised as follows.
