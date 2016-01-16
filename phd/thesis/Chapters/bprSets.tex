@@ -5,6 +5,7 @@ However, it uses an approach closely related to the \ac{ZKPPC}-based approach fr
 In this section we propose an entirely different approach to \acl{BPR} based on set theory rather than zero-knowledge proofs, which allows us to build a significantly faster protocol but also requires a different security model.
 Note that the \ac{BPR} protocol in this section is based on a more general approach that can be used in other scenarios than password policy checks.
 To this end we first introduce the notion of \acl{SPC}.
+In order to make the following technical sections easier to understand we give an examples in Section \ref{spc:example}.
 
 \subsection{Secure Set-based Policy Checking (SPC)} \label{sec:spc}
 In \ac{SPC} a server holds a public policy $f$ as defined in Section \ref{sec:spc-passwords} and a client holds a private set \ClientSet. 
@@ -116,6 +117,73 @@ At the end of the \ac{OBI} protocol the client gets a set of shares $\{\secret_i
 If $\ClientSet$ satisfies policy $f$, then the shares obtained from the \ac{OBI} protocol will allow the client to reconstruct secret \secret, otherwise the client learns nothing about \secret and aborts. 
 In the last step, by proving knowledge of secret \secret, the client can convince the server that its set is compliant with policy~$f$.
 
+\subsubsection{Example}\label{spc:example}
+To facilitate understanding of \ac{SPC} we give a short example of the protocol in Figure \ref{fig:spc}.
+Let $f=(\ServerSet, \Gamma_\ServerSet)=(\ServerSet_1\cup\ServerSet_2, (t_1,t_2))=(\{a,b\}\cup\{A,B\}, (1,1))$ denote the server's policy.
+This translate to; an authorised set must contain at least one element from $\{a,b\}$ and one element from $\{A,B\}$, \ie $|\ClientSet\cap\ServerSet_1|\geq t_1$ and $|\ClientSet\cap\ServerSet_2|\geq t_1$.
+The server chooses a random element $\secret\rin\ZZ_p$.
+Now the server generates an appropriate matrix $M$ and function $\rho$ for $f$ as follows.
+First we can rewrite $f$ as boolean formula $(a\vee b)\wedge(A\vee B)$ or $((a,b,1),(A,B,1),2)$, which is the format used as input to \citet[Algorithm 1]{LiuC10}.
+This can be then transformed into matrix 
+\[M=
+\begin{matrix}
+  1 & 1 \\
+  1 & 2 \\
+\end{matrix}
+~~ L=
+\begin{matrix}
+  (a,b,1) \\
+  (A,B,1) \\
+\end{matrix}
+\]
+\[M=
+\begin{matrix}
+  1 & 1 \\
+  1 & 1 \\
+  1 & 2 \\
+\end{matrix}
+~~ L=
+\begin{matrix}
+  a \\
+  b \\
+  (A,B,1) \\
+\end{matrix}
+\]
+\[M=
+\begin{matrix}
+  1 & 1 \\
+  1 & 1 \\
+  1 & 2 \\
+  1 & 2 \\
+\end{matrix}
+% =
+% \begin{matrix}
+%   v_1 \\
+%   v_2 \\
+%   v_3 \\
+%   v_4 \\
+% \end{matrix}
+% \equiv
+% \begin{matrix}
+%   \secret \\
+%   r_2 \\
+%   r_3 \\
+%   r_4 \\
+% \end{matrix}
+~~ L=
+\begin{matrix}
+  a \\
+  b \\
+  A \\
+  B \\
+\end{matrix}
+\]
+for random $r_i\rin\ZZ_p$.
+Function $\rho(i)$ is given by $\rho(1)=a,\rho(2)=b,\rho(3)=A,\rho(4)=B$.
+Matrix $M$ and function $\rho$ is sent to the client.
+For the \ac{OBI} protocol the server further prepares \ServerSet with secret shares $\share_1=\share_2\rin\ZZ_p$ and $\share_3=\share_4=2\share_1-\share$ (according to $M$).
+Execution of the \ac{OBI} protocol provides the client with shares $\share_i$ for all $\{\secret_i|\rho(i)\in \ServerSet\cap \ClientSet\}$, \ie all elements that are in the client's set \ClientSet as well as in the server's set \ServerSet.
+If the client retrieves a qualified set of shares, \ie $\share_1$ and ($\share_3$ or $\share_4$), or $\share_2$ and ($\share_3$ or $\share_4$), he can reconstruct \secret, \eg $\secret=2\share_1-\share_3$.
 
 \subsubsection{Security Analysis}
 \begin{lemma}[Correctness]\label{lem:correct}

@@ -53,10 +53,14 @@ Note that we do not count exponentiations with small exponents.
 %   \item \PoE needs $n+8$
 %   \item \PoS needs $4n+8$
 % \end{itemize}
-The client in the \ac{BPR} protocol has to perform $4n+2\sum_i |\omega_i| + 113$ exponentiations.
+The client in the \ac{BPR} protocol has to perform about $4n+2\sum_i |\omega_i| + 113$ exponentiations.
+(About $4n$ exponentations are needed to compute commitments and the \PoS; $2\sum_i |\omega_i|$ exponentations are needed for the \PoM, \ie in the number of characters and size of significant sets; and $113$ corresponds to the remaining exponentations used throughout the client side of the algorithm.)
 The server must perform $5n + 2\sum_i |\omega_i| + 16$ exponentiations if $g^{\pi_i}$ is pre-computed and re-used.
+(The number of exponentations is computes similar to the one on the client side, \ie the first factor accounts for \PoS and \PoE, the second one for \PoM, and the last for the remaining exponentations throughout the protocol.)
 In contrast, the generic approach for \ac{ZKPPC} requires $3n+3\sum_i (|\omega^\ast_i|-1)+7$ exponentiations on the client side and $3\sum_i |\omega^\ast_i|+8$ on the server side.
 Note that $\omega^\ast_i$ in the \ac{ZKPPC} context depends on the maximum password length and thus contains all characters from $\omega_i$ \emph{plus} all characters from $\omega_i$ shifted by $j = 1,\ldots, \pmax$ positions.
+(The number of exponentations in the case of \ac{ZKPPC} are dominated by the \PoM execution, which is responsible for the factor that includes $\omega^\ast_i$.
+The client has to compute commitments in addition, which is reflected in the first factor.)
 Therefore, the cost of a \ac{ZKPPC}-based password registration protocol is given by $3n+2\pmax\sum_i (|\omega_i|-1)+7$ exponentiations on the client side and $2\pmax\sum_i |\omega_i|+8$ on the server side. 
 A \ac{ZKPPC}-based password registration protocol is thus much less efficient than the \ac{BPR} protocol from Section \ref{sec:bpr}: in the optimal case where $n=\pmax$ the difference can be estimated by  $2(n-1)\sum_i|\omega_i| - 2n^2 - n - 106$ additional exponentiations for the client and $2(n-1)\sum_i|\omega_i| - 5n - 8$ additional exponentiations for the server.
 
@@ -64,6 +68,7 @@ The \ac{SPC}-based \ac{BPR} protocol from Section \ref{sec:spc-bpr} is based on 
 In particular, the server in the \ac{SPC}-based \ac{BPR} protocol has to perform $\pmin+|\ServerSet|$ exponentiations where the size of the server set $|\ServerSet|$ is $\sum_i x_i|\omega_i|$ for $x_i$ being the number of characters required from subset $\omega_i$.
 The client performs $n$ exponentiations.
 We refrain from counting symmetric operations as they do not have significant impact on the performance.
+(Client and server only need to comput exponentiations in the \ac{SPC}-based \ac{BPR} to compute $u_i$ and $u'_i$, \ie perform blind \ac{RSA} signatures and prepare the server's set.)
 
 % \paragraph{Implementation}
 % We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.
@@ -106,7 +111,7 @@ SPC (Section \ref{sec:spc-bpr}) & 132 & 5 & 247 & 11 & 489 & 23 & 266 & 11 & 300
 \end{center}
 \end{table} 
 
-The running time of the protocols are shown in Table \ref{tab::perf}. We measured the running time with different policies and password lengths. The passwords are printable \ac{ASCII} strings. 
+The running time of the protocols is shown in Table \ref{tab::perf}. We measured the running time with different policies and password lengths. The passwords are printable \ac{ASCII} strings. 
 The alphabet is partitioned into the four usual classes: digits, lower case, upper case and symbols. 
 We used three policies $P1, P2$ and $P4$ in the experiments, which require at least one, two and four characters in all character classes respectively. 
 In the first row of the table, the pairs indicate the policy and the password length that were used in the experiment, \eg $(P1, 10)$ means policy $P1$ is used and the password was $10$ characters long. 
