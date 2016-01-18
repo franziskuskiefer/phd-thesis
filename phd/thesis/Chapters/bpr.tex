@@ -306,6 +306,8 @@ In the following we describe these three proofs and define their messages. Note 
 % \end{proceedings}
 
 \subsubsection{Proofs} \label{sec:bpr-proofs}
+We use common zero-knowledge techniques to instantiate \PoE and \PoM proofs.
+This includes techniques first proposed by \citet{CramerDS94} for partial proofs of knowledge, techniques proposed by \citet{Schnorr91} to prove knowledge of discrete logarithms, and techniques proposed by \citet{Chaum93} to prove knowledge of equality of elements in different representations.
 
 \paragraph{Proof of Equivalence (\PoE)}
 This protocol proves that password hash $H_2$ contains the same encoded password $\pi$ as the product of the shifted commitments $\prod_{i=0}^{n-1} C^{b^i}_i$ and that the client knows the discrete logarithm $s_P$ of $H_1$ to base $g$, in particular:

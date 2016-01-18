@@ -68,7 +68,7 @@ The \ac{SPC}-based \ac{BPR} protocol from Section \ref{sec:spc-bpr} is based on 
 In particular, the server in the \ac{SPC}-based \ac{BPR} protocol has to perform $\pmin+|\ServerSet|$ exponentiations where the size of the server set $|\ServerSet|$ is $\sum_i x_i|\omega_i|$ for $x_i$ being the number of characters required from subset $\omega_i$.
 The client performs $n$ exponentiations.
 We refrain from counting symmetric operations as they do not have significant impact on the performance.
-(Client and server only need to comput exponentiations in the \ac{SPC}-based \ac{BPR} to compute $u_i$ and $u'_i$, \ie perform blind \ac{RSA} signatures and prepare the server's set.)
+(Client and server only need to comput exponentiations in the \ac{SPC}-based \ac{BPR} to compute $u_i$ and $u'_i$, \ie perform blind RSA signatures and prepare the server's set.)
 
 % \paragraph{Implementation}
 % We implement an unoptimised prototype of the \ac{BPR} protocol over the \ac{NIST} P-192 elliptic curve \cite{nistEC} in Python using the Charm framework \cite{charm13} and measure its performance.

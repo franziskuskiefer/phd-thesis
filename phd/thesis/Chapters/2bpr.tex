@@ -333,7 +333,7 @@ The client combines previously computed values $\bm C = \{C_{i}\}$.
 Shuffled commitments $C'_{\phi(i)}$ and sets $\omega_{\phi(i)}$ are combined according to the shuffled index $\phi(i)$, \ie $\bm C' = \{C'_{\phi(i)}\}$ and $\vect{\omega} = \{\omega_{\phi(i)}\}$.
 Once these computations are finished $\Client$ and $\Server_b$ proceed with the protocol.
 In the following we describe the three proofs \ac{PoM}, \ac{PoC} and \ac{PoS} and define their messages.
-
+Similar to the single-server case the following proofs are based on techniques first introduced in by \citet{CramerDS94,Schnorr91,Chaum93}.
 
 \paragraph{Proof of Correctness (\PoC)}
 This proof links the password shares, sent to each server, to the proof of \ac{PoM} and shows knowledge of the other password share.
