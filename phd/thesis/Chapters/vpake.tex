@@ -7,7 +7,7 @@ This concludes description of the password registration and authentication frame
 % \section{Verifier-based Password Authenticated Key Exchange} \label{sec:vpake-pake}
 
 \subsection{Building VPAKE from PAKE} \label{sec:vpakeToPake}
-Before specifying a concrete \ac{VPAKE} protocol we want to discuss a general way of constructing a \ac{VPAKE} protocols from any \ac{PAKE}, discuss its security, and why it might not be the best approach.
+Before specifying a concrete \ac{VPAKE} protocol we want to discuss a general way of constructing \ac{VPAKE}-like protocols from any \ac{PAKE}, discuss its security, and why it might not be the best approach.
 Note that the approach discussed here is used but has never been written down and discussed as such to the best of our knowledge.
 
 Figure \ref{fig:genericVPAKE} gives an overview of this straight forward approach.
@@ -60,7 +60,7 @@ $\ver=(H,r)\gets \phi(\pwd, r)$ & $\xleftarrow{\makebox[2.5cm]{$r$}}$ & \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{Generic VPAKE construction from PAKE}
+\caption{Not a \emph{real} VPAKE protocol}
 \label{fig:genericVPAKE}
 \end{figure*}
 
@@ -117,6 +117,7 @@ The protocol is constructed from the general \ac{VPAKE} framework introduced by 
 Their framework constructs one-round \ac{VPAKE} protocols with \Client and \Server sending one message each, independently, using a generic password hashing scheme $(\PSetup, \PPHSalt, \PPreHash,\PHSalt, \PHash)$ with deterministic $\PPreHash$, labelled public key encryption scheme $(\KGen, \Enc, \Dec)$, and secure \acp{SPHF} $(\HKGen, \PKGen, \Hash, \ProjHash)$ for two languages $L_H = \{(\ell, C) | \exists r : C = \Enc_\pk\ell, H; r)\}$ and $L_{s,H}  = \{(\ell, C) | \exists P, \exists r : C = \Enc_\pk(\ell, H; r)\ \wedge\ H = \PHash(\paramP,\allowbreak P, s)\}$. 
 Their approach can directly be used for the password hashing scheme proposed in Section \ref{sec:strucphash} with randomised \PPreHash if we assume that $L_{s,H}$ is defined using $s=(s_P,s_H)$. 
 This readily gives us a generic \ac{VPAKE} protocol that is suitable for \ac{BPR} construction in Section \ref{sec:bpr} such that security follows from the analysis of the framework in \cite{BenhamoudaP13}.
+Note that the protocol proposed by \cite{BenhamoudaP13} is the first and only \ac{VPAKE} protocol with a thorough security model such that comparison with other \ac{VPAKE} protocls is pointless.
 
 For the concrete \ac{VPAKE} construction based on our password hashing scheme from Section~\ref{sec:strucphash} we can use labelled \ac{CS} encryption scheme. 
 The common input of \Client and \Server contains the \ac{CS} public key $\pk=(p,g_1,g_2,h,c,d,H_k)$, where generators $g_1=g$ and $h$ must be the same as in the \ac{BPR} protocol. 

@@ -20,6 +20,10 @@ To this end we propose the notion of \ac{D-SPHF} that enables joint hash computa
 % Actually, the authors of \cite{AbdallaP06} already built a group PAKE protocol using smooth projective hashing in a multi-party party protocol.
 % However, they assume a ring structure such that the smooth projective hashing is only used between two parties.
 
+\aclp{D-SPHF} as introduced in this section are designed in order to propose a new framework for \ac{2PAKE} that leans itself towards \ac{UC} security.
+The majority of \ac{UC} secure \ac{PAKE} protocols use \acp{SPHF} as they allow to simulate the \ac{PAKE} protocol in the security proof using the two different ways of computing the hash value.
+Further, the \ac{PAKE} framework by \citet{Gennaro2003} shows the usage of \acp{SPHF} in the \ac{PAKE} protocol proposed by \citet{KatzOY01}, which is the basis for the \ac{2PAKE} protocol by \citet{Katz2012a}.
+It therefore seems natural to extend the definition of \acp{SPHF} to the two-server setting.
 
 %===============================================================================
 \subsection{Extending Smooth Projective Hashing}\label{sec:sphff}

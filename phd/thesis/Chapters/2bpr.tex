@@ -237,6 +237,7 @@ encode $\pi\gets\pwdint(\pwd)$ & & \\
 compute password shares: & & \\
 \hspace*{1em} $\share_{0}\rin\ZZ_p$, $\share_{1}=\pi-\share_{0}$ & & \\
 commit to shares: & & \\
+\hspace*{1em} $r_0,r_1\rin\ZZ_p$& & \\
 \hspace*{1em} $\fC_0=g^{\share_{0}}h^{r_{0}}$, $\fC_{1}=g^{\share_{1}}h^{r_{1}}$ & & \\
 \hspace*{1em} $\fD_0=\fC_0g^{\share_{1}}$, $\fD_{1}=\fC_{1}g^{\share_{0}}$ & & \\
 \midrule
@@ -324,7 +325,7 @@ For the following proofs the client further encodes every character $c_i\in\pwd$
 The client iterates over all encoded characters $\pi_i$ to perform the following operations:
 \begin{itemize}
   \item commit to $\pi_i$ by computing $C_i=g^{\pi_i}h^{r_i}, C'_i=C_i h^{r_i'}$ for $r_i,r'_i\rin\Zrp$;
-  \item choose a random permutation $\phi(i)$ over $[0,n-1]$ to shuffle $C'_i$;
+  \item choose a random permutation vector given by function $\phi(i)$ over $[0,n-1]$ to shuffle $C'_i$;
   \item if $\pi_i$ is \emph{significant} for any $R_j\in R$, set $\omega_{\phi(i)}\gets R_j$, otherwise $\omega_{\phi(i)}\gets\Sigma$ (all \ac{ASCII} characters).
 \end{itemize}
 Let further $l_i\in\NN$ denote the index in $\omega_{\phi(i)}$ such that $c_i=\omega_{\phi(i)}[l_i]$.

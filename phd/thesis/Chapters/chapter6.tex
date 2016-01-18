@@ -1,13 +1,22 @@
-\chapter{Conclusion} \label{ch:conclusion}
+\chapter{Conclusion and Future Work} \label{ch:conclusion}
 
 This thesis made advancements in the field of password-based cryptography.
 It in particular proposed two novel frameworks for password registration and authentication.
-The first framework is based in the verifier-based (single-server) setting and allows a client to register a password verifier with a server without disclosing the actual password, while preserving the server's ability to check policy compliance of the password that is hidden in the password verifier, and supports client authentication (\ac{VPAKE} and \ac{tPAuth}) with the password and registered verifier.
+The first framework is based on the verifier-based (single-server) setting and allows a client to register a password verifier with a server without disclosing the actual password, while preserving the server's ability to check policy compliance of the password that is hidden in the password verifier, and supports client authentication (\ac{VPAKE} and \ac{tPAuth}) with the password and registered verifier.
 We proposed three protocols with according security models to achieve \acl{BPR} and implemented them to compare performance in addition to security.
 To use the password together with the registered password verifier we discussed and proposed new \ac{VPAKE} protocols usable with the registered verifiers.
 In order to show real world usage of the proposed framework we implemented a demo that uses one of the proposed \ac{BPR} protocols to register passwords, an appropriate \ac{tPAuth} protocol to perform \acl{PACCE}, and an application to log into.
 
-The second framework achieves similar goals to the first one but is based in the two-server setting and allows a client to register password shares on two servers while preserving the server's ability to verify that the client's password is policy compliant, and supports client authentication (\ac{2PAKE} and \ac{PPSS}) with the password and registered password shares.
+The second framework achieves similar goals to the first one but is based on the two-server setting and allows a client to register password shares on two servers while preserving the server's ability to verify that the client's password is policy compliant, and supports client authentication (\ac{2PAKE} and \ac{PPSS}) with the password and registered password shares.
 We proposed an efficient protocol with according security model to achieve \acl{2BPR}.
 To use the registered password shares in a \ac{2PAKE} protocol for authentication we propose the first \ac{2PAKE} framework based on \aclp{D-SPHF}, a new variant of \acp{SPHF}.
 By further extending \acp{D-SPHF} to \acp{TD-SPHF} we were able to introduce the first \ac{2PAKE} protocol that is secure in a newly proposed security definition for \ac{2PAKE} in the \ac{UC} framework.
+
+While \ac{PAKE} is a very well researched field and probably does not require a lot of further attention \ac{VPAKE}, \ac{2PAKE}, and \ac{PPSS} hold many open problems to investigate starting with the actual security models used for these settings.
+The only \ac{VPAKE} protocol with security model, proposed by \citet{BenhamoudaP13}, has not yet been peer-reviewed.
+In the \ac{2PAKE} setting a very limited number of proven protocols exist.
+A game-based and a \ac{UC} model have been proposed but barely challenged or used to prove other protocols.
+With \ac{PPSS} protocols, new interest in the two-server setting has risen where different corruption scenarios and protocols tailored more towards real world applications are interesting for future research.
+
+Password registration as an area in cryptographic research has only been created with this work and has thus many open questions left.
+Interesting future work could be to develop more efficient protocols based on different assumptions that can be proven secure in the proposed security model, or to propose protocols not relying or incorporating the underlying secure channel.
