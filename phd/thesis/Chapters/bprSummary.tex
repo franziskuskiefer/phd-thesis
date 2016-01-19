@@ -119,8 +119,30 @@ In the first row of the table, the pairs indicate the policy and the password le
 The table shows the total running time as well as the time spent on checking the policies (Pol-ck) in each protocol. 
 As expected, the \ac{ZKPPC} approach is significantly slower than the two \ac{BPR} protocols.
 The main differences in all protocols comes from the policy checking time.
-Differences between the general \ac{ZKPPC} approach and \ac{BPR} come from the set membership proofs and therefore differ depending on the password length and its relation to the password policy. 
+Differences between the general \ac{ZKPPC} approach and \ac{BPR} come from the set membership proofs and therefore differ depending on the password length and its relation to the password policy.
+Table \ref{tab:perf:breakdown} gives a more detailed overview on \ac{ZKPPC} and \ac{BPR} timings by giving timings for each individual zero-knowledge proof (\PoM, \PoE/\PoC, \PoS), again showing that the time for both approaches is dominated by the proof of membership and that the \ac{BPR} protocol is much more efficient in \PoM (due to the smaller sets it uses).
 The measurements further show that the actual time needed for policy checking in the \ac{SPC}-based \ac{BPR} protocol is indeed independent of the password length (it depends on the password policy as everything else is negligible).
+
+\begin{table}[!t]
+\begin{center}
+\scalebox{0.77}{
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+\multirow{2}{*}{}&\multicolumn{2}{ c }{$(P1,10)$}&\multicolumn{2}{ c }{$(P2,10)$}&\multicolumn{2}{ c }{$(P4,20)$}&\multicolumn{2}{ c }{$(P2,20)$}&\multicolumn{2}{ c }{$(P2,40)$}\\
+\cmidrule{2-11}
+&BPR&ZKPPC&BPR&ZKPPC&BPR&ZKPPC&BPR&ZKPPC&BPR&ZKPPC\\
+\midrule
+\PoM & 1,144 & 14,449 & 614 & 8,252 & 1,234 & 41,573 & 2,183 & 72,971 & 5,290 & 499,023 \\
+\midrule
+\PoE/\PoC & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 \\
+\midrule
+\PoS & 55 & - & 53 & - & 108 & - & 107 & - & 238 & - \\
+\bottomrule
+\end{tabular}}
+\vspace*{1em}
+\caption[BPR Proof Performance]{Proof Performance (Running Time in Milliseconds)} \label{tab:perf:breakdown}
+\end{center}
+\end{table}
 
 % The cost of the zero-knowledge proof protocol is $6\cdot n\cdot\sum_{i=1}^n\omega_i$ exponentiations, where $n$ is the password length in the experiments, and $\omega_i$ is the size of character class to which the i$th$ character in the password belongs. 
 % In our protocol,  policy checking is done by using the \ac{SPC} protocol and the cost is mainly the \ac{OBI} protocol which is based on symmetric cryptography. The cost of the \ac{OBI} protocol is $4.32\cdot |\hat{S}|\cdot \lambda$ hash operations, where $\lambda$ is the security parameter.

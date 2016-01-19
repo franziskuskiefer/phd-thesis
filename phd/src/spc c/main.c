@@ -76,11 +76,9 @@ void testProtocol(){
     
     // create server
     
-/*    char* polStr="4:(D,2)(U,2)(L,2)(S,2)";*/
-/*    // Pl35B@dm1nt()n.ILuv2Pl35B@dm1nt()n.*/
-/*    char* passstr="ILuv21()n.ILuv21()n.ILuv21()n.ILuv21()n.";*/
-    char* polStr="2:(D,1)(U,1)(L,0)(S,0)";
-    char* passstr="1H";
+    char* polStr="4:(D,2)(U,2)(L,2)(S,2)";
+    // Pl35B@dm1nt()n.ILuv2Pl35B@dm1nt()n.
+    char* passstr="ILuv21()n.ILuv21()n.ILuv21()n.ILuv21()n.";
     printf("policy: %s\n",polStr);
     int len=strlen(polStr);
     
