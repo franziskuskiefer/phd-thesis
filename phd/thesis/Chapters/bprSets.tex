@@ -123,62 +123,47 @@ Let $f=(\ServerSet, \Gamma_\ServerSet)=(\ServerSet_1\cup\ServerSet_2, (t_1,t_2))
 This translate to; an authorised set must contain at least one element from $\{a,b\}$ and one element from $\{A,B\}$, \ie $|\ClientSet\cap\ServerSet_1|\geq t_1$ and $|\ClientSet\cap\ServerSet_2|\geq t_1$.
 The server chooses a random element $\secret\rin\ZZ_p$.
 Now the server generates an appropriate matrix $M$ and function $\rho$ for $f$ as follows.
-First we can rewrite $f$ as boolean formula $(a\vee b)\wedge(A\vee B)$ or $((a,b,1),(A,B,1),2)$, which is the format used as input to \citet[Algorithm 1]{LiuC10}.
-This can be then transformed into matrix 
+First we can rewrite $f$ as boolean formula $(a\vee b)\wedge(A\vee B)$ or $((a,b,1),(A,B,1),2)$, which is the format used as input to tha algorithm by \citet{LiuC10}.
+This can be then transformed into matrix:
 \[M=
-\begin{matrix}
+\begin{pmatrix}
   1 & 1 \\
   1 & 2 \\
-\end{matrix}
+\end{pmatrix}
 ~~ L=
-\begin{matrix}
+\begin{pmatrix}
   (a,b,1) \\
   (A,B,1) \\
-\end{matrix}
+\end{pmatrix}
 \]
 \[M=
-\begin{matrix}
+\begin{pmatrix}
   1 & 1 \\
   1 & 1 \\
   1 & 2 \\
-\end{matrix}
+\end{pmatrix}
 ~~ L=
-\begin{matrix}
+\begin{pmatrix}
   a \\
   b \\
   (A,B,1) \\
-\end{matrix}
+\end{pmatrix}
 \]
 \[M=
-\begin{matrix}
+\begin{pmatrix}
   1 & 1 \\
   1 & 1 \\
   1 & 2 \\
   1 & 2 \\
-\end{matrix}
-% =
-% \begin{matrix}
-%   v_1 \\
-%   v_2 \\
-%   v_3 \\
-%   v_4 \\
-% \end{matrix}
-% \equiv
-% \begin{matrix}
-%   \secret \\
-%   r_2 \\
-%   r_3 \\
-%   r_4 \\
-% \end{matrix}
+\end{pmatrix}
 ~~ L=
-\begin{matrix}
+\begin{pmatrix}
   a \\
   b \\
   A \\
   B \\
-\end{matrix}
+\end{pmatrix}
 \]
-for random $r_i\rin\ZZ_p$.
 Function $\rho(i)$ is given by $\rho(1)=a,\rho(2)=b,\rho(3)=A,\rho(4)=B$.
 Matrix $M$ and function $\rho$ is sent to the client.
 For the \ac{OBI} protocol the server further prepares \ServerSet with secret shares $\share_1=\share_2\rin\ZZ_p$ and $\share_3=\share_4=2\share_1-\share$ (according to $M$).
