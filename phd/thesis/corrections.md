@@ -23,7 +23,8 @@
 * p62: adapting section to change to Z94 (minial as this was actually using this already)
 * p77: references for zero-knowledge proofs
 * p85: explicitely stating that at least n_min characters are proven here
-* p88: example for SPC execution
+* p86: SPC idea
+* p88/89: example for SPC execution
 * p98/99: explanation for the number of exponentations
 * p100: table and some words to BPR/ZKPPC proof performance
 * p101/102: minor VPAKE comments

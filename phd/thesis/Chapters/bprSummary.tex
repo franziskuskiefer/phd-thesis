@@ -120,7 +120,7 @@ The table shows the total running time as well as the time spent on checking the
 As expected, the \ac{ZKPPC} approach is significantly slower than the two \ac{BPR} protocols.
 The main differences in all protocols comes from the policy checking time.
 Differences between the general \ac{ZKPPC} approach and \ac{BPR} come from the set membership proofs and therefore differ depending on the password length and its relation to the password policy.
-Table \ref{tab:perf:breakdown} gives a more detailed overview on \ac{ZKPPC} and \ac{BPR} timings by giving timings for each individual zero-knowledge proof (\PoM, \PoE/\PoC, \PoS), again showing that the time for both approaches is dominated by the proof of membership and that the \ac{BPR} protocol is much more efficient in \PoM (due to the smaller sets it uses).
+Table \ref{tab:perf:breakdown} gives a more detailed overview on \ac{ZKPPC} and \ac{BPR} performance with timings for each individual zero-knowledge proof (\PoM, \PoE/\PoC, \PoS), again showing that the time for both approaches is dominated by the proof of membership and that the \PoM proofs in the \ac{BPR} protocol are significantly more efficient (due to the smaller set size).
 The measurements further show that the actual time needed for policy checking in the \ac{SPC}-based \ac{BPR} protocol is indeed independent of the password length (it depends on the password policy as everything else is negligible).
 
 \begin{table}[!t]
